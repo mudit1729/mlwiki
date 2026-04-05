@@ -50,3 +50,11 @@ This page tracks the canonical LLM and adjacent foundation-model papers that mat
 - alignment method,
 - relevance to autonomy or VLA systems.
 
+## Already seeded in batch 01
+
+- [[wiki/sources/papers/attention-is-all-you-need]]
+- [[wiki/sources/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding]]
+- [[wiki/sources/papers/language-models-are-few-shot-learners]]
+- [[wiki/sources/papers/scaling-laws-for-neural-language-models]]
+- [[wiki/sources/papers/training-compute-optimal-large-language-models]]
+- [[wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision]]

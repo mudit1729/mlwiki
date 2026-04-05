@@ -72,3 +72,18 @@ Use citation count as a filter, not a definition. The corpus should include:
 2. Ingest one canonical paper per cluster before adding near-duplicates.
 3. Maintain explicit notes on whether each paper supports modular, hybrid, or e2e interpretations.
 
+## Already seeded in batch 01
+
+- [[wiki/sources/papers/end-to-end-learning-for-self-driving-cars]]
+- [[wiki/sources/papers/end-to-end-driving-via-conditional-imitation-learning]]
+- [[wiki/sources/papers/carla-an-open-urban-driving-simulator]]
+- [[wiki/sources/papers/chauffeurnet-learning-to-drive-by-imitating-the-best-and-synthesizing-the-worst]]
+- [[wiki/sources/papers/learning-by-cheating]]
+- [[wiki/sources/papers/vectornet-encoding-hd-maps-and-agent-dynamics-from-vectorized-representation]]
+- [[wiki/sources/papers/learning-lane-graph-representations-for-motion-forecasting]]
+- [[wiki/sources/papers/lift-splat-shoot-encoding-images-from-arbitrary-camera-rigs-by-implicitly-unprojecting-to-3d]]
+- [[wiki/sources/papers/nuscenes-a-multimodal-dataset-for-autonomous-driving]]
+- [[wiki/sources/papers/bevformer-learning-birds-eye-view-representation-from-multi-camera-images-via-spatiotemporal-transformers]]
+- [[wiki/sources/papers/transfuser-imitation-with-transformer-based-sensor-fusion-for-autonomous-driving]]
+- [[wiki/sources/papers/planning-oriented-autonomous-driving]]
+- [[wiki/sources/papers/vad-vectorized-scene-representation-for-efficient-autonomous-driving]]

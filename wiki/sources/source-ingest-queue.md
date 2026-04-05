@@ -14,6 +14,7 @@ This is the master queue for source collection and ingest.
 
 ## Acquisition lanes
 
+0. [[wiki/sources/initial-corpus-batch-01]]
 1. [[wiki/sources/ilya-top-30]]
 2. [[wiki/sources/autonomous-driving-seminal-papers]]
 3. [[wiki/sources/vla-and-driving]]
@@ -34,4 +35,4 @@ For each source:
 - Citation-count thresholds should be verified at ingest time.
 - For source discovery, use paper graphs and citations to expand outward from canonical papers rather than scraping arbitrary lists.
 - If AlphaXiv-specific tooling is unavailable, use arXiv, OpenReview, Semantic Scholar, OpenAlex, and project pages.
-
+- The initial real paper set now lives in [[wiki/sources/initial-corpus-batch-01]].

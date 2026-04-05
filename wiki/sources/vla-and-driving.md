@@ -43,3 +43,13 @@ This queue spans general VLA foundations and driving-specific multimodal action 
 
 This area is recent and terminology is unstable. The wiki should be stricter than the papers are about the difference between vision-language reasoning and action generation.
 
+## Already seeded in batch 01
+
+- [[wiki/sources/papers/a-generalist-agent]]
+- [[wiki/sources/papers/rt-1-robotics-transformer-for-real-world-control-at-scale]]
+- [[wiki/sources/papers/palm-e-an-embodied-multimodal-language-model]]
+- [[wiki/sources/papers/rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control]]
+- [[wiki/sources/papers/openvla-an-open-source-vision-language-action-model]]
+- [[wiki/sources/papers/drivelm-driving-with-graph-visual-question-answering]]
+- [[wiki/sources/papers/lmdrive-closed-loop-end-to-end-driving-with-large-language-models]]
+- [[wiki/sources/papers/drivevlm-the-convergence-of-autonomous-driving-and-large-vision-language-models]]
