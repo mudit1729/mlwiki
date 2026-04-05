@@ -1,0 +1,38 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>{% block title %}{{ repo_title }}{% endblock %}</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;700;800&family=Newsreader:opsz,wght@6..72,500;6..72,700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="backdrop"></div>
+    <header class="site-header">
+      <a class="brand" href="{{ url_for('home') }}">
+        <span class="brand-mark">ML</span>
+        <span class="brand-text">
+          <strong>{{ repo_title }}</strong>
+          <span>Persistent research wiki</span>
+        </span>
+      </a>
+      <nav class="site-nav">
+        <a href="{{ url_for('page', page_path='index') }}">Index</a>
+        <a href="{{ url_for('page', page_path='wiki/overview') }}">Overview</a>
+        <a href="{{ url_for('page', page_path='wiki/sources/source-ingest-queue') }}">Source Queue</a>
+      </nav>
+      <form class="search-form" action="{{ url_for('search') }}" method="get">
+        <input type="search" name="q" value="{{ request.args.get('q', '') }}" placeholder="Search the vault">
+        <button type="submit">Search</button>
+      </form>
+    </header>
+
+    <main class="page-shell">
+      {% block content %}{% endblock %}
+    </main>
+  </body>
+</html>
+

@@ -1,0 +1,28 @@
+{% extends "base.html" %}
+
+{% block title %}Search | {{ repo_title }}{% endblock %}
+
+{% block content %}
+  <section class="panel search-panel">
+    <div class="panel-heading">
+      <h1>Search</h1>
+      <p>Naive local search over the markdown vault. Good enough for the current scale.</p>
+    </div>
+
+    {% if query %}
+      <p class="search-meta">{{ results|length }} result{% if results|length != 1 %}s{% endif %} for <code>{{ query }}</code></p>
+      <div class="search-results">
+        {% for page in results %}
+          <article class="search-result">
+            <a href="{{ url_for('page', page_path=page.path) }}">{{ page.title }}</a>
+            <span>{{ page.path }}.md</span>
+            <p>{{ page.excerpt }}</p>
+          </article>
+        {% endfor %}
+      </div>
+    {% else %}
+      <p class="muted">Enter a search term in the header bar.</p>
+    {% endif %}
+  </section>
+{% endblock %}
+

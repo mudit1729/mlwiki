@@ -1,0 +1,54 @@
+{% extends "base.html" %}
+
+{% block title %}{{ page.title }} | {{ repo_title }}{% endblock %}
+
+{% block content %}
+  <section class="content-layout">
+    <article class="panel article-panel">
+      <div class="article-header">
+        <nav class="breadcrumbs">
+          {% for crumb in breadcrumbs %}
+            {% if crumb.exists %}
+              <a href="{{ url_for('page', page_path=crumb.path) }}">{{ crumb.label }}</a>
+            {% else %}
+              <span>{{ crumb.label }}</span>
+            {% endif %}
+          {% endfor %}
+        </nav>
+        <div class="article-meta">
+          <span>{{ page.path }}.md</span>
+          <span>{{ page.links|length }} outgoing links</span>
+        </div>
+      </div>
+
+      <div class="prose">
+        {{ page.html | safe }}
+      </div>
+    </article>
+
+    <aside class="panel sidebar-panel">
+      <div class="sidebar-block">
+        <h2>Backlinks</h2>
+        {% if backlinks %}
+          <ul class="backlink-list">
+            {% for backlink in backlinks %}
+              <li>
+                <a href="{{ url_for('page', page_path=backlink.path) }}">{{ backlink.title }}</a>
+                <p>{{ backlink.excerpt }}</p>
+              </li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="muted">No backlinks yet.</p>
+        {% endif %}
+      </div>
+
+      <div class="sidebar-block">
+        <h2>Quick jump</h2>
+        <a class="mini-link" href="{{ url_for('page', page_path='index') }}">Open index</a>
+        <a class="mini-link" href="{{ url_for('page', page_path='log') }}">Open log</a>
+        <a class="mini-link" href="{{ url_for('page', page_path='AGENTS') }}">Open agent schema</a>
+      </div>
+    </aside>
+  </section>
+{% endblock %}

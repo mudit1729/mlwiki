@@ -1,0 +1,76 @@
+{% extends "base.html" %}
+
+{% block title %}Home | {{ repo_title }}{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <div class="hero-copy">
+      <p class="eyebrow">ML, autonomy, robotics, VLA, e2e systems</p>
+      <h1>A hosted viewer for a persistent research wiki.</h1>
+      <p class="lede">
+        The markdown files remain the source of truth. This app turns them into a readable, searchable interface
+        for browsing concepts, source queues, comparisons, syntheses, and the running log.
+      </p>
+      <div class="hero-meta">
+        <span>{{ total_pages }} pages</span>
+        <span>{{ recent|length }} recent log entries surfaced</span>
+      </div>
+    </div>
+    <div class="hero-panel">
+      <h2>Suggested entry points</h2>
+      <div class="card-grid compact">
+        {% for page in featured %}
+          <a class="card" href="{{ url_for('page', page_path=page.path) }}">
+            <strong>{{ page.title }}</strong>
+            <p>{{ page.excerpt }}</p>
+          </a>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+
+  <section class="grid two-up">
+    <div class="panel">
+      <div class="panel-heading">
+        <h2>Sections</h2>
+        <p>Pages grouped by their role in the vault.</p>
+      </div>
+      <div class="section-list">
+        {% for label, pages in groups.items() %}
+          <article class="section-block">
+            <div class="section-title">
+              <h3>{{ label }}</h3>
+              <span>{{ pages|length }}</span>
+            </div>
+            <ul>
+              {% for page in pages[:8] %}
+                <li>
+                  <a href="{{ url_for('page', page_path=page.path) }}">{{ page.title }}</a>
+                </li>
+              {% endfor %}
+            </ul>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+
+    <div class="panel">
+      <div class="panel-heading">
+        <h2>Recent activity</h2>
+        <p>Parsed directly from <code>log.md</code>.</p>
+      </div>
+      <div class="activity-list">
+        {% for entry in recent %}
+          <article class="activity-item">
+            <span class="activity-date">{{ entry.date }}</span>
+            <div>
+              <strong>{{ entry.kind }}</strong>
+              <p>{{ entry.title }}</p>
+            </div>
+          </article>
+        {% endfor %}
+      </div>
+    </div>
+  </section>
+{% endblock %}
+

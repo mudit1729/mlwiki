@@ -1,0 +1,11 @@
+.venv/
+__pycache__/
+*.pyc
+.DS_Store
+raw/inbox/*
+raw/papers/*
+!raw/inbox/.gitkeep
+!raw/papers/.gitkeep
+raw/assets/*
+!raw/assets/.gitkeep
+
