@@ -21,7 +21,7 @@ repo = WikiRepository(BASE_DIR)
 @app.context_processor
 def inject_globals() -> dict[str, object]:
     return {
-        "repo_title": "ML Systems Wiki",
+        "repo_title": "Knowledge base for ML systems, autonomy, and embodied AI",
     }
 
 
