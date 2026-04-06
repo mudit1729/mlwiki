@@ -34,7 +34,10 @@ Use citation count as a filter, not a definition. The corpus should include:
 - CenterPoint
 - Lift, Splat, Shoot
 - BEVFormer
+- FB-BEV
+- SurroundOcc
 - DETR3D
+- OccFormer
 
 ### Prediction
 
@@ -87,3 +90,18 @@ Use citation count as a filter, not a definition. The corpus should include:
 - [[wiki/sources/papers/transfuser-imitation-with-transformer-based-sensor-fusion-for-autonomous-driving]]
 - [[wiki/sources/papers/planning-oriented-autonomous-driving]]
 - [[wiki/sources/papers/vad-vectorized-scene-representation-for-efficient-autonomous-driving]]
+
+## Added in batch 02 (AutoVLA corpus — planning/VLA overlap)
+
+- [[wiki/sources/papers/textual-explanations-for-self-driving]] — BDD-X dataset, explainability
+- [[wiki/sources/papers/talk2car]] — language command grounding
+- [[wiki/sources/papers/simlingo]] — CARLA challenge winner, vision-only VLA
+- [[wiki/sources/papers/orion]] — Bench2Drive SOTA
+- [[wiki/sources/papers/emma]] — Waymo industry-scale model
+- [[wiki/sources/papers/alpamayo-r1]] — NVIDIA production VLA
+- [[wiki/sources/papers/wote-bev-world-model]] — BEV trajectory verification
+- [[wiki/sources/papers/drivemoe]] — MoE for driving
+- [[wiki/sources/papers/think-twice-before-driving-towards-scalable-decoders-for-end-to-end-autonomous-driving]] — Cascaded decoder refinement, CARLA SOTA
+- [[wiki/sources/papers/bevformer-v2-adapting-modern-image-backbones-to-birds-eye-view-recognition-via-perspective-supervision]] — Perspective supervision for backbone-agnostic BEV perception
+- [[wiki/sources/papers/driveadapter-breaking-the-coupling-barrier-of-perception-and-planning-in-end-to-end-autonomous-driving]] — Decoupled perception-planning via adapter module (ICCV 2023)
+- [[wiki/sources/papers/fb-bev-bev-representation-from-forward-backward-view-transformations]] — Unified forward-backward view transformation for BEV (ICCV 2023)

@@ -3,26 +3,44 @@
 {% block title %}Search | {{ repo_title }}{% endblock %}
 
 {% block content %}
-  <section class="panel search-panel">
-    <div class="panel-heading">
+  <section class="search-page">
+    <div class="section-heading">
       <h1>Search</h1>
-      <p>Naive local search over the markdown vault. Good enough for the current scale.</p>
     </div>
+
+    <form action="{{ url_for('search') }}" method="get" class="search-inline">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="11" cy="11" r="8"/><path d="m21 21-4.3-4.3"/>
+      </svg>
+      <input type="search" name="q" value="{{ query }}" placeholder="Search papers, concepts, tags..." autofocus>
+    </form>
 
     {% if query %}
       <p class="search-meta">{{ results|length }} result{% if results|length != 1 %}s{% endif %} for <code>{{ query }}</code></p>
       <div class="search-results">
         {% for page in results %}
-          <article class="search-result">
-            <a href="{{ url_for('page', page_path=page.path) }}">{{ page.title }}</a>
-            <span>{{ page.path }}.md</span>
+          <a class="search-result-card" href="{{ url_for('page', page_path=page.path) }}">
+            <div class="search-result-header">
+              <strong>{{ page.title }}</strong>
+              {% if page.status %}
+                <span class="status-dot status-{{ page.status }}"></span>
+              {% endif %}
+            </div>
+            <span class="search-result-path">{{ page.path }}.md</span>
             <p>{{ page.excerpt }}</p>
-          </article>
+            {% if page.tags %}
+              <div class="paper-card-tags">
+                {% for tag in page.tags[:3] %}
+                  <span class="tag-pill small">{{ tag }}</span>
+                {% endfor %}
+              </div>
+            {% endif %}
+          </a>
         {% endfor %}
       </div>
+    {% elif query == '' %}
     {% else %}
-      <p class="muted">Enter a search term in the header bar.</p>
+      <p class="muted">Enter a search term above or press <kbd>Cmd+K</kbd> from anywhere.</p>
     {% endif %}
   </section>
 {% endblock %}
-

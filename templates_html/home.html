@@ -5,66 +5,113 @@
 {% block content %}
   <section class="hero">
     <div class="hero-copy">
-      <p class="eyebrow">ML, autonomy, robotics, VLA, e2e systems</p>
-      <h1>A hosted viewer for a persistent research wiki.</h1>
+      <p class="eyebrow">ML &middot; Autonomy &middot; Robotics &middot; VLA &middot; Foundation Models</p>
+      <h1>Persistent research wiki for ML systems.</h1>
       <p class="lede">
-        The markdown files remain the source of truth. This app turns them into a readable, searchable interface
-        for browsing concepts, source queues, comparisons, syntheses, and the running log.
+        Browse concepts, paper summaries, research syntheses, and the running log.
+        The markdown files remain the source of truth.
       </p>
-      <div class="hero-meta">
-        <span>{{ total_pages }} pages</span>
-        <span>{{ recent|length }} recent log entries surfaced</span>
+      <div class="stat-row">
+        <div class="stat-card">
+          <span class="stat-num">{{ stats.papers }}</span>
+          <span class="stat-label">Papers</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">{{ stats.concepts }}</span>
+          <span class="stat-label">Concepts</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">{{ stats.complete }}</span>
+          <span class="stat-label">Complete</span>
+        </div>
+        <div class="stat-card">
+          <span class="stat-num">{{ stats.tags }}</span>
+          <span class="stat-label">Tags</span>
+        </div>
       </div>
     </div>
-    <div class="hero-panel">
-      <h2>Suggested entry points</h2>
-      <div class="card-grid compact">
-        {% for page in featured %}
-          <a class="card" href="{{ url_for('page', page_path=page.path) }}">
-            <strong>{{ page.title }}</strong>
-            <p>{{ page.excerpt }}</p>
-          </a>
-        {% endfor %}
-      </div>
+  </section>
+
+  <section class="collections-section">
+    <div class="section-heading">
+      <h2>Paper Collections</h2>
+      <a href="{{ url_for('papers') }}" class="see-all">View all papers &rarr;</a>
+    </div>
+    <div class="collection-grid">
+      {% for name, papers in collections.items() %}
+        <div class="collection-card">
+          <div class="collection-header">
+            <h3>{{ name }}</h3>
+            <span class="badge">{{ papers|length }}</span>
+          </div>
+          <ul class="collection-list">
+            {% for p in papers[:5] %}
+              <li>
+                <a href="{{ url_for('page', page_path=p.path) }}">{{ p.title }}</a>
+                {% if p.year %}<span class="year-tag">{{ p.year }}</span>{% endif %}
+              </li>
+            {% endfor %}
+          </ul>
+          {% if papers|length > 5 %}
+            <p class="more-count">+{{ papers|length - 5 }} more</p>
+          {% endif %}
+        </div>
+      {% endfor %}
+    </div>
+  </section>
+
+  <section class="featured-section">
+    <div class="section-heading">
+      <h2>Entry Points</h2>
+    </div>
+    <div class="featured-grid">
+      {% for page in featured %}
+        <a class="featured-card" href="{{ url_for('page', page_path=page.path) }}">
+          <strong>{{ page.title }}</strong>
+          {% if page.status %}
+            <span class="status-dot status-{{ page.status }}"></span>
+          {% endif %}
+          <p>{{ page.excerpt }}</p>
+        </a>
+      {% endfor %}
     </div>
   </section>
 
   <section class="grid two-up">
     <div class="panel">
-      <div class="panel-heading">
+      <div class="section-heading">
         <h2>Sections</h2>
-        <p>Pages grouped by their role in the vault.</p>
       </div>
       <div class="section-list">
         {% for label, pages in groups.items() %}
-          <article class="section-block">
-            <div class="section-title">
+          <details class="section-block" {% if label in ['Concepts', 'Sources', 'Syntheses'] %}open{% endif %}>
+            <summary class="section-title">
               <h3>{{ label }}</h3>
-              <span>{{ pages|length }}</span>
-            </div>
+              <span class="badge">{{ pages|length }}</span>
+            </summary>
             <ul>
-              {% for page in pages[:8] %}
+              {% for page in pages %}
                 <li>
                   <a href="{{ url_for('page', page_path=page.path) }}">{{ page.title }}</a>
+                  {% if page.status %}<span class="status-dot status-{{ page.status }}"></span>{% endif %}
                 </li>
               {% endfor %}
             </ul>
-          </article>
+          </details>
         {% endfor %}
       </div>
     </div>
 
     <div class="panel">
-      <div class="panel-heading">
-        <h2>Recent activity</h2>
-        <p>Parsed directly from <code>log.md</code>.</p>
+      <div class="section-heading">
+        <h2>Recent Activity</h2>
       </div>
       <div class="activity-list">
         {% for entry in recent %}
           <article class="activity-item">
             <span class="activity-date">{{ entry.date }}</span>
             <div>
-              <strong>{{ entry.kind }}</strong>
+              <span class="activity-kind">{{ entry.kind }}</span>
               <p>{{ entry.title }}</p>
             </div>
           </article>
@@ -73,4 +120,3 @@
     </div>
   </section>
 {% endblock %}
-

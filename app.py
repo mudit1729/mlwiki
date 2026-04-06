@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import json
 import os
 from pathlib import Path
 
@@ -29,13 +30,15 @@ def home():
     featured = repo.featured_pages()
     groups = repo.grouped_pages()
     recent = repo.recent_log_entries()
-    total_pages = len(repo.list_pages())
+    stats = repo.stats()
+    collections = repo.paper_collections()
     return render_template(
         "home.html",
         featured=featured,
         groups=groups,
         recent=recent,
-        total_pages=total_pages,
+        stats=stats,
+        collections=collections,
     )
 
 
@@ -65,6 +68,53 @@ def page(page_path: str):
         page=page_obj,
         breadcrumbs=breadcrumbs,
         backlinks=backlinks,
+    )
+
+
+@app.route("/papers")
+def papers():
+    all_papers = repo.papers()
+    collections = repo.paper_collections()
+    tag_filter = request.args.get("tag", "").strip()
+    if tag_filter:
+        all_papers = [p for p in all_papers if tag_filter in p.tags]
+    return render_template(
+        "papers.html",
+        papers=all_papers,
+        collections=collections,
+        active_tag=tag_filter,
+    )
+
+
+@app.route("/graph")
+def graph():
+    graph_data = repo.paper_graph_data()
+    return render_template(
+        "graph.html",
+        graph_json=json.dumps(graph_data),
+    )
+
+
+@app.route("/timeline")
+def timeline():
+    timeline_data = repo.timeline_data()
+    return render_template(
+        "timeline.html",
+        timeline_data=timeline_data,
+        timeline_json=json.dumps(timeline_data),
+    )
+
+
+@app.route("/tags")
+def tags():
+    all_tags = repo.all_tags()
+    tag_name = request.args.get("t", "").strip()
+    tag_pages = repo.pages_by_tag(tag_name) if tag_name else []
+    return render_template(
+        "tags.html",
+        all_tags=all_tags,
+        active_tag=tag_name,
+        tag_pages=tag_pages,
     )
 
 

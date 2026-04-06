@@ -39,9 +39,9 @@ This is the navigation entry point for the wiki.
 
 - [[wiki/sources/source-ingest-queue]] - Master queue for source acquisition and ingest.
 - [[wiki/sources/initial-corpus-batch-01]] - First real corpus batch with 27 seeded paper pages across driving, VLA, and foundation models.
-- [[wiki/sources/ilya-top-30]] - Queue and placeholder synthesis for Ilya's recommended core papers.
-- [[wiki/sources/autonomous-driving-seminal-papers]] - Seed list for high-impact autonomous driving papers across perception, prediction, planning, and e2e systems.
-- [[wiki/sources/vla-and-driving]] - Seed list for VLM/VLA sources spanning robotics and autonomous driving.
+- [[wiki/sources/ilya-top-30]] - Complete canonical list of Ilya Sutskever's 30 recommended papers, all ingested with full summaries.
+- [[wiki/sources/autonomous-driving-seminal-papers]] - High-impact autonomous driving papers across perception, prediction, planning, and e2e systems (21 ingested).
+- [[wiki/sources/vla-and-driving]] - VLM/VLA sources spanning robotics and autonomous driving, including full AutoVLA corpus of 18 papers (2018–2025).
 - [[wiki/sources/llm-seminal-papers]] - Seed list for canonical LLM and foundation-model papers.
 
 ## Operational Files

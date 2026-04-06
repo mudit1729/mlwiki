@@ -1,0 +1,194 @@
+{% extends "base.html" %}
+
+{% block title %}Paper Graph | {{ repo_title }}{% endblock %}
+
+{% block content %}
+  <section class="graph-page">
+    <div class="graph-header">
+      <div class="section-heading">
+        <h1>Paper Graph</h1>
+        <p class="muted">Interactive visualization of paper relationships. Papers are connected when they cite each other within the wiki.</p>
+      </div>
+      <div class="graph-legend">
+        <span class="legend-item"><span class="legend-dot" style="background: #f59e0b"></span>Ilya Top 30</span>
+        <span class="legend-item"><span class="legend-dot" style="background: #8b5cf6"></span>VLA / Driving</span>
+        <span class="legend-item"><span class="legend-dot" style="background: #3b82f6"></span>Autonomous Driving</span>
+        <span class="legend-item"><span class="legend-dot" style="background: #10b981"></span>Foundation Models</span>
+        <span class="legend-item"><span class="legend-dot" style="background: #ef4444"></span>Robotics</span>
+        <span class="legend-item"><span class="legend-dot" style="background: #6b7280"></span>Other</span>
+      </div>
+    </div>
+    <div class="graph-controls">
+      <button class="chip active" onclick="filterGraph('all')">All</button>
+      <button class="chip" onclick="filterGraph('ilya-30')">Ilya Top 30</button>
+      <button class="chip" onclick="filterGraph('vla-driving')">VLA / Driving</button>
+      <button class="chip" onclick="filterGraph('autonomous-driving')">Autonomous Driving</button>
+      <button class="chip" onclick="filterGraph('foundation-models')">Foundation Models</button>
+      <button class="chip" onclick="filterGraph('robotics')">Robotics</button>
+    </div>
+    <div class="graph-container" id="graph-container">
+      <svg id="graph-svg"></svg>
+    </div>
+    <div class="graph-tooltip" id="graph-tooltip"></div>
+  </section>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  <script>
+    const graphData = {{ graph_json | safe }};
+    const groupColors = {
+      'ilya-30': '#f59e0b',
+      'vla-driving': '#8b5cf6',
+      'autonomous-driving': '#3b82f6',
+      'foundation-models': '#10b981',
+      'robotics': '#ef4444',
+      'other': '#6b7280',
+    };
+
+    const container = document.getElementById('graph-container');
+    const svg = d3.select('#graph-svg');
+    const tooltip = document.getElementById('graph-tooltip');
+    let width = container.clientWidth;
+    let height = Math.max(600, window.innerHeight - 280);
+    svg.attr('width', width).attr('height', height);
+
+    // Create data copies for filtering
+    let activeFilter = 'all';
+    let nodes = graphData.nodes.map(d => ({...d}));
+    let edges = graphData.edges.map(d => ({...d}));
+
+    const g = svg.append('g');
+
+    // Zoom
+    const zoom = d3.zoom()
+      .scaleExtent([0.2, 4])
+      .on('zoom', (event) => g.attr('transform', event.transform));
+    svg.call(zoom);
+
+    // Force simulation
+    const simulation = d3.forceSimulation(nodes)
+      .force('link', d3.forceLink(edges).id(d => d.id).distance(80).strength(0.7))
+      .force('charge', d3.forceManyBody().strength(-180).distanceMax(400))
+      .force('center', d3.forceCenter(width / 2, height / 2))
+      .force('collision', d3.forceCollide().radius(d => nodeRadius(d) + 6))
+      .force('x', d3.forceX(width / 2).strength(0.06))
+      .force('y', d3.forceY(height / 2).strength(0.06));
+
+    // Links
+    const link = g.append('g')
+      .selectAll('line')
+      .data(edges)
+      .join('line')
+      .attr('class', 'graph-link');
+
+    // Nodes
+    const node = g.append('g')
+      .selectAll('circle')
+      .data(nodes)
+      .join('circle')
+      .attr('class', 'graph-node')
+      .attr('r', d => nodeRadius(d))
+      .attr('fill', d => groupColors[d.group] || groupColors.other)
+      .call(d3.drag()
+        .on('start', dragStarted)
+        .on('drag', dragged)
+        .on('end', dragEnded));
+
+    // Labels
+    const label = g.append('g')
+      .selectAll('text')
+      .data(nodes)
+      .join('text')
+      .attr('class', 'graph-label')
+      .text(d => truncate(d.title, 30))
+      .attr('dx', d => nodeRadius(d) + 5)
+      .attr('dy', 4);
+
+    // Hover
+    node.on('mouseover', function(event, d) {
+      tooltip.innerHTML = `
+        <strong>${d.title}</strong>
+        ${d.year ? `<span class="meta-pill small">${d.year}</span>` : ''}
+        ${d.citations ? `<span class="meta-pill small">${d.citations.toLocaleString()} citations</span>` : ''}
+        <div class="paper-card-tags" style="margin-top:4px">
+          ${d.tags.slice(0, 4).map(t => `<span class="tag-pill small">${t}</span>`).join('')}
+        </div>
+      `;
+      tooltip.style.display = 'block';
+      tooltip.style.left = event.pageX + 12 + 'px';
+      tooltip.style.top = event.pageY - 12 + 'px';
+      d3.select(this).attr('stroke', '#fff').attr('stroke-width', 3);
+    })
+    .on('mousemove', function(event) {
+      tooltip.style.left = event.pageX + 12 + 'px';
+      tooltip.style.top = event.pageY - 12 + 'px';
+    })
+    .on('mouseout', function() {
+      tooltip.style.display = 'none';
+      d3.select(this).attr('stroke', null).attr('stroke-width', null);
+    })
+    .on('click', function(event, d) {
+      window.location.href = d.url;
+    });
+
+    simulation.on('tick', () => {
+      link.attr('x1', d => d.source.x).attr('y1', d => d.source.y)
+          .attr('x2', d => d.target.x).attr('y2', d => d.target.y);
+      node.attr('cx', d => d.x).attr('cy', d => d.y);
+      label.attr('x', d => d.x).attr('y', d => d.y);
+    });
+
+    function nodeRadius(d) {
+      if (d.citations > 10000) return 16;
+      if (d.citations > 1000) return 12;
+      if (d.citations > 100) return 9;
+      return 7;
+    }
+
+    function truncate(s, n) {
+      return s.length > n ? s.substring(0, n) + '...' : s;
+    }
+
+    function dragStarted(event, d) {
+      if (!event.active) simulation.alphaTarget(0.3).restart();
+      d.fx = d.x; d.fy = d.y;
+    }
+    function dragged(event, d) { d.fx = event.x; d.fy = event.y; }
+    function dragEnded(event, d) {
+      if (!event.active) simulation.alphaTarget(0);
+      d.fx = null; d.fy = null;
+    }
+
+    function filterGraph(group) {
+      activeFilter = group;
+      document.querySelectorAll('.graph-controls .chip').forEach(el => el.classList.remove('active'));
+      event.target.classList.add('active');
+
+      const nodeSet = new Set();
+      node.transition().duration(300)
+        .attr('opacity', d => {
+          const show = group === 'all' || d.group === group;
+          if (show) nodeSet.add(d.id);
+          return show ? 1 : 0.08;
+        });
+
+      link.transition().duration(300)
+        .attr('opacity', d => {
+          const srcId = typeof d.source === 'object' ? d.source.id : d.source;
+          const tgtId = typeof d.target === 'object' ? d.target.id : d.target;
+          return (group === 'all' || (nodeSet.has(srcId) && nodeSet.has(tgtId))) ? 0.5 : 0.03;
+        });
+
+      label.transition().duration(300)
+        .attr('opacity', d => (group === 'all' || d.group === group) ? 1 : 0.05);
+    }
+
+    // Responsive
+    window.addEventListener('resize', () => {
+      width = container.clientWidth;
+      height = Math.max(600, window.innerHeight - 280);
+      svg.attr('width', width).attr('height', height);
+      simulation.force('center', d3.forceCenter(width / 2, height / 2));
+      simulation.alpha(0.3).restart();
+    });
+  </script>
+{% endblock %}

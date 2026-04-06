@@ -1,17 +1,19 @@
 from __future__ import annotations
 
 from collections import defaultdict
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Iterable
 from urllib.parse import quote
 import re
 
 import markdown
+import yaml
 
 
 WIKILINK_RE = re.compile(r"(!)?\[\[([^\]]+)\]\]")
 HEADING_RE = re.compile(r"^#\s+(.+)$", re.MULTILINE)
+FRONTMATTER_RE = re.compile(r"^---\s*\n(.*?)\n---\s*\n", re.DOTALL)
 LOG_ENTRY_RE = re.compile(
     r"^## \[(?P<date>[^\]]+)\] (?P<kind>[^|]+)\| (?P<title>.+)$",
     re.MULTILINE,
@@ -30,6 +32,13 @@ class Page:
     excerpt: str
     links: list[str]
     backlinks: list[str]
+    tags: list[str] = field(default_factory=list)
+    status: str = ""
+    page_type: str = ""
+    year: str = ""
+    venue: str = ""
+    citations: int = 0
+    meta: dict = field(default_factory=dict)
 
 
 class WikiRepository:
@@ -57,7 +66,7 @@ class WikiRepository:
         if self._pages and stamp == self._stamp:
             return
 
-        sources: dict[str, tuple[Path, str, str]] = {}
+        sources: dict[str, tuple[Path, str, str, dict]] = {}
         stem_index: defaultdict[str, list[str]] = defaultdict(list)
 
         for file_path in self._iter_markdown_files():
@@ -65,7 +74,8 @@ class WikiRepository:
             page_path = rel_path[:-3]
             raw = file_path.read_text(encoding="utf-8")
             title = self._extract_title(page_path, raw)
-            sources[page_path] = (file_path, raw, title)
+            meta = self._extract_frontmatter(raw)
+            sources[page_path] = (file_path, raw, title, meta)
             stem_index[Path(page_path).name.lower()].append(page_path)
 
         self._path_lookup = {path.lower(): path for path in sources}
@@ -78,13 +88,14 @@ class WikiRepository:
         pages: dict[str, Page] = {}
         backlinks: defaultdict[str, list[str]] = defaultdict(list)
 
-        for path, (file_path, raw, title) in sources.items():
+        for path, (file_path, raw, title, meta) in sources.items():
             links = self._extract_links(raw)
             for target in links:
                 backlinks[target].append(path)
 
+            body = re.sub(r"^---\s*\n.*?\n---\s*\n", "", raw, count=1, flags=re.DOTALL)
             html = markdown.markdown(
-                self._render_wikilinks(raw),
+                self._render_wikilinks(body),
                 extensions=[
                     "tables",
                     "fenced_code",
@@ -95,6 +106,16 @@ class WikiRepository:
                 ],
             )
             excerpt = self._make_excerpt(raw)
+            tags = meta.get("tags", []) or []
+            if isinstance(tags, str):
+                tags = [tags]
+
+            citations_val = meta.get("citations", 0)
+            try:
+                citations_val = int(citations_val)
+            except (ValueError, TypeError):
+                citations_val = 0
+
             pages[path] = Page(
                 path=path,
                 file_path=file_path,
@@ -104,6 +125,13 @@ class WikiRepository:
                 excerpt=excerpt,
                 links=links,
                 backlinks=[],
+                tags=tags,
+                status=str(meta.get("status", "")),
+                page_type=str(meta.get("type", "")),
+                year=str(meta.get("year", "")),
+                venue=str(meta.get("venue", "")),
+                citations=citations_val,
+                meta=meta,
             )
 
         for page in pages.values():
@@ -139,9 +167,11 @@ class WikiRepository:
         for page in self._pages.values():
             title = page.title.lower()
             body = page.raw.lower()
+            tag_str = " ".join(page.tags).lower()
             score = 0
             for term in terms:
                 score += title.count(term) * 8
+                score += tag_str.count(term) * 4
                 score += body.count(term)
             if score:
                 scored.append((score, page))
@@ -188,11 +218,12 @@ class WikiRepository:
 
     def featured_pages(self) -> list[Page]:
         featured_paths = [
-            "README",
             "wiki/overview",
-            "wiki/comparisons/modular-vs-end-to-end",
-            "wiki/sources/source-ingest-queue",
+            "wiki/concepts/vision-language-action",
+            "wiki/sources/ilya-top-30",
+            "wiki/sources/vla-and-driving",
             "wiki/syntheses/research-thesis",
+            "wiki/queries/open-questions",
         ]
         featured: list[Page] = []
         for path in featured_paths:
@@ -200,6 +231,155 @@ class WikiRepository:
             if page:
                 featured.append(page)
         return featured
+
+    def all_tags(self) -> dict[str, int]:
+        self.refresh()
+        tag_counts: defaultdict[str, int] = defaultdict(int)
+        for page in self._pages.values():
+            for tag in page.tags:
+                tag_counts[tag] += 1
+        return dict(sorted(tag_counts.items(), key=lambda item: (-item[1], item[0])))
+
+    def pages_by_tag(self, tag: str) -> list[Page]:
+        self.refresh()
+        return sorted(
+            [p for p in self._pages.values() if tag in p.tags],
+            key=lambda p: p.title.lower(),
+        )
+
+    def papers(self) -> list[Page]:
+        self.refresh()
+        return sorted(
+            [p for p in self._pages.values() if p.page_type == "source-summary"],
+            key=lambda p: (p.year or "0000", p.title.lower()),
+            reverse=True,
+        )
+
+    def paper_collections(self) -> dict[str, list[Page]]:
+        all_papers = self.papers()
+        collections: dict[str, list[Page]] = {
+            "Ilya Top 30": [],
+            "AutoVLA / Driving": [],
+            "Foundation Models": [],
+            "Autonomous Driving": [],
+            "Robotics / VLA": [],
+        }
+        for p in all_papers:
+            if "ilya-30" in p.tags:
+                collections["Ilya Top 30"].append(p)
+            if any(t in p.tags for t in ["vla", "vlm", "reasoning"]) and "autonomous-driving" in p.tags:
+                collections["AutoVLA / Driving"].append(p)
+            if any(t in p.tags for t in ["llm", "transformer", "scaling"]):
+                collections["Foundation Models"].append(p)
+            if "autonomous-driving" in p.tags:
+                collections["Autonomous Driving"].append(p)
+            if "robotics" in p.tags:
+                collections["Robotics / VLA"].append(p)
+        return {k: v for k, v in collections.items() if v}
+
+    def stats(self) -> dict[str, int]:
+        self.refresh()
+        total = len(self._pages)
+        papers = len([p for p in self._pages.values() if p.page_type == "source-summary"])
+        concepts = len([p for p in self._pages.values() if p.page_type == "concept"])
+        complete = len([p for p in self._pages.values() if p.status == "complete"])
+        tags = len(self.all_tags())
+        return {
+            "total": total,
+            "papers": papers,
+            "concepts": concepts,
+            "complete": complete,
+            "tags": tags,
+        }
+
+    def paper_graph_data(self) -> dict:
+        """Returns nodes and edges for paper graph visualization."""
+        self.refresh()
+        papers = {p.path: p for p in self._pages.values()
+                  if p.page_type == "source-summary"}
+
+        # Assign colors by primary research direction
+        def get_group(p: Page) -> str:
+            if "ilya-30" in p.tags and "autonomous-driving" not in p.tags:
+                return "ilya-30"
+            if any(t in p.tags for t in ["vla", "vlm"]) and "autonomous-driving" in p.tags:
+                return "vla-driving"
+            if "autonomous-driving" in p.tags:
+                return "autonomous-driving"
+            if "robotics" in p.tags:
+                return "robotics"
+            if any(t in p.tags for t in ["llm", "transformer", "scaling"]):
+                return "foundation-models"
+            return "other"
+
+        nodes = []
+        for path, p in papers.items():
+            nodes.append({
+                "id": path,
+                "title": p.title,
+                "year": p.year,
+                "group": get_group(p),
+                "citations": p.citations,
+                "tags": p.tags,
+                "url": f"/page/{path}",
+            })
+
+        node_ids = set(papers.keys())
+        edges = []
+        seen = set()
+        for path, p in papers.items():
+            for link in p.links:
+                if link in node_ids and link != path:
+                    edge_key = tuple(sorted([path, link]))
+                    if edge_key not in seen:
+                        seen.add(edge_key)
+                        edges.append({"source": path, "target": link})
+            for bl in p.backlinks:
+                if bl in node_ids and bl != path:
+                    edge_key = tuple(sorted([path, bl]))
+                    if edge_key not in seen:
+                        seen.add(edge_key)
+                        edges.append({"source": bl, "target": path})
+
+        return {"nodes": nodes, "edges": edges}
+
+    def timeline_data(self) -> dict[str, list[dict]]:
+        """Returns papers grouped by research direction for timeline view."""
+        self.refresh()
+        directions = {
+            "VLA / Driving": lambda p: any(t in p.tags for t in ["vla", "vlm"]) and "autonomous-driving" in p.tags,
+            "End-to-End": lambda p: "e2e" in p.tags or "imitation-learning" in p.tags,
+            "Perception": lambda p: "perception" in p.tags or "bev" in p.tags,
+            "Planning": lambda p: "planning" in p.tags,
+            "Prediction": lambda p: "prediction" in p.tags or "forecasting" in p.tags,
+            "Foundation Models": lambda p: any(t in p.tags for t in ["llm", "transformer", "scaling"]) and "autonomous-driving" not in p.tags,
+            "Robotics": lambda p: "robotics" in p.tags,
+            "Ilya Top 30": lambda p: "ilya-30" in p.tags,
+        }
+
+        result: dict[str, list[dict]] = {}
+        for direction, pred in directions.items():
+            papers = [p for p in self._pages.values()
+                      if p.page_type == "source-summary" and pred(p)]
+            papers.sort(key=lambda p: (p.year or "0000", p.title))
+            result[direction] = [{
+                "path": p.path,
+                "title": p.title,
+                "year": p.year,
+                "citations": p.citations,
+                "url": f"/page/{p.path}",
+            } for p in papers]
+
+        return {k: v for k, v in result.items() if v}
+
+    def _extract_frontmatter(self, raw: str) -> dict:
+        match = FRONTMATTER_RE.match(raw)
+        if not match:
+            return {}
+        try:
+            return yaml.safe_load(match.group(1)) or {}
+        except yaml.YAMLError:
+            return {}
 
     def _extract_title(self, page_path: str, raw: str) -> str:
         match = HEADING_RE.search(raw)
@@ -214,7 +394,7 @@ class WikiRepository:
         text = re.sub(r"\s+", " ", text).strip()
         if len(text) <= max_length:
             return text
-        return text[: max_length - 1].rstrip() + "…"
+        return text[: max_length - 1].rstrip() + "\u2026"
 
     def _extract_links(self, raw: str) -> list[str]:
         targets: list[str] = []
