@@ -1,16 +1,12 @@
 ---
-title: Training Compute-Optimal Large Language Models
-type: source-summary
-status: complete
-updated: 2026-04-05
-year: 2022
-venue: arXiv
-tags:
-  - paper
-  - llm
-  - scaling
-  - foundation
-citations: 2973
+title: "Training Compute-Optimal Large Language Models"
+tags: [nlp, language-modeling, transformer, foundation-model, scaling]
+status: active
+type: paper
+year: "2022"
+venue: "arXiv"
+citations: 4116
+arxiv_id: "2203.15556"
 ---
 
 # Training Compute-Optimal Large Language Models
@@ -74,8 +70,9 @@ All three approaches converge: a = b ~ 0.5 in the relationship N_opt ~ C^a, D_op
 
 ## Connections
 
-- [[wiki/concepts/foundation-models]]
-- [[wiki/concepts/machine-learning]]
-- [[wiki/sources/papers/scaling-laws-for-neural-language-models]]
-- [[wiki/sources/papers/attention-is-all-you-need]]
-- [[wiki/sources/papers/gpipe-easy-scaling-with-micro-batch-pipeline-parallelism]]
+- [[wiki/sources/papers/scaling-laws-for-neural-language-models]] -- Kaplan et al. scaling laws that Chinchilla corrected
+- [[wiki/sources/papers/language-models-are-few-shot-learners]] -- GPT-3, shown to be significantly undertrained by Chinchilla analysis
+- [[wiki/sources/papers/attention-is-all-you-need]] -- Transformer architecture used throughout
+- [[wiki/sources/papers/gpipe-easy-scaling-with-micro-batch-pipeline-parallelism]] -- pipeline parallelism for training large models
+- [[wiki/concepts/foundation-models]] -- broader context on foundation model scaling
+- [[wiki/concepts/machine-learning]] -- general ML concepts

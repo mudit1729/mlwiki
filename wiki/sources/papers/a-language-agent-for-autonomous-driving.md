@@ -97,6 +97,7 @@ Related papers in the wiki:
 - [[wiki/sources/papers/orion-holistic-end-to-end-autonomous-driving-by-vision-language-instructed-action-generation]] -- later holistic VLA that integrates reasoning into a single forward pass
 - [[wiki/sources/papers/senna-bridging-large-vision-language-models-and-end-to-end-autonomous-driving]] -- decoupled reasoning + E2E planning, a middle ground between Agent-Driver's tool-use and EMMA's full unification
 - [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models]] -- foundational technique for the reasoning engine
+- [[wiki/sources/papers/react-synergizing-reasoning-and-acting-in-language-models]] -- ReAct's reasoning-and-acting paradigm directly inspired Agent-Driver's tool-use and self-reflection approach
 - [[wiki/sources/papers/reason2drive-towards-interpretable-and-chain-based-reasoning-for-autonomous-driving]] -- reasoning chains for driving with large-scale video-text data
 - [[wiki/concepts/planning]] -- planning module context
 - [[wiki/concepts/autonomous-driving]] -- broader autonomous driving landscape

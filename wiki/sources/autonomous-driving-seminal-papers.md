@@ -38,6 +38,7 @@ Use citation count as a filter, not a definition. The corpus should include:
 - SurroundOcc
 - DETR3D
 - OccFormer
+- BEVNeXt
 
 ### Prediction
 
@@ -59,6 +60,7 @@ Use citation count as a filter, not a definition. The corpus should include:
 - TransFuser
 - TCP
 - VAD
+- VADv2
 - UniAD
 
 ### Evaluation / benchmarks / data
@@ -68,6 +70,7 @@ Use citation count as a filter, not a definition. The corpus should include:
 - Waymo Open Dataset
 - Argoverse / Argoverse 2
 - CARLA
+- NAVSIM
 
 ## Ingest priorities
 
@@ -105,3 +108,5 @@ Use citation count as a filter, not a definition. The corpus should include:
 - [[wiki/sources/papers/bevformer-v2-adapting-modern-image-backbones-to-birds-eye-view-recognition-via-perspective-supervision]] — Perspective supervision for backbone-agnostic BEV perception
 - [[wiki/sources/papers/driveadapter-breaking-the-coupling-barrier-of-perception-and-planning-in-end-to-end-autonomous-driving]] — Decoupled perception-planning via adapter module (ICCV 2023)
 - [[wiki/sources/papers/fb-bev-bev-representation-from-forward-backward-view-transformations]] — Unified forward-backward view transformation for BEV (ICCV 2023)
+- [[wiki/sources/papers/vadv2-end-to-end-vectorized-autonomous-driving-via-probabilistic-planning]] — Probabilistic planning via action vocabulary, successor to VAD
+- [[wiki/sources/papers/navsim-data-driven-non-reactive-autonomous-vehicle-simulation]] — Non-reactive simulation benchmark bridging open-loop and closed-loop evaluation (NeurIPS 2024)

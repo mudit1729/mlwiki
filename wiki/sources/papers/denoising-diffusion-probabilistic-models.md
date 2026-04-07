@@ -81,6 +81,7 @@ Training minimizes the simplified objective L_simple = E_{t, x_0, epsilon} [||ep
 ## Connections
 
 - [[wiki/concepts/machine-learning]]
+- [[wiki/sources/papers/diffusion-models-beat-gans-on-image-synthesis]] -- Directly builds on DDPM, improving the U-Net architecture and introducing classifier guidance to surpass GANs on ImageNet for the first time
 - [[wiki/sources/papers/variational-lossy-autoencoder]]
 - [[wiki/sources/papers/attention-is-all-you-need]]
 - [[wiki/sources/papers/deep-residual-learning-for-image-recognition]]

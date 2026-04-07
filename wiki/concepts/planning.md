@@ -76,6 +76,7 @@ The problem with open-loop evaluation: a planner that outputs the average trajec
 | [[wiki/sources/papers/learning-by-cheating]] | Privileged expert distillation for planning |
 | [[wiki/sources/papers/planning-oriented-autonomous-driving]] | UniAD: planning-centric joint training |
 | [[wiki/sources/papers/vad-vectorized-scene-representation-for-efficient-autonomous-driving]] | Efficient vectorized planning |
+| [[wiki/sources/papers/vadv2-end-to-end-vectorized-autonomous-driving-via-probabilistic-planning]] | Probabilistic planning via discrete action vocabulary |
 | [[wiki/sources/papers/orion-holistic-end-to-end-autonomous-driving-by-vision-language-instructed-action-generation]] | Vision-language-instructed action generation |
 | [[wiki/sources/papers/senna-bridging-large-vision-language-models-and-end-to-end-autonomous-driving]] | Decoupled VLM reasoning + lightweight planner |
 | [[wiki/sources/papers/emma-end-to-end-multimodal-model-for-autonomous-driving]] | Trajectories as language tokens |
@@ -100,6 +101,7 @@ The problem with open-loop evaluation: a planner that outputs the average trajec
 | [[wiki/sources/papers/navsim-v2-pseudo-simulation-for-autonomous-driving]] | Pseudo-simulation benchmark, R^2=0.8 with closed-loop |
 | [[wiki/sources/papers/think-twice-before-driving-towards-scalable-decoders-for-end-to-end-autonomous-driving]] | Cascaded decoder with iterative trajectory refinement, scalable decoder depth |
 | [[wiki/sources/papers/driveadapter-breaking-the-coupling-barrier-of-perception-and-planning-in-end-to-end-autonomous-driving]] | Decoupled perception-planning via adapter, reuses frozen privileged planner |
+| [[wiki/sources/papers/llms-cant-plan-but-can-help-planning-in-llm-modulo-frameworks]] | LLMs cannot plan autonomously; LLM-Modulo framework with external verification for sound planning |
 
 ## Related
 

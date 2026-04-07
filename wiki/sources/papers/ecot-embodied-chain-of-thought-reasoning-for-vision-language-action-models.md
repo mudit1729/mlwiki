@@ -84,5 +84,6 @@ ECoT modifies the VLA training and inference pipeline as follows:
 - [[wiki/concepts/robotics]] -- manipulation with interpretable reasoning
 - [[wiki/sources/papers/openvla-an-open-source-vision-language-action-model]] -- base VLA model that ECoT extends
 - [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models]] -- foundational CoT prompting work from NLP
+- [[wiki/sources/papers/react-synergizing-reasoning-and-acting-in-language-models]] -- ReAct's interleaved reasoning-and-acting paradigm is a direct ancestor of ECoT's embodied chain-of-thought
 - [[wiki/sources/papers/rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control]] -- RT-2 VLA, comparison baseline
 - [[wiki/sources/papers/palm-e-an-embodied-multimodal-language-model]] -- embodied multimodal reasoning

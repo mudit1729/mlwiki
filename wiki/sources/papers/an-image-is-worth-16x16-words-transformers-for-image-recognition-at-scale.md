@@ -1,18 +1,19 @@
 ---
 title: "An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale"
-type: source-summary
-status: complete
-updated: 2026-04-05
-year: 2020
-venue: ICLR 2021
+type: paper
+status: active
+updated: 2026-04-06
+year: "2021"
+venue: "ICLR 2021"
+arxiv_id: "2010.11929"
 tags:
-  - paper
   - ilya-30
   - vision-transformer
   - computer-vision
-  - transformers
+  - transformer
   - image-classification
-citations: 60022
+  - foundation-model
+citations: 91128
 ---
 
 # An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale
@@ -83,7 +84,9 @@ Three model sizes are studied: ViT-Base (12 layers, 12 heads, 86M params), ViT-L
 
 ## Connections
 
-- [[wiki/concepts/machine-learning]]
-- [[wiki/sources/papers/attention-is-all-you-need]]
-- [[wiki/sources/papers/deep-residual-learning-for-image-recognition]]
-- [[wiki/sources/papers/imagenet-classification-with-deep-convolutional-neural-networks]]
+- [[wiki/concepts/machine-learning]] — foundational ML concepts
+- [[wiki/sources/papers/attention-is-all-you-need]] — the Transformer architecture that ViT adapts for vision
+- [[wiki/sources/papers/deep-residual-learning-for-image-recognition]] — ResNet, the CNN baseline ViT compares against and eventually surpasses at scale
+- [[wiki/sources/papers/imagenet-classification-with-deep-convolutional-neural-networks]] — AlexNet, the CNN paradigm that ViT ultimately displaces
+- [[wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision]] — CLIP, which uses ViT as its vision encoder for vision-language alignment
+- [[wiki/sources/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding]] — BERT, whose [CLS] token and pre-training paradigm ViT directly adapts

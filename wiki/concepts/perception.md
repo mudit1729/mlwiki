@@ -22,6 +22,8 @@ The central challenge of camera-based perception for driving is projecting multi
 
 **FB-BEV** ([[wiki/sources/papers/fb-bev-bev-representation-from-forward-backward-view-transformations]], ICCV 2023) unified both paradigms, showing that forward (LSS-style depth projection) and backward (BEVFormer-style query attention) view transformations are complementary. By running both branches and fusing their BEV features with learned gating, FB-BEV achieved +3 NDS over BEVFormer alone on nuScenes. A 3D pre-training strategy using LiDAR depth supervision further bootstraps the forward branch, demonstrating that combining geometric and attention-based view transforms yields the strongest BEV representations.
 
+**BEVNeXt** ([[wiki/sources/papers/bevnext-reviving-dense-bev-frameworks-for-3d-object-detection]], CVPR 2024) demonstrated that dense BEV frameworks can be revived to surpass query-based alternatives through targeted modernization. Three key upgrades -- CRF-modulated depth estimation for object-level depth consistency, long-term recurrent temporal aggregation with large-kernel convolutions, and a two-stage object decoder combining perspective and BEV features -- pushed the dense BEV paradigm to 64.2 NDS on nuScenes test, outperforming both BEVFormer v2 and query-based methods like StreamPETR.
+
 **BEVFormer v2** ([[wiki/sources/papers/bevformer-v2-adapting-modern-image-backbones-to-birds-eye-view-recognition-via-perspective-supervision]], CVPR 2023) solved a critical limitation of the original: modern 2D backbones (InternImage, ConvNeXt) trained on ImageNet performed poorly for BEV tasks due to the domain gap between 2D classification and 3D scene understanding. By adding perspective supervision -- an auxiliary 3D detection head operating directly on backbone features in perspective view -- BEVFormer v2 provides dense gradients that adapt any backbone to 3D perception without depth-specific pre-training. This enabled InternImage-XL to achieve 63.4% NDS on nuScenes, surpassing prior art by 2.4% NDS.
 
 ## Camera vs. LiDAR
@@ -93,6 +95,7 @@ Radar offers a cost-effective alternative to LiDAR, providing direct distance an
 | [[wiki/sources/papers/fb-bev-bev-representation-from-forward-backward-view-transformations]] | Unified forward-backward view transformation combining LSS and BEVFormer paradigms |
 | [[wiki/sources/papers/surroundocc-multi-camera-3d-occupancy-prediction-for-autonomous-driving]] | Foundational multi-camera 3D occupancy prediction with dense GT pipeline |
 | [[wiki/sources/papers/bevformer-v2-adapting-modern-image-backbones-to-birds-eye-view-recognition-via-perspective-supervision]] | Perspective supervision for backbone-agnostic BEV perception |
+| [[wiki/sources/papers/bevnext-reviving-dense-bev-frameworks-for-3d-object-detection]] | CRF-modulated depth + long-term temporal aggregation revives dense BEV to 64.2 NDS SOTA |
 | [[wiki/sources/papers/nuscenes-a-multimodal-dataset-for-autonomous-driving]] | Standard multimodal driving dataset |
 | [[wiki/sources/papers/vectornet-encoding-hd-maps-and-agent-dynamics-from-vectorized-representation]] | Vectorized map and agent encoding |
 | [[wiki/sources/papers/transfuser-imitation-with-transformer-based-sensor-fusion-for-autonomous-driving]] | Camera-LiDAR fusion via transformers |
@@ -105,6 +108,7 @@ Radar offers a cost-effective alternative to LiDAR, providing direct distance an
 | [[wiki/sources/papers/gaussianworld-gaussian-world-model-for-streaming-3d-occupancy-prediction]] | 3D Gaussian world model for streaming occupancy |
 | [[wiki/sources/papers/hermes-a-unified-self-driving-world-model-for-simultaneous-3d-scene-understanding-and-generation]] | Unified 3D understanding + generation world model |
 | [[wiki/sources/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale]] | ViT: transformers for vision, backbone for many BEV systems |
+| [[wiki/sources/papers/swin-transformer-hierarchical-vision-transformer-using-shifted-windows]] | Hierarchical vision transformer with shifted windows; standard backbone for BEV and detection systems |
 | [[wiki/sources/papers/gaussianformer-2-probabilistic-gaussian-superposition-for-efficient-3d-occupancy-prediction]] | Probabilistic Gaussian superposition for efficient 3D occupancy |
 | [[wiki/sources/papers/occmamba-semantic-occupancy-prediction-with-state-space-models]] | First Mamba-based occupancy network with linear complexity |
 | [[wiki/sources/papers/gausstr-foundation-model-aligned-gaussian-transformer-for-self-supervised-3d]] | Self-supervised 3D occupancy via foundation model alignment |
@@ -118,6 +122,7 @@ Radar offers a cost-effective alternative to LiDAR, providing direct distance an
 | [[wiki/sources/papers/racformer-query-based-radar-camera-fusion-for-3d-object-detection]] | Radar-camera fusion via query-based dual-view attention |
 | [[wiki/sources/papers/occformer-dual-path-transformer-for-vision-based-3d-semantic-occupancy-prediction]] | Dual-path transformer for efficient dense 3D semantic occupancy |
 | [[wiki/sources/papers/flashocc-fast-and-memory-efficient-occupancy-prediction-via-channel-to-height-plugin]] | Channel-to-Height plugin for 2D-only occupancy, 3-4x faster inference |
+| [[wiki/sources/papers/yolov10-real-time-end-to-end-object-detection]] | NMS-free real-time detection via consistent dual assignments; holistic efficiency-accuracy optimization |
 
 ## Related
 

@@ -76,6 +76,7 @@ The entire pipeline is trained end-to-end with losses on map detection (polyline
 
 ## Connections
 
+- [[wiki/sources/papers/vadv2-end-to-end-vectorized-autonomous-driving-via-probabilistic-planning]] -- direct successor, replaces deterministic planner with probabilistic action vocabulary
 - [[wiki/concepts/planning]]
 - [[wiki/concepts/end-to-end-architectures]]
 - [[wiki/concepts/autonomous-driving]]

@@ -1,16 +1,12 @@
 ---
-title: Learning Transferable Visual Models From Natural Language Supervision
-type: source-summary
-status: seed
-updated: 2026-04-05
-year: 2021
-venue: arXiv
-tags:
-  - paper
-  - vlm
-  - clip
-  - foundation
-citations: 46045
+title: "Learning Transferable Visual Models From Natural Language Supervision"
+tags: [computer-vision, multimodal, foundation-model, transformer, cnn, image-classification, nlp]
+status: active
+type: paper
+year: "2021"
+venue: "ICML 2021"
+citations: 57987
+arxiv_id: "2103.00020"
 ---
 
 # Learning Transferable Visual Models From Natural Language Supervision
@@ -57,6 +53,15 @@ For zero-shot classification, the class names are embedded in prompt templates (
 
 ![Robustness to distribution shift: CLIP vs. supervised models on ImageNet variants](https://paper-assets.alphaxiv.org/figures/2103.00020/img-11.jpeg)
 
+![Linear probe performance across 27 datasets](https://paper-assets.alphaxiv.org/figures/2103.00020/img-10.jpeg)
+
+| Setting | ImageNet Top-1 | ImageNet-R | ImageNet-Sketch | ObjectNet |
+|---------|---------------|------------|-----------------|-----------|
+| Zero-shot CLIP (ViT-L/14) | **76.2%** | **88.9%** | **60.2%** | **72.3%** |
+| Supervised ResNet-50 | 76.1% | 56.1% | 33.3% | 52.3% |
+| Supervised ResNet-101 | 77.4% | 57.7% | 36.0% | 54.8% |
+| Few-shot CLIP (16-shot) | 73.7% | — | — | — |
+
 - Zero-shot CLIP matches the accuracy of a fully supervised linear probe on ResNet-50 features across 27 datasets, despite never training on any of those datasets' labeled examples
 - On ImageNet, zero-shot CLIP (ViT-L/14) achieves 76.2% top-1 accuracy, matching the original supervised ResNet-50 result without any ImageNet-specific training
 - **Data efficiency**: Zero-shot CLIP often matches the performance of supervised models trained with 1 to 4 shots (examples) per class
@@ -76,11 +81,16 @@ For zero-shot classification, the class names are embedded in prompt templates (
 
 ## Connections
 
-- [[wiki/concepts/foundation-models]]
-- [[wiki/concepts/vision-language-action]]
-- [[wiki/sources/papers/attention-is-all-you-need]]
-- [[wiki/sources/papers/imagenet-classification-with-deep-convolutional-neural-networks]]
-- [[wiki/sources/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale]]
-- [[wiki/sources/papers/language-models-are-few-shot-learners]]
-- [[wiki/sources/papers/deep-residual-learning-for-image-recognition]]
+Related papers in the wiki:
+- [[wiki/sources/papers/attention-is-all-you-need]] -- transformer architecture underpinning CLIP's text encoder (and ViT image encoder variant)
+- [[wiki/sources/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale]] -- ViT, used as CLIP's best-performing image encoder
+- [[wiki/sources/papers/imagenet-classification-with-deep-convolutional-neural-networks]] -- AlexNet, the supervised ImageNet paradigm that CLIP's zero-shot approach matches
+- [[wiki/sources/papers/deep-residual-learning-for-image-recognition]] -- ResNet, CLIP's alternative image encoder family
+- [[wiki/sources/papers/language-models-are-few-shot-learners]] -- GPT-3, parallel demonstration that scale enables zero-shot/few-shot transfer in NLP
+- [[wiki/sources/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding]] -- BERT, bidirectional text pretraining; CLIP uses a unidirectional (GPT-style) text encoder instead
+- [[wiki/sources/papers/denoising-diffusion-probabilistic-models]] -- diffusion models that use CLIP embeddings for text-conditioned image generation (DALL-E 2, Stable Diffusion)
+- [[wiki/sources/papers/vlp-vision-language-planning-for-autonomous-driving]] -- driving planner leveraging CLIP-style vision-language representations
+- [[wiki/sources/papers/palm-e-an-embodied-multimodal-language-model]] -- embodied multimodal model building on contrastive vision-language pretraining
+- [[wiki/concepts/foundation-models]] -- CLIP as a seminal vision-language foundation model
+- [[wiki/concepts/vision-language-action]] -- CLIP encoders as visual backbone for VLA systems
 

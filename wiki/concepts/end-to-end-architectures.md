@@ -88,6 +88,7 @@ The current wave applies foundation models to driving. Key architectural variant
 | [[wiki/sources/papers/learning-by-cheating]] | Privileged distillation paradigm |
 | [[wiki/sources/papers/planning-oriented-autonomous-driving]] | UniAD: jointly trained modular E2E |
 | [[wiki/sources/papers/vad-vectorized-scene-representation-for-efficient-autonomous-driving]] | Vectorized joint E2E |
+| [[wiki/sources/papers/vadv2-end-to-end-vectorized-autonomous-driving-via-probabilistic-planning]] | Probabilistic vectorized E2E with action vocabulary |
 | [[wiki/sources/papers/transfuser-imitation-with-transformer-based-sensor-fusion-for-autonomous-driving]] | Transformer sensor fusion for E2E |
 | [[wiki/sources/papers/emma-end-to-end-multimodal-model-for-autonomous-driving]] | Everything-as-tokens VLA |
 | [[wiki/sources/papers/senna-bridging-large-vision-language-models-and-end-to-end-autonomous-driving]] | Decoupled VLM reasoning + E2E planning |
@@ -105,6 +106,7 @@ The current wave applies foundation models to driving. Key architectural variant
 | [[wiki/sources/papers/navsim-v2-pseudo-simulation-for-autonomous-driving]] | Pseudo-simulation evaluation benchmark (CoRL 2025) |
 | [[wiki/sources/papers/think-twice-before-driving-towards-scalable-decoders-for-end-to-end-autonomous-driving]] | Scalable cascaded decoder for E2E, decoder depth as scaling axis |
 | [[wiki/sources/papers/driveadapter-breaking-the-coupling-barrier-of-perception-and-planning-in-end-to-end-autonomous-driving]] | Decoupled perception-planning via adapter, plug-and-play modularity |
+| [[wiki/sources/papers/hydra-mdp-end-to-end-multimodal-planning-with-multi-target-hydra-distillation]] | Multi-target distillation with vocabulary-based planning, NAVSIM winner |
 
 ## Related
 

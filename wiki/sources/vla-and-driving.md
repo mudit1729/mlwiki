@@ -55,10 +55,12 @@ This queue spans general VLA foundations and driving-specific multimodal action 
 - **Reason2Drive** (Nie et al., 2024) — large-scale video-text reasoning chains
 - **DriveMLM** (Wang et al., 2023) — plug-and-play LLM for behavioral planning
 - **Drive as You Speak** (Cui et al., 2023) — LLM as bidirectional human-vehicle interaction interface, not planner
+- **Talk2Drive** (Cui et al., IEEE ITSC 2024) — LLM-based personalized driving via memory module, real-world deployment, 65.2% takeover reduction
 - **Driving with LLMs** (Wayve, 2023) — first concrete LLM-for-driving with vector modality, explainable AD
 - **Senna** (Jiang et al., 2024) — decoupled LVLM reasoning + E2E trajectory prediction
 - DriveVLM
 - VAD
+- **VADv2** (Chen et al., 2024) — probabilistic planning via action vocabulary, LLM-inspired next-action prediction, CARLA SOTA
 - **GenAD** (2024) — E2E driving as generative trajectory modeling, 0.91m L2, 0.43% collision
 - **PARA-Drive** (NVIDIA, 2024) — fully parallel E2E architecture, systematic design space exploration
 - **DriveDreamer** (2023) — first real-world-driven world model for driving, diffusion-based video generation

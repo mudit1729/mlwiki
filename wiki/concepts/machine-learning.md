@@ -20,7 +20,7 @@ Parallel advances in sequence modeling proved equally important. Recurrent netwo
 
 ## The transformer era
 
-[[wiki/sources/papers/attention-is-all-you-need]] (2017) unified these threads by replacing recurrence entirely with self-attention, enabling massive parallelism and scaling. The transformer architecture now dominates language ([[wiki/sources/papers/language-models-are-few-shot-learners]]), vision ([[wiki/sources/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale]]), speech ([[wiki/sources/papers/deep-speech-2]]), and multimodal settings. For driving, transformers underpin BEV encoders (BEVFormer), trajectory decoders (VAD), and the VLA systems that treat perception, prediction, and planning as a single sequence modeling problem.
+[[wiki/sources/papers/attention-is-all-you-need]] (2017) unified these threads by replacing recurrence entirely with self-attention, enabling massive parallelism and scaling. The transformer architecture now dominates language ([[wiki/sources/papers/language-models-are-few-shot-learners]]), vision ([[wiki/sources/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale]]), speech ([[wiki/sources/papers/deep-speech-2]]), and multimodal settings. [[wiki/sources/papers/swin-transformer-hierarchical-vision-transformer-using-shifted-windows]] (Swin Transformer, 2021) made transformers practical as general-purpose vision backbones by introducing hierarchical multi-scale features and shifted window attention with linear complexity, replacing ResNet across detection, segmentation, and BEV perception pipelines. For driving, transformers underpin BEV encoders (BEVFormer), trajectory decoders (VAD), and the VLA systems that treat perception, prediction, and planning as a single sequence modeling problem.
 
 ## Scaling laws and compute-optimal training
 
@@ -28,11 +28,15 @@ A defining insight of the 2020s is that model performance is predictable from sc
 
 ## Self-supervised and multimodal pretraining
 
-Self-supervised pretraining allows models to learn general representations before task-specific fine-tuning. [[wiki/sources/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding]] introduced masked language modeling; [[wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision]] (CLIP) extended contrastive pretraining to vision-language pairs. [[wiki/sources/papers/denoising-diffusion-probabilistic-models]] opened the generative modeling frontier, with diffusion now used for scene generation, data augmentation, and world modeling in driving contexts.
+Self-supervised pretraining allows models to learn general representations before task-specific fine-tuning. [[wiki/sources/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding]] introduced masked language modeling; [[wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision]] (CLIP) extended contrastive pretraining to vision-language pairs. [[wiki/sources/papers/exploring-simple-siamese-representation-learning]] (SimSiam, 2021) showed that self-supervised visual learning can be dramatically simplified: a Siamese network with stop-gradient and a prediction MLP achieves competitive results without negative pairs, momentum encoders, or large batches, clarifying which components of prior methods were truly essential. [[wiki/sources/papers/denoising-diffusion-probabilistic-models]] opened the generative modeling frontier, and [[wiki/sources/papers/diffusion-models-beat-gans-on-image-synthesis]] proved that diffusion models with classifier guidance could surpass GANs on image quality, catalyzing the shift toward diffusion-based generation across images, video, audio, 3D, and planning in driving contexts.
 
 ## Reasoning and chain-of-thought
 
 [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models]] showed that prompting LLMs to produce intermediate reasoning steps dramatically improves performance on complex tasks. This idea is central to driving VLAs: systems like DriveLM and Reason2Drive use chain-of-thought structures to decompose driving decisions into perception, prediction, and planning stages before emitting actions.
+
+## Parameter-efficient adaptation
+
+As models scale to billions of parameters, full fine-tuning becomes impractical for multi-task deployment. [[wiki/sources/papers/prefix-tuning-optimizing-continuous-prompts-for-generation]] (2021) demonstrated that prepending learned continuous vectors to transformer key-value pairs at every layer enables task adaptation with only 0.1% of parameters, matching full fine-tuning on generation tasks. [[wiki/sources/papers/lora-low-rank-adaptation-of-large-language-models]] (LoRA, ICLR 2022) became the dominant PEFT method: by freezing pretrained weights and injecting trainable low-rank decomposition matrices (Delta-W = BA, rank r << d), LoRA reduces trainable parameters by 10,000x on GPT-3 175B while matching full fine-tuning, with zero inference overhead after merging. Together, prefix-tuning, LoRA, adapters, and prompt tuning form the PEFT paradigm now standard for adapting foundation models to downstream tasks, including driving VLA systems that fine-tune large VLMs for action prediction.
 
 ## Present state and open problems
 
@@ -50,9 +54,14 @@ Self-supervised pretraining allows models to learn general representations befor
 | [[wiki/sources/papers/attention-is-all-you-need]] | Transformer architecture replacing recurrence with self-attention |
 | [[wiki/sources/papers/scaling-laws-for-neural-language-models]] | Power-law scaling relationships for neural LMs |
 | [[wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision]] | CLIP: contrastive vision-language pretraining |
+| [[wiki/sources/papers/exploring-simple-siamese-representation-learning]] | SimSiam: minimal self-supervised learning without negatives or momentum |
 | [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models]] | Intermediate reasoning steps improve LLM performance |
 | [[wiki/sources/papers/denoising-diffusion-probabilistic-models]] | Diffusion models for high-quality generation |
+| [[wiki/sources/papers/diffusion-models-beat-gans-on-image-synthesis]] | Classifier guidance enabling diffusion to surpass GANs |
 | [[wiki/sources/papers/neural-machine-translation-by-jointly-learning-to-align-and-translate]] | Attention mechanism for sequence-to-sequence models |
+| [[wiki/sources/papers/prefix-tuning-optimizing-continuous-prompts-for-generation]] | Parameter-efficient fine-tuning via continuous prefix optimization (0.1% params) |
+| [[wiki/sources/papers/lora-low-rank-adaptation-of-large-language-models]] | LoRA: low-rank adaptation reducing trainable params by 10,000x with zero inference overhead |
+| [[wiki/sources/papers/swin-transformer-hierarchical-vision-transformer-using-shifted-windows]] | Hierarchical vision transformer; general-purpose backbone replacing CNNs |
 
 ## Related
 

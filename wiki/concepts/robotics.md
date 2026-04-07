@@ -26,7 +26,9 @@ The modern VLA trajectory begins with generalist agents and scales through incre
 
 **RoboCat** ([[wiki/sources/papers/robocat-a-self-improving-generalist-agent-for-robotic-manipulation]], 2023) took a complementary path to RT-2 by focusing on multi-embodiment generalization and self-improvement rather than web-scale pretraining. Building on the Gato architecture, RoboCat trained a single policy across 253 manipulation tasks on three real robot embodiments (Sawyer, Panda, KUKA), demonstrating that heterogeneous multi-robot data produces positive cross-task transfer. Its key innovation was an autonomous self-improvement loop: the trained model generates its own practice data, which is filtered for success and folded back into training, yielding measurable gains each iteration. RoboCat adapted to the unseen KUKA 14-DoF bimanual arm with ~80% success using only 100-1000 demonstrations, establishing that generalist robot policies can rapidly acquire new embodiments.
 
-**OpenVLA** ([[wiki/sources/papers/openvla-an-open-source-vision-language-action-model]], 2024) democratized VLA research by releasing an open-source 7B-parameter model trained on the Open X-Embodiment dataset. OpenVLA showed that the RT-2 paradigm works at smaller scale with open weights, enabling the broader research community to build on VLA foundations.
+**Octo** ([[wiki/sources/papers/octo-an-open-source-generalist-robot-policy]], RSS 2024) was the first fully open-source generalist robot policy, trained on 800K trajectories from the Open X-Embodiment dataset. Octo's modular transformer architecture with diffusion-based action decoding handled heterogeneous observations (multi-view images, language, proprioception) and could be fine-tuned to novel robots with ~100 demonstrations in under 5 hours on a consumer GPU. At 93M parameters, Octo-Base matched the 55B-parameter RT-2-X while being fully open, establishing the open-source baseline that OpenVLA later built upon.
+
+**OpenVLA** ([[wiki/sources/papers/openvla-an-open-source-vision-language-action-model]], 2024) scaled the open-source VLA paradigm pioneered by Octo to 7B parameters using a VLM backbone (Prismatic VLM with Llama 2). OpenVLA showed that the RT-2 paradigm works at smaller scale with open weights, enabling the broader research community to build on VLA foundations.
 
 ## Transfer from robotics to driving
 
@@ -89,6 +91,7 @@ Several ideas from the robotics VLA lineage now appear directly in driving syste
 | [[wiki/sources/papers/palm-e-an-embodied-multimodal-language-model]] | LLM-scale model as embodied reasoning backbone |
 | [[wiki/sources/papers/rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control]] | VLM fine-tuned for robotic action, web knowledge transfer |
 | [[wiki/sources/papers/robocat-a-self-improving-generalist-agent-for-robotic-manipulation]] | Multi-embodiment generalist with self-improvement loop, 253 tasks |
+| [[wiki/sources/papers/octo-an-open-source-generalist-robot-policy]] | Open-source 93M generalist policy with diffusion action head, 800K trajectories (RSS 2024) |
 | [[wiki/sources/papers/openvla-an-open-source-vision-language-action-model]] | Open-source 7B VLA model |
 | [[wiki/sources/papers/emma-end-to-end-multimodal-model-for-autonomous-driving]] | Driving system adopting robotics-style action tokenization |
 | [[wiki/sources/papers/lmdrive-closed-loop-end-to-end-driving-with-large-language-models]] | Language-conditioned closed-loop driving |

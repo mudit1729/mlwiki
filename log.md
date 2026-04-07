@@ -1,5 +1,37 @@
 # Log
 
+## [2026-04-06] ingest | BEVNeXt: Reviving Dense BEV Frameworks for 3D Object Detection
+- Added paper wiki page: wiki/sources/papers/bevnext-reviving-dense-bev-frameworks-for-3d-object-detection.md
+- Updated: wiki/concepts/perception.md (BEV revolution section + key papers table), wiki/sources/autonomous-driving-seminal-papers.md (perception seed list)
+- Citations: ~80 (user-provided; Semantic Scholar and AlphaXiv overview unavailable)
+- Tags: autonomous-driving, perception, bev, transformer, computer-vision, 3d-object-detection, cnn, depth-estimation
+
+## [2026-04-06] ingest | Emerging Properties in Self-Supervised Vision Transformers (DINO)
+- Added paper wiki page: wiki/sources/papers/emerging-properties-in-self-supervised-vision-transformers.md
+- Updated: wiki/concepts/foundation-models.md (vision-language models section), wiki/sources/llm-seminal-papers.md (multimodal bridge list)
+- Citations: ~10798 (user-provided)
+- Tags: computer-vision, self-supervised-learning, transformer, vision-transformer, knowledge-distillation, image-classification, foundation-model
+
+## [2026-04-06] ingest | YOLOv10: Real-Time End-to-End Object Detection
+- Added paper wiki page: wiki/sources/papers/yolov10-real-time-end-to-end-object-detection.md
+- Updated: wiki/concepts/perception.md (key papers table)
+- Citations: ~5988 (user-provided)
+- Tags: computer-vision, object-detection, cnn, end-to-end, real-time, perception
+
+## [2026-04-06] ingest | Learning Transferable Visual Models From Natural Language Supervision (CLIP)
+- Updated paper wiki page from seed to active: wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision.md
+- Updated: frontmatter (venue ICML 2021, citations 57987, proper tags, arxiv_id), added results comparison table, added linear probe figure, expanded Connections with descriptive annotations
+- Already cross-referenced in: wiki/concepts/foundation-models.md, wiki/concepts/machine-learning.md, wiki/concepts/vision-language-action.md, wiki/sources/llm-seminal-papers.md
+- Citations: 57987 (user-provided)
+- Tags: computer-vision, multimodal, foundation-model, transformer, cnn, image-classification, nlp
+
+## [2026-04-06] update | Training Compute-Optimal Large Language Models (Chinchilla)
+- Updated existing paper wiki page: wiki/sources/papers/training-compute-optimal-large-language-models.md
+- Updated frontmatter: type source-summary -> paper, citations 2973 -> 4116, added arxiv_id, updated tags
+- Enriched connections with GPT-3 link and descriptive annotations
+- Citations: ~4116 (user-provided)
+- Tags: nlp, language-modeling, transformer, foundation-model, scaling
+
 ## [2026-04-05] ingest | VoxPoser: Composable 3D Value Maps for Robotic Manipulation with Language Models
 - Added paper wiki page: wiki/sources/papers/voxposer-composable-3d-value-maps-for-robotic-manipulation-with-language-models.md
 - Updated: wiki/sources/vla-and-driving.md (general VLA section), wiki/concepts/robotics.md (key papers table), wiki/queries/open-questions.md (Q4/Q5 partial answers)
@@ -224,8 +256,40 @@
 - Citations: 0 (Semantic Scholar fetch failed)
 - Tags: autonomous-driving, perception, 3d-occupancy, bev, computer-vision, cnn, efficient-inference
 
+## [2026-04-06] update | An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale (ViT)
+- Updated existing paper wiki page: wiki/sources/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale.md
+- Updated citations: 60022 → 91128 (user-provided)
+- Updated frontmatter: year to 2021, type to paper, status to active, added arxiv_id field, added foundation-model tag
+- Fixed broken wikilink in wiki/sources/ilya-top-30.md (entry #29 pointed to wrong slug)
+- Expanded Connections section with CLIP and BERT links
+- Tags: ilya-30, vision-transformer, computer-vision, transformer, image-classification, foundation-model
+
 ## [2026-04-05] ingest | FB-BEV: BEV Representation from Forward-Backward View Transformations
 - Added paper wiki page: wiki/sources/papers/fb-bev-bev-representation-from-forward-backward-view-transformations.md
 - Updated: wiki/concepts/perception.md, wiki/sources/autonomous-driving-seminal-papers.md
 - Citations: ~150 (Semantic Scholar unavailable, estimated)
 - Tags: autonomous-driving, perception, bev, transformer, computer-vision
+
+## [2026-04-06] ingest | Diffusion Models Beat GANs on Image Synthesis
+- Added paper wiki page: wiki/sources/papers/diffusion-models-beat-gans-on-image-synthesis.md
+- Updated: wiki/sources/papers/denoising-diffusion-probabilistic-models.md (added connection), wiki/concepts/machine-learning.md (self-supervised section + key papers table)
+- Citations: 13548 (user-provided)
+- Tags: computer-vision, diffusion, generative-models, image-generation, classifier-guidance
+
+## [2026-04-06] ingest | Exploring Simple Siamese Representation Learning (SimSiam)
+- Added paper wiki page: wiki/sources/papers/exploring-simple-siamese-representation-learning.md
+- Updated: wiki/concepts/machine-learning.md (self-supervised section + key papers table), wiki/concepts/foundation-models.md (vision-language models section)
+- Citations: 6444 (user-provided; Semantic Scholar fetch unavailable)
+- Tags: computer-vision, self-supervised-learning, representation-learning, siamese-networks, contrastive-learning
+
+## [2026-04-06] ingest | Prefix-Tuning: Optimizing Continuous Prompts for Generation
+- Added paper wiki page: wiki/sources/papers/prefix-tuning-optimizing-continuous-prompts-for-generation.md
+- Updated: wiki/sources/llm-seminal-papers.md (added PEFT section + wikilink), wiki/concepts/foundation-models.md (LLM section with PEFT context), wiki/concepts/machine-learning.md (new parameter-efficient adaptation section + key papers table), wiki/taxonomies/research-map.md (LLM seminal papers count)
+- Citations: 6753 (user-provided; Semantic Scholar fetch unavailable)
+- Tags: nlp, transformer, parameter-efficient, language-modeling, fine-tuning
+
+## [2026-04-06] ingest | High-Resolution Image Synthesis with Latent Diffusion Models
+- Added paper wiki page: wiki/sources/papers/high-resolution-image-synthesis-with-latent-diffusion-models.md
+- Updated: wiki/concepts/foundation-models.md (diffusion models section + key papers table), wiki/taxonomies/research-map.md (added generative models routing)
+- Citations: 31987 (user-provided; Semantic Scholar fetch unavailable)
+- Tags: diffusion, generative-models, computer-vision, image-generation, foundation-model, transformer

@@ -49,7 +49,7 @@ For each new source, tag at least:
 | [[wiki/sources/ilya-top-30]] | 30 | All ingested |
 | [[wiki/sources/vla-and-driving]] | 25 (6 general VLA + 19 AutoVLA) | Active |
 | [[wiki/sources/autonomous-driving-seminal-papers]] | 14 ingested, many queued | Active |
-| [[wiki/sources/llm-seminal-papers]] | 6 ingested | Active |
+| [[wiki/sources/llm-seminal-papers]] | 8 ingested | Active |
 
 ## Routing guide for new papers
 
@@ -59,6 +59,7 @@ For each new source, tag at least:
 - Driving perception/prediction/planning (no language) → [[wiki/sources/autonomous-driving-seminal-papers]]
 - LLM/VLM architecture (not driving-specific) → [[wiki/sources/llm-seminal-papers]]
 - Foundational ML / Ilya-adjacent → [[wiki/sources/ilya-top-30]]
+- Generative models (diffusion, flow matching, VAE) → [[wiki/concepts/foundation-models]] under diffusion models section
 - Robotics VLA → [[wiki/sources/vla-and-driving]] under general VLA section
 
 ## VLA sub-taxonomy (from AutoVLA analysis)

@@ -45,7 +45,7 @@ Ilya Sutskever's curated reading list of ~30 papers and resources spanning the c
 | 26 | Kolmogorov Complexity and Algorithmic Randomness (Li & Vitányi / Shen et al.) | 2017 | [[wiki/sources/papers/kolmogorov-complexity-and-algorithmic-randomness]] |
 | 27 | CS231n: Convolutional Neural Networks for Visual Recognition (Stanford course) | 2015 | [[wiki/sources/papers/cs231n-convolutional-neural-networks-for-visual-recognition]] |
 | 28 | Denoising Diffusion Probabilistic Models (Ho et al.) | 2020 | [[wiki/sources/papers/denoising-diffusion-probabilistic-models]] |
-| 29 | An Image Is Worth 16x16 Words: Vision Transformer (ViT) | 2020 | [[wiki/sources/papers/an-image-is-worth-16x16-words-vision-transformer]] |
+| 29 | An Image Is Worth 16x16 Words: Vision Transformer (ViT) | 2020 | [[wiki/sources/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale]] |
 | 30 | Chain-of-Thought Prompting Elicits Reasoning in Large Language Models (Wei et al.) | 2022 | [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning]] |
 
 ## Thematic clusters

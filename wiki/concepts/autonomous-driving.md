@@ -44,6 +44,7 @@ World models have also emerged as a key paradigm. [[wiki/sources/papers/hermes-a
 
 - **nuScenes** ([[wiki/sources/papers/nuscenes-a-multimodal-dataset-for-autonomous-driving]]): de facto standard for perception and open-loop planning evaluation.
 - **CARLA** ([[wiki/sources/papers/carla-an-open-urban-driving-simulator]]): primary closed-loop simulation benchmark. Leaderboard versions (Town05, Longest6, Bench2Drive) test increasingly difficult scenarios.
+- **NAVSIM** ([[wiki/sources/papers/navsim-data-driven-non-reactive-autonomous-vehicle-simulation]]): non-reactive simulation benchmark that bridges open-loop and closed-loop evaluation. Its PDM Score achieves 0.7--0.8 correlation with closed-loop metrics while being computationally tractable. Successor [[wiki/sources/papers/navsim-v2-pseudo-simulation-for-autonomous-driving]] extends this with pseudo-simulation via 3D Gaussian Splatting.
 - **Open-loop vs closed-loop:** A recurring tension. Open-loop metrics (L2 displacement, collision rate on replayed logs) often fail to predict closed-loop competence. The field is converging on closed-loop evaluation as the minimum standard.
 
 ## What makes driving distinct
