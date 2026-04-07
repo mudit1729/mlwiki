@@ -13,17 +13,23 @@ tags:
 
 Foundation models -- large models pretrained on broad data and adapted to downstream tasks -- are reshaping autonomous driving. This page tracks how LLMs, VLMs, and diffusion models influence autonomy, and examines the emerging "everything as language" paradigm.
 
+## Defining the paradigm
+
+[[wiki/sources/papers/on-the-opportunities-and-risks-of-foundation-models]] (Bommasani et al., 2021) is the landmark 200+ page Stanford HAI report that coined and formalized the term "foundation model." It identified **emergence** (spontaneous development of unanticipated capabilities) and **homogenization** (concentration around a few base models) as the two defining phenomena of this paradigm, and articulated both the opportunities (transfer learning, few-shot generalization) and systemic risks (bias amplification, single points of failure, power concentration) that follow from building many applications atop shared pretrained models.
+
 ## Core foundation model ideas
 
 ### The transformer and scaling
 
 [[wiki/sources/papers/attention-is-all-you-need]] (2017) introduced the transformer, which replaced recurrence with self-attention and enabled the scaling that defines modern AI. [[wiki/sources/papers/scaling-laws-for-neural-language-models]] (Kaplan et al., 2020) showed that language model loss follows predictable power laws in compute, data, and parameters. [[wiki/sources/papers/training-compute-optimal-large-language-models]] (Chinchilla, 2022) refined this, demonstrating that most models were undertrained for their size.
 
-These scaling insights drive the foundation-model approach to driving: if enough data and compute produce general-purpose intelligence in language, perhaps the same recipe works for embodied control.
+These scaling insights drive the foundation-model approach to driving: if enough data and compute produce general-purpose intelligence in language, perhaps the same recipe works for embodied control. [[wiki/sources/papers/gemini-25-pushing-the-frontier-with-advanced-reasoning-multimodality-long-context-and-next-generation-agentic-capabilities]] (Gemini 2.5, 2025) pushes the frontier further with a sparse MoE Transformer that adds inference-time "Thinking" -- tens of thousands of reasoning forward passes before answering -- producing dramatic gains on math (AIME 2025: 88.0%) and coding (LiveCodeBench: 74.2%). Its 1M+ token context window and agentic capabilities represent a new tier of foundation model capability.
 
 ### Large language models
 
-[[wiki/sources/papers/language-models-are-few-shot-learners]] (GPT-3, 2020) demonstrated that sufficiently large language models exhibit emergent capabilities: few-shot learning, instruction following, and reasoning without task-specific fine-tuning. [[wiki/sources/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding]] (BERT, 2018) established bidirectional pretraining for representation learning. Together, they defined the pretrain-then-adapt paradigm.
+[[wiki/sources/papers/language-models-are-few-shot-learners]] (GPT-3, 2020) demonstrated that sufficiently large language models exhibit emergent capabilities: few-shot learning, instruction following, and reasoning without task-specific fine-tuning. [[wiki/sources/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding]] (BERT, 2018) established bidirectional pretraining for representation learning. Together, they defined the pretrain-then-adapt paradigm. [[wiki/sources/papers/qwen3-technical-report]] (Qwen3, 2025) pushes open-weight LLMs to a new level with a full dense + MoE model family (0.6B to 235B-A22B) featuring a unified "thinking mode" that dynamically switches between extended chain-of-thought reasoning and direct response within a single model. Trained on 36 trillion tokens across 119 languages with a four-stage post-training pipeline (Long-CoT Cold Start, Reasoning RL, Thinking Mode Fusion, General RL), Qwen3 demonstrates that open-weight models can match frontier proprietary systems on reasoning benchmarks while offering strong-to-weak distillation that transfers reasoning capabilities even to sub-billion-parameter models.
+
+On the open-weight multimodal front, [[wiki/sources/papers/gemma-3-technical-report]] (Gemma 3, 2025) introduces a 1B-27B family with native vision via SigLIP and 128K context through a 5:1 local/global attention interleaving that cuts KV-cache memory by ~5x. Knowledge distillation from larger teachers enables the 4B model to match the prior-generation 27B, demonstrating that distillation can compress capability across model generations. Gemma 3's PaliGemma lineage directly underpins VLA systems like pi0.
 
 For driving, LLMs serve multiple roles: as reasoning engines (GPT-Driver, DriveGPT4), as planners (EMMA), as explanation generators, and as data augmentation tools. Adapting these large models efficiently is a critical concern: [[wiki/sources/papers/prefix-tuning-optimizing-continuous-prompts-for-generation]] (2021) introduced continuous prefix optimization as a parameter-efficient alternative to full fine-tuning, training only 0.1% of parameters while matching full fine-tuning performance. This work helped launch the PEFT paradigm that now underpins most foundation model adaptation. [[wiki/sources/papers/lora-low-rank-adaptation-of-large-language-models]] (LoRA, ICLR 2022) became the dominant method: by injecting trainable low-rank matrices (Delta-W = BA, rank r << d) alongside frozen pretrained weights, LoRA reduces trainable parameters by 10,000x on GPT-3 175B while matching full fine-tuning performance, with zero inference overhead since the low-rank updates merge into the base weights. LoRA is now the default adaptation method for driving VLA systems that fine-tune frozen VLMs for embodied control.
 
@@ -39,9 +45,15 @@ For driving, LLMs serve multiple roles: as reasoning engines (GPT-Driver, DriveG
 
 [[wiki/sources/papers/segment-anything]] (SAM, 2023) extended the foundation model paradigm to dense prediction by defining a promptable segmentation task: given any combination of points, boxes, masks, or text, SAM produces valid segmentation masks. Trained on 1.1 billion masks (SA-1B dataset) via a three-stage data engine, SAM demonstrated strong zero-shot transfer across 23 segmentation benchmarks without task-specific fine-tuning. SAM's architecture -- a MAE-pretrained ViT-H image encoder paired with a lightweight transformer mask decoder -- enables real-time interactive use. The model spawned a large ecosystem of derivative work across medical imaging, remote sensing, video segmentation, and 3D scene understanding, and its data engine approach (using the model to generate its own training data) became an influential paradigm for scaling annotation.
 
+### Instruction tuning
+
+[[wiki/sources/papers/scaling-instruction-finetuned-language-models]] (Flan-PaLM/Flan-T5, 2022) established instruction finetuning as the standard compute-efficient post-training recipe. By scaling to 1,836 tasks across 473 datasets and crucially including chain-of-thought reasoning data in the mixture, Flan-PaLM achieves +9.4% on held-out tasks at only 0.2% of pre-training compute. The paper demonstrated that instruction finetuning works across architectures (encoder-decoder T5, decoder-only PaLM), benefits more from scale (18.4% error reduction at 540B vs. 16.6% at 8B), and enables zero-shot CoT reasoning -- bridging the gap between few-shot prompting and RLHF-based alignment. [[wiki/sources/papers/training-language-models-to-follow-instructions-with-human-feedback]] (InstructGPT, 2022) took the complementary RLHF approach, showing that human preference optimization can make even small models preferred over much larger base models.
+
 ### Chain-of-thought reasoning
 
 [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models]] (2022) showed that eliciting intermediate reasoning steps dramatically improves LLM performance on complex tasks. This idea is central to driving applications: rather than mapping directly from perception to action, systems decompose the driving decision into explicit reasoning stages.
+
+[[wiki/sources/papers/deepseek-r1-incentivizing-reasoning-capability-in-llms-via-reinforcement-learning]] (DeepSeek-R1, 2025) took reasoning a step further by showing that chain-of-thought emerges spontaneously from reinforcement learning with rule-based rewards, without any human-annotated reasoning traces. Using GRPO on a 671B MoE model, R1 matches OpenAI-o1 on math and code benchmarks, and its reasoning distills to models as small as 1.5B parameters. This establishes RL as a viable alternative to supervised demonstration for eliciting reasoning in foundation models, with direct implications for driving VLAs that use chain-of-thought decomposition (e.g., Alpamayo-R1).
 
 ### Diffusion models
 
@@ -99,11 +111,13 @@ The most recent work bridges foundation model reasoning with continuous control:
 
 | Paper | Contribution |
 |-------|-------------|
+| [[wiki/sources/papers/on-the-opportunities-and-risks-of-foundation-models]] | Coined "foundation model"; emergence + homogenization framework |
 | [[wiki/sources/papers/attention-is-all-you-need]] | Transformer architecture |
 | [[wiki/sources/papers/scaling-laws-for-neural-language-models]] | Scaling laws for neural LMs |
 | [[wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision]] | CLIP: contrastive vision-language pretraining |
 | [[wiki/sources/papers/segment-anything]] | SAM: promptable segmentation foundation model, SA-1B dataset |
 | [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models]] | Chain-of-thought reasoning |
+| [[wiki/sources/papers/deepseek-r1-incentivizing-reasoning-capability-in-llms-via-reinforcement-learning]] | Emergent reasoning via RL (GRPO); distillation to small models |
 | [[wiki/sources/papers/language-models-are-few-shot-learners]] | GPT-3: emergent few-shot capabilities |
 | [[wiki/sources/papers/emma-end-to-end-multimodal-model-for-autonomous-driving]] | Everything-as-language driving |
 | [[wiki/sources/papers/senna-bridging-large-vision-language-models-and-end-to-end-autonomous-driving]] | Decoupled VLM reasoning for driving |
@@ -115,10 +129,14 @@ The most recent work bridges foundation model reasoning with continuous control:
 | [[wiki/sources/papers/cosmos-world-foundation-model-platform-for-physical-ai]] | World foundation model platform |
 | [[wiki/sources/papers/groot-n1-an-open-foundation-model-for-generalist-humanoid-robots]] | Open foundation model for humanoid robots |
 | [[wiki/sources/papers/gemini-robotics-bringing-ai-into-the-physical-world]] | Gemini 2.0 for physical robotics |
+| [[wiki/sources/papers/gemini-25-pushing-the-frontier-with-advanced-reasoning-multimodality-long-context-and-next-generation-agentic-capabilities]] | Gemini 2.5: sparse MoE multimodal with inference-time Thinking, 1M+ context, agentic capabilities |
 | [[wiki/sources/papers/s4-driver-scalable-self-supervised-driving-mllm-with-spatio-temporal-visual-representation]] | Self-supervised MLLM scaling for driving without annotations |
 | [[wiki/sources/papers/self-improving-embodied-foundation-models]] | Self-improving EFMs via autonomous RL practice |
 | [[wiki/sources/papers/autort-embodied-foundation-models-for-large-scale-orchestration-of-robotic-agents]] | Foundation model orchestration for robot data collection at scale |
 | [[wiki/sources/papers/hpt-scaling-proprioceptive-visual-learning-with-heterogeneous-pre-trained-transformers]] | Cross-embodiment scaling laws via heterogeneous pre-trained transformers |
+| [[wiki/sources/papers/qwen3-technical-report]] | Qwen3: open-weight dense + MoE family (0.6B-235B) with unified thinking mode, 36T tokens, 119 languages |
+| [[wiki/sources/papers/gemma-3-technical-report]] | Gemma 3: open-weight 1B-27B multimodal family, 5:1 local/global attention for 128K context, distillation-driven efficiency |
+| [[wiki/sources/papers/scaling-instruction-finetuned-language-models]] | Flan-PaLM/Flan-T5: instruction finetuning at scale (1,836 tasks + CoT), architecture-agnostic, 0.2% of pre-training compute |
 
 ## Related
 

@@ -34,9 +34,15 @@ Self-supervised pretraining allows models to learn general representations befor
 
 [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models]] showed that prompting LLMs to produce intermediate reasoning steps dramatically improves performance on complex tasks. This idea is central to driving VLAs: systems like DriveLM and Reason2Drive use chain-of-thought structures to decompose driving decisions into perception, prediction, and planning stages before emitting actions.
 
+[[wiki/sources/papers/deepseek-r1-incentivizing-reasoning-capability-in-llms-via-reinforcement-learning]] (DeepSeek-R1, 2025) demonstrated that chain-of-thought reasoning can emerge from pure reinforcement learning without human-annotated reasoning demonstrations. Using Group Relative Policy Optimization (GRPO) with simple rule-based rewards on a 671B MoE base model, R1-Zero discovers self-verification, reflection, and adaptive compute allocation. The full R1 model uses a multi-stage pipeline (cold-start SFT → reasoning RL → rejection sampling SFT → alignment RL) to reach performance competitive with OpenAI-o1 on math, code, and science benchmarks. Crucially, reasoning capabilities distill effectively to models as small as 1.5B parameters, democratizing access to strong reasoning. This represents a paradigm shift: the training objective (RL with outcome rewards), not just scale, is a key axis for capability emergence.
+
 ## Parameter-efficient adaptation
 
 As models scale to billions of parameters, full fine-tuning becomes impractical for multi-task deployment. [[wiki/sources/papers/prefix-tuning-optimizing-continuous-prompts-for-generation]] (2021) demonstrated that prepending learned continuous vectors to transformer key-value pairs at every layer enables task adaptation with only 0.1% of parameters, matching full fine-tuning on generation tasks. [[wiki/sources/papers/lora-low-rank-adaptation-of-large-language-models]] (LoRA, ICLR 2022) became the dominant PEFT method: by freezing pretrained weights and injecting trainable low-rank decomposition matrices (Delta-W = BA, rank r << d), LoRA reduces trainable parameters by 10,000x on GPT-3 175B while matching full fine-tuning, with zero inference overhead after merging. Together, prefix-tuning, LoRA, adapters, and prompt tuning form the PEFT paradigm now standard for adapting foundation models to downstream tasks, including driving VLA systems that fine-tune large VLMs for action prediction.
+
+## The foundation model paradigm
+
+[[wiki/sources/papers/on-the-opportunities-and-risks-of-foundation-models]] (Bommasani et al., 2021) formalized the concept of foundation models -- large models pretrained on broad data via self-supervision, then adapted to downstream tasks. The report identified two defining phenomena: **emergence** (unanticipated capabilities arising from scale) and **homogenization** (convergence around a few base models). Both have been validated by subsequent developments: GPT-4's emergent capabilities, the dominance of LoRA/RLHF adaptation pipelines, and the concentration of frontier model development among a handful of labs.
 
 ## Present state and open problems
 
@@ -56,11 +62,13 @@ As models scale to billions of parameters, full fine-tuning becomes impractical 
 | [[wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision]] | CLIP: contrastive vision-language pretraining |
 | [[wiki/sources/papers/exploring-simple-siamese-representation-learning]] | SimSiam: minimal self-supervised learning without negatives or momentum |
 | [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models]] | Intermediate reasoning steps improve LLM performance |
+| [[wiki/sources/papers/deepseek-r1-incentivizing-reasoning-capability-in-llms-via-reinforcement-learning]] | Emergent reasoning from RL; GRPO; distillation to small models |
 | [[wiki/sources/papers/denoising-diffusion-probabilistic-models]] | Diffusion models for high-quality generation |
 | [[wiki/sources/papers/diffusion-models-beat-gans-on-image-synthesis]] | Classifier guidance enabling diffusion to surpass GANs |
 | [[wiki/sources/papers/neural-machine-translation-by-jointly-learning-to-align-and-translate]] | Attention mechanism for sequence-to-sequence models |
 | [[wiki/sources/papers/prefix-tuning-optimizing-continuous-prompts-for-generation]] | Parameter-efficient fine-tuning via continuous prefix optimization (0.1% params) |
 | [[wiki/sources/papers/lora-low-rank-adaptation-of-large-language-models]] | LoRA: low-rank adaptation reducing trainable params by 10,000x with zero inference overhead |
+| [[wiki/sources/papers/on-the-opportunities-and-risks-of-foundation-models]] | Coined "foundation model"; emergence + homogenization framework |
 | [[wiki/sources/papers/swin-transformer-hierarchical-vision-transformer-using-shifted-windows]] | Hierarchical vision transformer; general-purpose backbone replacing CNNs |
 
 ## Related

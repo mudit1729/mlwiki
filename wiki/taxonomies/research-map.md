@@ -49,7 +49,7 @@ For each new source, tag at least:
 | [[wiki/sources/ilya-top-30]] | 30 | All ingested |
 | [[wiki/sources/vla-and-driving]] | 25 (6 general VLA + 19 AutoVLA) | Active |
 | [[wiki/sources/autonomous-driving-seminal-papers]] | 14 ingested, many queued | Active |
-| [[wiki/sources/llm-seminal-papers]] | 8 ingested | Active |
+| [[wiki/sources/llm-seminal-papers]] | 12 ingested | Active |
 
 ## Routing guide for new papers
 

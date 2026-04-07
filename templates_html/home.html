@@ -3,32 +3,21 @@
 {% block title %}Home | {{ repo_title }}{% endblock %}
 
 {% block content %}
-  <section class="hero">
-    <div class="hero-copy">
-      <p class="eyebrow">ML &middot; Autonomy &middot; Robotics &middot; VLA &middot; Foundation Models</p>
-      <h1>Knowledge base for ML systems, autonomy, and embodied AI.</h1>
-      <p class="lede">
-        Browse concepts, paper summaries, research syntheses, and the running log.
-        The markdown files remain the source of truth.
-      </p>
-      <div class="stat-row">
-        <div class="stat-card">
-          <span class="stat-num">{{ stats.papers }}</span>
-          <span class="stat-label">Papers</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-num">{{ stats.concepts }}</span>
-          <span class="stat-label">Concepts</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-num">{{ stats.complete }}</span>
-          <span class="stat-label">Complete</span>
-        </div>
-        <div class="stat-card">
-          <span class="stat-num">{{ stats.tags }}</span>
-          <span class="stat-label">Tags</span>
-        </div>
-      </div>
+  <section class="featured-section hero-featured">
+    <div class="section-heading">
+      <h2>Entry Points</h2>
+      <p class="eyebrow" style="margin:0">ML &middot; Autonomy &middot; Robotics &middot; VLA &middot; Foundation Models</p>
+    </div>
+    <div class="featured-grid">
+      {% for page in featured %}
+        <a class="featured-card" href="{{ url_for('page', page_path=page.path) }}">
+          <strong>{{ page.title }}</strong>
+          {% if page.status %}
+            <span class="status-dot status-{{ page.status }}"></span>
+          {% endif %}
+          <p>{{ page.excerpt }}</p>
+        </a>
+      {% endfor %}
     </div>
   </section>
 
@@ -60,22 +49,24 @@
     </div>
   </section>
 
-  <section class="featured-section">
-    <div class="section-heading">
-      <h2>Entry Points</h2>
+  <div class="stats-bar">
+    <div class="stat-card">
+      <span class="stat-num">{{ stats.papers }}</span>
+      <span class="stat-label">Papers</span>
     </div>
-    <div class="featured-grid">
-      {% for page in featured %}
-        <a class="featured-card" href="{{ url_for('page', page_path=page.path) }}">
-          <strong>{{ page.title }}</strong>
-          {% if page.status %}
-            <span class="status-dot status-{{ page.status }}"></span>
-          {% endif %}
-          <p>{{ page.excerpt }}</p>
-        </a>
-      {% endfor %}
+    <div class="stat-card">
+      <span class="stat-num">{{ stats.concepts }}</span>
+      <span class="stat-label">Concepts</span>
     </div>
-  </section>
+    <div class="stat-card">
+      <span class="stat-num">{{ stats.year_range }}</span>
+      <span class="stat-label">Year Range</span>
+    </div>
+    <div class="stat-card">
+      <span class="stat-num">{{ stats.tags }}</span>
+      <span class="stat-label">Tags</span>
+    </div>
+  </div>
 
   <section class="grid two-up">
     <div class="panel">

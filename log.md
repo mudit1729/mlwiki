@@ -1,5 +1,47 @@
 # Log
 
+## [2026-04-06] ingest | Gemma 3 Technical Report
+- Added paper wiki page: wiki/sources/papers/gemma-3-technical-report.md
+- Updated: wiki/sources/llm-seminal-papers.md (new open-weight multimodal section + ingested individually list), wiki/concepts/foundation-models.md (LLM section + key papers table), wiki/taxonomies/research-map.md (LLM seminal papers count)
+- Citations: ~1120 (user-provided)
+- Tags: transformer, language-modeling, multimodal, foundation-model, vision-language-model, knowledge-distillation, mixture-of-experts, scaling, multilingual
+
+## [2026-04-06] ingest | Scaling Instruction-Finetuned Language Models (Flan-PaLM / Flan-T5)
+- Added paper wiki page: wiki/sources/papers/scaling-instruction-finetuned-language-models.md
+- Updated: wiki/sources/llm-seminal-papers.md (instruction tuning section + ingested individually list), wiki/concepts/foundation-models.md (new instruction tuning subsection)
+- Citations: ~3987 (user-provided)
+- Tags: nlp, transformer, instruction-tuning, chain-of-thought, foundation-model, language-modeling, scaling, multi-task
+
+## [2026-04-06] ingest | Qwen3 Technical Report
+- Added paper wiki page: wiki/sources/papers/qwen3-technical-report.md
+- Updated: wiki/sources/llm-seminal-papers.md (core architecture list + ingested individually list), wiki/concepts/foundation-models.md (LLM section + key papers table), wiki/taxonomies/research-map.md (LLM seminal papers count)
+- Citations: ~3706 (user-provided)
+- Tags: nlp, language-modeling, transformer, mixture-of-experts, foundation-model, reasoning, multilingual, reinforcement-learning
+
+## [2026-04-06] ingest | DeepSeek-R1: Incentivizing Reasoning Capability in LLMs via Reinforcement Learning
+- Added paper wiki page: wiki/sources/papers/deepseek-r1-incentivizing-reasoning-capability-in-llms-via-reinforcement-learning.md
+- Updated: wiki/sources/llm-seminal-papers.md (added "Reasoning via reinforcement learning" section + ingested individually list), wiki/concepts/machine-learning.md (reasoning section + key papers table), wiki/concepts/foundation-models.md (chain-of-thought section + key papers table), wiki/queries/open-questions.md (Q8 partial answer on GRPO for driving), wiki/taxonomies/research-map.md (LLM seminal papers count)
+- Citations: ~1920 (user-provided)
+- Tags: nlp, reinforcement-learning, language-modeling, reasoning, chain-of-thought, foundation-model, transformer, alignment
+
+## [2026-04-06] ingest | Tree of Thoughts: Deliberate Problem Solving with Large Language Models
+- Added paper wiki page: wiki/sources/papers/tree-of-thoughts-deliberate-problem-solving-with-large-language-models.md
+- Updated: wiki/sources/llm-seminal-papers.md (added "Reasoning and search" section + ingested individually list)
+- Citations: ~3561 (user-provided)
+- Tags: nlp, reasoning, language-modeling, chain-of-thought, search, foundation-model, prompting
+
+## [2026-04-06] ingest | Gemini 2.5: Pushing the Frontier with Advanced Reasoning, Multimodality, Long Context, and Next Generation Agentic Capabilities
+- Added paper wiki page: wiki/sources/papers/gemini-25-pushing-the-frontier-with-advanced-reasoning-multimodality-long-context-and-next-generation-agentic-capabilities.md
+- Updated: wiki/sources/llm-seminal-papers.md (multimodal bridge section + ingested individually list), wiki/concepts/foundation-models.md (transformer and scaling section + key papers table), wiki/taxonomies/research-map.md (LLM seminal papers count)
+- Citations: ~1943 (user-provided)
+- Tags: nlp, multimodal, foundation-model, transformer, mixture-of-experts, language-modeling, chain-of-thought, reasoning, agentic
+
+## [2026-04-06] ingest | On the Opportunities and Risks of Foundation Models
+- Added paper wiki page: wiki/sources/papers/on-the-opportunities-and-risks-of-foundation-models.md
+- Updated: wiki/concepts/foundation-models.md (new "Defining the paradigm" section + key papers table), wiki/concepts/machine-learning.md (new "Foundation model paradigm" section + key papers table), wiki/sources/llm-seminal-papers.md (new "Foundational surveys and frameworks" section)
+- Citations: ~6057 (user-provided; Semantic Scholar fetch unavailable)
+- Tags: foundation-model, nlp, computer-vision, robotics, multimodal, transformer, survey
+
 ## [2026-04-06] ingest | BEVNeXt: Reviving Dense BEV Frameworks for 3D Object Detection
 - Added paper wiki page: wiki/sources/papers/bevnext-reviving-dense-bev-frameworks-for-3d-object-detection.md
 - Updated: wiki/concepts/perception.md (BEV revolution section + key papers table), wiki/sources/autonomous-driving-seminal-papers.md (perception seed list)

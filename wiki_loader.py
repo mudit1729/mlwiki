@@ -277,18 +277,20 @@ class WikiRepository:
                 collections["Robotics / VLA"].append(p)
         return {k: v for k, v in collections.items() if v}
 
-    def stats(self) -> dict[str, int]:
+    def stats(self) -> dict[str, object]:
         self.refresh()
         total = len(self._pages)
-        papers = len([p for p in self._pages.values() if p.page_type in ("source-summary", "paper")])
+        papers_list = [p for p in self._pages.values() if p.page_type in ("source-summary", "paper")]
+        papers = len(papers_list)
         concepts = len([p for p in self._pages.values() if p.page_type == "concept"])
-        complete = len([p for p in self._pages.values() if p.status == "complete"])
         tags = len(self.all_tags())
+        years = [int(p.year) for p in papers_list if p.year and p.year.strip('"').isdigit()]
+        year_range = f"{min(years)}–{max(years)}" if years else ""
         return {
             "total": total,
             "papers": papers,
             "concepts": concepts,
-            "complete": complete,
+            "year_range": year_range,
             "tags": tags,
         }
 
