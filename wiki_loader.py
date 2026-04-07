@@ -250,7 +250,7 @@ class WikiRepository:
     def papers(self) -> list[Page]:
         self.refresh()
         return sorted(
-            [p for p in self._pages.values() if p.page_type == "source-summary"],
+            [p for p in self._pages.values() if p.page_type in ("source-summary", "paper")],
             key=lambda p: (p.year or "0000", p.title.lower()),
             reverse=True,
         )
@@ -280,7 +280,7 @@ class WikiRepository:
     def stats(self) -> dict[str, int]:
         self.refresh()
         total = len(self._pages)
-        papers = len([p for p in self._pages.values() if p.page_type == "source-summary"])
+        papers = len([p for p in self._pages.values() if p.page_type in ("source-summary", "paper")])
         concepts = len([p for p in self._pages.values() if p.page_type == "concept"])
         complete = len([p for p in self._pages.values() if p.status == "complete"])
         tags = len(self.all_tags())
@@ -296,7 +296,7 @@ class WikiRepository:
         """Returns nodes and edges for paper graph visualization."""
         self.refresh()
         papers = {p.path: p for p in self._pages.values()
-                  if p.page_type == "source-summary"}
+                  if p.page_type in ("source-summary", "paper")}
 
         # Assign colors by primary research direction
         def get_group(p: Page) -> str:
@@ -360,7 +360,7 @@ class WikiRepository:
         result: dict[str, list[dict]] = {}
         for direction, pred in directions.items():
             papers = [p for p in self._pages.values()
-                      if p.page_type == "source-summary" and pred(p)]
+                      if p.page_type in ("source-summary", "paper") and pred(p)]
             papers.sort(key=lambda p: (p.year or "0000", p.title))
             result[direction] = [{
                 "path": p.path,
@@ -376,10 +376,30 @@ class WikiRepository:
         match = FRONTMATTER_RE.match(raw)
         if not match:
             return {}
+        fm_text = match.group(1)
         try:
-            return yaml.safe_load(match.group(1)) or {}
+            return yaml.safe_load(fm_text) or {}
         except yaml.YAMLError:
-            return {}
+            # Fallback: fix unquoted colons in values by quoting them
+            fixed_lines = []
+            for line in fm_text.split("\n"):
+                stripped = line.lstrip()
+                if stripped.startswith("-") or stripped.startswith("#") or not stripped:
+                    fixed_lines.append(line)
+                    continue
+                colon_pos = stripped.find(":")
+                if colon_pos > 0:
+                    key = stripped[:colon_pos]
+                    val = stripped[colon_pos + 1:].strip()
+                    if val and ":" in val and not val.startswith('"') and not val.startswith("'") and not val.startswith("["):
+                        indent = line[:len(line) - len(stripped)]
+                        val_escaped = val.replace('"', '\\"')
+                        line = f'{indent}{key}: "{val_escaped}"'
+                fixed_lines.append(line)
+            try:
+                return yaml.safe_load("\n".join(fixed_lines)) or {}
+            except yaml.YAMLError:
+                return {}
 
     def _extract_title(self, page_path: str, raw: str) -> str:
         match = HEADING_RE.search(raw)
