@@ -29,6 +29,51 @@ VADv2 achieved state-of-the-art closed-loop performance on the CARLA Town05 benc
 - **Conflict-aware action selection:** Introduces a conflict resolution mechanism that evaluates candidate trajectories from the predicted distribution for safety violations (collision checking against predicted agent futures), selecting the highest-probability collision-free trajectory at inference time
 - **State-of-the-art closed-loop performance:** Achieves best results on CARLA Town05 Long benchmark among camera-only methods, validating that probabilistic planning substantially improves closed-loop driving over deterministic alternatives
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                     VADv2 Pipeline                        │
+│                                                           │
+│  Multi-camera Images                                      │
+│       │                                                  │
+│       ▼                                                  │
+│  ┌──────────────┐                                         │
+│  │ BEV Encoder  │ (backbone + BEV lifting)                │
+│  └──────┬───────┘                                         │
+│         │                                                │
+│    ┌────┴──────────────┐                                  │
+│    ▼                   ▼                                  │
+│  ┌──────────┐   ┌──────────┐                              │
+│  │ Map Det  │   │ Agent    │                              │
+│  │(polylines)│   │ Pred     │                             │
+│  └────┬─────┘   └────┬─────┘                              │
+│       │  Vectorized   │                                   │
+│       │  Scene Tokens  │                                  │
+│       └───────┬───────┘                                   │
+│               ▼                                           │
+│  ┌────────────────────────────┐   ┌───────────────────┐   │
+│  │ Probabilistic Planning     │   │Planning Vocabulary│   │
+│  │ Transformer Decoder        │◄──│K trajectories     │   │
+│  │ (ego queries + cross-attn) │   │(K-means clusters) │   │
+│  └────────────┬───────────────┘   └───────────────────┘   │
+│               │                                           │
+│               ▼                                           │
+│  ┌────────────────────────────┐                           │
+│  │ P(action | scene)          │  Categorical distribution  │
+│  │ [p1, p2, ..., pK]         │  over K vocabulary entries  │
+│  └────────────┬───────────────┘                           │
+│               │                                           │
+│               ▼                                           │
+│  ┌────────────────────────────┐                           │
+│  │ Conflict-Aware Selection   │  Check top trajectories    │
+│  │ (collision filtering)      │  against predicted agents  │
+│  └────────────┬───────────────┘                           │
+│               ▼                                           │
+│         Best safe trajectory                              │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![VADv2 architecture overview](https://paper-assets.alphaxiv.org/figures/2402.13243/x1.png)

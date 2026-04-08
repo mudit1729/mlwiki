@@ -46,6 +46,44 @@ This result triggered a paradigm shift. Within two years, vision transformers re
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│                Vision Transformer (ViT)                      │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Input Image (224 x 224)                                     │
+│       │                                                      │
+│       ▼                                                      │
+│  Split into 196 patches (16 x 16 each)                       │
+│  [p_1] [p_2] [p_3] ... [p_196]                              │
+│       │                                                      │
+│       ▼  Flatten + Linear Projection (to dim D)              │
+│                                                              │
+│  [CLS] [e_1] [e_2] [e_3] ... [e_196]                       │
+│    +     +     +     +          +       Learnable Position   │
+│  pos_0 pos_1 pos_2 pos_3 ... pos_196   Embeddings           │
+│       │                                                      │
+│       ▼                                                      │
+│  ┌──────────────────────────────────┐  x L layers            │
+│  │  Transformer Encoder Block       │  (L=12 Base,           │
+│  │  ┌────────────────────────────┐  │   24 Large,            │
+│  │  │  Layer Norm                 │  │   32 Huge)             │
+│  │  │  Multi-Head Self-Attention  │  │                        │
+│  │  │  + Residual                 │  │                        │
+│  │  ├────────────────────────────┤  │                        │
+│  │  │  Layer Norm                 │  │                        │
+│  │  │  MLP (GELU)                │  │                        │
+│  │  │  + Residual                 │  │                        │
+│  │  └────────────────────────────┘  │                        │
+│  └──────────────────────────────────┘                        │
+│       │                                                      │
+│       ▼ (CLS token output)                                   │
+│  ┌──────────────┐                                           │
+│  │ Linear Head   │ ──► Class Prediction                      │
+│  └──────────────┘                                           │
+└──────────────────────────────────────────────────────────────┘
+```
+
 ![Vision Transformer architecture overview](https://paper-assets.alphaxiv.org/figures/2010.11929v2/img-0.jpeg)
 
 ViT uses a standard Transformer encoder (identical to the original Transformer's encoder from Vaswani et al.) with minimal modifications for vision. An input image of size H x W is divided into a grid of N = HW/P^2 non-overlapping patches of size P x P (typically P=16, giving N=196 patches for 224x224 images). Each patch is flattened into a vector and linearly projected to dimension D (768 for ViT-Base, 1024 for ViT-Large, 1280 for ViT-Huge).

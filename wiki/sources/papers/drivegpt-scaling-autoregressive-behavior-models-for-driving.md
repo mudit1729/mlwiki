@@ -35,6 +35,40 @@ The central finding is that driving behavior models follow predictable scaling l
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    DriveGPT Architecture                     │
+│                                                              │
+│  ┌──────────────────────────────────────────────────┐       │
+│  │              Scene Tokenizer                      │       │
+│  │  ┌──────────┐ ┌──────────┐ ┌──────────────────┐  │       │
+│  │  │ Road     │ │ Traffic  │ │ Agent States     │  │       │
+│  │  │ Geometry │ │ Signals  │ │ (pos,vel,heading)│  │       │
+│  │  └────┬─────┘ └────┬─────┘ └────────┬─────────┘  │       │
+│  │       └─────────────┼────────────────┘            │       │
+│  │                     ▼                             │       │
+│  │         Discretized Token Sequence                │       │
+│  │    [road₁ road₂ ... sig₁ ... agent₁_t₁ ...]     │       │
+│  └─────────────────────┬────────────────────────────┘       │
+│                        ▼                                     │
+│  ┌──────────────────────────────────────────────────┐       │
+│  │     Decoder-Only Transformer (15M ─► 1.1B)       │       │
+│  │     ┌─────────────────────────────────┐           │       │
+│  │     │   Causal Self-Attention Layers  │           │       │
+│  │     │   (depth/width scale with size) │           │       │
+│  │     └─────────────┬───────────────────┘           │       │
+│  │                   ▼                               │       │
+│  │   Next-Token Prediction (Cross-Entropy Loss)      │       │
+│  └─────────────────────┬────────────────────────────┘       │
+│                        ▼                                     │
+│         Autoregressive Future Trajectory Tokens               │
+│    [agent₁_t₂ agent₂_t₂ ... agent₁_t₃ agent₂_t₃ ...]      │
+└─────────────────────────────────────────────────────────────┘
+
+Scaling Law:  L(N,D) = A/N^α + B/D^β + L_∞
+              N = parameters, D = dataset size, L_∞ = irreducible loss
+```
+
 DriveGPT formulates driving as next-token prediction over discretized scene representations. The architecture consists of:
 
 1. **Scene Tokenizer**: Road geometry, traffic signals, and agent states (position, velocity, heading) are tokenized into a structured sequence. Each agent's trajectory is discretized into spatial tokens at each timestep. The tokenization preserves the relational structure between agents and map elements.

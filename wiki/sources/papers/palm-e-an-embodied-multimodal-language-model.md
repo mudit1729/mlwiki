@@ -4,7 +4,7 @@ type: source-summary
 status: seed
 updated: 2026-04-05
 year: 2023
-venue: arXiv
+venue: ICML
 tags:
   - paper
   - robotics
@@ -34,6 +34,41 @@ PaLM-E is significant because it showed that the foundation model paradigm scale
 - **Frozen LLM backbone**: The PaLM language model weights are frozen during embodied training; only the input encoders and projection layers are trained, preserving the LLM's reasoning and language generation capabilities
 
 ## Architecture / Method
+
+```
+                     PaLM-E Architecture
+                     ───────────────────
+
+  Images        Point Clouds     Robot State     Text
+    │                │               │             │
+    ▼                ▼               ▼             ▼
+ ┌────────┐   ┌───────────┐   ┌──────────┐  ┌──────────┐
+ │ ViT-22B│   │   OSRT     │   │   MLP    │  │ Token    │
+ │ Encoder │   │  (3D scene │   │ Encoder  │  │ Embed.   │
+ │         │   │   repr.)   │   │          │  │          │
+ └───┬────┘   └─────┬─────┘   └────┬─────┘  └────┬─────┘
+     │ patch        │               │              │
+     │ tokens       │ scene tokens  │ state tokens │ text tokens
+     │              │               │              │
+     └──────────────┴───────┬───────┴──────────────┘
+                            │  Interleaved "multimodal sentence"
+                            ▼
+              ┌──────────────────────────────┐
+              │   Frozen PaLM LLM            │
+              │   (8B / 62B / 562B)          │
+              │                              │
+              │   Autoregressive generation  │
+              └──────────────┬───────────────┘
+                             │
+                  ┌──────────┴──────────┐
+                  ▼                     ▼
+           Plan Steps              VQA / Caption
+           (natural language)      (text output)
+                  │
+                  ▼
+           Low-level Skill
+           Policy Execution
+```
 
 ![PaLM-E architecture: multimodal input integration for manipulation, planning, and VQA](https://paper-assets.alphaxiv.org/figures/2303.03378/img-0.jpeg)
 

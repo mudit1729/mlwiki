@@ -31,6 +31,43 @@ InstructGPT is one of the most influential papers of the LLM era. It operational
 
 ## Architecture / Method
 
+```
+         InstructGPT: Three-Stage RLHF Alignment Pipeline
+
+  ┌─────────────────────────────────────────────────────────┐
+  │  Stage 1: Supervised Fine-Tuning (SFT)                   │
+  │                                                         │
+  │  Pretrained    ~13K human-written                       │
+  │  GPT-3    ──►  demonstrations    ──►  SFT Model         │
+  │                (prompt, ideal response)                  │
+  └──────────────────────────┬──────────────────────────────┘
+                             │
+  ┌──────────────────────────▼──────────────────────────────┐
+  │  Stage 2: Reward Model (RM) Training                     │
+  │                                                         │
+  │  SFT Model generates K outputs per prompt                │
+  │       │                                                 │
+  │       ▼                                                 │
+  │  Humans rank outputs: y_1 > y_2 > ... > y_K             │
+  │       │                                                 │
+  │       ▼   ~33K comparison pairs                         │
+  │  Train 6B Reward Model: r_θ(prompt, response) ──► scalar│
+  │  Loss: Bradley-Terry pairwise ranking                    │
+  └──────────────────────────┬──────────────────────────────┘
+                             │
+  ┌──────────────────────────▼──────────────────────────────┐
+  │  Stage 3: RL Fine-Tuning via PPO                         │
+  │                                                         │
+  │  SFT Model ──► Generate response y                       │
+  │       │                                                 │
+  │       ▼                                                 │
+  │  Reward = r_θ(x, y) - β * KL(π_φ || π_SFT)             │
+  │       │                                                 │
+  │       ▼   PPO-ptx: + γ * pretrain loss (prevent forget) │
+  │  Optimized InstructGPT Model                             │
+  └─────────────────────────────────────────────────────────┘
+```
+
 ![InstructGPT three-stage pipeline](https://paper-assets.alphaxiv.org/figures/2203.02155/img-0.jpeg)
 
 ### Stage 1: Supervised Fine-Tuning (SFT)

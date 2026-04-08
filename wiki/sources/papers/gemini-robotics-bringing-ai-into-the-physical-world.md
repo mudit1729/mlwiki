@@ -30,6 +30,35 @@ Training leverages thousands of hours of expert teleoperated demonstrations on A
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Gemini Robotics System                        │
+│                                                                 │
+│  ┌──────────────────────────────────────────┐   ┌────────────┐ │
+│  │           Cloud (Gemini 2.0 Backbone)     │   │  Robot     │ │
+│  │                                           │   │  (ALOHA 2) │ │
+│  │  Camera ──► Vision ──► Gemini 2.0 VLM    │   │            │ │
+│  │  Images     Encoder    (multimodal        │   │ ┌────────┐ │ │
+│  │                         reasoning)        │   │ │ Local  │ │ │
+│  │  Language ──────────────┘                 │   │ │ Action │ │ │
+│  │  Instruction     │                        │   │ │Decoder │ │ │
+│  │                  ▼                        │   │ │ (50Hz) │ │ │
+│  │         ┌────────────────┐                │   │ └───┬────┘ │ │
+│  │         │ Gemini         │  latent ──────────►│    │      │ │
+│  │         │ Robotics-ER    │  features      │   │    ▼      │ │
+│  │         │ (spatial       │                │   │  Joint    │ │
+│  │         │  understanding)│                │   │  Actions  │ │
+│  │         └────────────────┘                │   │  ──► Robot│ │
+│  │         - Object detection                │   │           │ │
+│  │         - 6-DOF grasp estimation          │   └────────────┘ │
+│  │         - Trajectory prediction           │                  │
+│  └──────────────────────────────────────────┘                   │
+│                                                                 │
+│  Training: Web pretraining ──► Teleoperation fine-tuning        │
+│            (Gemini 2.0)        (1000s hrs on ALOHA 2)           │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ![System Overview](https://paper-assets.alphaxiv.org/figures/2503.20020v1/img-0.jpeg)
 
 The architecture builds on Gemini 2.0's multimodal foundation. Gemini Robotics-ER adds spatial understanding modules for object detection, 6-DOF grasp estimation, and trajectory prediction. The full Gemini Robotics model extends this with an action generation head.

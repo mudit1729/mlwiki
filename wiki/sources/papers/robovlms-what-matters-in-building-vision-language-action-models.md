@@ -29,7 +29,34 @@ The key findings provide concrete, actionable guidance: KosMos and PaliGemma bac
 - **Cross-embodiment data strategy**: Established that post-training (cross-embodiment pretrain then target fine-tune) is the optimal strategy, vs. co-training or target-only training
 - **Open-source framework**: Released the RoboVLMs codebase enabling reproducible VLA research across backbone and architecture combinations
 
-## Architecture / Method
+## Architecture
+
+```
+┌────────────────────────────────────────────────────────────┐
+│               RoboVLMs Framework: 4 Formulations           │
+│                                                            │
+│  Images + Language ──► VLM Backbone (8 options tested)     │
+│                        │                                   │
+│         ┌──────────────┼──────────────┐                    │
+│         │              │              │                     │
+│    One-Step        One-Step      History Models             │
+│    Continuous      Discrete      ┌─────────┴──────────┐    │
+│         │              │         │                     │    │
+│         ▼              ▼         ▼                     ▼    │
+│    ┌─────────┐   ┌─────────┐  ┌───────────┐   ┌──────────┐│
+│    │MLP Head │   │LM Head  │  │Interleaved│   │Policy    ││
+│    │→ cont.  │   │→ action │  │tokens in  │   │Head      ││
+│    │7-DoF    │   │tokens   │  │VLM context│   │(separate ││
+│    │action   │   │(RT-2    │  │+ cont.    │   │temporal  ││
+│    │         │   │ style)  │  │action head│   │module)   ││
+│    └─────────┘   └─────────┘  └───────────┘   └──────────┘│
+│                                                            │
+│  Best config: PaliGemma/KosMos + Policy-Head + Continuous  │
+│  Data strategy: Pretrain cross-embodiment → fine-tune      │
+└────────────────────────────────────────────────────────────┘
+```
+
+## Method
 
 The RoboVLMs framework supports four VLA formulations built on a common VLM backbone:
 

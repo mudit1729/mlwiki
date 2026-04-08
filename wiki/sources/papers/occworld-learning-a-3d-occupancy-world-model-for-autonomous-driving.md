@@ -26,6 +26,56 @@ OccWorld introduces a generative world model that operates in 3D semantic occupa
 
 ## Architecture / Method
 
+```
+                         OccWorld Pipeline
+                         ─────────────────
+
+  3D Semantic         ┌──────────────────────┐
+  Occupancy    ──────►│  Height Compression   │
+  (H x W x Z)        │  (3D ──► BEV)         │
+                      └──────────┬───────────┘
+                                 │
+                                 ▼
+                      ┌──────────────────────┐
+                      │   CNN Encoder         │
+                      │   (Downsample BEV)    │
+                      └──────────┬───────────┘
+                                 │
+                                 ▼
+                      ┌──────────────────────┐       ┌────────────┐
+                      │  Vector Quantization  │◄─────│  Codebook   │
+                      │  z = argmin||f - c||  │      └────────────┘
+                      └──────────┬───────────┘
+                                 │
+              ┌──────────────────┼──────────────────┐
+              │                  │                   │
+              ▼                  ▼                   ▼
+   ┌─────────────────┐  ┌──────────────┐  ┌────────────────┐
+   │  CNN Decoder     │  │  Scene       │  │  Ego Tokens    │
+   │  (Reconstruct    │  │  Tokens      │  │  (Vehicle      │
+   │   3D Occupancy)  │  │              │  │   State)       │
+   └─────────────────┘  └──────┬───────┘  └───────┬────────┘
+                               │                   │
+                               └────────┬──────────┘
+                                        ▼
+                            ┌───────────────────────┐
+                            │  Spatial-Temporal GPT  │
+                            │  ┌─────────────────┐  │
+                            │  │ Spatial Attn     │  │
+                            │  │ (within timestep)│  │
+                            │  └────────┬────────┘  │
+                            │           ▼           │
+                            │  ┌─────────────────┐  │
+                            │  │ Temporal Causal  │  │
+                            │  │ Attn (across t)  │  │
+                            │  └────────┬────────┘  │
+                            └───────────┼───────────┘
+                               ┌────────┴────────┐
+                               ▼                 ▼
+                        Future 4D          Ego Trajectory
+                        Occupancy          Prediction
+```
+
 ![OccWorld Overview](https://paper-assets.alphaxiv.org/figures/2311.16038v1/img-0.jpeg)
 
 **Scene Tokenizer (VQ-VAE):**

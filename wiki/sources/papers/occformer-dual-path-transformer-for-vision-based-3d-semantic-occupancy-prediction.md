@@ -31,6 +31,49 @@ OccFormer achieved 12.32% mIoU on the SemanticKITTI benchmark (a 1.24% improveme
 
 ## Architecture / Method
 
+```
+┌────────────────────────────────────────────────────────────────┐
+│  Multi-View Cameras ──► 2D Backbone (ResNet-50)                │
+│  ──► View Transformer (LSS lift-splat) ──► 3D Voxel Volume     │
+│                                            (X, Y, Z, C)        │
+└────────────────────────────┬───────────────────────────────────┘
+                             │
+              ┌──────────────▼──────────────┐
+              │   Dual-Path Transformer      │
+              │        Encoder (×L)          │
+              │                              │
+              │  ┌────────────────────────┐  │
+              │  │    Local Path           │  │
+              │  │  Slice along Z axis     │  │
+              │  │  Z × 2D windowed attn   │  │
+              │  │  on (X,Y) per slice     │  │
+              │  └───────────┬────────────┘  │
+              │              │ + fuse         │
+              │  ┌───────────▼────────────┐  │
+              │  │    Global Path          │  │
+              │  │  Avg-pool along Z       │  │
+              │  │  2D attn on (X,Y) BEV   │  │
+              │  │  Broadcast back to Z    │  │
+              │  └───────────┬────────────┘  │
+              └──────────────┬──────────────┘
+                             │
+              ┌──────────────▼──────────────┐
+              │  Mask2Former Decoder         │
+              │  Class queries + masked      │
+              │  cross-attention             │
+              │  ┌─────────────────────────┐ │
+              │  │ Preserve-pooling (max)  │ │
+              │  │ Class-guided sampling   │ │
+              │  └─────────────────────────┘ │
+              └──────────────┬──────────────┘
+                             │
+                             ▼
+              ┌──────────────────────────────┐
+              │  Semantic Occupancy Volume    │
+              │  Per-voxel class predictions  │
+              └──────────────────────────────┘
+```
+
 ![OccFormer architecture overview](https://paper-assets.alphaxiv.org/figures/2304.05316v1/img-0.jpeg)
 
 OccFormer operates in three stages: (1) a 2D image backbone extracts multi-view image features, (2) a view transformer lifts these features into a 3D voxel volume, and (3) the dual-path transformer encoder + Mask2Former decoder produce the final semantic occupancy predictions.

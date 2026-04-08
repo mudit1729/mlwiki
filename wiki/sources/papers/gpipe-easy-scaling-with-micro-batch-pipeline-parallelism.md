@@ -12,7 +12,7 @@ tags:
   - pipeline-parallelism
   - model-parallelism
   - scaling
-citations: 6
+citations: 2100
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1811.06965)**
@@ -36,6 +36,40 @@ GPipe enabled training a 557M-parameter AmoebaNet to 84.4% ImageNet accuracy and
 - **Synchronous training with exact gradients:** Unlike asynchronous approaches, GPipe maintains fully synchronous gradient computation with no approximations
 
 ## Architecture / Method
+
+```
+┌─────────────────────────────────────────────────────────────┐
+│         GPipe: Micro-Batch Pipeline Parallelism              │
+│                                                             │
+│  Model split into K=4 stages across 4 devices:              │
+│                                                             │
+│  Naive Model Parallelism (wasteful):                        │
+│  Time ──►                                                   │
+│  Dev 1: [F1────]                    [B1────]                │
+│  Dev 2:         [F2────]      [B2────]                      │
+│  Dev 3:               [F3──][B3──]                          │
+│  Dev 4:                [F4][B4]                              │
+│         ████ = idle ("bubble")  ──► 75% idle!               │
+│                                                             │
+│  GPipe with M=4 micro-batches (pipelined):                  │
+│  Time ──►                                                   │
+│  Dev 1: [F1][F2][F3][F4]          [B4][B3][B2][B1]         │
+│  Dev 2:     [F1][F2][F3][F4]  [B4][B3][B2][B1]             │
+│  Dev 3:         [F1][F2][F3][F4][B4][B3][B2][B1]           │
+│  Dev 4:             [F1][F2][F3][F4][B4][B3][B2][B1]       │
+│                ███                                          │
+│         bubble = (K-1)/(M+K-1) = 3/7 ≈ 43%                 │
+│         With M=32: bubble = 3/35 ≈ 8.6%                    │
+│                                                             │
+│  Re-materialization:                                        │
+│  Forward:  compute activations ──► discard                  │
+│  Backward: recompute activations ──► compute gradients      │
+│  Cost: ~33% extra compute, massive memory savings           │
+│                                                             │
+│  Gradient accumulation: sum grads across all M micro-batches│
+│  ──► single synchronized weight update (exact SGD)          │
+└─────────────────────────────────────────────────────────────┘
+```
 
 ![Pipeline parallelism execution patterns -- sequential forward-backward vs naive model parallelism vs GPipe micro-batch pipelining](https://paper-assets.alphaxiv.org/figures/1811.06965v5/img-1.jpeg)
 

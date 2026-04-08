@@ -40,6 +40,41 @@ This paper demonstrated that the bottleneck in visual reasoning was not perceptu
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│                   Relation Network (RN)                      │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  Image                          Question                     │
+│    │                               │                         │
+│    ▼                               ▼                         │
+│  ┌──────────┐                ┌──────────┐                   │
+│  │ 4-layer   │                │   LSTM    │                   │
+│  │ CNN       │                │  Encoder  │                   │
+│  └────┬─────┘                └────┬─────┘                   │
+│       ▼                           │                          │
+│  d x d feature map                │                          │
+│  (d^2 "objects")                  │ q (question embedding)   │
+│       │                           │                          │
+│       ▼                           │                          │
+│  Form all n^2 pairs               │                          │
+│  (o_i, o_j) for i,j               │                          │
+│       │                           │                          │
+│       ▼                           ▼                          │
+│  ┌────────────────────────────────────┐                     │
+│  │  g_theta( o_i, o_j, q )           │  MLP (4 layers,     │
+│  │  for each pair (i,j)              │   256 units, ReLU)   │
+│  └──────────────┬─────────────────────┘                     │
+│                 ▼                                            │
+│        Element-wise SUM over all pairs                       │
+│                 │                                            │
+│                 ▼                                            │
+│          ┌────────────┐                                     │
+│          │  f_phi(.)   │  MLP ──► Answer                    │
+│          └────────────┘                                     │
+└──────────────────────────────────────────────────────────────┘
+```
+
 ![RN architecture for visual question answering -- CNN extracts feature maps as objects, LSTM processes question, RN computes pairwise relations](https://paper-assets.alphaxiv.org/figures/1706.01427/img-1.jpeg)
 
 ![Examples of non-relational versus relational questions in Sort-of-CLEVR](https://paper-assets.alphaxiv.org/figures/1706.01427/img-3.jpeg)

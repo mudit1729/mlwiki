@@ -36,6 +36,48 @@ The key insight is that robot manipulation is inherently a 3D task: grasping req
 
 ![SpatialVLA architecture with Ego3D encoding and adaptive action grids](https://paper-assets.alphaxiv.org/figures/2501.15830v5/x1.png)
 
+```
+  ┌──────────────────────────────────────────────────────────┐
+  │                      SpatialVLA                          │
+  │                                                          │
+  │  ┌──────────┐     ┌───────────────────┐                  │
+  │  │ RGB Image│────►│ Monocular Depth   │                  │
+  │  └─────┬────┘     │ Estimator         │                  │
+  │        │          └────────┬──────────┘                  │
+  │        │                   │ per-pixel depth             │
+  │        │                   ▼                             │
+  │        │          ┌───────────────────┐                  │
+  │        │          │ Back-project to   │                  │
+  │        │          │ 3D (ego-centric)  │                  │
+  │        │          └────────┬──────────┘                  │
+  │        │                   │ 3D coordinates              │
+  │        │                   ▼                             │
+  │        │          ┌───────────────────┐                  │
+  │        │          │ Sinusoidal 3D     │                  │
+  │        │          │ Position Encoding │                  │
+  │        │          └────────┬──────────┘                  │
+  │        │                   │  Ego3D PE                   │
+  │        ▼                   ▼                             │
+  │  ┌──────────────────────────────┐                        │
+  │  │ Vision Encoder               │                        │
+  │  │ (patch embeds + Ego3D PE)    │                        │
+  │  └──────────────┬───────────────┘                        │
+  │                 │                                        │
+  │  ┌──────────┐   │                                        │
+  │  │ Task Text│───┤                                        │
+  │  └──────────┘   ▼                                        │
+  │          ┌──────────────┐                                │
+  │          │ VLM Backbone  │                                │
+  │          └──────┬───────┘                                │
+  │                 ▼                                        │
+  │  ┌──────────────────────────────┐                        │
+  │  │ Adaptive Action Grids        │                        │
+  │  │ (Gaussian equal-probability  │                        │
+  │  │  bins per action dimension)  │──► Robot Actions       │
+  │  └──────────────────────────────┘                        │
+  └──────────────────────────────────────────────────────────┘
+```
+
 SpatialVLA's architecture augments a standard VLA pipeline with two key modules:
 
 **Ego3D Position Encoding** works in three steps: (1) a monocular depth estimator predicts per-pixel depth from the RGB image, (2) depth values are back-projected into 3D coordinates using known camera intrinsics and the robot's ego-centric reference frame, (3) sinusoidal position encodings of the 3D coordinates are added to the image patch embeddings before they enter the VLM backbone. This gives the model explicit spatial information without requiring depth cameras or point clouds at inference time (only a learned depth estimator).

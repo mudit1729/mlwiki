@@ -40,6 +40,55 @@ This self-supervised approach eliminates the expensive 3D annotation requirement
 
 ![Performance vs efficiency comparison](https://paper-assets.alphaxiv.org/figures/2412.13193v2/x1.png)
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                       GaussTR Pipeline                            │
+│                                                                   │
+│  ┌──────────┐    ┌──────────────────────────────┐                 │
+│  │ Multi-cam │───►│ Pre-trained VFMs              │                 │
+│  │ Images    │    │ (CLIP, DINO, Metric3D V2)    │                 │
+│  └──────────┘    └──────────┬───────────────────┘                 │
+│                             │                                     │
+│              Multi-scale 2D features + depth maps                 │
+│                             │                                     │
+│  ┌────────────────┐        │                                     │
+│  │ Learnable       │        │                                     │
+│  │ Gaussian Queries │        │                                     │
+│  └────────┬───────┘        │                                     │
+│           │                 │                                     │
+│           ▼                 ▼                                     │
+│  ┌─────────────────────────────────────────┐                      │
+│  │  Transformer Decoder                     │                      │
+│  │  ┌───────────────────────────────────┐  │                      │
+│  │  │ Deformable Cross-Attention         │  │                      │
+│  │  │ (aggregate 2D features)            │  │                      │
+│  │  ├───────────────────────────────────┤  │                      │
+│  │  │ Global Self-Attention              │  │                      │
+│  │  │ (3D positional encodings)          │  │                      │
+│  │  ├───────────────────────────────────┤  │                      │
+│  │  │ Gaussian Head (MLP):               │  │                      │
+│  │  │ center, scale, rot, density, feat  │  │                      │
+│  │  └───────────────────────────────────┘  │                      │
+│  └──────────────────┬──────────────────────┘                      │
+│                     │                                             │
+│           Predicted 3D Gaussians                                  │
+│                     │                                             │
+│    ┌────────────────┴─────────────────┐                           │
+│    ▼ (Training)                       ▼ (Inference)               │
+│  ┌───────────────────────┐  ┌──────────────────────────┐          │
+│  │ Diff. Splatting ──►    │  │ Text prototype embeddings│          │
+│  │ 2D rendered features   │  │ (from VFM)               │          │
+│  │      │                 │  │      │                    │          │
+│  │      ▼                 │  │      ▼                    │          │
+│  │ PCA + Cosine sim loss  │  │ Cosine sim ──► semantic   │          │
+│  │ vs VFM features        │  │ logits (zero-shot)        │          │
+│  │ + Depth loss (SILog)   │  │      │                    │          │
+│  └───────────────────────┘  │      ▼                    │          │
+│                              │ Voxelize ──► Occ Grid     │          │
+│                              └──────────────────────────┘          │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 **Input Processing:**
 - Multi-view images processed through pre-trained VFMs (CLIP, DINO variants, Metric3D V2)
 - Extraction of multi-scale 2D features and dense depth maps

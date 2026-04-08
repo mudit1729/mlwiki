@@ -34,6 +34,44 @@ This paper is historically significant as the canonical modern reference for cam
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  DAVE-2 / NVIDIA E2E Architecture                │
+│                                                                 │
+│  ┌───────────────────────────────────────┐                      │
+│  │  3 Cameras: Left / Center / Right     │                      │
+│  │  (side cameras get adjusted steering  │                      │
+│  │   labels for recovery training)       │                      │
+│  └───────────────────┬───────────────────┘                      │
+│                      ▼                                          │
+│  ┌───────────────────────────────────────┐                      │
+│  │  Input: 66 x 200 x 3 (YUV)           │                      │
+│  └───────────────────┬───────────────────┘                      │
+│                      ▼                                          │
+│  ┌───────────────────────────────────────┐                      │
+│  │  Normalization Layer                   │                      │
+│  ├───────────────────────────────────────┤                      │
+│  │  Conv1: 24 filters, 5x5, stride 2    │                      │
+│  │  Conv2: 36 filters, 5x5, stride 2    │                      │
+│  │  Conv3: 48 filters, 5x5, stride 2    │                      │
+│  │  Conv4: 64 filters, 3x3, stride 1    │                      │
+│  │  Conv5: 64 filters, 3x3, stride 1    │                      │
+│  ├───────────────────────────────────────┤                      │
+│  │  Flatten                              │                      │
+│  ├───────────────────────────────────────┤                      │
+│  │  FC1: 1164 neurons                    │                      │
+│  │  FC2: 100 neurons                     │                      │
+│  │  FC3: 50 neurons                      │                      │
+│  │  FC4: 10 neurons                      │                      │
+│  ├───────────────────────────────────────┤                      │
+│  │  Output: 1 (inverse turning radius)   │                      │
+│  └───────────────────────────────────────┘                      │
+│                                                                 │
+│  Loss: MSE(predicted steering, actual steering)                 │
+│  Inference: ~30 FPS on NVIDIA Drive PX                          │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ![The 9-layer CNN architecture from pixel inputs (66x200) through five convolutional layers and three fully connected layers to steering output](https://paper-assets.alphaxiv.org/figures/1604.07316/img-3.jpeg)
 
 ![Training pipeline: multi-camera data augmentation through shifts, rotations, and corresponding steering command adjustments](https://paper-assets.alphaxiv.org/figures/1604.07316/img-1.jpeg)

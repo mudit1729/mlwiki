@@ -29,6 +29,45 @@ LLaVA achieves an 85.1% relative score compared to GPT-4 on a synthetic multimod
 - **LLaVA-Bench evaluation**: Introduces a GPT-4-based evaluation protocol for open-ended visual instruction-following, measuring relative quality against GPT-4's own responses
 - **ScienceQA state-of-the-art**: Achieves 92.53% on ScienceQA through a late-fusion ensembling strategy with GPT-4, demonstrating complementary strengths between visual grounding and textual reasoning
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                   LLaVA Architecture                      │
+│                                                           │
+│  Image                    User Instruction                │
+│    │                           │                         │
+│    ▼                           │                         │
+│  ┌──────────────┐              │                          │
+│  │ CLIP ViT-L/14│ (frozen)     │                          │
+│  │  224 x 224   │              │                          │
+│  └──────┬───────┘              │                          │
+│         │ Z_v (patch tokens)   │                          │
+│         ▼                      │                          │
+│  ┌──────────────┐              │                          │
+│  │Linear Project.│  W          │                          │
+│  │ H_v = W·Z_v  │              │                          │
+│  └──────┬───────┘              │                          │
+│         │ Visual tokens        │ Text tokens              │
+│         │ (LLM dim)            │                          │
+│         └─────────┬────────────┘                          │
+│                   │  Interleaved sequence:                 │
+│                   │  [sys] [H_v] [instruction] [response] │
+│                   ▼                                       │
+│  ┌────────────────────────────────┐                       │
+│  │    Vicuna (LLaMA fine-tuned)   │                      │
+│  │    Autoregressive generation   │                      │
+│  │    Loss on response tokens only│                      │
+│  └────────────┬───────────────────┘                       │
+│               ▼                                          │
+│         Generated Response                                │
+│                                                           │
+│  Training:                                                │
+│  Stage 1: Freeze ViT + LLM, train W only (595K CC3M)     │
+│  Stage 2: Freeze ViT, fine-tune LLM + W (158K instruct)  │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![Example demonstrating LLaVA's ability to understand complex visual scenes](https://paper-assets.alphaxiv.org/figures/2304.08485v2/car_bbox.jpg)

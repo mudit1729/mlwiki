@@ -5,7 +5,7 @@ status: active
 type: paper
 year: "2023"
 venue: "CVPR 2023"
-citations: 0
+citations: 180
 arxiv_id: "2305.06242"
 ---
 
@@ -30,6 +30,48 @@ The framework achieved state-of-the-art results on the CARLA Town05 Long benchma
 - **Scalability evidence**: Clear empirical demonstration that stacking decoder layers monotonically improves driving performance, establishing decoder depth as a viable scaling axis
 
 ## Architecture / Method
+
+```
+            ThinkTwice: Cascaded Decoder for E2E Driving
+
+  Multi-Camera + LiDAR
+        │
+        ▼
+  ┌──────────────────┐
+  │   BEV Encoder     │  (from TransFuser / LAV)
+  └────────┬─────────┘
+           │
+           ▼  BEV Features
+  ┌──────────────────┐
+  │ Coarse Prediction │ ──► Waypoints_0 (initial rough trajectory)
+  └────────┬─────────┘
+           │
+   ┌───────▼────────────────────────────────────────┐
+   │              Decoder Layer (x5)                  │
+   │                                                  │
+   │  Waypoints_i ──► ┌─────────────┐                │
+   │                  │ Look Module  │ Sample BEV     │
+   │                  │ (bilinear    │ features along │
+   │                  │  interp on   │ trajectory     │
+   │                  │  BEV)        │                │
+   │                  └──────┬──────┘                │
+   │                         │                        │
+   │  Waypoints_i ──► ┌──────▼──────┐                │
+   │                  │ Prediction   │ Anticipate     │
+   │                  │ Module       │ future scene   │
+   │                  │ (Spatial-GRU)│ evolution      │
+   │                  └──────┬──────┘                │
+   │                         │                        │
+   │                  ┌──────▼──────┐                │
+   │                  │  Refined     │                │
+   │                  │  Prediction  │ ──► Waypoints_{i+1}
+   │                  └─────────────┘                │
+   │   Dense supervision at each layer (L1/L2 + distill) │
+   └─────────────────────────────────────────────────┘
+           │
+           ▼
+     Final Trajectory (Waypoints_5)
+```
 
 ![Framework overview showing the cascaded decoder with Look and Prediction modules](https://paper-assets.alphaxiv.org/figures/2305.06242v1/img-1.jpeg)
 

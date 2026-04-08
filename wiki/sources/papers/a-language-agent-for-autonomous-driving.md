@@ -38,6 +38,35 @@ Agent-Driver achieves strong results on both open-loop and closed-loop benchmark
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                     Agent-Driver Architecture                    │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌──────────────────┐   ┌──────────────────────────────────────┐│
+│  │   Tool Library    │   │         Cognitive Memory              ││
+│  │  (20+ functions)  │   │  ┌────────────┐ ┌────────────────┐  ││
+│  │  get_leading_obj()│   │  │ Commonsense │ │  Experiential   │  ││
+│  │  get_pred_trajs() │   │  │ (rules,     │ │  (past driving  │  ││
+│  │  get_lane_info()  │   │  │  safety)    │ │   scenarios)    │  ││
+│  │  get_traffic()    │   │  └─────┬──────┘ └───────┬────────┘  ││
+│  └────────┬─────────┘   │        └────┬────────────┘           ││
+│           │              │     Vector Search + LLM Re-rank      ││
+│           │              └──────────────┬───────────────────────┘│
+│           │                             │                        │
+│           ▼                             ▼                        │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │                  LLM Reasoning Engine                     │   │
+│  │  ┌──────────┐ ┌──────────┐ ┌───────────┐ ┌───────────┐  │   │
+│  │  │1. Task    │ │2. Motion  │ │3. Self-   │ │4. Correct-│  │   │
+│  │  │  Planning │►│  Planning │►│  Reflect  │►│  ion      │  │   │
+│  │  └──────────┘ └──────────┘ └───────────┘ └─────┬─────┘  │   │
+│  └─────────────────────────────────────────────────┼────────┘   │
+│                                                    ▼            │
+│                                          Trajectory Waypoints   │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 ![Agent-Driver architecture: comparison between conventional pipeline and LLM-based cognitive agent approach with tool library, cognitive memory, and reasoning engine](https://paper-assets.alphaxiv.org/figures/2311.10813v4/x1.png)
 
 Agent-Driver's architecture centers on three interconnected components that together enable the LLM to function as a cognitive driving agent.

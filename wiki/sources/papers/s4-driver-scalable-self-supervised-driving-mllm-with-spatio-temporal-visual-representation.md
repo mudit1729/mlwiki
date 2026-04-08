@@ -39,6 +39,51 @@ S4-Driver represents a paradigm shift toward annotation-free autonomous driving 
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     S4-Driver Pipeline                      │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌────────────┐  ┌────────────┐  ┌────────────────────┐    │
+│  │ Multi-View  │  │ Historical  │  │ Behavior Command   │   │
+│  │ Cameras     │  │ Ego States  │  │ (meta-decision)    │   │
+│  └─────┬──────┘  └─────┬──────┘  └─────────┬──────────┘   │
+│        │               │                    │              │
+│        ▼               │                    │              │
+│  ┌───────────────┐     │                    │              │
+│  │ PaLI3-5B      │     │                    │              │
+│  │ Vision Encoder │     │                    │              │
+│  └─────┬─────────┘     │                    │              │
+│        │               │                    │              │
+│        ▼               │                    │              │
+│  ┌────────────────────────────────────┐     │              │
+│  │  3D Spatio-Temporal Visual Module  │     │              │
+│  │  ┌──────────────────────────────┐  │     │              │
+│  │  │ Dense Volume Projection      │  │     │              │
+│  │  │         ▼                    │  │     │              │
+│  │  │ Sparse Volume Representation │  │     │              │
+│  │  │         ▼                    │  │     │              │
+│  │  │ Local Feature Aggregation    │  │     │              │
+│  │  │   (3D position bias)         │  │     │              │
+│  │  │         ▼                    │  │     │              │
+│  │  │ Multi-Frame Temporal Fusion  │  │     │              │
+│  │  └──────────────────────────────┘  │     │              │
+│  └──────────────┬─────────────────────┘     │              │
+│                 │                            │              │
+│                 ▼                            ▼              │
+│  ┌──────────────────────────────────────────────────────┐  │
+│  │            PaLI3-5B Language Decoder                  │  │
+│  │   Coarse: Meta-decision ("accelerating forward")     │  │
+│  │   Fine:   Trajectory Waypoints (K=16 decoded)        │  │
+│  └──────────────────────┬───────────────────────────────┘  │
+│                         ▼                                  │
+│               ┌──────────────────┐                         │
+│               │ Averaged Planned │                         │
+│               │    Trajectory    │                         │
+│               └──────────────────┘                         │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ![S4-Driver architecture overview](https://paper-assets.alphaxiv.org/figures/2505.24139v2/F.png)
 
 The architecture processes multi-view camera images, historical ego-vehicle states, and behavior commands through PaLI3-5B as a unified text interface. The key innovation is the 3D Spatio-Temporal Visual Representation module:

@@ -37,6 +37,37 @@ ToT dramatically improves performance on tasks requiring non-trivial planning an
 - **Massive gains on hard reasoning tasks:** Achieves 74% on Game of 24 (vs. 4% CoT), 7.56 coherence on creative writing (vs. 6.93 CoT), and 60% word-level accuracy on mini crosswords with DFS.
 - **Modular, training-free framework:** All components (thought decomposition, generation, evaluation, search) are modular and require only prompting -- no fine-tuning or gradient updates needed.
 
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│              Tree of Thoughts (ToT)                  │
+│                                                      │
+│  Problem x ──► [Root Node]                           │
+│                    │                                 │
+│         ┌─────────┼─────────┐     Thought            │
+│         ▼         ▼         ▼     Generation         │
+│      [s1a]     [s1b]     [s1c]    (LM proposes k)    │
+│      ✓ 0.8     ✓ 0.6     ✗ 0.1   State Evaluation   │
+│      │  │         │               (LM scores)        │
+│    ┌─┘  └──┐   ┌──┘                                  │
+│    ▼       ▼   ▼                                     │
+│  [s2a]  [s2b] [s2c]    ◄── Prune low-value states    │
+│  ✓ 0.9  ✗ 0.2 ✓ 0.7                                 │
+│    │              │                                  │
+│    ▼              ▼                                  │
+│  [s3a]         [s3b]    ◄── Continue best branches   │
+│  ★ SOLUTION                                          │
+│                                                      │
+│  Search: BFS (bounded breadth b)                     │
+│     or   DFS (with backtracking on low value)        │
+│                                                      │
+│  IO:  x ──────────────────────► y  (single pass)     │
+│  CoT: x ── z1 ── z2 ── z3 ───► y  (single chain)    │
+│  ToT: x ── tree of z's ──────► y  (search)           │
+└─────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![ToT framework overview](https://paper-assets.alphaxiv.org/figures/2305.10601v2/x1.png)

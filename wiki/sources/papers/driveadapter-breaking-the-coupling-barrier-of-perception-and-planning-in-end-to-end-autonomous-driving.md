@@ -5,7 +5,7 @@ status: active
 type: paper
 year: "2023"
 venue: "ICCV 2023"
-citations: 0 <!-- TODO: fetch citation count -->
+citations: ~120
 arxiv_id: "2308.00398"
 ---
 
@@ -30,6 +30,42 @@ DriveAdapter achieves state-of-the-art results on the CARLA closed-loop benchmar
 - **State-of-the-art CARLA performance**: Achieves top driving scores on Town05 Long and Longest6 benchmarks, surpassing TCP, InterFuser, and TransFuser by significant margins
 
 ## Architecture / Method
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                       DriveAdapter                           │
+│                                                              │
+│  Camera/LiDAR  ┌─────────────────────────┐                   │
+│  Inputs ──────►│  Perception Encoder     │                   │
+│                │  (TransFuser / ResNet / │                   │
+│                │   BEVFormer -- any)     │  Trainable        │
+│                └───────────┬─────────────┘                   │
+│                            │ Sensor features z_s             │
+│                            ▼                                 │
+│  Nav Command  ┌─────────────────────────────┐                │
+│  (left/right/ │      Adapter Module         │                │
+│   straight)   │  ┌───────────────────────┐  │                │
+│  ────────────►│  │  Cross-Attention      │  │  Trainable     │
+│    (FiLM)     │  │  Learnable queries    │  │                │
+│               │  │  attend to z_s        │  │                │
+│               │  │  + action conditioning│  │                │
+│               │  └───────────┬───────────┘  │                │
+│               │              │ Adapted feat. │                │
+│               └──────────────┼──────────────┘                │
+│                              │ (matches privileged           │
+│                              │  feature space)               │
+│                              ▼                               │
+│               ┌─────────────────────────────┐                │
+│               │    Frozen Privileged Planner │                │
+│               │  (pre-trained on GT BEV)    │  Frozen        │
+│               │  Roach / TCP-teacher        │                │
+│               └──────────────┬──────────────┘                │
+│                              ▼                               │
+│                      Waypoint Trajectory                     │
+└──────────────────────────────────────────────────────────────┘
+
+Training: L2(predicted waypoints, expert waypoints) + aux perception losses
+```
 
 DriveAdapter's architecture consists of three components:
 

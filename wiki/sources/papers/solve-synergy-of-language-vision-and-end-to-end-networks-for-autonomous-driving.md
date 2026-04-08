@@ -34,6 +34,39 @@ Rather than using the VLM as a direct planner (which suffers from action space m
 
 ## Architecture / Method
 
+```
+  ┌──────────────────────────────────────────────────────────────┐
+  │  Multi-Camera Images                                         │
+  └───────────┬──────────────────────────────────┬───────────────┘
+              │                                  │
+              ▼                                  ▼
+  ┌───────────────────────┐          ┌───────────────────────────┐
+  │  VLM Reasoning Branch │          │  E2E Planning Network     │
+  │                       │          │                           │
+  │  Prompt ──► VLM       │          │  Image Backbone           │
+  │             │         │          │       │                   │
+  │  Chain-of-Thought:    │          │       ▼                   │
+  │  1. Scene Description │          │  BEV Encoder              │
+  │  2. Critical Objects  │          │       │                   │
+  │  3. Intention Predict │          │       ▼                   │
+  │  4. Driving Strategy  │          │  Planning Decoder         │
+  │  5. Traj. Guidance    │          │       ▲                   │
+  │         │             │          │       │ cross-attention   │
+  └─────────┼─────────────┘          └───────┼───────────────────┘
+            │                                │
+            │    ┌─────────────────────┐      │
+            └───►│ Sequential Q-Former │──────┘
+                 │  (learnable queries │
+                 │   cross-attend to   │
+                 │   CoT hidden states)│
+                 └─────────────────────┘
+                            │
+                            ▼
+                 ┌─────────────────────┐
+                 │  Trajectory Waypoints│
+                 └─────────────────────┘
+```
+
 SOLVE has three main components:
 
 1. **VLM Reasoning Branch**: A vision-language model (e.g., based on LLaVA or InternVL) takes multi-camera images and a structured prompt as input. The prompt elicits Chain-of-Thought reasoning in a specific sequence:

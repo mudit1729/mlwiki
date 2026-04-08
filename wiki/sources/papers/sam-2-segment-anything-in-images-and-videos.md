@@ -4,7 +4,7 @@ tags: [computer-vision, segmentation, foundation-model, transformer, video-under
 status: active
 type: paper
 year: "2024"
-venue: "arXiv"
+venue: "arXiv (ECCV 2024 submission)"
 citations: 3925
 arxiv_id: "2408.00714"
 ---
@@ -30,6 +30,54 @@ Beyond the model itself, SAM 2 introduces the SA-V (Segment Anything Video) data
 - **Unified image-video model**: A single architecture that treats images as single-frame videos, achieving improved image segmentation over SAM while adding full video capabilities
 
 ## Architecture / Method
+
+```
+                    ┌──────────────────┐
+                    │  User Prompts    │
+                    │ (points/boxes/   │
+                    │  masks) @ any    │
+                    │  frame           │
+                    └────────┬─────────┘
+                             │
+┌────────────────────────────┼────────────────────────────┐
+│  SAM 2 Streaming Architecture                          │
+│                            │                            │
+│  ┌─────────────┐          │          ┌──────────────┐  │
+│  │ Video Frame  │          │          │ Memory Bank  │  │
+│  │  (current)   │          │          │ ┌──────────┐ │  │
+│  └──────┬──────┘          │          │ │Recent     │ │  │
+│         │                  │          │ │Frames     │ │  │
+│         ▼                  │          │ │(FIFO)     │ │  │
+│  ┌──────────────┐          │          │ ├──────────┤ │  │
+│  │ Hiera Image  │          │          │ │Prompted  │ │  │
+│  │ Encoder      │          │          │ │Frames    │ │  │
+│  │ (6x faster   │          │          │ ├──────────┤ │  │
+│  │  than ViT-H) │          │          │ │Object    │ │  │
+│  └──────┬──────┘          │          │ │Pointers  │ │  │
+│         │                  │          │ └─────┬────┘ │  │
+│         ▼                  ▼          └───────┼──────┘  │
+│  ┌────────────────────────────────────────────┘         │
+│  │  Memory Attention                                    │
+│  │  (cross-attn to memory bank)                         │
+│  └──────────────┬──────────────────────────────┐        │
+│                 │                               │        │
+│                 ▼                               │        │
+│  ┌──────────────────────┐    ┌─────────────┐   │        │
+│  │ Prompt Encoder       │───►│ Mask Decoder │   │        │
+│  └──────────────────────┘    │ + Occlusion  │   │        │
+│                              │   Head       │   │        │
+│                              └──────┬───────┘   │        │
+│                                     │           │        │
+│                          ┌──────────┴────┐      │        │
+│                          ▼               ▼      │        │
+│                   ┌───────────┐   ┌──────────┐  │        │
+│                   │ Predicted │   │ Memory   │──┘        │
+│                   │ Masks     │   │ Encoder  │           │
+│                   └───────────┘   │ (feedback│           │
+│                                   │  to bank)│           │
+│                                   └──────────┘           │
+└──────────────────────────────────────────────────────────┘
+```
 
 ![SAM 2 architecture overview](https://paper-assets.alphaxiv.org/figures/2408.00714v2/x1.png)
 

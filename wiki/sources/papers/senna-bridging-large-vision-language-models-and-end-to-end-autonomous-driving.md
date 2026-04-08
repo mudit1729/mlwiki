@@ -42,6 +42,43 @@ The decoupled LVLM+E2E design pattern achieves a 27% planning error reduction an
 
 ![Senna system architecture: Senna-VLM processes multi-view images to generate meta-actions, feeding into Senna-E2E for trajectory prediction](https://paper-assets.alphaxiv.org/figures/2410.22313/x2.png)
 
+```
+  ┌─────────────────────────────────────────────────────────┐
+  │                    Senna-VLM                            │
+  │  ┌──────────────┐   ┌───────────────┐   ┌───────────┐  │
+  │  │ Multi-View   │──►│ Vision Encoder │──►│ Driving   │  │
+  │  │ Cameras (6x) │   │ + Adapter      │   │ Vision    │  │
+  │  └──────────────┘   └───────────────┘   │ Adapter   │  │
+  │                                          └─────┬─────┘  │
+  │  ┌──────────────┐   ┌───────────────┐         │        │
+  │  │ Surround-View│──►│ Text Encoder  │────┐    │        │
+  │  │ Prompts      │   └───────────────┘    ▼    ▼        │
+  │  └──────────────┘              ┌──────────────────┐    │
+  │                                │   LLM Backbone    │    │
+  │                                └────────┬─────────┘    │
+  └─────────────────────────────────────────┼───────────────┘
+                                            │
+                          Meta-Action Text  │  "Decelerate, Straight"
+                          (Speed + Path)    ▼
+  ┌─────────────────────────────────────────────────────────┐
+  │                    Senna-E2E                            │
+  │  ┌────────────┐  ┌────────────┐  ┌──────────────────┐  │
+  │  │ BEV Feature│  │ Multi-View │  │ Text Encoder     │  │
+  │  │ Transform  │  │ Cam Features│  │ (Meta-Action)    │  │
+  │  └─────┬──────┘  └─────┬──────┘  └────────┬─────────┘  │
+  │        └───────────┬───┘───────────────────┘            │
+  │                    ▼                                    │
+  │           ┌─────────────────┐                           │
+  │           │  Cross-Attention │                          │
+  │           │  Fusion          │                          │
+  │           └────────┬────────┘                           │
+  │                    ▼                                    │
+  │           ┌─────────────────┐                           │
+  │           │ Trajectory Head  │──► Future Waypoints      │
+  │           └─────────────────┘                           │
+  └─────────────────────────────────────────────────────────┘
+```
+
 Senna consists of two core components: **Senna-VLM** (high-level planning in natural language) and **Senna-E2E** (precise trajectory prediction using meta-actions).
 
 Senna-VLM predicts meta-actions combining speed decisions (Keep, Accelerate, Decelerate, Stop) with path decisions (Straight, Right Turn, Left Turn) in natural language. These are encoded into high-dimensional features and fed into Senna-E2E. Meta-action distribution shows balance across categories: "Keep, Straight" (15.18%), "Keep, Right" (15.95%), "Decelerate, Straight" (15.36%), with less frequent actions like "Accelerate, Right" (3.54%).

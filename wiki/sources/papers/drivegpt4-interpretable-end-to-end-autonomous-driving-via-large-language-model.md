@@ -43,6 +43,44 @@ The work's open-loop-only evaluation was an important limitation that motivated 
 
 ![DriveGPT4 architecture: video frames through visual encoding, projection, and LLM to produce text responses and control signals](https://paper-assets.alphaxiv.org/figures/2310.01412v5/x2.png)
 
+```
+┌───────────────────────────────────────────────────────────┐
+│                  DriveGPT4 Architecture                    │
+│                                                            │
+│  ┌─────────────┐                                          │
+│  │ Video Frames │                                          │
+│  │  (BDD-X)     │                                          │
+│  └──────┬───────┘                                          │
+│         ▼                                                  │
+│  ┌─────────────────┐                                      │
+│  │ CLIP ViT-L/14   │  (Frozen)                            │
+│  │ Vision Encoder   │                                      │
+│  └──────┬──────────┘                                      │
+│         ▼                                                  │
+│  ┌─────────────────┐                                      │
+│  │ Linear Projection│  Visual tokens ──► LLM embedding    │
+│  └──────┬──────────┘                                      │
+│         ▼                                                  │
+│  ┌─────────────────────────────────────────────┐          │
+│  │           LLaMA-based LLM + LoRA             │          │
+│  │  ┌───────────────────────────────────────┐   │          │
+│  │  │ Input: [visual tokens] + [instruction]│   │          │
+│  │  └───────────────┬───────────────────────┘   │          │
+│  │                  ▼                           │          │
+│  │  ┌──────────────────────────────────────┐    │          │
+│  │  │ Multi-Task Output Heads              │    │          │
+│  │  │  ├─► Control: speed, turning angle   │    │          │
+│  │  │  ├─► Action description (text)       │    │          │
+│  │  │  ├─► Action justification (text)     │    │          │
+│  │  │  └─► Scene narration (text)          │    │          │
+│  │  └──────────────────────────────────────┘    │          │
+│  └──────────────────────────────────────────────┘          │
+└───────────────────────────────────────────────────────────┘
+
+Training Data Pipeline:
+  BDD-X annotations ──► ChatGPT expansion ──► Diverse QA pairs
+```
+
 DriveGPT4 follows the LLaVA architecture pattern. A pre-trained vision encoder (CLIP ViT-L/14) processes each video frame into visual tokens. These tokens are projected through a learned linear layer into the embedding space of a large language model (LLaMA-based). The LLM is fine-tuned with LoRA (Low-Rank Adaptation) while the vision encoder remains frozen, keeping training costs manageable.
 
 The training data is constructed by taking the BDD-X dataset (which contains driving videos with human-written action descriptions and justifications) and using ChatGPT to expand each annotation into multiple instruction-following QA pairs. For example, a single clip might generate questions about what the car is doing, why it is doing it, what objects are visible, and what the driver should do next. This produces a diverse instruction-tuning dataset without additional human annotation.

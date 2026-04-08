@@ -29,6 +29,48 @@ VoxPoser achieves an 88.0% average success rate on everyday manipulation tasks i
 - **Efficient few-shot dynamics learning**: Demonstrates that zero-shot VoxPoser trajectories serve as intelligent exploration priors, enabling rapid online learning of contact-rich dynamics in under 3 minutes
 - **Composability of spatial objectives**: Shows that complex manipulation behaviors emerge from composing simple affordance and constraint primitives (e.g., "move to X while avoiding Y while rotating Z"), with the LLM handling the compositional reasoning
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                  VoxPoser Pipeline                         │
+│                                                           │
+│  "Open the top drawer"                                    │
+│       │                                                  │
+│       ▼                                                  │
+│  ┌──────────────┐                                         │
+│  │   LLM (GPT-4)│  Generates Python code                  │
+│  │   Code Gen   │  specifying spatial objectives           │
+│  └──────┬───────┘                                         │
+│         │  Python code                                    │
+│         ▼                                                │
+│  ┌──────────────┐    ┌──────────────┐                     │
+│  │  OWL-ViT     │    │ Depth Camera │                     │
+│  │  (detect obj)│    │ (3D localize)│                     │
+│  └──────┬───────┘    └──────┬───────┘                     │
+│         └────────┬──────────┘                             │
+│                  ▼                                        │
+│  ┌────────────────────────────────┐                       │
+│  │  3D Voxel Grid (100x100x100)  │                       │
+│  │  ┌────────────┐ ┌───────────┐ │                       │
+│  │  │ Affordance │ │ Constraint│ │                       │
+│  │  │ Map (go to)│+│ Map(avoid)│ │                       │
+│  │  └────────────┘ └───────────┘ │                       │
+│  │  + Rotation map + Gripper map │                       │
+│  └──────────────┬─────────────────┘                       │
+│                 │  Composed value landscape                │
+│                 ▼                                         │
+│  ┌────────────────────────────────┐                       │
+│  │  MPPI Controller (5 Hz)        │                      │
+│  │  Sample trajectories           │                      │
+│  │  Score against value maps      │                      │
+│  │  Execute best, replan          │                      │
+│  └──────────────┬─────────────────┘                       │
+│                 ▼                                         │
+│         End-effector motion (closed-loop)                  │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![VoxPoser system overview showing LLM code generation, 3D value map composition, and MPC-based execution](https://paper-assets.alphaxiv.org/figures/2307.05973v2/img-0.jpeg)

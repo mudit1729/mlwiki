@@ -32,6 +32,49 @@ SparseOcc achieves 34.0 RayIoU at 17.3 FPS with 7 history frames -- significantl
 
 ![Architecture overview](https://paper-assets.alphaxiv.org/figures/2312.17118v5/x1.png)
 
+```
+  Multi-Camera Images (6x)
+         │
+         ▼
+  ┌──────────────────┐
+  │  2D Backbone      │
+  │  (Multi-View)     │
+  └────────┬─────────┘
+           │
+           ▼
+  ┌───────────────────────────────────────────────────┐
+  │  Stage 1: Sparse Voxel Decoder                    │
+  │                                                   │
+  │  Dense Voxel Candidates                           │
+  │       │                                           │
+  │       ▼  Layer 1: predict occupancy, prune low    │
+  │  ┌─────────┐                                      │
+  │  │ Prune   │──► ~50% remain                       │
+  │  └────┬────┘                                      │
+  │       ▼  Layer 2: predict occupancy, prune low    │
+  │  ┌─────────┐                                      │
+  │  │ Prune   │──► ~20% remain                       │
+  │  └────┬────┘                                      │
+  │       ▼  Layer N: final pruning                   │
+  │  ┌─────────┐                                      │
+  │  │ Prune   │──► ~5% remain (32K-48K voxels)       │
+  │  └────┬────┘                                      │
+  └───────┼───────────────────────────────────────────┘
+          │ sparse voxel features
+          ▼
+  ┌───────────────────────────────────────────────────┐
+  │  Stage 2: Mask Transformer Decoder                │
+  │                                                   │
+  │  Learnable queries ──► mask-guided sparse sampling│
+  │       │                   (attend only to voxels  │
+  │       ▼                    within predicted mask)  │
+  │  ┌──────────────────┐                             │
+  │  │ Semantic Classes  │                            │
+  │  │ + Instance Masks  │                            │
+  │  └──────────────────┘                             │
+  └───────────────────────────────────────────────────┘
+```
+
 SparseOcc consists of two main stages:
 
 **Stage 1: Sparse Voxel Decoder.** Starting from multi-camera image features, the decoder reconstructs sparse 3D geometry through a coarse-to-fine pruning strategy. An initial dense set of voxel candidates is progressively pruned across multiple decoder layers, with each layer predicting occupancy scores and discarding low-confidence voxels. After pruning, only ~5% of the original voxels (typically 32,000-48,000 out of the full volume) are retained, dramatically reducing computation in subsequent stages. The retained voxels represent the occupied surfaces and objects in the scene.

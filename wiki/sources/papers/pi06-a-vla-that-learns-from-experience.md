@@ -35,6 +35,40 @@ RECAP more than doubled successful task completions per hour on difficult real-w
 
 ## Architecture / Method
 
+```
+              RECAP: Iterative Self-Improvement Loop
+              ───────────────────────────────────────
+
+  ┌──────────────────────┐
+  │  VLA Policy (pi0)    │◄──────────────────────────┐
+  │  (flow matching)     │                           │
+  └──────────┬───────────┘                           │
+             │ deploy                                │
+             ▼                                       │
+  ┌──────────────────────┐                           │
+  │  Real-World Rollouts │                           │
+  │  ┌────────────────┐  │                           │
+  │  │ Successes      │  │                           │
+  │  │ Failures       │  │                           │
+  │  │ Human Corrects │  │                           │
+  │  └────────┬───────┘  │                           │
+  └───────────┼──────────┘                           │
+              │ + reward labels                      │
+              ▼                                      │
+  ┌──────────────────────┐                           │
+  │  Value Function      │                           │
+  │  Training            │                           │
+  │  V(s) ──► A(s,a)     │  advantage estimates      │
+  └──────────┬───────────┘                           │
+             │                                       │
+             ▼                                       │
+  ┌──────────────────────┐      updated policy       │
+  │  Advantage-Cond.     ├───────────────────────────┘
+  │  Policy Fine-tuning  │
+  │  (offline RL)        │
+  └──────────────────────┘
+```
+
 ![pi0.6 RECAP training loop](https://paper-assets.alphaxiv.org/figures/2511.14759v2/img-1.jpeg)
 
 RECAP operates through iterative cycles:

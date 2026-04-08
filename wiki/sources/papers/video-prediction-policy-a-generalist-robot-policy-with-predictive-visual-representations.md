@@ -32,6 +32,45 @@ This reinterpretation of video diffusion models as predictive encoders (rather t
 - **Generalist robot policy**: A single model handles multiple robot embodiments (Panda arm, XHand dexterous hand) and diverse manipulation tasks with language conditioning
 - **Strong empirical results**: 18.6% improvement on CALVIN ABC-D, 10.8% absolute improvement on MetaWorld, 31.6% real-world dexterous improvement
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│              Video Prediction Policy (VPP)                 │
+│                                                           │
+│  Stage 1: Fine-tune Video Diffusion Model                 │
+│  ──────────────────────────────────────                   │
+│  Robot demos + Internet manipulation videos               │
+│       │                                                  │
+│       ▼                                                  │
+│  ┌────────────────────────────────┐                       │
+│  │  Video Diffusion Model (SVD)   │                      │
+│  │  (pre-trained, then fine-tuned)│                      │
+│  └────────────────────────────────┘                       │
+│                                                           │
+│  Stage 2: Extract Representations + Action Head           │
+│  ──────────────────────────────────────────               │
+│  Current Observation   Language Instruction                │
+│       │                      │                           │
+│       ▼                      │                           │
+│  ┌────────────────────────┐  │                            │
+│  │ Fine-tuned VDM         │  │                            │
+│  │ (single forward pass)  │◄─┘                            │
+│  │                        │                              │
+│  │ Internal features ─────┼──► Predictive representations │
+│  │ (multi-layer, multi-t) │    (encode future dynamics)   │
+│  └────────────────────────┘                               │
+│              │                                            │
+│              ▼                                            │
+│  ┌────────────────────────┐                               │
+│  │  Inverse Dynamics Head  │  Lightweight action predictor │
+│  │  (trained on demos)     │                              │
+│  └───────────┬────────────┘                               │
+│              ▼                                            │
+│         Robot Actions (arm joints + gripper)               │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![VPP representation approach comparison](https://paper-assets.alphaxiv.org/figures/2412.14803v2/x1.png)

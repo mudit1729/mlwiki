@@ -27,11 +27,40 @@ The paper presents two key components: a "front-end" module that adapts classifi
 ## Key Contributions
 
 - **Dilated convolution operator**: A 3x3 kernel with dilation rate d has an effective receptive field of (2d+1)x(2d+1) while using only 9 parameters, achieving exponential receptive field growth through stacking
-- **Context module**: Stacks dilated convolutions with rates 1, 2, 4, 8, 16 in parallel branches, then fuses via concatenation and 1x1 convolution, capturing features from fine to coarse scales simultaneously
+- **Context module**: Cascades dilated convolutions with rates 1, 1, 2, 4, 8, 16, 1, 1 sequentially, each 3x3 with ReLU and batch normalization, aggregating multi-scale context through exponentially growing receptive fields
 - **Front-end adaptation**: Converts VGG-16 classification backbone to 8x-stride dense feature extractor by replacing pooling/striding in later layers with dilated convolutions
 - **Resolution-preserving design**: Achieves 74.7% mIoU on Pascal VOC 2012 without CRF post-processing, demonstrating that maintaining resolution throughout the network eliminates the need for expensive graphical model refinement
 
 ## Architecture / Method
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        Input Image                              │
+└──────────────────────────┬──────────────────────────────────────┘
+                           │
+┌──────────────────────────▼──────────────────────────────────────┐
+│                  VGG-16 Front-End Module                        │
+│  ┌────────┐  ┌────────┐  ┌────────────────┐  ┌───────────────┐ │
+│  │conv1-3 │─►│pool1-3 │─►│ conv4 (dil=2)  │─►│conv5 (dil=4)  │ │
+│  │standard│  │standard│  │ (replaces pool4)│  │(replaces pool5)│ │
+│  └────────┘  └────────┘  └────────────────┘  └───────┬───────┘ │
+│                                    Output: stride-8 features    │
+└──────────────────────────────────────────────┬──────────────────┘
+                                               │
+┌──────────────────────────────────────────────▼──────────────────┐
+│                     Context Module                              │
+│  ┌─────────┐ ┌─────────┐ ┌─────────┐ ┌──────────┐ ┌─────────┐ │
+│  │ 3x3     │ │ 3x3     │ │ 3x3     │ │ 3x3      │ │ 3x3     │ │
+│  │ dil=1   │►│ dil=2   │►│ dil=4   │►│ dil=8    │►│ dil=16  │ │
+│  │ RF=3x3  │ │ RF=5x5  │ │ RF=9x9  │ │ RF=17x17 │ │ RF=33x33│ │
+│  └─────────┘ └─────────┘ └─────────┘ └──────────┘ └────┬────┘ │
+│                                          1x1 conv ◄─────┘      │
+└──────────────────────────────────────────────┬──────────────────┘
+                                               │
+┌──────────────────────────────────────────────▼──────────────────┐
+│               Per-Pixel Class Predictions (stride 8)            │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 The front-end module takes a VGG-16 network pretrained for classification and modifies its last two pooling and convolution blocks. Instead of downsampling by 2x in pool4 and pool5, these pooling layers are removed and subsequent convolutions are replaced with dilated convolutions at rates 2 and 4, respectively. This produces a feature map at 1/8 resolution (stride 8) instead of 1/32, preserving spatial detail.
 

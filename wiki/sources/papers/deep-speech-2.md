@@ -44,6 +44,52 @@ Deep Speech 2's significance extends beyond speech recognition. It established t
 
 ![Row convolution allowing unidirectional RNNs to look ahead at a fixed number of future frames](https://paper-assets.alphaxiv.org/figures/1512.02595/img-2.jpeg)
 
+```
+┌───────────────────────────────────┐
+│  Audio Waveform                   │
+└──────────────┬────────────────────┘
+               ▼
+┌───────────────────────────────────┐
+│  Log-Spectrogram / Log-Mel       │
+│  Filterbank Features             │
+└──────────────┬────────────────────┘
+               ▼
+┌───────────────────────────────────┐
+│  1-3 Convolutional Layers        │
+│  (time-frequency kernels)        │
+│  + Batch Normalization           │
+└──────────────┬────────────────────┘
+               ▼
+┌───────────────────────────────────┐
+│  5-7 Bidirectional RNN Layers    │
+│  (GRU or Simple RNN)             │
+│  + Batch Norm on non-recurrent   │
+│    connections                    │
+│                                  │
+│  ┌─────► ──► ──► ──► ──►─────┐  │
+│  │  Forward pass              │  │
+│  │                            │  │
+│  │  ◄── ◄── ◄── ◄── ◄──     │  │
+│  │  Backward pass             │  │
+│  └────────────────────────────┘  │
+└──────────────┬────────────────────┘
+               ▼
+┌───────────────────────────────────┐
+│  Fully Connected Layer           │
+│  + Softmax over characters       │
+│  (29 English / ~3500 Mandarin)   │
+└──────────────┬────────────────────┘
+               ▼
+┌───────────────────────────────────┐
+│  CTC Loss (training)             │
+│  Beam Search + LM (inference)    │
+└───────────────────────────────────┘
+
+Training: SortaGrad (short utterances first, epoch 1)
+          ──► Random order (remaining epochs)
+          Multi-GPU AllReduce (8-16 GPUs, ~7x speedup)
+```
+
 The Deep Speech 2 architecture processes log-spectrograms (or log-mel filterbank features) through a stack of convolutional layers (1-3 layers with large time-frequency kernels for initial feature extraction), followed by multiple bidirectional recurrent layers (5-7 GRU or simple RNN layers), and a final fully-connected softmax output layer over the character vocabulary.
 
 Batch normalization is applied to the input of each non-recurrent layer and to the input of the recurrent computation at each timestep (but not across the recurrent hidden-to-hidden connections, to preserve temporal information). The network is trained end-to-end with CTC loss, which sums over all possible alignments between the input audio frames and the output character sequence using dynamic programming.

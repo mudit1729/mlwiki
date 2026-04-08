@@ -42,6 +42,43 @@ From the same team as Senna, AlphaDrive represents the RL enhancement of the dec
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    AlphaDrive Training Pipeline                   │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │  Stage 1: Supervised Fine-Tuning (SFT)                  │    │
+│  │                                                          │    │
+│  │  Multi-Camera Images ──► VLM ──► CoT Reasoning          │    │
+│  │  + Expert Demos (GPT-4o)         + Trajectory Tokens     │    │
+│  │                                                          │    │
+│  │  Loss: Next-token prediction on reasoning + trajectory   │    │
+│  └────────────────────────────┬────────────────────────────┘    │
+│                               ▼                                  │
+│  ┌─────────────────────────────────────────────────────────┐    │
+│  │  Stage 2: RL with GRPO                                   │    │
+│  │                                                          │    │
+│  │  For each scenario, generate K candidates:               │    │
+│  │  ┌─────┐ ┌─────┐ ┌─────┐       ┌─────┐                │    │
+│  │  │ c_1 │ │ c_2 │ │ c_3 │ . . . │ c_K │                │    │
+│  │  └──┬──┘ └──┬──┘ └──┬──┘       └──┬──┘                │    │
+│  │     └───────┴───────┴─────┬───────┘                     │    │
+│  │                           ▼                              │    │
+│  │  ┌─────────────────────────────────────────────────┐    │    │
+│  │  │  4 Reward Functions:                             │    │    │
+│  │  │  R1: Planning Accuracy (L2 to expert)            │    │    │
+│  │  │  R2: Action-Weighted (safety-critical ops)       │    │    │
+│  │  │  R3: Planning Diversity (multiple strategies)    │    │    │
+│  │  │  R4: Format Reward (structured output)           │    │    │
+│  │  └──────────────────────┬──────────────────────────┘    │    │
+│  │                         ▼                                │    │
+│  │           Group Relative Policy Optimization             │    │
+│  │           (rank candidates, update policy)               │    │
+│  └─────────────────────────────────────────────────────────┘    │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 ![AlphaDrive two-stage training paradigm: supervised fine-tuning followed by reinforcement learning](https://paper-assets.alphaxiv.org/figures/2503.07608/x2.png)
 
 AlphaDrive follows a two-stage training pipeline. In Stage 1 (SFT), a VLM is fine-tuned on expert driving demonstrations to develop basic driving competence. The model learns to process multi-camera driving images, generate chain-of-thought reasoning about the scene, and predict trajectory waypoints. This stage uses standard supervised fine-tuning with next-token prediction loss on both reasoning text and trajectory tokens.

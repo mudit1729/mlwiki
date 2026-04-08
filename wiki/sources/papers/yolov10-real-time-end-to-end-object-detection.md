@@ -29,6 +29,51 @@ YOLOv10 establishes a new Pareto frontier on COCO. Across six model scales (N/S/
 - **Rank-guided block design**: analyzes intrinsic rank of feature maps at each stage and replaces redundant blocks with compact inverted blocks (CIB) where rank is low, reducing computation without accuracy loss
 - **Partial Self-Attention (PSA)**: applies multi-head self-attention to only a subset of channels (e.g., 1/4), concatenating attended and unattended features, to add global context at minimal cost
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                  YOLOv10 Architecture                      │
+│                                                           │
+│  Input Image                                              │
+│       │                                                  │
+│       ▼                                                  │
+│  ┌──────────────────────────────────┐                     │
+│  │  CSPDarknet Backbone             │                    │
+│  │  ┌───────────────────────────┐   │                    │
+│  │  │ Rank-guided block design: │   │                    │
+│  │  │ Low rank → CIB (compact)  │   │                    │
+│  │  │ High rank → standard      │   │                    │
+│  │  └───────────────────────────┘   │                    │
+│  │  + Large-kernel DWConv (7x7)     │  (L/X models)      │
+│  │  + Decoupled downsampling:       │                    │
+│  │    DWConv(s=2) → PWConv(1x1)     │                    │
+│  └──────────────┬───────────────────┘                     │
+│                 │                                         │
+│                 ▼                                         │
+│  ┌──────────────────────────────────┐                     │
+│  │  PAN Neck + SPPF                 │                    │
+│  │  ┌───────────────────────────┐   │                    │
+│  │  │  Partial Self-Attention   │   │                    │
+│  │  │  MHSA on 1/4 channels    │   │                    │
+│  │  │  concat with unattended   │   │                    │
+│  │  └───────────────────────────┘   │                    │
+│  └──────┬──────────────┬────────────┘                     │
+│         │              │                                 │
+│    ┌────▼────┐    ┌────▼────┐                             │
+│    │One-to-  │    │One-to-  │                             │
+│    │ Many    │    │  One    │                             │
+│    │ Head    │    │  Head   │  ◄── Hungarian matching      │
+│    │(TAL)    │    │(NMS-free│                             │
+│    └────┬────┘    └────┬────┘                             │
+│         │              │                                 │
+│    Train only     Inference                               │
+│    (dense grad)   (end-to-end)                            │
+│                                                           │
+│  Consistency loss aligns one-to-one with one-to-many      │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![Key architectural innovations: intrinsic rank analysis, Compact Inverted Block, and Partial Self-Attention module](https://paper-assets.alphaxiv.org/figures/2405.14458v2/x4.png)

@@ -36,6 +36,48 @@ The paper introduces a height-prioritized 2D Hilbert expansion -- a novel 3D-to-
 
 ## Architecture / Method
 
+```
+┌──────────────┐   ┌──────────────────┐
+│  LiDAR       │   │  Multi-Camera     │
+│  Voxelize +  │   │  ResNet + FPN +   │
+│  Sparse Conv │   │  View Transform   │
+└──────┬───────┘   └────────┬─────────┘
+       │                    │
+       └────────┬───────────┘
+                │ concat (3D features)
+                ▼
+┌───────────────────────────────────────────────┐
+│    Height-Prioritized 2D Hilbert Expansion     │
+│  3D voxels ──► collapse Z ──► 2D Hilbert      │
+│  curve ──► 1D sequence (preserves locality)    │
+└───────────────────┬───────────────────────────┘
+                    │
+       ┌────────────▼────────────┐
+       │  Hierarchical Mamba     │
+       │  ┌────────────────────┐ │
+       │  │ Mamba block (fine) │ │
+       │  │      ↓ downsample  │ │
+       │  │ Mamba block (mid)  │ │
+       │  │      ↓ downsample  │ │
+       │  │ Mamba block(coarse)│ │
+       │  │      ↓ upsample    │ │
+       │  │ + skip connections │ │
+       │  └────────────────────┘ │
+       └────────────┬────────────┘
+                    │
+       ┌────────────▼────────────┐
+       │  Local Context Processor │
+       │  Overlapping patches +   │
+       │  local Mamba + 3D conv   │
+       └────────────┬────────────┘
+                    │
+                    ▼
+       ┌─────────────────────────┐
+       │  Semantic Occupancy      │
+       │  Predictions             │
+       └─────────────────────────┘
+```
+
 ![OccMamba architecture overview](https://paper-assets.alphaxiv.org/figures/2408.09859v2/img-1.jpeg)
 
 ![Height-prioritized 2D Hilbert expansion](https://paper-assets.alphaxiv.org/figures/2408.09859v2/img-2.jpeg)

@@ -29,6 +29,36 @@ Using QLoRA, the authors fine-tuned over 1,000 models across 8 instruction-follo
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────┐
+│              QLoRA Forward Pass                       │
+│                                                      │
+│  Frozen Base Model (NF4 quantized, ~4 bits/param)    │
+│  ┌────────────────────────────────────────────┐      │
+│  │  W_frozen (NF4)                            │      │
+│  │     │                                      │      │
+│  │     ▼ dequantize on-the-fly to BF16        │      │
+│  │  W_deq (BF16)                              │      │
+│  │     │              ┌──────────────┐         │      │
+│  │     │              │ LoRA Adapter │         │      │
+│  │     │              │  B (d×r)     │         │      │
+│  │     │              │  × A (r×k)   │ BF16   │      │
+│  │     │              └──────┬───────┘         │      │
+│  │     └──────┬──────────────┘                 │      │
+│  │            ▼  h = W_deq·x + B·A·x          │      │
+│  └────────────┼───────────────────────────────┘      │
+│               │                                      │
+│  Applied to ALL linear layers (Q,K,V,O + FFN)        │
+│                                                      │
+│  Double Quantization:                                │
+│  W ──► NF4 (block=64) ──► quant constants ──► FP8   │
+│        4 bits/param         saves ~0.37 bits/param   │
+│                                                      │
+│  Paged Optimizers: GPU ◄──► CPU auto-paging          │
+│  (handles memory spikes from grad checkpointing)     │
+└──────────────────────────────────────────────────────┘
+```
+
 QLoRA's approach can be decomposed into three layers: quantization of the base model, low-rank adaptation for learning, and memory management for training stability.
 
 ### Quantization: NF4

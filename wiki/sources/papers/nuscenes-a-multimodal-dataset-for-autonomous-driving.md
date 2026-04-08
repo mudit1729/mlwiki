@@ -1,7 +1,7 @@
 ---
 title: nuScenes: A Multimodal Dataset for Autonomous Driving
 type: source-summary
-status: seed
+status: complete
 updated: 2026-04-05
 year: 2020
 venue: CVPR

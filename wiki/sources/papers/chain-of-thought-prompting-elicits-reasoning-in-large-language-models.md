@@ -4,7 +4,7 @@ type: source-summary
 status: complete
 updated: 2026-04-05
 year: 2022
-venue: NeurIPS 2022 / ICLR 2023 (Outstanding Paper)
+venue: NeurIPS 2022
 tags:
   - paper
   - ilya-30
@@ -48,6 +48,46 @@ CoT prompting became the foundation for subsequent techniques including self-con
 ![Standard prompting vs. chain-of-thought prompting comparison](https://paper-assets.alphaxiv.org/figures/2201.11903v6/img-0.jpeg)
 
 ![Chain-of-thought examples across arithmetic, commonsense, and symbolic reasoning](https://paper-assets.alphaxiv.org/figures/2201.11903v6/img-1.jpeg)
+
+```
+Standard Few-Shot Prompting:
+┌───────────────────────────────────────┐
+│ Prompt                                │
+│ ┌───────────────────────────────────┐ │
+│ │ Q: [example 1]  A: [answer 1]    │ │
+│ │ Q: [example 2]  A: [answer 2]    │ │
+│ │ ...                               │ │
+│ │ Q: [test question]                │ │
+│ └───────────────┬───────────────────┘ │
+└─────────────────┼─────────────────────┘
+                  ▼
+          ┌──────────────┐
+          │   LLM (100B+)│──► A: [final answer]
+          └──────────────┘
+
+Chain-of-Thought Prompting:
+┌───────────────────────────────────────────────────┐
+│ Prompt                                            │
+│ ┌───────────────────────────────────────────────┐ │
+│ │ Q: [example 1]                                │ │
+│ │ A: [step1] ─► [step2] ─► ... ─► [answer 1]   │ │
+│ │ Q: [example 2]                                │ │
+│ │ A: [step1] ─► [step2] ─► ... ─► [answer 2]   │ │
+│ │ ...                                           │ │
+│ │ Q: [test question]                            │ │
+│ └─────────────────────┬─────────────────────────┘ │
+└───────────────────────┼───────────────────────────┘
+                        ▼
+                ┌──────────────┐
+                │   LLM (100B+)│
+                └──────┬───────┘
+                       ▼
+          A: [step1] ─► [step2] ─► ... ─► [final answer]
+              ▲                                ▲
+              │                                │
+        Interpretable                    Parsed for
+        reasoning chain                  evaluation
+```
 
 CoT prompting requires no architectural changes or retraining. The method modifies only the prompt format: instead of standard few-shot exemplars that show (question, answer) pairs, CoT exemplars show (question, reasoning_chain, answer) triples where the reasoning chain is a natural-language sequence of intermediate steps.
 

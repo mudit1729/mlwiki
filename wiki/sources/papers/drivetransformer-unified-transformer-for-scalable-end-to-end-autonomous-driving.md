@@ -35,6 +35,50 @@ DriveTransformer (right) eliminates the sequential pipeline structure of UniAD-s
 
 ![Architecture Overview](https://paper-assets.alphaxiv.org/figures/2503.07656v2/x2.png)
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│              DriveTransformer Architecture                     │
+│                                                               │
+│  Multi-Camera Images                                          │
+│  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐          │
+│  │Cam 1│ │Cam 2│ │Cam 3│ │Cam 4│ │Cam 5│ │Cam 6│          │
+│  └──┬──┘ └──┬──┘ └──┬──┘ └──┬──┘ └──┬──┘ └──┬──┘          │
+│     └───────┴───────┴───┬───┴───────┴───────┘              │
+│                         ▼                                    │
+│  ┌──────────────────────────────┐                            │
+│  │     Image Backbone           │                            │
+│  │     (Multi-scale features)   │                            │
+│  └──────────────┬───────────────┘                            │
+│                 ▼                                             │
+│  ┌──────────────────────────────────────────────────┐       │
+│  │           Unified Decoder (repeated L layers)     │       │
+│  │                                                   │       │
+│  │  Task Queries (all processed in parallel):        │       │
+│  │  ┌──────┐ ┌──────┐ ┌───────┐ ┌────────┐         │       │
+│  │  │Detect│ │ Map  │ │Predict│ │Planning│         │       │
+│  │  └──┬───┘ └──┬───┘ └───┬───┘ └───┬────┘         │       │
+│  │     │        │         │         │               │       │
+│  │     ▼        ▼         ▼         ▼               │       │
+│  │  ┌─────────────────────────────────────┐         │       │
+│  │  │ 1. Sensor Cross-Attention           │         │       │
+│  │  │    (queries attend to image feats)  │         │       │
+│  │  ├─────────────────────────────────────┤         │       │
+│  │  │ 2. Task Self-Attention              │         │       │
+│  │  │    (all tasks interact mutually)    │         │       │
+│  │  ├─────────────────────────────────────┤         │       │
+│  │  │ 3. Temporal Cross-Attention         │         │       │
+│  │  │    (FIFO queue of past queries      │         │       │
+│  │  │     + ego-motion compensation)      │         │       │
+│  │  └─────────────────────────────────────┘         │       │
+│  └──────────────────────────────────────────────────┘       │
+│                         ▼                                    │
+│  ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────────┐   │
+│  │3D Detect │ │HD Map    │ │Motion    │ │GMM Planning  │   │
+│  │Output    │ │Output    │ │Prediction│ │(multi-mode)  │   │
+│  └──────────┘ └──────────┘ └──────────┘ └──────────────┘   │
+└──────────────────────────────────────────────────────────────┘
+```
+
 The architecture consists of a shared decoder with three attention types:
 
 **Sensor Cross Attention:** Each task query (detection, mapping, planning) attends directly to multi-camera image features. This eliminates the BEV intermediate representation that creates an information bottleneck in prior systems.

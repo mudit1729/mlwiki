@@ -34,7 +34,56 @@ Santoro et al. (DeepMind) published this at NeurIPS 2018, and the work sits at t
 - **Gate integration with attention**: Combines attention-based updates with standard LSTM-style gating (forget and input gates per slot) to provide stable long-term memory alongside relational updates
 - **Demonstration that relational inductive biases improve sequence modeling**: Explicit relational computation over memory slots outperforms implicit relational learning in standard recurrent architectures
 
-## Architecture / Method
+## Architecture
+
+```
+                    Input x_t
+                       │
+                       ▼
+              ┌────────────────┐
+              │ Linear Project │
+              └───────┬────────┘
+                      │
+    ┌─────────────────┼─────────────────┐
+    │                 │                 │
+    ▼                 ▼                 ▼
+┌────────┐      ┌────────┐       ┌────────┐
+│ Slot 1 │      │ Slot 2 │  ...  │ Slot N │  M_{t-1}
+└───┬────┘      └───┬────┘       └───┬────┘
+    │               │                │
+    └───────────────┼────────────────┘
+                    │
+                    ▼
+    ┌───────────────────────────────────┐
+    │   Multi-Head Self-Attention       │
+    │   Q,K,V from [slots + input]      │
+    │   (each slot attends to all       │
+    │    other slots + input x_t)       │
+    └───────────────┬───────────────────┘
+                    │
+                    ▼
+    ┌───────────────────────────────────┐
+    │   Residual MLP (per slot)         │
+    └───────────────┬───────────────────┘
+                    │
+                    ▼
+    ┌───────────────────────────────────┐
+    │   LSTM-style Gating (per slot)    │
+    │   f_t = σ(W_f[slot, attn_out])   │
+    │   i_t = σ(W_i[slot, attn_out])   │
+    │   M_t[i] = f*M_{t-1}[i] + i*out │
+    └───────────────┬───────────────────┘
+                    │
+                    ▼
+    ┌────────┐ ┌────────┐  ┌────────┐
+    │ Slot 1 │ │ Slot 2 │  │ Slot N │  M_t
+    └────────┘ └────────┘  └────────┘
+                    │
+                    ▼
+            Linear Readout ──► Output
+```
+
+## Method
 
 The RMC operates by maintaining a memory matrix M_t of shape (N, D_m) where N is the number of memory slots and D_m is the dimension per slot. At each timestep t, the current input x_t is first linearly projected and concatenated with the existing memory slots. Multi-head dot-product attention is then applied where each memory slot generates its own query, and keys and values come from all slots plus the input. This allows every slot to attend to every other slot and the input simultaneously.
 

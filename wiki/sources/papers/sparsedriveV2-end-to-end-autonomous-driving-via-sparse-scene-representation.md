@@ -37,6 +37,40 @@ SparseDriveV2 achieves 92.0 PDMS on NAVSIM v1, establishing a new state-of-the-a
 
 ![SparseDriveV2 framework overview](https://paper-assets.alphaxiv.org/figures-normalized/figures/2603.29163v1/high_level.png)
 
+```
+  ┌───────────────────────────────────────────────────────────┐
+  │              Factorized Trajectory Vocabulary              │
+  │                                                           │
+  │  ┌─────────────────────┐    ┌──────────────────────────┐  │
+  │  │ Geometric Paths     │    │ Velocity Profiles        │  │
+  │  │ (1024 anchors)      │    │ (256 anchors)            │  │
+  │  │ [straight, turn,    │    │ [accel, decel, const,    │  │
+  │  │  lane change, ...]  │    │  stop, ...]              │  │
+  │  └─────────┬───────────┘    └──────────┬───────────────┘  │
+  └────────────┼───────────────────────────┼──────────────────┘
+               │                           │
+               ▼                           ▼
+  ┌───────────────────────────────────────────────────────────┐
+  │  Stage 1: Coarse Factorized Scoring                       │
+  │  Score paths independently ──► Top-K paths (64)           │
+  │  Score velocities independently ──► Top-M velocities (16) │
+  │  262,144 candidates ──► 1,024 composed trajectories       │
+  └──────────────────────────┬────────────────────────────────┘
+                             │
+                             ▼
+  ┌───────────────────────────────────────────────────────────┐
+  │  Stage 2: Fine-Grained Scoring                            │
+  │  Compose path + velocity ──► full trajectory              │
+  │  Joint scoring with path-velocity interaction features    │
+  │  1,024 ──► Best trajectory                                │
+  └──────────────────────────┬────────────────────────────────┘
+                             │
+                             ▼
+  ┌───────────────────────────────────────────────────────────┐
+  │  Metric Supervision: Safety + Progress + Comfort + Rules  │
+  └───────────────────────────────────────────────────────────┘
+```
+
 The architecture extends [[wiki/sources/papers/sparsedrive-end-to-end-autonomous-driving-via-sparse-scene-representation]] with a fundamentally new planning module:
 
 **Factorized Vocabulary Construction:** Instead of directly discretizing the full trajectory space, SparseDriveV2 separates trajectories into two independent components:

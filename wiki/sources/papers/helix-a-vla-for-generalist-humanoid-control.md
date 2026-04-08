@@ -37,6 +37,44 @@ Helix is the first VLA to simultaneously operate two humanoid robots for shared 
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│                  HELIX DUAL-SYSTEM VLA                        │
+│                                                              │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────────┐           │
+│  │ Camera 1  │  │ Camera 2 │  │ Language          │           │
+│  │ (head)    │  │ (wrist)  │  │ Instruction       │           │
+│  └────┬──────┘  └────┬─────┘  └───────┬──────────┘           │
+│       │              │                │                       │
+│       ▼              ▼                ▼                       │
+│  ┌──────────────────────────────────────────────┐            │
+│  │        System 2 — Slow Brain (7-9 Hz)        │            │
+│  │        7B Vision-Language Model               │            │
+│  │  ┌──────────────────────────────────────┐    │            │
+│  │  │ Scene Understanding + Language Ground.│    │            │
+│  │  │ Task Planning + Subtask Sequencing    │    │            │
+│  │  └──────────────────────────────────────┘    │            │
+│  └─────────────────────┬────────────────────────┘            │
+│                        │ Latent Semantic                      │
+│                        │ Representations                      │
+│                        ▼                                      │
+│  ┌──────────────────────────────────────────────┐            │
+│  │        System 1 — Fast Brain (200 Hz)        │            │
+│  │        80M Visuomotor Policy                  │            │
+│  │  ┌──────────────────────────────────────┐    │            │
+│  │  │ Continuous Joint Actions (35 DoF)     │    │            │
+│  │  │ Fingers + Wrists + Torso + Head       │    │            │
+│  │  └──────────────────────────────────────┘    │            │
+│  └─────────────────────┬────────────────────────┘            │
+│                        │                                      │
+│                        ▼                                      │
+│              ┌──────────────────┐                             │
+│              │  Joint Commands   │                             │
+│              │  (5ms per action) │                             │
+│              └──────────────────┘                             │
+└──────────────────────────────────────────────────────────────┘
+```
+
 The architecture is organized around two interacting systems:
 
 **System 2 (Slow Brain):** A 7-billion-parameter VLM pre-trained on internet-scale vision-language data. Takes multi-camera images and natural language instructions as input. Produces rich latent semantic representations that encode the current scene state, object identities, spatial relationships, and task progress. Operates at 7-9 Hz due to computational cost.

@@ -35,6 +35,51 @@ DriveVLM addresses a practical concern in the VLM-for-driving space: pure VLM-ba
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│              DriveVLM Chain-of-Thought Pipeline                │
+│                                                               │
+│  Multi-Camera Images + Ego State                              │
+│         │                                                     │
+│         ▼                                                     │
+│  ┌─────────────────────────────┐                             │
+│  │   InternVL Vision-Language  │                             │
+│  │         Model               │                             │
+│  │                             │                             │
+│  │  Stage 1: Scene Description │                             │
+│  │  "3 vehicles, ped crossing" │                             │
+│  │            │                │                             │
+│  │            ▼                │                             │
+│  │  Stage 2: Scene Analysis    │                             │
+│  │  "Ped at risk, red light"  │                             │
+│  │            │                │                             │
+│  │            ▼                │                             │
+│  │  Stage 3: Hierarchical Plan │                             │
+│  │  ├─ Meta-action (17 types) │                             │
+│  │  ├─ Decision description   │                             │
+│  │  └─ Trajectory waypoints   │                             │
+│  └──────────┬──────────────────┘                             │
+│             ▼                                                 │
+│                                                               │
+│  DriveVLM-Dual (Hybrid Architecture):                         │
+│  ┌─────────────────┐    ┌─────────────────┐                  │
+│  │  VLM Branch      │    │ Traditional AD   │                  │
+│  │  (complex scenes)│    │ Branch           │                  │
+│  │  Chain-of-thought│    │ 3D Det + Track   │                  │
+│  │  reasoning       │    │ + Cost Planner   │                  │
+│  └────────┬─────────┘    └────────┬─────────┘                  │
+│           └───────────┬───────────┘                            │
+│                       ▼                                        │
+│            ┌─────────────────────┐                             │
+│            │  Learned Fusion     │                             │
+│            │  (complexity-based  │                             │
+│            │   weight selection) │                             │
+│            └─────────┬───────────┘                             │
+│                      ▼                                         │
+│              Final Trajectory                                  │
+└──────────────────────────────────────────────────────────────┘
+```
+
 DriveVLM uses a large Vision-Language Model (based on InternVL) as its core reasoning engine. The VLM processes multi-camera images along with ego vehicle state information and produces outputs through a three-stage chain-of-thought pipeline.
 
 Stage 1 (Scene Description): The VLM generates a natural language description of the driving scene, identifying key objects, their positions, velocities, and relationships. This creates a structured understanding of the environment.

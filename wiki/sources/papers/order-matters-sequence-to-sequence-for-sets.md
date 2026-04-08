@@ -35,6 +35,43 @@ This work is foundational for understanding how to apply sequence models to inhe
 
 ## Architecture / Method
 
+```
+              Read-Process-Write Architecture
+              ───────────────────────────────
+
+  Input Set: {x₁, x₂, ..., xₙ}  (unordered)
+                    │
+         ┌──────── ▼ ────────┐
+         │    READ Phase      │
+         │  ┌────┐ ┌────┐    │
+         │  │RNN │ │RNN │... │    Encode each element
+         │  └─┬──┘ └─┬──┘    │    (order discarded after)
+         │    ▼      ▼       │
+         │  {h₁, h₂, ..., hₙ}   Unordered hidden states
+         └────────┬──────────┘
+                  │
+         ┌────────▼──────────┐
+         │   PROCESS Phase   │
+         │                   │
+         │  for t = 1..P:    │    P rounds of attention
+         │    rₜ = Σ αᵢ·hᵢ  │    (no ordering assumption)
+         │    qₜ = LSTM(     │
+         │      qₜ₋₁, rₜ)   │
+         │                   │
+         └────────┬──────────┘
+                  │ processed state
+         ┌────────▼──────────┐
+         │    WRITE Phase    │
+         │                   │
+         │  Decoder attends  │    Generate output sequence
+         │  over {hᵢ} +      │    (with pointer mechanism
+         │  processed state  │     for selection tasks)
+         │                   │
+         └────────┬──────────┘
+                  ▼
+         Output: (y₁, y₂, ..., yₘ)
+```
+
 ![The Read-Process-Write (RPW) architecture for handling input sets](https://paper-assets.alphaxiv.org/figures/1511.06391v4/img-0.jpeg)
 
 The read-process-write (RPW) architecture consists of three phases:

@@ -34,6 +34,48 @@ Developed by Physical Intelligence and UC Berkeley, FAST consistently outperform
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                  FAST Tokenization Pipeline                       │
+│                                                                 │
+│  Raw Action Sequence (T timesteps x D dimensions)               │
+│  ┌─────────────────────────────────────────────┐                │
+│  │  [a1_t1, a1_t2, ..., a1_tT]  (dim 1)       │                │
+│  │  [a2_t1, a2_t2, ..., a2_tT]  (dim 2)       │                │
+│  │  ...                                        │                │
+│  │  [aD_t1, aD_t2, ..., aD_tT]  (dim D)       │                │
+│  └──────────────────────┬──────────────────────┘                │
+│                         ▼                                       │
+│  Step 1: ┌──────────────────────────┐                           │
+│          │ Normalize (zero mean,    │                           │
+│          │ unit variance per dim)   │                           │
+│          └────────────┬─────────────┘                           │
+│                       ▼                                         │
+│  Step 2: ┌──────────────────────────┐                           │
+│          │ DCT (Discrete Cosine     │  energy concentrated      │
+│          │ Transform) per dimension │  in low-freq coefficients │
+│          └────────────┬─────────────┘                           │
+│                       ▼                                         │
+│  Step 3: ┌──────────────────────────┐                           │
+│          │ Quantize coefficients    │                           │
+│          │ to discrete integers     │                           │
+│          └────────────┬─────────────┘                           │
+│                       ▼                                         │
+│  Step 4: ┌──────────────────────────┐                           │
+│          │ Flatten 2D ──► 1D        │                           │
+│          │ (D x freq ──► sequence)  │                           │
+│          └────────────┬─────────────┘                           │
+│                       ▼                                         │
+│  Step 5: ┌──────────────────────────┐                           │
+│          │ BPE Compression          │  merge frequent patterns  │
+│          │ (Byte-Pair Encoding)     │  into single tokens       │
+│          └────────────┬─────────────┘                           │
+│                       ▼                                         │
+│          Compressed Token Sequence (2x-13x shorter)             │
+│          Fed to VLA autoregressive decoder                      │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ![FAST tokenization pipeline: normalize, DCT, quantize, flatten, BPE](https://paper-assets.alphaxiv.org/figures/2501.09747/x1.png)
 
 The FAST pipeline consists of five steps:

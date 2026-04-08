@@ -33,6 +33,55 @@ Radar is attractive as a replacement for expensive LiDAR because it provides dir
 - **Linearly Increasing Circular (LIC) Query Initialization**: Organizes object queries into concentric circles in polar coordinates with density increasing proportionally with distance, providing balanced coverage across different ranges
 - **Query-based Dual-View Fusion**: Adaptively samples features from both BEV and original image perspectives, mitigating the impact of inaccurate depth estimation in the BEV transformation
 
+## Architecture
+
+```
+┌──────────────┐   ┌──────────────────┐
+│ Multi-Camera │   │  Radar Points    │
+│   Images     │   │  (sparse + noisy)│
+└──────┬───────┘   └────────┬─────────┘
+       │                    │
+       ▼                    ▼
+┌──────────────┐   ┌──────────────────┐
+│ Image Encoder│   │  Pillar Encoder  │
+│ (ResNet/VoV) │   │  (voxelize+feat) │
+└──────┬───────┘   └────────┬─────────┘
+       │                    │
+       │    ┌───────────────┤
+       │    │               │
+       ▼    ▼               ▼
+┌──────────────────┐  ┌─────────────────────┐
+│ Radar-Aware      │  │ Implicit Dynamic     │
+│ Depth Head       │  │ Catcher (ConvGRU)    │
+│ (depth + RCS)    │  │ (multi-frame Doppler)│
+└──────┬───────────┘  └──────────┬──────────┘
+       │                         │
+       ▼                         ▼
+┌─────────────────────────────────────────┐
+│           BEV Feature Map               │
+│    (fused camera depth + radar temporal)│
+└──────────────────┬──────────────────────┘
+                   │
+       ┌───────────┴───────────┐
+       │  LIC Query Init       │
+       │  (polar concentric)   │
+       └───────────┬───────────┘
+                   │
+       ┌───────────┴───────────┐
+       │  Transformer Decoder  │
+       │  ┌─────────────────┐  │
+       │  │ Dual-View Attn  │  │
+       │  │ BEV ◄──► Image  │  │
+       │  └─────────────────┘  │
+       └───────────┬───────────┘
+                   │
+                   ▼
+          ┌────────────────┐
+          │ 3D Bounding Box│
+          │   Predictions  │
+          └────────────────┘
+```
+
 ## Architecture / Method
 
 ![RaCFormer architecture comparison with prior methods](https://paper-assets.alphaxiv.org/figures/2412.12725v2/img-0.jpeg)

@@ -37,6 +37,37 @@ BDD-X became the standard benchmark for explainable driving research, directly r
 
 ## Architecture / Method
 
+```
+         BDD-X: Attention-Aligned Controller + Explainer
+
+  Video Frames [f1, f2, ..., fT]
+        │
+        ├──────────────────────────────────────┐
+        ▼                                      ▼
+  ┌───────────────────┐              ┌───────────────────┐
+  │  Vehicle Controller│              │ Explanation Generator│
+  │                   │              │                     │
+  │  CNN (VGG-16)     │              │  CNN Encoder         │
+  │       │           │              │       │             │
+  │       ▼           │              │       ▼             │
+  │  Spatial Attention │              │  LSTM Decoder       │
+  │   A_ctrl          │              │  + Attention A_expl │
+  │       │           │              │       │             │
+  │       ▼           │              │       ▼             │
+  │  LSTM ──► Control │              │  Word-by-word text  │
+  │  (steer, speed)   │              │  "stopping because  │
+  └────────┬──────────┘              │   of pedestrian"    │
+           │                         └──────────┬──────────┘
+           │                                    │
+           │         ┌──────────────┐           │
+           └────────►│  L_align =    │◄──────────┘
+                     │ ||A_ctrl -    │
+                     │   A_expl||^2  │
+                     └──────────────┘
+
+  Total Loss: L = L_control + λ_text * L_text + λ_align * L_align
+```
+
 The system has two components trained jointly. The **vehicle controller** takes a sequence of frames and produces steering angle and speed predictions. It uses a CNN (VGG-16) with spatial attention to produce attention-weighted visual features, which are processed by an LSTM to generate control signals. The spatial attention map A_ctrl indicates which image regions the controller relies on for its decisions.
 
 The **explanation generator** is an encoder-decoder model. The encoder processes the same video frames through a CNN, and the decoder generates natural-language explanations word by word using an LSTM with attention over the visual features. The decoder's attention map A_expl indicates which image regions the explanation references.

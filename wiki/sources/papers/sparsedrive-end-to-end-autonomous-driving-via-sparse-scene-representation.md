@@ -39,6 +39,54 @@ SparseDrive surpasses prior SOTA on nuScenes across all metrics, especially the 
 
 ![SparseDrive detection visualization](https://paper-assets.alphaxiv.org/figures/2405.19620v2/avoidance1.jpg)
 
+```
+  Multi-Camera Images (6x)
+         │
+         ▼
+  ┌──────────────────┐
+  │  Image Backbone   │  (ResNet-50/101)
+  │  (Multi-View)     │
+  └────────┬─────────┘
+           │ multi-view features
+           ▼
+  ┌──────────────────────────────────────────────────┐
+  │        Symmetric Sparse Perception               │
+  │                                                  │
+  │  ┌──────────────────┐  ┌──────────────────────┐  │
+  │  │  Agent Queries    │  │  Map Queries         │  │
+  │  │  (anchor boxes)   │  │  (anchor polylines)  │  │
+  │  └────────┬─────────┘  └────────┬─────────────┘  │
+  │           │  deformable          │  deformable    │
+  │           │  cross-attn          │  cross-attn    │
+  │           ▼                      ▼                │
+  │  ┌────────────────┐  ┌────────────────────────┐  │
+  │  │ 3D Detection   │  │ Online Mapping         │  │
+  │  │ + Tracking      │  │ (lanes, edges, xwalks) │  │
+  │  └────────┬───────┘  └────────┬───────────────┘  │
+  └───────────┼───────────────────┼──────────────────┘
+              └─────────┬─────────┘
+                        ▼
+  ┌──────────────────────────────────────────────────┐
+  │          Parallel Motion Planner                 │
+  │                                                  │
+  │  ┌────────────────┐     ┌────────────────────┐   │
+  │  │ Agent Motion   │     │ Ego Planning       │   │
+  │  │ Prediction     │     │ (multi-modal)      │   │
+  │  │ (multi-modal)  │     │                    │   │
+  │  └────────┬───────┘     └────────┬───────────┘   │
+  │           │                      │               │
+  │           └──────────┬───────────┘               │
+  │                      ▼                           │
+  │           ┌─────────────────────┐                │
+  │           │ Hierarchical Select │                │
+  │           │ (safety + progress  │                │
+  │           │  + rule compliance) │                │
+  │           └────────┬────────────┘                │
+  └────────────────────┼─────────────────────────────┘
+                       ▼
+                 Final Trajectory
+```
+
 SparseDrive consists of three main modules:
 
 **1. Image Backbone + Sparse Feature Extraction:** Multi-camera images are processed by a backbone (ResNet-50/101). Instead of constructing a dense BEV grid, sparse 3D queries (anchor boxes for agents, anchor polylines for map elements) attend to multi-view image features via deformable cross-attention. Each query extracts features relevant to its spatial location from the images directly.

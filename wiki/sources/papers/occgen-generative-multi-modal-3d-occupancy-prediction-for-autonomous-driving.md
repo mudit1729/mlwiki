@@ -31,6 +31,36 @@ OccGen achieves strong results on the Occ3D-nuScenes benchmark, demonstrating th
 
 ## Architecture / Method
 
+```
+┌────────────────────────────────────────────────────────────┐
+│  Multi-Camera Images ──► 2D Backbone ──► View Transformer  │
+│  (optional LiDAR) ──► Voxelize ──────┐                     │
+│                                       │ fuse                │
+│                    BEV Conditioning ◄─┘                     │
+└─────────────────────────┬──────────────────────────────────┘
+                          │ spatial conditioning signal
+                          │
+┌─────────────────────────▼──────────────────────────────────┐
+│            Conditional Diffusion Model                      │
+│                                                             │
+│  Training:  GT occ ──► add noise ──► 3D U-Net denoiser     │
+│                                      (conditioned on BEV)   │
+│                                                             │
+│  Inference: Gaussian  ──► denoise ──► denoise ──► ... ──►  │
+│             noise        step 1      step 2     (T steps)  │
+│                          ▲                                  │
+│                          │ cross-attention to BEV features  │
+│                          │ at each resolution level         │
+└─────────────────────────┬──────────────────────────────────┘
+                          │ coarse occupancy
+                          ▼
+┌─────────────────────────────────────────────────────────────┐
+│          Refinement Network                                  │
+│  3D conv decoder + skip connections ──► upsample to full    │
+│  resolution ──► fine-grained semantic occupancy              │
+└─────────────────────────────────────────────────────────────┘
+```
+
 OccGen's pipeline consists of three main components:
 
 **1. Multi-modal Condition Network.** Multi-camera images are processed through a 2D backbone (e.g., ResNet-50 or Swin Transformer) to extract multi-scale features. These are projected into BEV space using a view transformer (LSS-style depth-based lifting or cross-attention). The resulting BEV features serve as the spatial conditioning signal for the diffusion model. When LiDAR is available, point cloud features are voxelized and fused into the BEV conditioning via concatenation or cross-attention.

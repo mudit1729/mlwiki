@@ -29,6 +29,46 @@ Training was conducted on Google's TPUv5p architecture using synchronous data-pa
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Gemini 2.5 (Sparse MoE Transformer)       │
+│                                                             │
+│  Inputs:  Text ─┐                                          │
+│           Image ─┤                                          │
+│           Video ─┼──► Tokenizer ──► [Token Sequence]        │
+│           Audio ─┤       (native multimodal)                │
+│           Code  ─┘                                          │
+│                           │                                 │
+│                           ▼                                 │
+│              ┌────────────────────────┐                     │
+│              │   MoE Transformer Layers│                    │
+│              │  ┌──────────────────┐  │                     │
+│              │  │  Attention       │  │                     │
+│              │  └────────┬─────────┘  │                     │
+│              │           ▼            │                     │
+│              │  ┌──────────────────┐  │                     │
+│              │  │  Expert Router   │  │  Context: >1M tokens│
+│              │  │  ┌───┐┌───┐┌───┐│  │                     │
+│              │  │  │E_1││E_2││E_k││  │  (sparse activation │
+│              │  │  └───┘└───┘└───┘│  │   per token)        │
+│              │  └────────┬─────────┘  │                     │
+│              └───────────┼────────────┘                     │
+│                          ▼                                  │
+│              ┌────────────────────────┐                     │
+│              │   "Thinking" Phase     │                     │
+│              │  (extended CoT reasoning│                    │
+│              │   10K+ forward passes) │                     │
+│              │   [tunable budget]     │                     │
+│              └───────────┬────────────┘                     │
+│                          ▼                                  │
+│                   Final Response                            │
+└─────────────────────────────────────────────────────────────┘
+
+Model Tiers:  Pro (max capability)
+              Flash (balanced)
+              Flash-Lite (efficiency)
+```
+
 ![Gemini 2.5 architecture overview](https://paper-assets.alphaxiv.org/figures/2507.06261v6/img-0.jpeg)
 
 Gemini 2.5 uses a sparse Mixture-of-Experts Transformer, where each input token is routed to a subset of expert modules rather than activating the full network. This enables the model to maintain a very large total parameter count (and thus capacity) while keeping per-token compute manageable. Native multimodal processing means images, video, audio, and code are handled directly by the model without separate external encoders at inference time.

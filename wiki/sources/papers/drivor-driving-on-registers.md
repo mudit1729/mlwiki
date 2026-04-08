@@ -3,7 +3,7 @@ title: "DrivoR: Driving on Registers"
 type: source-summary
 status: complete
 updated: 2026-04-05
-year: 2025
+year: 2026
 venue: arXiv
 tags:
   - paper
@@ -37,6 +37,48 @@ This aligns with the broader trend toward end-to-end systems that learn their ow
 - **3x compute reduction:** Over 3x reduction in GFLOPs and peak memory versus ViT-L baselines while maintaining SOTA performance
 
 ## Architecture / Method
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│            DrivoR: Driving on Registers Architecture          │
+│                                                               │
+│  Multi-Camera Images (4 cameras)                              │
+│  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐                    │
+│  │Front │  │ FL   │  │ FR   │  │ Back │                    │
+│  └──┬───┘  └──┬───┘  └──┬───┘  └──┬───┘                    │
+│     │         │         │         │                          │
+│     ▼         ▼         ▼         ▼                          │
+│  ┌──────────────────────────────────────────┐               │
+│  │  DINOv2 ViT-S + LoRA (per camera)        │               │
+│  │  Patch tokens + R register tokens each    │               │
+│  │  (camera intrinsics/extrinsics injected)  │               │
+│  └──────────────────┬───────────────────────┘               │
+│                     │ Discard patch tokens,                  │
+│                     │ keep only N x R registers              │
+│                     ▼                                        │
+│  ┌──────────────────────────────────────────┐               │
+│  │  Cross-Camera Self-Attention              │               │
+│  │  (registers from all cameras exchange     │               │
+│  │   information ──► unified scene tokens)   │               │
+│  └──────────────────┬───────────────────────┘               │
+│                     ▼                                        │
+│     ┌───────────────┴───────────────┐                       │
+│     ▼                               ▼                       │
+│  ┌───────────────────┐  ┌────────────────────┐              │
+│  │ Trajectory Gen    │  │ Disentangled       │              │
+│  │ Decoder           │  │ Scoring Decoder    │              │
+│  │ (k transformer    │  │ (no gradient flow  │              │
+│  │  blocks + ego     │  │  from scorer to    │              │
+│  │  state + WTA loss)│  │  generator)        │              │
+│  │  ──► |Q| candidate│  │  ──► 6 sub-scores  │              │
+│  │     trajectories  │  │  (safety, comfort, │              │
+│  └────────┬──────────┘  │   efficiency)      │              │
+│           │             └────────┬───────────┘              │
+│           └──────────┬───────────┘                          │
+│                      ▼                                       │
+│           Best-scored trajectory                             │
+└──────────────────────────────────────────────────────────────┘
+```
 
 DrivoR's architecture has three main stages: multi-camera feature extraction, register-based scene compression, and disentangled trajectory generation and scoring.
 

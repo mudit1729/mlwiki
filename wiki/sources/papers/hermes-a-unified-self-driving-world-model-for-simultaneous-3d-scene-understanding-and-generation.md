@@ -29,6 +29,50 @@ The system achieves a 32.4% reduction in Chamfer Distance compared to ViDAR for 
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                      HERMES ARCHITECTURE                         │
+│                                                                  │
+│  Multi-View Cameras                                              │
+│  ┌─────┐┌─────┐┌─────┐                                         │
+│  │Cam 1││Cam 2││Cam N│                                          │
+│  └──┬──┘└──┬──┘└──┬──┘                                         │
+│     └──────┼──────┘                                              │
+│            ▼                                                     │
+│  ┌──────────────────┐     ┌──────────────────────┐              │
+│  │  CLIP Encoder     │────►│  BEVFormer v2        │              │
+│  │  (frozen)         │     │  (BEV Tokenizer)     │              │
+│  └──────────────────┘     └─────────┬────────────┘              │
+│                                     │ BEV Features               │
+│                           ┌─────────┴──────────┐                │
+│                           ▼                    ▼                 │
+│                   ┌──────────────┐    ┌────────────────┐        │
+│                   │ Down-sample  │    │ Max-Pool ──►   │        │
+│                   │ + Project    │    │ World Queries  │        │
+│                   └──────┬───────┘    │ + Ego-Motion   │        │
+│                          │            │ + Frame Embed  │        │
+│                          │            └───────┬────────┘        │
+│                          ▼                    ▼                  │
+│               ┌──────────────────────────────────────┐          │
+│               │         LLM Backbone                  │          │
+│               │  [BEV tokens | Text tokens | World Q] │          │
+│               │    Causal Attention ──► Knowledge      │          │
+│               │    Transfer (understanding ─► gen.)    │          │
+│               └────────┬──────────────┬───────────────┘          │
+│                        │              │                           │
+│              ┌─────────▼──┐   ┌──────▼──────────────┐           │
+│              │ Text Output │   │ Current-to-Future    │           │
+│              │ (Captions,  │   │ Cross-Attention      │           │
+│              │  QA)        │   │      ▼               │           │
+│              └────────────┘   │ Volume Rendering     │           │
+│                               │ (SDF-based, NeRF)    │           │
+│                               │      ▼               │           │
+│                               │ 3D Point Cloud       │           │
+│                               │ Prediction           │           │
+│                               └─────────────────────┘           │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 ![Architecture](https://paper-assets.alphaxiv.org/figures/2501.14729v3/x2.png)
 
 The architecture processes multi-view camera images through a pre-trained CLIP encoder, aggregating features into BEV representation via BEVFormer v2. BEV features are compressed through down-sampling and projection to fit within LLM context limits.

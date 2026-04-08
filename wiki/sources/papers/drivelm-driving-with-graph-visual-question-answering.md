@@ -39,6 +39,48 @@ With an ECCV Oral acceptance and substantial citation impact, DriveLM-Data has b
 
 ![DriveLM framework overview: Graph VQA task structure, dataset construction, baseline model, and evaluation metrics](https://paper-assets.alphaxiv.org/figures/2312.14150v3/img-0.jpeg)
 
+```
+┌───────────────────────────────────────────────────────────────┐
+│              DriveLM: Graph VQA Reasoning Pipeline             │
+│                                                                │
+│  Reasoning DAG (per driving scene):                            │
+│                                                                │
+│  ┌────────────┐   ┌────────────┐   ┌────────────┐            │
+│  │ Perception │   │ Perception │   │ Perception │            │
+│  │ QA: "What  │   │ QA: "Where │   │ QA: "What  │            │
+│  │ objects?"  │   │ is car A?" │   │ is signal?"│            │
+│  └─────┬──────┘   └─────┬──────┘   └──────┬─────┘            │
+│        │                │                  │                   │
+│        ▼                ▼                  │                   │
+│  ┌────────────┐   ┌────────────┐           │                  │
+│  │ Prediction │   │ Prediction │           │                  │
+│  │ QA: "Will  │   │ QA: "Car A │           │                  │
+│  │ ped cross?"│   │ trajectory"│           │                  │
+│  └─────┬──────┘   └─────┬──────┘           │                  │
+│        └────────┬────────┘                  │                  │
+│                 ▼                           ▼                  │
+│        ┌──────────────────────────────────────┐               │
+│        │  Planning QA: "What should ego do?"  │               │
+│        └──────────────────┬───────────────────┘               │
+│                           ▼                                    │
+│              ┌──────────────────────┐                          │
+│              │  Behavior Token      │                          │
+│              │  (discrete decision) │                          │
+│              └──────────┬───────────┘                          │
+│                         ▼                                      │
+│              ┌──────────────────────┐                          │
+│              │  Motion Waypoints    │                          │
+│              │  (256-bin tokenized) │                          │
+│              └──────────────────────┘                          │
+│                                                                │
+│  DriveLM-Agent Model:                                          │
+│  ┌──────────┐    ┌──────────────────────────────┐             │
+│  │ Multi-cam│───►│ BLIP-2 VLM + Graph Context   │             │
+│  │ Images   │    │ (parent QA answers prepended) │──► QA + Traj│
+│  └──────────┘    └──────────────────────────────┘             │
+└───────────────────────────────────────────────────────────────┘
+```
+
 DriveLM constructs a directed acyclic graph (DAG) of QA pairs for each driving scene. Each node in the graph is a question-answer pair belonging to one of five stages: Perception (P), Prediction (Pred), Planning (Plan), Behavior (B), and Motion (M). Edges represent logical dependencies -- a prediction node depends on the perception nodes that identify the relevant agents, and a planning node depends on the prediction nodes that forecast those agents' future states.
 
 The DriveLM-Data annotation process involves: (1) defining key objects in the scene, (2) generating perception QAs about object properties and positions, (3) creating prediction QAs about future states conditioned on perception answers, (4) producing planning QAs that reason about appropriate responses, (5) generating behavior tokens (discrete driving decisions), and (6) outputting continuous motion waypoints. The graph structure enforces that each QA at a later stage references specific earlier QAs as dependencies.

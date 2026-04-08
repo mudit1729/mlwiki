@@ -35,6 +35,41 @@ The query-key-value pattern introduced here -- where a decoder state queries enc
 
 ## Architecture / Method
 
+```
+                         Source: x_1, x_2, ..., x_T
+                              │
+              ┌───────────────▼────────────────┐
+              │     Bidirectional GRU Encoder    │
+              │  ┌──►h1──►h2──►h3──►h4──►      │
+              │  │   forward                     │
+              │  x1  x2   x3   x4               │
+              │  │   backward                    │
+              │  └◄──h1◄──h2◄──h3◄──h4◄──      │
+              │                                  │
+              │  h_i = [h_fwd_i ; h_bwd_i]      │
+              └───────────┬────────────────────┘
+                          │ h_1..h_T (annotations)
+                          │
+         ┌────────────────▼────────────────────┐
+         │          Attention Layer              │
+         │                                      │
+         │  e(t,i) = v^T tanh(W_s·s_{t-1}      │
+         │                    + W_h·h_i)        │
+         │  α(t,i) = softmax(e(t,:))            │
+         │  c_t = Σ α(t,i)·h_i                 │
+         └────────────────┬────────────────────┘
+                          │ c_t (context vector)
+                          │
+              ┌───────────▼────────────────────┐
+              │     GRU Decoder                  │
+              │  s_t = GRU(s_{t-1}, [y_{t-1};c_t])│
+              │  P(y_t) = softmax(W_o·[s_t;c_t;y_{t-1}])│
+              └───────────┬────────────────────┘
+                          │
+                          ▼
+                    Target: y_1, y_2, ..., y_T'
+```
+
 ![RNNsearch architecture with attention weights determining focus on source words](https://paper-assets.alphaxiv.org/figures/1409.0473v7/img-0.jpeg)
 
 The encoder is a bidirectional GRU that processes the source sentence in both forward and reverse directions. For each source position i, the encoder produces an annotation h_i by concatenating the forward hidden state (capturing left context) and backward hidden state (capturing right context): h_i = [h_forward_i; h_backward_i].

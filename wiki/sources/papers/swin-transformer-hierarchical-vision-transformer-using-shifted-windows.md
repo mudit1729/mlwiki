@@ -33,6 +33,50 @@ The results established Swin Transformer as the first general-purpose vision tra
 
 ![Architecture overview showing hierarchical design and shifted windows](https://paper-assets.alphaxiv.org/figures/2103.14030v2/img-0.jpeg)
 
+```
+                         Swin Transformer Hierarchical Architecture
+
+  Input Image (H x W x 3)
+        │
+        ▼
+  ┌──────────────────────┐
+  │  Patch Partition 4x4  │  ──►  H/4 x W/4 tokens, dim C
+  │  + Linear Embedding   │
+  └──────────┬───────────┘
+             │
+             ▼
+  ┌──────────────────────┐
+  │  Stage 1: Swin Blocks │  ──►  H/4 x W/4,  C     (1/4 res)
+  │  [W-MSA ─► SW-MSA]x2  │
+  └──────────┬───────────┘
+             │  Patch Merging (2x2 concat ──► linear)
+             ▼
+  ┌──────────────────────┐
+  │  Stage 2: Swin Blocks │  ──►  H/8 x W/8,  2C    (1/8 res)
+  │  [W-MSA ─► SW-MSA]x2  │
+  └──────────┬───────────┘
+             │  Patch Merging
+             ▼
+  ┌──────────────────────┐
+  │  Stage 3: Swin Blocks │  ──►  H/16 x W/16, 4C   (1/16 res)
+  │  [W-MSA ─► SW-MSA]xN  │
+  └──────────┬───────────┘
+             │  Patch Merging
+             ▼
+  ┌──────────────────────┐
+  │  Stage 4: Swin Blocks │  ──►  H/32 x W/32, 8C   (1/32 res)
+  │  [W-MSA ─► SW-MSA]x2  │
+  └──────────────────────┘
+
+  Each Swin Block:
+  ┌─────────────────────────────────────────┐
+  │  Input ─► LN ─► W-MSA  ─► + (residual) │
+  │        ─► LN ─► MLP    ─► + (residual) │
+  │        ─► LN ─► SW-MSA ─► + (residual) │
+  │        ─► LN ─► MLP    ─► + (residual) │
+  └─────────────────────────────────────────┘
+```
+
 ### Hierarchical Design
 
 The architecture processes an input image through four stages, each operating at a different spatial resolution:

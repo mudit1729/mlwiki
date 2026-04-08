@@ -43,6 +43,43 @@ Applied to BEVFormer-tiny, BEVDiffuser yields 12.3% mAP improvement and 10.1% ND
 
 ![Plug-and-play training scheme](https://paper-assets.alphaxiv.org/figures/2502.19694v2/img-2.jpeg)
 
+```
+┌──────────────────── TRAINING ONLY ────────────────────────────┐
+│                                                               │
+│  Multi-Camera        GT Layout (cat ID + 3D bbox)             │
+│  Images                    │                                  │
+│    │                       ▼                                  │
+│    ▼              ┌────────────────┐                           │
+│  ┌──────────┐     │ Layout Encoder │                           │
+│  │ BEV      │     │ (global scene  │                           │
+│  │ Encoder  │     │  + per-object) │                           │
+│  │ (any)    │     └───────┬────────┘                           │
+│  └────┬─────┘             │                                   │
+│       │                   ▼                                   │
+│       │         ┌───────────────────┐                          │
+│  Noisy BEV ───► │    BEVDiffuser    │                          │
+│  features x_t0  │  (Conditional     │                          │
+│       │         │   Diffusion U-Net │                          │
+│       │         │   + Cross-Attn)   │                          │
+│       │         └────────┬──────────┘                          │
+│       │                  │                                    │
+│       │           Denoised BEV                                │
+│       │                  │                                    │
+│       ▼                  ▼                                    │
+│  ┌──────────────────────────────┐                              │
+│  │  L_total = L_diffusion(MSE)  │                              │
+│  │          + λ·L_task          │                              │
+│  │  L_BEV   = L_task            │                              │
+│  │          + α·L(denoised,orig)│                              │
+│  └──────────────────────────────┘                              │
+│                                                               │
+├──────────────────── INFERENCE ────────────────────────────────┤
+│                                                               │
+│  Multi-Camera ──► BEV Encoder ──► Detection Head              │
+│  (BEVDiffuser completely removed, zero overhead)              │
+└───────────────────────────────────────────────────────────────┘
+```
+
 **Core Components:**
 - **Conditional diffusion model**: U-Net with transformer-based layout fusion
 - **Ground-truth layout representation**: Objects encoded as sets of (category ID, normalized 3D bounding box coordinates)

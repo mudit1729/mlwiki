@@ -26,6 +26,46 @@ DrivingGaussian addresses photorealistic 3D scene reconstruction for dynamic aut
 
 ![Framework Overview](https://paper-assets.alphaxiv.org/figures/2312.07920v3/x1.png)
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│           DrivingGaussian: Composite Scene Reconstruction      │
+│                                                               │
+│  Input: Multi-Camera Images + LiDAR Point Clouds              │
+│                                                               │
+│  ┌────────────────────────────────────────────────┐          │
+│  │  1. Incremental Static 3D Gaussians (IS3G)     │          │
+│  │                                                 │          │
+│  │  Scene volume divided into N depth bins:        │          │
+│  │  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐       │          │
+│  │  │Near  │─►│Mid-1 │─►│Mid-2 │─►│ Far  │       │          │
+│  │  │Bin 1 │  │Bin 2 │  │Bin 3 │  │Bin N │       │          │
+│  │  └──────┘  └──────┘  └──────┘  └──────┘       │          │
+│  │  (position priors propagated near ──► far)      │          │
+│  │  LiDAR provides initial Gaussian centers        │          │
+│  └─────────────────────┬──────────────────────────┘          │
+│                        │                                      │
+│  ┌─────────────────────┼──────────────────────────┐          │
+│  │  2. Composite Dynamic Gaussian Graph (CDGG)     │          │
+│  │                                                 │          │
+│  │  ┌───────┐  ┌───────┐  ┌───────┐              │          │
+│  │  │Car A  │  │Car B  │  │Ped C  │  ...         │          │
+│  │  │Gauss  │  │Gauss  │  │Gauss  │              │          │
+│  │  │+T(t)  │  │+T(t)  │  │+T(t)  │              │          │
+│  │  └───┬───┘  └───┬───┘  └───┬───┘              │          │
+│  │      └──────────┼──────────┘                   │          │
+│  │      Graph edges (temporal + spatial)           │          │
+│  └─────────────────────┬──────────────────────────┘          │
+│                        │                                      │
+│  ┌─────────────────────▼──────────────────────────┐          │
+│  │  3. Composite Rendering                         │          │
+│  │  Static Gaussians + Dynamic Gaussians           │          │
+│  │  ──► Differentiable 3DGS Splatting              │          │
+│  │  ──► Multi-camera view synthesis                │          │
+│  │  Loss: Tile-SSIM + Outlier + LiDAR geometric   │          │
+│  └────────────────────────────────────────────────┘          │
+└──────────────────────────────────────────────────────────────┘
+```
+
 The framework operates in three stages:
 
 **1. Static Background (IS3G):**

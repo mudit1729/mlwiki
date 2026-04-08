@@ -28,6 +28,49 @@ Vista outperforms prior driving world models by 55% in FID and 27% in FVD on nuS
 - **Multi-modal action controllability**: Supports four action modalities (steering/speed, trajectories, commands, goal points) via LoRA adapters with frozen UNet weights
 - **Uncertainty-based reward function**: Ensemble denoising variance provides a self-contained action evaluation signal without ground-truth supervision, validated on unseen Waymo data
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                    Vista Pipeline                          │
+│                                                           │
+│  Phase 1: High-Fidelity World Model                       │
+│  ──────────────────────────────────                       │
+│  3 History Frames                                         │
+│  [f_{t-2}, f_{t-1}, f_t]                                  │
+│       │                                                  │
+│       ▼  (latent replacement, not concatenation)          │
+│  ┌────────────────────────────────────┐                   │
+│  │   Stable Video Diffusion (SVD)     │                  │
+│  │   ┌──────────────────────────┐     │                  │
+│  │   │  + Dynamics Enhancement  │     │                  │
+│  │   │    Loss (motion regions) │     │                  │
+│  │   │  + Structure Preservation│     │                  │
+│  │   │    Loss (high-freq FFT)  │     │                  │
+│  │   └──────────────────────────┘     │                  │
+│  └──────────────┬─────────────────────┘                   │
+│                 ▼                                         │
+│     Future frames @ 576x1024, 10 Hz                       │
+│                                                           │
+│  Phase 2: Multi-Modal Action Control (UNet frozen)        │
+│  ──────────────────────────────────────────               │
+│  Action input (one of four types):                        │
+│  ┌──────────┬──────────┬──────────┬──────────┐            │
+│  │ Steer/   │Trajectory│ Command  │  Goal    │            │
+│  │ Speed    │Waypoints │(fwd/turn)│  Point   │            │
+│  └────┬─────┴────┬─────┴────┬─────┴────┬─────┘           │
+│       └──────────┴──────────┴──────────┘                  │
+│                    │  Fourier embedding                    │
+│                    ▼                                      │
+│           ┌──────────────────┐                            │
+│           │  LoRA Adapters   │  (cross-attention layers)   │
+│           │  in frozen UNet  │                            │
+│           └────────┬─────────┘                            │
+│                    ▼                                      │
+│           Action-conditioned video                        │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![Vista architecture overview](https://paper-assets.alphaxiv.org/figures/2405.17398v2/img-0.jpeg)

@@ -35,6 +35,45 @@ Built on top of PaLM-E (a 12B-parameter VLM) and PaLI-X (a 55B-parameter VLM), R
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────┐
+│                   RT-2 (VLA Model)                      │
+│         PaLM-E (12B) or PaLI-X (55B) backbone           │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌──────────┐   ┌──────────────┐   ┌────────────────┐  │
+│  │  Camera   │   │  Language     │   │  Web Data      │  │
+│  │  Image    │   │  Instruction  │   │  (VQA, capts)  │  │
+│  └────┬─────┘   └──────┬───────┘   └───────┬────────┘  │
+│       │                │                    │           │
+│       ▼                ▼                    ▼           │
+│  ┌─────────────────────────────────────────────────┐    │
+│  │           Vision-Language Model (VLM)           │    │
+│  │    Image Encoder ──► Transformer Decoder        │    │
+│  │    (co-fine-tuned on web + robot data)          │    │
+│  └──────────────────────┬──────────────────────────┘    │
+│                         │                               │
+│                         ▼                               │
+│              ┌─────────────────────┐                    │
+│              │  Text Token Output  │                    │
+│              │  "1 128 91 241 ..." │                    │
+│              └──────────┬──────────┘                    │
+│                         │                               │
+│                         ▼                               │
+│              ┌─────────────────────┐                    │
+│              │  De-discretize to   │                    │
+│              │  7-DoF Actions      │                    │
+│              │  (256 bins/dim)     │                    │
+│              └──────────┬──────────┘                    │
+│                         │                               │
+└─────────────────────────┼───────────────────────────────┘
+                          ▼
+                   ┌─────────────┐
+                   │   Robot     │
+                   │   Control   │
+                   └─────────────┘
+```
+
 ![RT-2 overview: combining VQA and robot action data to create Vision-Language-Action models](https://paper-assets.alphaxiv.org/figures/2307.15818/img-0.jpeg)
 
 RT-2 takes two existing VLMs -- PaLM-E (12B) and PaLI-X (55B) -- and co-fine-tunes them on a mixture of their original web data and approximately 100,000 robot demonstration episodes from the RT-1 dataset. The robot actions (7-DoF arm + gripper + base + termination = 11 dimensions) are each discretized into 256 bins and represented as integer strings. The action string is appended to the instruction text, and the model is trained with standard next-token prediction loss.

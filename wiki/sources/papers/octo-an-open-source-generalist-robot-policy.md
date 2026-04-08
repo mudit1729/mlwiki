@@ -29,6 +29,47 @@ Octo-Base (93M parameters) achieves a 29% higher success rate than RT-1-X on lan
 
 ## Architecture / Method
 
+```
+                          Octo Architecture
+                          ─────────────────
+
+  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐  ┌──────────┐
+  │  Image(s)    │  │  Language     │  │ Proprioception│  │ Readout  │
+  │  (cameras)   │  │  Instruction  │  │ (joints,      │  │ Token    │
+  └──────┬───────┘  └──────┬───────┘  │  gripper)     │  │ [ACT]    │
+         │                 │          └───────┬───────┘  └────┬─────┘
+         ▼                 ▼                  ▼               │
+  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐      │
+  │  ViT         │  │  Language     │  │  MLP          │      │
+  │  Tokenizer   │  │  Encoder      │  │  Tokenizer    │      │
+  │  (ViT-S/B)   │  │  (pretrained) │  │               │      │
+  └──────┬───────┘  └──────┬───────┘  └───────┬───────┘      │
+         │                 │                  │               │
+         └────────┬────────┴──────────┬───────┘               │
+                  │    Concatenate    │                        │
+                  └────────┬─────────┘                        │
+                           │◄─────────────────────────────────┘
+                           ▼
+              ┌────────────────────────────┐
+              │   Transformer Backbone     │
+              │   (Causal Attention,       │
+              │    2-frame temporal window) │
+              └────────────┬───────────────┘
+                           │ readout embeddings
+                           ▼
+              ┌────────────────────────────┐
+              │   Diffusion Action Head    │
+              │   ┌──────────────────┐     │
+              │   │ Noise z ~ N(0,1) │     │
+              │   └────────┬─────────┘     │
+              │            ▼               │
+              │   Iterative Denoising      │
+              │   (conditioned on readout) │
+              └────────────┬───────────────┘
+                           ▼
+                  Action Chunk (k steps)
+```
+
 ![Octo architecture](https://paper-assets.alphaxiv.org/figures/2405.12213v2/img-1.jpeg)
 
 Octo uses a modular encoder-decoder architecture:

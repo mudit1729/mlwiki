@@ -4,7 +4,7 @@ type: source-summary
 status: seed
 updated: 2026-04-05
 year: 2024
-venue: arXiv
+venue: CoRL
 tags:
   - paper
   - robotics
@@ -34,6 +34,44 @@ OpenVLA addresses a critical bottleneck in robot learning: prior VLA models were
 - **Systematic evaluation across embodiments**: Tests on WidowX, Franka, and Google Robot platforms with real-world evaluations, not just simulation
 
 ## Architecture / Method
+
+```
+                      OpenVLA Architecture
+                      ────────────────────
+
+  Camera Image                    Language Instruction
+       │                                │
+       ▼                                ▼
+ ┌─────────────┐  ┌─────────────┐  ┌─────────────┐
+ │  SigLIP     │  │  DinoV2-L   │  │  Tokenizer  │
+ │  SO400M     │  │  (spatial/  │  │  (text)     │
+ │  (semantic) │  │   geometric)│  │             │
+ └──────┬──────┘  └──────┬──────┘  └──────┬──────┘
+        │                │                │
+        └───────┬────────┘                │
+                │ concat                  │
+                ▼                         │
+        ┌──────────────┐                  │
+        │  2-Layer MLP  │                  │
+        │  Projector    │                  │
+        └──────┬───────┘                  │
+               │                          │
+               ▼                          ▼
+        ┌─────────────────────────────────────┐
+        │         Llama 2 7B LLM              │
+        │  [visual tokens] + [text tokens]    │
+        │                                     │
+        │  Next-token prediction ──►          │
+        └─────────────────┬───────────────────┘
+                          │
+                          ▼
+                 7 Action Tokens
+          (each: 256 bins discretized)
+         ┌───┬───┬───┬───┬───┬───┬───┐
+         │ dx│ dy│ dz│ r │ p │ y │ g │
+         └───┴───┴───┴───┴───┴───┴───┘
+          translation  rotation  grip
+```
 
 ![OpenVLA architecture: DINOv2 + SigLIP encoders fused into Llama 2 for action output](https://paper-assets.alphaxiv.org/figures/2406.09246v3/x1.png)
 

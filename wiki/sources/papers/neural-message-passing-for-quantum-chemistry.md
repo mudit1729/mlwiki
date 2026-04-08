@@ -34,6 +34,41 @@ The MPNN framework also revealed what the essential design choices are: the mess
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Molecular Graph Input                      │
+│        Nodes = atoms (features: atomic #, charge)           │
+│        Edges = bonds (features: bond type, conjugation)     │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼  × T rounds (T=6)
+┌─────────────────────────────────────────────────────────────┐
+│               Message Passing Phase                          │
+│                                                              │
+│  For each node v:                                            │
+│    ┌──────────┐    ┌──────────────────┐    ┌──────────────┐ │
+│    │ Neighbor  │───►│ Message function  │───►│  Aggregate   │ │
+│    │ h_w, e_vw │    │ m(h_v, h_w, e_vw)│    │  M_v = Σ m   │ │
+│    └──────────┘    └──────────────────┘    └──────┬───────┘ │
+│                                                    │         │
+│    ┌──────────────────────────────────────────────▼───────┐ │
+│    │  Update: h_v^{t+1} = GRU(h_v^t, M_v)                │ │
+│    └──────────────────────────────────────────────────────┘ │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│               Readout Phase (Set2Set)                        │
+│  LSTM + attention over {h_v^T} ──► graph-level embedding    │
+└────────────────────────┬────────────────────────────────────┘
+                         │
+                         ▼
+┌─────────────────────────────────────────────────────────────┐
+│           MLP ──► Molecular Property Prediction              │
+│           (13 QM9 properties: energy, dipole, etc.)         │
+└─────────────────────────────────────────────────────────────┘
+```
+
 The MPNN framework defines a GNN as operating in two phases: message passing and readout.
 
 **Message passing phase** (T rounds): At each round t, every node v receives messages from its neighbors N(v). The message function m_t(h_v^t, h_w^t, e_vw) computes a vector for each edge (v,w) based on the source node state, neighbor node state, and edge features (e.g., bond type). Messages are aggregated via summation: M_v^{t+1} = sum_{w in N(v)} m_t(h_v, h_w, e_vw). The update function combines the aggregated message with the current state: h_v^{t+1} = U_t(h_v^t, M_v^{t+1}). In the best-performing variant, U is a GRU cell.

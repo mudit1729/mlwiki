@@ -3,7 +3,7 @@ title: "BEVFormer v2: Adapting Modern Image Backbones to Bird's-Eye-View Recogni
 tags: [autonomous-driving, perception, bev, transformer, computer-vision, end-to-end]
 status: active
 type: paper
-year: "2022"
+year: "2023"
 venue: "CVPR 2023"
 citations: 250 <!-- TODO: verify citation count -->
 arxiv_id: "2211.10439"
@@ -32,6 +32,53 @@ With perspective supervision, BEVFormer v2 achieved new state-of-the-art results
 ## Architecture / Method
 
 ![BEVFormer v2 architecture overview](https://paper-assets.alphaxiv.org/figures/2211.10439v1/img-0.jpeg)
+
+```
+┌────────────────────────────────────────────────────────────────┐
+│                  BEVFormer v2 Architecture                      │
+├────────────────────────────────────────────────────────────────┤
+│                                                                │
+│  Multi-Camera Images                                           │
+│        │                                                       │
+│        ▼                                                       │
+│  ┌──────────────────┐                                          │
+│  │  Image Backbone   │  (InternImage / ResNet / ConvNeXt)       │
+│  │  + Multi-Scale FPN│                                          │
+│  └────────┬──────────┘                                          │
+│           │                                                    │
+│     ┌─────┴──────────────────────┐                              │
+│     │                            │                              │
+│     ▼                            ▼                              │
+│  ┌───────────────────┐   ┌──────────────────────┐              │
+│  │ Perspective Head  │   │ BEVFormer Encoder     │              │
+│  │ (DD3D/FCOS3D-style│   │ (Spatial + Temporal   │              │
+│  │  dense per-pixel  │   │  Cross-Attention)     │              │
+│  │  3D detection)    │   └──────────┬───────────┘              │
+│  └────────┬──────────┘              │                          │
+│           │                         │                          │
+│   L_pers  │    NMS + Top-K          │                          │
+│   (dense  │         │               │                          │
+│  gradients│         ▼               ▼                          │
+│  to       │  3D proposals ──► BEV Projection                   │
+│  backbone)│         │               │                          │
+│           │         └───────┬───────┘                          │
+│           │                 ▼                                  │
+│           │     ┌───────────────────────┐                      │
+│           │     │ Hybrid Object Queries  │                      │
+│           │     │ (proposals + learned)  │                      │
+│           │     └───────────┬───────────┘                      │
+│           │                 ▼                                  │
+│           │     ┌───────────────────────┐                      │
+│           │     │ BEV Transformer       │                      │
+│           │     │ Decoder               │                      │
+│           │     └───────────┬───────────┘                      │
+│           │                 │                                  │
+│           │                 ▼                                  │
+│           │            L_bev (3D detection)                    │
+│           │                                                    │
+│  L_total = λ_bev·L_bev + λ_pers·L_pers                        │
+└────────────────────────────────────────────────────────────────┘
+```
 
 BEVFormer v2 builds on the original BEVFormer architecture with two critical additions: a perspective supervision branch and a two-stage detection pipeline.
 

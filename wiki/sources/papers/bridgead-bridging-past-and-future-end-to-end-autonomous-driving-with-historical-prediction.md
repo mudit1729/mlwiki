@@ -42,6 +42,53 @@ Developed at Fudan University and Eastern Institute of Technology, BridgeAD demo
 
 ![BridgeAD architecture](https://paper-assets.alphaxiv.org/figures/2503.14182/x2.png)
 
+```
+┌────────────────────────────────────────────────────────────────┐
+│                    BridgeAD Architecture                        │
+├────────────────────────────────────────────────────────────────┤
+│                                                                │
+│  Multi-View Cameras ──► Image Encoder ──► Image Features       │
+│                                                │               │
+│  ┌────────────────────────────────┐            │               │
+│  │ FIFO Memory Queue (K=3 frames) │            │               │
+│  │ Historical multi-step queries  │            │               │
+│  └────────────┬───────────────────┘            │               │
+│               │                                │               │
+│     ┌─────────┼────────────────────────────────┘               │
+│     │         │                                                │
+│     ▼         ▼                                                │
+│  ┌──────────────────────────────────┐                          │
+│  │  History-Enhanced Perception      │                          │
+│  │  Q_obj + CrossAttn(K,V=Q_m2d)    │  Hist. motion ──►        │
+│  │  ──► 3D Detection + Tracking     │  improved detection      │
+│  └──────────────┬───────────────────┘                          │
+│                 │                                              │
+│                 ▼                                              │
+│  ┌──────────────────────────────────┐                          │
+│  │  History-Enhanced Motion Pred.    │                          │
+│  │  Multi-step queries:             │                          │
+│  │  N_a x M_mot x T_mot x C         │  ◄── explicit temporal   │
+│  │  + Step-level self-attention     │      dimension           │
+│  │  + Mode-level self-attention     │                          │
+│  └──────────────┬───────────────────┘                          │
+│                 │                                              │
+│          Best mode ▼ (per timestep)                            │
+│  ┌──────────────────────────────────┐                          │
+│  │  Step-Level Mot2Plan Interaction  │                          │
+│  │  Planning queries attend to       │                          │
+│  │  highest-prob motion mode at     │                          │
+│  │  corresponding future timestep   │                          │
+│  └──────────────┬───────────────────┘                          │
+│                 │                                              │
+│                 ▼                                              │
+│  ┌──────────────────────────────────┐                          │
+│  │  History-Enhanced Planning        │                          │
+│  │  + Historical planning context   │                          │
+│  │  ──► Ego Trajectory              │                          │
+│  └──────────────────────────────────┘                          │
+└────────────────────────────────────────────────────────────────┘
+```
+
 BridgeAD processes multi-view camera images through an image encoder, then feeds features through history-enhanced perception and motion planning modules. A FIFO memory queue of K frames stores historical multi-step queries for temporal continuity.
 
 **History-Enhanced Perception:** The perception module (3D detection, tracking, vectorized mapping) integrates historical motion predictions into current perception. A Historical Mot2Det Fusion Module combines cached motion queries with current object queries via cross-attention: `CrossAttn(Q=Q_obj, K,V=Q_m2d)`, leveraging historical object movement knowledge for improved detection.

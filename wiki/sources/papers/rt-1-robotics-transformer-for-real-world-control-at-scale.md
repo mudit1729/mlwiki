@@ -33,7 +33,47 @@ RT-1 became the foundation upon which RT-2 was built, demonstrating that the sam
 - **TokenLearner compression**: Applies TokenLearner to reduce the number of visual tokens before the Transformer, dramatically cutting inference time to achieve real-time control (3Hz) on a physical robot
 - **Systematic generalization evaluation**: Introduces a rigorous evaluation framework testing generalization across unseen object-task combinations, backgrounds, and distractor environments
 
-## Architecture / Method
+## Architecture
+
+```
+  Language Instruction           6 RGB Images (history @ 3Hz)
+        │                              │
+        ▼                              ▼  (per image)
+┌───────────────────┐          ┌─────────────────────┐
+│ Universal Sentence│          │  EfficientNet-B3    │
+│ Encoder           │──FiLM──►│  (FiLM-conditioned  │
+│ → fixed embedding │  layers  │   on language emb)  │
+└───────────────────┘          └──────────┬──────────┘
+                                          │
+                                          ▼
+                               ┌─────────────────────┐
+                               │    TokenLearner     │
+                               │  81 tokens → 8      │
+                               │  (per image)        │
+                               └──────────┬──────────┘
+                                          │
+                                   8 × 6 = 48 tokens
+                                          │
+                                          ▼
+                               ┌─────────────────────┐
+                               │  Decoder-Only       │
+                               │  Transformer        │
+                               │  (8 layers, 8 heads │
+                               │   512-dim)          │
+                               └──────────┬──────────┘
+                                          │
+                                          ▼
+                               ┌─────────────────────┐
+                               │  11 Action Tokens   │
+                               │  (7 arm + 3 base    │
+                               │   + 1 gripper)      │
+                               │  256 bins each      │
+                               └─────────────────────┘
+                                          │
+                                    @ 3Hz on robot
+```
+
+## Method
 
 ![RT-1 robot setup showing mobile manipulators in kitchen environments, data collection classrooms, and example task objects](https://paper-assets.alphaxiv.org/figures/2212.06817v2/RT-1_Robot_Setup.png)
 
@@ -68,7 +108,7 @@ Training uses a standard cross-entropy loss on the action tokens. At inference, 
 
 - **97% success rate on 200 seen tasks** in controlled evaluation, demonstrating robust multi-task learning across a wide variety of manipulation skills (picking, placing, opening drawers, etc.)
 - **76% success rate on novel task-object combinations** not seen during training, showing meaningful compositional generalization (e.g., "pick up the unseen object" when the object category was seen with different verbs)
-- **Outperforms Gato and BC-Z baselines** significantly on both seen and unseen tasks, with Gato achieving only 53% on seen tasks despite being a much larger generalist model
+- **Outperforms Gato and BC-Z baselines** significantly on both seen and unseen tasks, with Gato achieving only 65% on seen tasks despite being a much larger generalist model
 - **Robustness to distractors and backgrounds**: 83% success rate with distractors present, 36 percentage points higher than the BC-Z baseline; performance degrades gracefully (to ~70-80%) when tested in new kitchen environments with different lighting, backgrounds, and distractor objects
 - **Simulation and cross-morphology data integration**: Effectively incorporates 518K simulated trajectories and data from different robot morphologies to boost generalization
 - **Environment transfer**: Maintains 67% performance consistency across drastically different environments

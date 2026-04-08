@@ -34,7 +34,58 @@ The technique directly contributed to advances in language modeling, speech reco
 - **Two-layer stacked LSTM architecture**: Establishes the input-embed-dropout-LSTM1-dropout-LSTM2-dropout-output pipeline that became the standard LSTM language model architecture
 - **BPTT with 35-step unrolling**: Establishes training protocol with backpropagation through time using sequence length 35, batch size 20, on the Penn Treebank vocabulary of 10K words
 
-## Architecture / Method
+## Architecture
+
+```
+          Input word w_t
+               │
+               ▼
+      ┌────────────────┐
+      │ Word Embedding │
+      │   (D=200/650)  │
+      └───────┬────────┘
+              │
+         ┌────┴────┐
+         │ DROPOUT │  ◄── applied here
+         └────┬────┘
+              │
+              ▼
+      ┌───────────────────────────────────┐
+      │        LSTM Layer 1               │
+      │  h_{t-1} ──────────► h_t          │
+      │     │   (NO dropout on            │
+      │     │    recurrent connection)     │
+      │  c_{t-1} ──────────► c_t          │
+      └───────────────┬───────────────────┘
+                      │
+                 ┌────┴────┐
+                 │ DROPOUT │  ◄── applied here
+                 └────┬────┘
+                      │
+                      ▼
+      ┌───────────────────────────────────┐
+      │        LSTM Layer 2               │
+      │  h_{t-1} ──────────► h_t          │
+      │     │   (NO dropout on            │
+      │     │    recurrent connection)     │
+      │  c_{t-1} ──────────► c_t          │
+      └───────────────┬───────────────────┘
+                      │
+                 ┌────┴────┐
+                 │ DROPOUT │  ◄── applied here
+                 └────┬────┘
+                      │
+                      ▼
+            ┌──────────────────┐
+            │ Linear + Softmax │
+            │   (vocab=10K)    │
+            └──────────────────┘
+                      │
+                      ▼
+                  P(w_{t+1})
+```
+
+## Method
 
 The architecture is a stacked LSTM language model with dropout applied at specific locations:
 

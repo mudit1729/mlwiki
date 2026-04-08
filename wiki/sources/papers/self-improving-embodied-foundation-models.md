@@ -39,6 +39,43 @@ The results are remarkable: policies trained with just 10% of the imitation data
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│          Self-Improving Embodied Foundation Model            │
+│                    (PaLI-3B backbone)                        │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  Stage 1: Supervised Fine-Tuning                            │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  ┌─────────────┐   ┌──────────────────────────────┐  │   │
+│  │  │ Robot Demos  │──►│ PaLI-3B Foundation Model     │  │   │
+│  │  │ (obs, goal)  │   │                              │  │   │
+│  │  └─────────────┘   │  Loss 1: Behavioral Cloning  │  │   │
+│  │                     │  Loss 2: Steps-to-Go d(o,g)  │  │   │
+│  │                     └──────────────────────────────┘  │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                            │                                │
+│                            ▼                                │
+│  Stage 2: Self-Improvement (Autonomous RL)                  │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │                                                      │   │
+│  │  ┌────────┐  act   ┌────────────┐  observe           │   │
+│  │  │ Policy │──────►│ Environment │──────┐             │   │
+│  │  │(PaLI-3B│◄──────│            │      │             │   │
+│  │  └────────┘reward └────────────┘      │             │   │
+│  │       ▲                               │             │   │
+│  │       │                               ▼             │   │
+│  │  ┌────┴──────────────────────────────────────┐      │   │
+│  │  │  Reward: r = d(o_t, g) - d(o_{t+1}, g)   │      │   │
+│  │  │  (decrease in predicted steps-to-go)      │      │   │
+│  │  │  No manual reward engineering needed      │      │   │
+│  │  └───────────────────────────────────────────┘      │   │
+│  └──────────────────────────────────────────────────────┘   │
+│                                                             │
+│  Result: 10% BC data + 1% RL practice > 80% BC data alone  │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ![Self-Improving EFM framework](https://paper-assets.alphaxiv.org/figures/2509.15155v1/final_arxiv_method_figure.png)
 
 The framework builds on PaLI-3B as the foundation model backbone.

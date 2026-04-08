@@ -48,6 +48,64 @@ The residual learning framework became the default backbone architecture across 
 
 ![Architecture comparison: VGG-19, 34-layer plain network, and 34-layer ResNet](https://paper-assets.alphaxiv.org/figures/1512.03385/img-2.jpeg)
 
+```
+Basic Residual Block (ResNet-18/34):
+                 x
+                 │
+        ┌────────┤
+        │        ▼
+        │   ┌──────────┐
+        │   │ 3x3 Conv │
+        │   │ BN + ReLU│
+        │   └────┬─────┘
+        │        ▼
+        │   ┌──────────┐
+        │   │ 3x3 Conv │
+        │   │ BN       │
+        │   └────┬─────┘
+        │        │
+        └───►(+)◄┘    y = F(x) + x
+              │
+            ReLU
+              │
+              ▼
+              y
+
+Bottleneck Block (ResNet-50/101/152):
+                 x
+                 │
+        ┌────────┤
+        │        ▼
+        │   ┌──────────────┐
+        │   │ 1x1 Conv     │  (256 ─► 64)
+        │   │ BN + ReLU    │
+        │   └────┬─────────┘
+        │        ▼
+        │   ┌──────────────┐
+        │   │ 3x3 Conv     │  (64 ─► 64)
+        │   │ BN + ReLU    │
+        │   └────┬─────────┘
+        │        ▼
+        │   ┌──────────────┐
+        │   │ 1x1 Conv     │  (64 ─► 256)
+        │   │ BN           │
+        │   └────┬─────────┘
+        │        │
+        └───►(+)◄┘
+              │
+            ReLU
+              │
+              ▼
+
+Full Network (ResNet-50 example):
+┌───────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌────────┐  ┌─────┐  ┌────┐
+│7x7 cv │─►│Stage 1 │─►│Stage 2 │─►│Stage 3 │─►│Stage 4 │─►│ GAP │─►│ FC │
+│stride 2│  │64ch    │  │128ch   │  │256ch   │  │512ch   │  │     │  │1000│
+│MaxPool │  │56x56   │  │28x28   │  │14x14   │  │7x7     │  │     │  │    │
+└───────┘  │3 blocks│  │4 blocks│  │6 blocks│  │3 blocks│  └─────┘  └────┘
+            └────────┘  └────────┘  └────────┘  └────────┘
+```
+
 ResNet builds on the VGG philosophy of using small (3x3) convolution filters but adds shortcut connections that skip one or more layers. The basic residual block consists of two 3x3 conv layers with batch normalization and ReLU, plus an identity shortcut: y = F(x, {W_i}) + x. When input and output dimensions differ (due to stride or channel changes), a projection shortcut using 1x1 convolution is used: y = F(x, {W_i}) + W_s * x.
 
 For deeper networks (50+ layers), bottleneck blocks are used: 1x1 conv (reduce channels from 256 to 64), 3x3 conv (64 channels), 1x1 conv (expand back to 256). This reduces computational cost by ~3x compared to two 3x3 layers while maintaining accuracy. The full architecture follows a stage-based design: conv7x7 stride 2, max pool, then 4 stages of residual blocks with progressively increasing channels (64, 128, 256, 512) and decreasing spatial resolution (56x56, 28x28, 14x14, 7x7), followed by global average pooling and a fully-connected classification layer.

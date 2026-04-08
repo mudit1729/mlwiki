@@ -35,6 +35,46 @@ The post covers three gates (forget, input, output) with careful mathematical de
 - **GRU as simplified alternative**: Covers Gated Recurrent Units which merge forget and input gates into a single update gate, reducing parameters while achieving comparable performance on many tasks
 - **Connection to broader architectural principles**: Implicitly demonstrates that additive skip connections (the cell state highway) are the key to training deep/long sequential models, a principle that extends to residual networks and transformers
 
+## Architecture
+
+```
+┌───────────────────────────────────────────────────────────┐
+│                    LSTM Cell at time t                     │
+│                                                           │
+│  C_{t-1} ──────────────────────────────────────► C_t      │
+│         │          ┌─────┐        ┌─────┐    │            │
+│         │    ×◄────┤  f_t│   +◄───┤ i_t │    │            │
+│         │    │     │Forget│   │   │Input │    │            │
+│         │    │     │ Gate │   │   │ Gate │    │            │
+│         │    │     └──┬──┘   │   └──┬──┘    │            │
+│         │    │        │      │      │        │            │
+│         └────┘        │      │   ┌──┴──┐     │            │
+│                       │      └───┤C_tld│     │            │
+│                       │          │tanh │     │            │
+│                       │          └──┬──┘     │            │
+│                       │             │        │            │
+│  h_{t-1}──┬───────────┼─────────────┘   ┌───┴───┐        │
+│           │           │                 │ tanh  │        │
+│           │           │                 └───┬───┘        │
+│           │           │              ┌──────┤            │
+│           │           │              │  ×◄──┘            │
+│           │           │              │  │                │
+│           │           │              │  └──────► h_t     │
+│           │           │         ┌────┴──┐                │
+│           │           └─────────┤  o_t  │                │
+│           │                     │Output │                │
+│           └─────────────────────┤ Gate  │                │
+│                                 └───────┘                │
+│  x_t ──────────────────[concat with h_{t-1}]──► gates    │
+│                                                           │
+│  Key: f_t = sigmoid(W_f·[h,x]+b)  forget gate            │
+│       i_t = sigmoid(W_i·[h,x]+b)  input gate             │
+│       o_t = sigmoid(W_o·[h,x]+b)  output gate            │
+│       C_t = f_t*C_{t-1} + i_t*tanh(W_c·[h,x]+b)         │
+│       h_t = o_t * tanh(C_t)                               │
+└───────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 The LSTM cell processes inputs sequentially, maintaining two state vectors: the hidden state h_t (exposed as output) and the cell state C_t (internal memory). At each timestep t, given input x_t and previous states h_{t-1}, C_{t-1}:

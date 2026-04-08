@@ -36,6 +36,49 @@ UniAD achieved state-of-the-art results on the nuScenes benchmark across multipl
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────┐
+│                Multi-Camera Images                      │
+└──────────────────────┬──────────────────────────────────┘
+                       ▼
+         ┌──────────────────────────┐
+         │  BEV Encoder (BEVFormer) │
+         └────────────┬─────────────┘
+                      │ BEV Features B
+                      ▼
+         ┌──────────────────────────┐
+         │  TrackFormer             │──► Q_A (agent queries)
+         │  (Detection + Tracking)  │    + ego query
+         └────────────┬─────────────┘
+                      │
+                      ▼
+         ┌──────────────────────────┐
+         │  MapFormer               │──► Q_M (map queries)
+         │  (Online HD Mapping)     │
+         └────────────┬─────────────┘
+                      │
+                      ▼
+         ┌──────────────────────────┐
+         │  MotionFormer            │──► K multimodal
+         │  (Motion Forecasting)    │    future trajectories
+         │  agent-agent attention   │
+         │  agent-map attention     │
+         │  agent-goal attention    │
+         └────────────┬─────────────┘
+                      │
+              ┌───────┴───────┐
+              ▼               ▼
+  ┌────────────────┐  ┌──────────────┐
+  │  OccFormer     │  │   Planner    │
+  │  (Occupancy    │  │  (Ego Traj + │
+  │   Prediction)  │  │  Collision   │
+  └────────┬───────┘  │  Optim.)     │
+           │          └──────┬───────┘
+           └─────────────────┘
+              collision optimization
+              tau* = argmin[||tau-tau_hat||² + lambda*CollCost]
+```
+
 ![UniAD overall architecture: unified perception, prediction, and planning](https://paper-assets.alphaxiv.org/figures/2212.10156v2/img-1.jpeg)
 
 ![Comparison of autonomous driving paradigms: standalone vs. multi-task vs. end-to-end](https://paper-assets.alphaxiv.org/figures/2212.10156v2/img-0.jpeg)

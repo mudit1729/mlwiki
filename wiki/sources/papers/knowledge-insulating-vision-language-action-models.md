@@ -35,6 +35,42 @@ Built on PaliGemma (2B parameters) with a 300M parameter flow matching action he
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────┐
+│            Knowledge Insulation Training                  │
+│                                                          │
+│  ┌──────────────┐                                        │
+│  │  Camera RGB   │                                        │
+│  └──────┬───────┘                                        │
+│         ▼                                                │
+│  ┌──────────────────────────────┐                        │
+│  │   PaliGemma VLM Backbone     │                        │
+│  │       (2B params)            │                        │
+│  │  ┌────────────────────────┐  │                        │
+│  │  │ Insulated Layers       │  │  ◄── Stop-gradient     │
+│  │  │ (frozen to action grad)│  │      from action loss   │
+│  │  └────────────────────────┘  │                        │
+│  │  ┌────────────────────────┐  │                        │
+│  │  │ Adapted Layers / MoE   │  │  ◄── Gradients from    │
+│  │  │ (shared + routed)      │  │      both losses flow   │
+│  │  └────────────────────────┘  │                        │
+│  └──────────┬───────────────────┘                        │
+│             │                                            │
+│     ┌───────┴───────┐                                    │
+│     ▼               ▼                                    │
+│  ┌──────────┐  ┌─────────────────┐                       │
+│  │ VLM Head │  │ Action Head     │                       │
+│  │(caption, │  │(flow matching,  │                       │
+│  │ VQA)     │  │ 300M params)    │                       │
+│  └────┬─────┘  └───────┬─────────┘                       │
+│       ▼                ▼                                 │
+│  ┌──────────┐  ┌─────────────────┐                       │
+│  │ VLM Loss │  │  Action Loss    │──── stop-grad ──X──►  │
+│  │(co-train)│  │ (flow matching) │     to insulated       │
+│  └──────────┘  └─────────────────┘     VLM layers         │
+└──────────────────────────────────────────────────────────┘
+```
+
 ![Knowledge insulation architecture with gradient flow control](https://paper-assets.alphaxiv.org/figures/2505.23705v1/x1.png)
 
 The architecture uses PaliGemma (2B parameters) as the VLM backbone and a 300M parameter transformer for continuous action prediction via flow matching. The key innovation is in the training methodology:

@@ -35,6 +35,33 @@ NAVSIM v2 implements this pseudo-simulation framework as the de facto standard b
 
 ## Architecture / Method
 
+```
+                    Phase 1: Offline Generation
+┌──────────────────┐    3D Gaussian     ┌──────────────────────┐
+│  Real Driving     │    Splatting       │  Observation Bank     │
+│  Observation      │──────────────────►│  (varied position,    │
+│  (cameras + ego)  │   Re-render from   │   heading, speed)     │
+└──────────────────┘   novel viewpoints  └──────────┬───────────┘
+                                                    │ cached
+                    Phase 2: Online Evaluation       │
+┌──────────────────┐                                │
+│  Current          │◄──────────────────────────────┘
+│  Observation      │         proximity-based
+└────────┬─────────┘         selection
+         │
+         ▼
+┌──────────────────┐    select closest   ┌──────────────────────┐
+│  AV Model         │    pre-generated    │  Next Observation     │
+│  predicts action  │───────────────────►│  (from bank)          │
+└──────────────────┘    observation       └──────────┬───────────┘
+                                                     │
+                                          ┌──────────▼───────────┐
+                                          │  Repeat for T steps   │
+                                          │  (captures compound-  │
+                                          │   ing errors)         │
+                                          └──────────────────────┘
+```
+
 The pseudo-simulation pipeline operates in two phases:
 
 **Phase 1 -- Observation Generation (Offline):** From each real-world driving observation (multi-camera images + ego state), the system generates a bank of synthetic observations using 3D Gaussian Splatting. The Gaussians are fit to the real driving scene and then re-rendered from novel viewpoints corresponding to different ego positions, headings, and speeds. This produces a set of plausible future observations the ego might encounter under different actions. This phase is done once and cached.

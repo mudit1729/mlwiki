@@ -35,6 +35,55 @@ Using GENBOT-1K -- a dataset of nearly 1,000 procedurally generated robots spann
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────────┐
+│               Extended URMA Architecture                         │
+│                                                                 │
+│  Per-Joint Inputs                    Fixed Inputs               │
+│  ┌──────────────┐                    ┌──────────────┐           │
+│  │ Joint Obs o_j │                    │ Trunk Vel,   │           │
+│  │ (pos,vel,torq)│                    │ Gravity Vec  │           │
+│  └──────┬───────┘                    └──────┬───────┘           │
+│         │                                   │                   │
+│         ▼                                   │                   │
+│  ┌──────────────┐  ┌──────────────┐         │                   │
+│  │ f_psi(o_j)   │  │ f_phi(phi_j) │         │                   │
+│  │ Obs Encoder  │  │ Descriptor   │         │                   │
+│  └──────┬───────┘  │ Encoder      │         │                   │
+│         │          └──────┬───────┘         │                   │
+│         ▼                 ▼                  │                   │
+│  ┌────────────────────────────┐              │                   │
+│  │  Multi-Head Attention       │              │                   │
+│  │  alpha_j = softmax(f_phi . │              │                   │
+│  │            f_psi)          │              │                   │
+│  └────────────┬───────────────┘              │                   │
+│               │                              │                   │
+│               ▼                              ▼                   │
+│        ┌──────────────────────────────────────┐                 │
+│        │        Global Representation          │                 │
+│        │     (concat attention out + fixed)    │                 │
+│        └──────────────────┬───────────────────┘                 │
+│                           │                                     │
+│                           ▼                                     │
+│        ┌──────────────────────────────────────┐                 │
+│        │       Universal Decoder               │                 │
+│        │  (global repr + joint desc ──► a_j)  │                 │
+│        └──────────────────────────────────────┘                 │
+└─────────────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────────────┐
+│                  Two-Stage Training Pipeline                     │
+│                                                                 │
+│  Stage 1: Expert Training (PPO)     Stage 2: Distillation       │
+│  ┌───────────────────────────┐      ┌──────────────────────┐    │
+│  │ Per-embodiment PPO experts│      │ Behavior Cloning     │    │
+│  │ Isaac Gym, 160 GPUs      │─────►│ 2B samples           │    │
+│  │ 2T+ simulation steps     │      │ ──► Single Universal  │    │
+│  └───────────────────────────┘      │     Policy           │    │
+│                                     └──────────────────────┘    │
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ![GENBOT-1K dataset overview showing procedurally generated robot diversity](https://paper-assets.alphaxiv.org/figures/2505.05753v2/img-0.jpeg)
 
 **Core Architecture (Extended URMA):**

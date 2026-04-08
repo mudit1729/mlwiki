@@ -27,6 +27,45 @@ UniSim achieves strong results across several applications: training vision-lang
 - Shows that policies trained entirely in the learned simulator transfer zero-shot to real robots, achieving 3-4x better performance than baselines
 - Establishes that data diversity (internet video, robotics, simulation, panoramas) improves generation quality across all domains through positive transfer
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                    UniSim Pipeline                         │
+│                                                           │
+│  History Frames        Actions (unified)                  │
+│  [f_{t-2}, f_{t-1}, f_t]   │                              │
+│       │                     │                             │
+│       ▼                     ▼                             │
+│  ┌─────────┐   ┌──────────────────────┐                   │
+│  │ Encoder  │   │ T5 Text Embedding    │                  │
+│  │(latent)  │   │ + Normalized Controls│                  │
+│  └────┬────┘   │ + Domain ID prefix   │                  │
+│       │        └──────────┬───────────┘                   │
+│       │                   │                               │
+│       ▼                   ▼                               │
+│  ┌────────────────────────────────────┐                   │
+│  │       3D U-Net (5.6B params)       │                   │
+│  │  ┌──────────────────────────────┐  │                   │
+│  │  │ Spatial Attn ◄─► Temporal Attn│  │                  │
+│  │  │    (interleaved layers)       │  │                  │
+│  │  └──────────────────────────────┘  │                   │
+│  │  + Classifier-free guidance        │                   │
+│  └──────────────┬─────────────────────┘                   │
+│                 │                                         │
+│                 ▼                                         │
+│  ┌──────────────────────────┐                             │
+│  │ Base: 16 frames @ 24x40  │                             │
+│  └────────────┬─────────────┘                             │
+│               ▼                                           │
+│  ┌──────────────────────────┐                             │
+│  │ Spatial SR: 192x320       │                            │
+│  └────────────┬─────────────┘                             │
+│               │                                           │
+│               └──► Autoregressive rollout ──► next step   │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![Architecture overview](https://paper-assets.alphaxiv.org/figures/2310.06114v3/x1.png)

@@ -44,6 +44,50 @@ Built on the Drive-pi-0 VLA baseline, DriveMoE represents the first application 
 
 ![Skill-Specialized Action MoE with specialized expert networks for merging, give way, and overtaking](https://paper-assets.alphaxiv.org/figures/2505.16278/x4.png)
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│              DriveMoE: Dual-Level MoE Architecture            │
+│                                                               │
+│  Multi-Camera Input                                           │
+│  ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐ ┌─────┐          │
+│  │Front│ │FL   │ │FR   │ │Back │ │BL   │ │BR   │          │
+│  └──┬──┘ └──┬──┘ └──┬──┘ └──┬──┘ └──┬──┘ └──┬──┘          │
+│     └───────┼───────┼───────┼───────┼───────┘              │
+│             ▼       ▼       ▼       ▼                       │
+│  ┌────────────────────────────────────────────┐             │
+│  │     Scene-Specialized Vision MoE            │             │
+│  │  ┌────────────────┐                         │             │
+│  │  │ Camera Router  │ (context + goal + state)│             │
+│  │  │ ──► Top-K view │ selection (hard routing) │             │
+│  │  └───────┬────────┘                         │             │
+│  │          ▼                                  │             │
+│  │  Process only selected cameras              │             │
+│  │  (e.g., highway: front+side only)           │             │
+│  └──────────────────┬─────────────────────────┘             │
+│                     ▼                                        │
+│  ┌────────────────────────────────────────────┐             │
+│  │        VLA Backbone (Drive-pi-0)            │             │
+│  │   Vision Encoder + Language Model Backbone  │             │
+│  └──────────────────┬─────────────────────────┘             │
+│                     ▼                                        │
+│  ┌────────────────────────────────────────────┐             │
+│  │     Skill-Specialized Action MoE            │             │
+│  │  ┌────────────────┐                         │             │
+│  │  │ Action Router  │ (scene understanding)   │             │
+│  │  └───────┬────────┘                         │             │
+│  │          ▼                                  │             │
+│  │  ┌────────┐ ┌────────┐ ┌────────┐ ┌──────┐ │             │
+│  │  │Merging │ │Give-way│ │Overtake│ │General│ │             │
+│  │  │Expert  │ │Expert  │ │Expert  │ │Expert │ │             │
+│  │  └───┬────┘ └───┬────┘ └───┬────┘ └──┬───┘ │             │
+│  │      └──────────┼─────────┘          │     │             │
+│  │                 ▼ (weighted combine)  │     │             │
+│  └──────────────────┬─────────────────────────┘             │
+│                     ▼                                        │
+│           Trajectory Waypoints                               │
+└──────────────────────────────────────────────────────────────┘
+```
+
 DriveMoE builds on the Drive-pi-0 VLA architecture, which takes multi-camera images and produces trajectory waypoints through a vision encoder, language model backbone, and action decoder. The MoE modifications are applied at two levels.
 
 The Vision MoE implements dynamic view selection. A lightweight camera router analyzes the current driving context (including goal points and vehicle state) to compute probability distributions across all available camera views using top-K selection. The router considers current driving maneuver (lane changing, turning, parking), environmental context (intersections, highway, urban), and goal waypoint information. The Vision MoE router is trained using cross-entropy loss with ground-truth camera view annotations, encouraging the model to learn meaningful associations between driving contexts and relevant camera views. This is a hard routing decision (cameras are processed or not), unlike soft attention typically used in multi-camera fusion.

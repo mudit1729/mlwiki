@@ -31,6 +31,39 @@ The resulting Mamba architecture is remarkably simple: it replaces the Transform
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────┐
+│                     Mamba Block                          │
+│                                                          │
+│  Input x ──► Linear (expand 2x) ──┬──────────────────┐  │
+│                                    │                  │  │
+│                              ┌─────┴─────┐     ┌─────┴──┐│
+│                              │  Branch 1  │     │Branch 2││
+│                              │           │     │        ││
+│                              │ Conv1D(k=4)│     │ SiLU   ││
+│                              │    ▼       │     │ (gate) ││
+│                              │  SiLU      │     │        ││
+│                              │    ▼       │     │        ││
+│                              │ Selective  │     │        ││
+│                              │   SSM (S6) │     │        ││
+│                              │ ┌────────┐ │     │        ││
+│                              │ │Δ=f(x)  │ │     │        ││
+│                              │ │B=f(x)  │ │     │        ││
+│                              │ │C=f(x)  │ │     │        ││
+│                              │ │A=fixed  │ │     │        ││
+│                              │ └────────┘ │     │        ││
+│                              └─────┬─────┘     └────┬───┘│
+│                                    │     multiply    │    │
+│                                    └───────⊗─────────┘    │
+│                                            │              │
+│                                     Linear (project down) │
+│                                            │              │
+│                                        Output             │
+└──────────────────────────────────────────────────────────┘
+  h(t) = Ā(t)·h(t-1) + B̄(t)·x(t)    ← O(n) recurrence
+  y(t) = C(t)·h(t)                    (vs O(n²) attention)
+```
+
 ![Mamba architecture overview](https://paper-assets.alphaxiv.org/figures/2312.00752v2/img-0.jpeg)
 
 ### Selective State Space Model (S6)

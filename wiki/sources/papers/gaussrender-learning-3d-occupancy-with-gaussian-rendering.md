@@ -36,6 +36,58 @@ GaussRender is architecture-agnostic, requiring no modifications to the base occ
 
 ![GaussRender qualitative results](https://paper-assets.alphaxiv.org/figures/2502.05040v3/qualitative_0_0.png)
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│            GaussRender: Training-Time Module                      │
+│                                                                   │
+│  ┌───────────────────────────────────────────────────┐            │
+│  │  Any Base Occupancy Model                          │            │
+│  │  (TPVFormer / SurroundOcc / Symphonies)            │            │
+│  └──────────────────────┬────────────────────────────┘            │
+│                         │                                         │
+│              Predicted 3D Voxel Grid                              │
+│                         │                                         │
+│         ┌───────────────┴───────────────┐                         │
+│         ▼                               ▼                         │
+│  ┌──────────────┐              ┌──────────────┐                   │
+│  │ Standard 3D   │              │ Voxel         │                   │
+│  │ Occupancy     │              │ Gaussianize   │                   │
+│  │ Loss (CE +    │              │ (each voxel   │                   │
+│  │ Lovasz)       │              │ ──► spherical │                   │
+│  └──────┬───────┘              │ Gaussian)     │                   │
+│         │                      └───────┬──────┘                   │
+│         │                              │                          │
+│         │         ┌────────────────────┤                          │
+│         │         │                    │                          │
+│         │         ▼                    ▼                          │
+│         │  ┌─────────────┐    ┌──────────────┐                    │
+│         │  │ GT Voxels    │    │ Pred Voxels   │                    │
+│         │  │ Gaussianized │    │ Gaussianized  │                    │
+│         │  └──────┬──────┘    └──────┬───────┘                    │
+│         │         │                  │                             │
+│         │         ▼                  ▼                             │
+│         │  ┌───────────────────────────────────┐                  │
+│         │  │  Differentiable Gaussian Splatting  │                  │
+│         │  │  from virtual cameras:              │                  │
+│         │  │  - Fixed BEV camera (top-down)      │                  │
+│         │  │  - Dynamic cameras (maximize info)  │                  │
+│         │  └───────────────┬───────────────────┘                  │
+│         │                  │                                      │
+│         │         2D rendered semantic maps                        │
+│         │         (pred vs GT)                                    │
+│         │                  │                                      │
+│         │         ┌────────▼────────┐                             │
+│         │         │ Projective       │                             │
+│         │         │ Consistency Loss  │                             │
+│         │         └────────┬────────┘                             │
+│         │                  │                                      │
+│         └──────────┬───────┘                                      │
+│                    ▼                                              │
+│           Total Training Loss                                     │
+│           (removed at inference -- zero overhead)                  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 The GaussRender module operates as follows:
 
 **Voxel Gaussianization:** Each occupied voxel in the predicted 3D grid is converted into a spherical Gaussian primitive. The Gaussian center is placed at the voxel center, the covariance is set proportional to voxel size (spherical), and opacity is predicted by the base model or learned. Semantic class labels are assigned to each Gaussian based on the voxel's predicted class.

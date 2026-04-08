@@ -48,6 +48,54 @@ BEVFormer achieved state-of-the-art results on the nuScenes 3D detection and BEV
 
 ![BEVFormer encoder architecture: spatial cross-attention and temporal self-attention](https://paper-assets.alphaxiv.org/figures/2203.17270v2/img-1.jpeg)
 
+```
+┌────────────────────────────────────────────────────────────┐
+│                   BEVFormer Architecture                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  6 Surround-View Cameras                                   │
+│  ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐ ┌───┐                     │
+│  │ F │ │FL │ │FR │ │ B │ │BL │ │BR │                     │
+│  └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘ └─┬─┘                     │
+│    └──────┴──────┴──┬──┴──────┴──────┘                     │
+│                     ▼                                      │
+│           ┌──────────────────┐                              │
+│           │ Image Backbone   │  (ResNet-101 / VoVNet-99)    │
+│           │ Multi-Scale FPN  │                              │
+│           └────────┬─────────┘                              │
+│                    │                                       │
+│  BEV Queries       │     Prev BEV Features                 │
+│  (HxW grid)        │     (ego-motion aligned)              │
+│     │              │          │                             │
+│     ▼              │          ▼                             │
+│  ┌─────────────────┴──────────────────────┐  ─┐            │
+│  │  Encoder Layer (x6)                    │   │            │
+│  │                                        │   │            │
+│  │  1. Temporal Self-Attention            │   │            │
+│  │     Q: BEV queries                     │   │            │
+│  │     K,V: prev BEV (deformable attn)    │   │            │
+│  │              │                         │   │ x6         │
+│  │              ▼                         │   │            │
+│  │  2. Spatial Cross-Attention            │   │            │
+│  │     BEV query ──► 3D ref points ──►    │   │            │
+│  │     project to cameras ──►             │   │            │
+│  │     deformable attn on image feats     │   │            │
+│  │              │                         │   │            │
+│  │              ▼                         │   │            │
+│  │  3. Feed-Forward Network               │   │            │
+│  └────────────────────────────────────────┘  ─┘            │
+│                    │                                       │
+│                    ▼                                       │
+│           BEV Feature Map (200x200)                        │
+│           ┌───────┴────────┐                               │
+│           ▼                ▼                               │
+│  ┌──────────────┐  ┌──────────────┐                        │
+│  │ DETR3D Head  │  │ Segmentation │                        │
+│  │ (3D Det.)    │  │ Head (BEV)   │                        │
+│  └──────────────┘  └──────────────┘                        │
+└────────────────────────────────────────────────────────────┘
+```
+
 BEVFormer consists of a backbone (ResNet-101 or VoVNet-99), a set of 6 encoder layers, and task-specific heads. The input is 6 surround-view camera images. The backbone extracts multi-scale features from each camera independently.
 
 The BEV queries are a learnable H x W grid (e.g., 200 x 200 covering 100m x 100m at 0.5m resolution). Each encoder layer applies three operations in sequence: (1) temporal self-attention -- each BEV query attends to the aligned BEV features from the previous timestamp at the same spatial location (using deformable attention with ego-motion compensation); (2) spatial cross-attention -- each BEV query generates a pillar of N_ref 3D reference points at predefined heights, projects them onto all camera views, and aggregates image features via deformable attention from the relevant cameras; (3) feedforward network.

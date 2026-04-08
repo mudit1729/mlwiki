@@ -40,6 +40,51 @@ This probabilistic formulation naturally prevents unnecessary overlapping -- the
 
 ![Architecture details](https://paper-assets.alphaxiv.org/figures/2412.04384v2/img-2.jpeg)
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                  GaussianFormer-2 Pipeline                        │
+│                                                                   │
+│  ┌──────────┐    ┌──────────────┐                                 │
+│  │ Multi-cam │───►│ Image        │──► Multi-scale features        │
+│  │ Images    │    │ Backbone     │                                 │
+│  └──────────┘    └──────┬───────┘                                 │
+│                         │                                         │
+│         ┌───────────────▼────────────────┐                        │
+│         │ Distribution-based Init         │                        │
+│         │ Per-ray occupancy distribution  │                        │
+│         │ (replaces surface depth est.)   │                        │
+│         └───────────────┬────────────────┘                        │
+│                         │                                         │
+│              25,600 initial Gaussians                              │
+│              (vs 144K in GaussianFormer)                           │
+│                         │                                         │
+│         ┌───────────────▼────────────────┐                        │
+│         │ Gaussian Encoder (iterative)    │                        │
+│         │ ┌────────────────────────────┐ │                        │
+│         │ │ Self-encoding attention     │ │                        │
+│         │ │ Image cross-attention       │ │                        │
+│         │ │ Parameter refinement (MLP)  │ │                        │
+│         │ └────────────────────────────┘ │                        │
+│         └───────────────┬────────────────┘                        │
+│                         │                                         │
+│    ┌────────────────────┴────────────────────┐                    │
+│    ▼                                         ▼                    │
+│  ┌────────────────────┐   ┌───────────────────────┐               │
+│  │ Geometry:           │   │ Semantics:             │               │
+│  │ Multiplicative      │   │ Gaussian Mixture Model │               │
+│  │ Probability         │   │ (proper normalization) │               │
+│  │ (product-of-experts │   └───────────┬───────────┘               │
+│  │  reduces overlap)   │               │                           │
+│  └─────────┬──────────┘               │                           │
+│            └──────────┬───────────────┘                            │
+│                       ▼                                            │
+│            ┌────────────────────┐                                  │
+│            │ Dense Voxel Output  │                                  │
+│            │ (CE loss training)  │                                  │
+│            └────────────────────┘                                  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 The system builds on an attention-based framework:
 
 1. **Image feature extraction** through a backbone network

@@ -33,6 +33,48 @@ On the nuScenes-Occupancy benchmark, SparseOcc achieves a **74.9% reduction in F
 
 ![SparseOcc architecture overview](https://paper-assets.alphaxiv.org/figures/2404.09502/img-1.jpeg)
 
+```
+  Multi-Camera Images
+         │
+         ▼
+  ┌──────────────────┐
+  │ 2D Backbone      │  (ResNet-50)
+  │ + View Transform │
+  └────────┬─────────┘
+           │ initial 3D volume
+           ▼
+  ┌──────────────────────────────────────────────┐
+  │  Mask Predictor: identify occupied voxels    │
+  │  Retain ~5-15% ──► COO sparse tensor         │
+  └────────┬─────────────────────────────────────┘
+           │ sparse voxels (coords, features)
+           ▼
+  ┌──────────────────────────────────────────────┐
+  │  Sparse Latent Diffuser                      │
+  │  ┌──────────┐ ┌──────────┐ ┌──────────┐     │
+  │  │ X-axis   │ │ Y-axis   │ │ Z-axis   │     │
+  │  │ Sparse   │ │ Sparse   │ │ Sparse   │     │
+  │  │ Conv     │ │ Conv     │ │ Conv     │     │
+  │  └────┬─────┘ └────┬─────┘ └────┬─────┘     │
+  │       └──────────┬──┘────────────┘           │
+  │                  ▼  combine                  │
+  └──────────────────┼───────────────────────────┘
+                     │
+                     ▼
+  ┌──────────────────────────────────────────────┐
+  │  Sparse Feature Pyramid                      │
+  │  Coarse (global context) ◄──► Fine (detail)  │
+  │  Top-down + lateral connections (all sparse) │
+  └──────────────────┬───────────────────────────┘
+                     │
+                     ▼
+  ┌──────────────────────────────────────────────┐
+  │  Sparse Transformer Head                     │
+  │  Self-attention among non-empty voxels only  │
+  │  ──► Semantic occupancy predictions          │
+  └──────────────────────────────────────────────┘
+```
+
 The SparseOcc pipeline processes multi-view camera images through three stages:
 
 **1. Initial Sparse Representation:** Multi-view images are processed through a standard 2D backbone (e.g., ResNet-50) and view transformer to produce an initial 3D feature volume. A mask prediction module identifies which voxels are likely occupied, and only these voxels are retained in COO format -- a sparse tensor storing `(coordinates, features)` pairs for non-empty locations only. This initial sparsification step is critical: it discards the ~85-95% of voxels that are empty before any expensive 3D processing begins.

@@ -4,7 +4,7 @@ tags: [autonomous-driving, world-model, 3d-occupancy, gaussian-splatting, percep
 status: active
 type: paper
 year: "2024"
-venue: "CVPR"
+venue: "CVPR 2025"
 citations: 59
 arxiv_id: "2412.10373"
 ---
@@ -30,6 +30,45 @@ Evaluated on nuScenes, GaussianWorld improves mean Intersection over Union (mIoU
 ## Architecture / Method
 
 ![Architecture](https://paper-assets.alphaxiv.org/figures/2412.10373/x2.png)
+
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                   GaussianWorld Pipeline                          │
+│                                                                   │
+│  ┌──────────────┐                  ┌──────────────────────┐       │
+│  │ Current Frame │                  │ Historical Gaussians  │       │
+│  │ Multi-view    │                  │ (from prev frames)    │       │
+│  │ Images        │                  └──────────┬───────────┘       │
+│  └──────┬───────┘                              │                  │
+│         │                                      │                  │
+│         ▼                                      ▼                  │
+│  ┌──────────────┐          ┌───────────────────────────────┐      │
+│  │ Image Encoder │          │ Scene Evolution Decomposition  │      │
+│  └──────┬───────┘          │                                │      │
+│         │                  │  1. Ego Motion Alignment        │      │
+│         │                  │     (transform to current ego)  │      │
+│         │                  │                                │      │
+│         │                  │  2. Dynamic Object Movement     │      │
+│         │                  │     (predict agent motion)      │      │
+│         │                  │                                │      │
+│         │                  │  3. New Area Completion         │      │
+│         │                  │     (random priors + refine)    │      │
+│         │                  └───────────────┬───────────────┘      │
+│         │                                  │                      │
+│         ▼                                  ▼                      │
+│  ┌──────────────────────────────────────────────────────┐         │
+│  │  Gaussian World Layers                                │         │
+│  │  ┌────────────────────────────────────────────────┐  │         │
+│  │  │ Self-Encoding ──► Cross-Attention ──► Unified   │  │         │
+│  │  │ Module            Module             Refinement │  │         │
+│  │  │                                     (delta Δ)   │  │         │
+│  │  └────────────────────────────────────────────────┘  │         │
+│  └──────────────────────────┬───────────────────────────┘         │
+│                             │                                     │
+│                    Updated Gaussians ──► Occupancy Output          │
+│                    (also stored for next frame)                    │
+└──────────────────────────────────────────────────────────────────┘
+```
 
 The architecture processes historical and current information through specialized modules:
 

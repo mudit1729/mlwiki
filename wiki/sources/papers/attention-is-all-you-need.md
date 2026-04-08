@@ -47,6 +47,44 @@ The Transformer's impact is unparalleled in modern AI. Nearly every major model 
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                     Transformer Architecture                     │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│      ENCODER (x6)                       DECODER (x6)            │
+│  ┌───────────────────┐           ┌───────────────────┐          │
+│  │                   │           │                   │          │
+│  │ Input Embeddings  │           │ Output Embeddings │          │
+│  │ + Positional Enc  │           │ + Positional Enc  │          │
+│  │       │           │           │       │           │          │
+│  │       ▼           │           │       ▼           │          │
+│  │ ┌───────────────┐ │           │ ┌───────────────┐ │          │
+│  │ │ Multi-Head     │ │           │ │ Masked Multi-  │ │          │
+│  │ │ Self-Attention │ │           │ │ Head Self-Attn │ │          │
+│  │ │ + Add & Norm   │ │           │ │ + Add & Norm   │ │          │
+│  │ └───────┬───────┘ │           │ └───────┬───────┘ │          │
+│  │         ▼         │           │         ▼         │          │
+│  │ ┌───────────────┐ │    K,V    │ ┌───────────────┐ │          │
+│  │ │ Feed-Forward   │ │───────────►│ Cross-Attention│ │          │
+│  │ │ + Add & Norm   │ │           │ │ + Add & Norm   │ │          │
+│  │ └───────────────┘ │           │ └───────┬───────┘ │          │
+│  │                   │           │         ▼         │          │
+│  └───────────────────┘           │ ┌───────────────┐ │          │
+│                                  │ │ Feed-Forward   │ │          │
+│                                  │ │ + Add & Norm   │ │          │
+│                                  │ └───────┬───────┘ │          │
+│                                  └─────────┼─────────┘          │
+│                                            ▼                     │
+│                                     ┌────────────┐              │
+│   Attention(Q,K,V) =                │   Linear    │              │
+│   softmax(QK^T / sqrt(d_k)) V      │  + Softmax  │              │
+│                                     └──────┬─────┘              │
+│   d_model=512, h=8 heads,                 ▼                     │
+│   d_k=d_v=64, d_ff=2048          Output Probabilities           │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 ![Transformer model architecture](https://paper-assets.alphaxiv.org/figures/1706.03762v7/ModalNet-21.png)
 
 ![Scaled dot-product attention and multi-head attention mechanisms](https://paper-assets.alphaxiv.org/figures/1706.03762v7/ModalNet-19.png)

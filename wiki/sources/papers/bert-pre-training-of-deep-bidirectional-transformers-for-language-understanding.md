@@ -48,6 +48,46 @@ BERT's impact was enormous. It achieved state-of-the-art results on 11 NLP bench
 
 ![Comparison of BERT (bidirectional), GPT (left-to-right), and ELMo architectures](https://paper-assets.alphaxiv.org/figures/1810.04805v2/img-2.jpeg)
 
+```
+┌───────────────────────────────────────────────────────────────┐
+│                    BERT Input Representation                   │
+│                                                               │
+│  [CLS] tok1 tok2 ... [SEP] tokA tokB ... [SEP]               │
+│    │     │    │         │    │    │         │                  │
+│    ▼     ▼    ▼         ▼    ▼    ▼         ▼                 │
+│  Token Embedding + Position Embedding + Segment Embedding     │
+│                         │                                     │
+├─────────────────────────┼─────────────────────────────────────┤
+│                         ▼                                     │
+│  ┌─────────────────────────────────────────────┐              │
+│  │          Transformer Encoder x12/x24        │              │
+│  │  ┌─────────────────────────────────────┐    │              │
+│  │  │  Multi-Head Self-Attention          │    │              │
+│  │  │  (bidirectional: attends to ALL     │    │              │
+│  │  │   positions in both directions)     │    │              │
+│  │  └──────────────┬──────────────────────┘    │              │
+│  │                 ▼                           │              │
+│  │  ┌─────────────────────────────────────┐    │              │
+│  │  │  Feed-Forward Network               │    │              │
+│  │  └─────────────────────────────────────┘    │              │
+│  └─────────────────────────────────────────────┘              │
+│                         │                                     │
+├─────────────────────────┼─────────────────────────────────────┤
+│   PRE-TRAINING          ▼            FINE-TUNING              │
+│  ┌──────────────┐  ┌──────────┐  ┌──────────────────┐        │
+│  │ MLM: predict │  │ [CLS]    │  │ + Task Head      │        │
+│  │ masked 15%   │  │ repr.    │  │ (linear layer)   │        │
+│  │ of tokens    │  │    │     │  │                  │        │
+│  ├──────────────┤  │    ▼     │  │ Classification,  │        │
+│  │ NSP: predict │  │ NSP head │  │ QA, NER, etc.    │        │
+│  │ next sentence│  └──────────┘  └──────────────────┘        │
+│  └──────────────┘                                             │
+│                                                               │
+│  BERT-BASE:  12 layers, 768 hidden, 12 heads, 110M params    │
+│  BERT-LARGE: 24 layers, 1024 hidden, 16 heads, 340M params   │
+└───────────────────────────────────────────────────────────────┘
+```
+
 BERT uses the encoder portion of the original Transformer architecture. BERT-BASE has 12 transformer layers, 12 attention heads, hidden dimension 768, and 110M parameters. BERT-LARGE has 24 layers, 16 heads, hidden dimension 1024, and 340M parameters. Input sequences can be up to 512 tokens, constructed as [CLS] + tokens_A + [SEP] + tokens_B + [SEP] for sentence-pair tasks, or [CLS] + tokens + [SEP] for single-sentence tasks.
 
 Each input token's representation is the sum of three embeddings: the WordPiece token embedding, a learned positional embedding, and a segment embedding (indicating whether the token belongs to sentence A or B). Pre-training runs for 1M steps on 256 sequences of length 512, using Adam with learning rate 1e-4 and warmup. The total pre-training compute was roughly 4 days on 4 Cloud TPU Pods (16 TPU chips each).

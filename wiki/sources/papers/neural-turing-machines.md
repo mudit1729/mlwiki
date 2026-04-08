@@ -34,6 +34,35 @@ This work launched the memory-augmented neural network line of research, leading
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                    External Memory (N × M)                    │
+│    ┌──────┬──────┬──────┬──────┬──────┬──────┬──────┐       │
+│    │ m_1  │ m_2  │ m_3  │ m_4  │ ...  │m_N-1 │ m_N  │       │
+│    └──┬───┴──┬───┴──────┴──────┴──────┴──────┴──┬───┘       │
+│       │      │                                   │           │
+│       │ Read │ w_r (attention weights)    Write │ w_w        │
+│       │ Head │◄───────────┐  ┌───────────►Head │            │
+└───────┼──────┼────────────┼──┼────────────┼────┼────────────┘
+        │      │            │  │            │    │
+        │ r_t  │            │  │        e_t,a_t  │
+        ▼      │            │  │            │    │
+┌───────────────────────────────────────────────────────────┐
+│                  Controller (LSTM / FFN)                    │
+│                                                            │
+│  Inputs: x_t + r_t          Outputs: y_t + addressing     │
+│                                       parameters           │
+└──────────────┬────────────────────────────────────────────┘
+               │
+┌──────────────▼────────────────────────────────────────────┐
+│              Addressing Mechanism                           │
+│  1. Content: cosine_sim(k_t, m_i) ──► softmax(β_t·sim)   │
+│  2. Interpolate: g_t·w_content + (1-g_t)·w_{t-1}         │
+│  3. Shift: convolve with shift kernel s_t                  │
+│  4. Sharpen: w^γ_t / Σ w^γ_t                              │
+└───────────────────────────────────────────────────────────┘
+```
+
 ![NTM Architecture -- neural network controller interacting with external memory through differentiable read and write heads](https://paper-assets.alphaxiv.org/figures/1410.5401v2/img-0.jpeg)
 
 ![Addressing mechanism -- combines content-based addressing with location-based operations including interpolation, shifting, and sharpening](https://paper-assets.alphaxiv.org/figures/1410.5401v2/img-1.jpeg)

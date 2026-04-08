@@ -52,6 +52,32 @@ As a baseline, the paper introduces **CoVLA-Agent**, a VLA model integrating a C
 
 ### CoVLA-Agent Model
 
+```
+┌──────────────┐   ┌──────────────────┐   ┌──────────────┐
+│ Front Camera │   │  Caption (text)  │   │  Ego Speed   │
+│   Image      │   │  (GT or pred.)   │   │              │
+└──────┬───────┘   └────────┬─────────┘   └──────┬───────┘
+       │                    │                     │
+       ▼                    ▼                     ▼
+┌──────────────┐   ┌──────────────────┐   ┌──────────────┐
+│  CLIP ViT-L  │   │   Llama-2 (7B)  │   │  MLP Speed   │
+│  /14 Encoder │   │   Tokenizer +   │   │  Embedding   │
+└──────┬───────┘   │   Language Model │   └──────┬───────┘
+       │           └────────┬─────────┘          │
+       │  Visual            │  Language           │
+       │  Features          │  Features           │
+       └────────────┬───────┴─────────┬───────────┘
+                    │    Fused        │
+                    ▼                 ▼
+           ┌────────────────┐  ┌──────────────────┐
+           │  Caption Head  │  │  Trajectory Head │
+           │  (LM Cross-   │  │  (MLP Regression)│
+           │   Entropy)     │  │  (L2 Loss)       │
+           └────────────────┘  └──────────────────┘
+
+Joint Training Loss = Caption Loss + Trajectory Loss (1:1)
+```
+
 The baseline model architecture combines:
 - **Vision encoder:** CLIP ViT-L/14 processes front-camera images into visual features
 - **Language model:** Llama-2 (7B) processes and generates natural language captions

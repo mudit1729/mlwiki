@@ -37,6 +37,52 @@ The paper also raises important questions that persist in the field: can LLMs ha
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│              GPT-Driver: LLM as Motion Planner               │
+│                                                             │
+│  Driving Scene (nuScenes)                                   │
+│       │                                                     │
+│       ▼                                                     │
+│  ┌──────────────────────┐                                   │
+│  │  Scene Tokenization  │                                   │
+│  │  - 3D bbox ──► text  │  "car at (3.2, -1.5) vel 5.1m/s" │
+│  │  - lanes  ──► text   │  "lane: (0,0),(0,5),(0.2,10)..."  │
+│  │  - ego state ──► text│  "ego: vel 8.3m/s heading 0.02"   │
+│  └──────────┬───────────┘                                   │
+│             │                                               │
+│             ▼                                               │
+│  ┌──────────────────────┐                                   │
+│  │  Prompt Construction │                                   │
+│  │  ┌────────────────┐  │                                   │
+│  │  │ System: "You   │  │                                   │
+│  │  │ are a planner" │  │                                   │
+│  │  ├────────────────┤  │                                   │
+│  │  │ Traffic Rules   │  │                                   │
+│  │  ├────────────────┤  │                                   │
+│  │  │ Scene Context   │  │                                   │
+│  │  ├────────────────┤  │                                   │
+│  │  │ Ego State       │  │                                   │
+│  │  ├────────────────┤  │                                   │
+│  │  │ "Plan trajectory│  │                                   │
+│  │  │  with reasoning"│  │                                   │
+│  │  └────────────────┘  │                                   │
+│  └──────────┬───────────┘                                   │
+│             │                                               │
+│             ▼                                               │
+│  ┌──────────────────────┐                                   │
+│  │  GPT-3.5 (fine-tuned │                                   │
+│  │  on nuScenes data)   │                                   │
+│  │       │              │                                   │
+│  │       ▼              │                                   │
+│  │  Chain-of-Thought:   │  "The car ahead is braking..."    │
+│  │       │              │                                   │
+│  │       ▼              │                                   │
+│  │  Waypoints:          │  "(x1,y1), (x2,y2), ..."         │
+│  └──────────────────────┘                                   │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ![GPT-DRIVER system overview: perception and prediction data converted to language, processed through GPT as motion planner, outputting reasoning and trajectories](https://paper-assets.alphaxiv.org/figures/2310.01415v3/img-0.jpeg)
 
 GPT-Driver's method involves three main components: scene tokenization, prompt construction, and trajectory generation.

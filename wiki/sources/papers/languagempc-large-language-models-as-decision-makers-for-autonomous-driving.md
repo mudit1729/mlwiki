@@ -8,10 +8,10 @@ tags:
   - model-predictive-control
   - multimodal
   - chain-of-thought
-type: paper
+type: source-summary
 status: active
-year: "2024"
-venue: ""
+year: "2023"
+venue: "arXiv"
 citations: 100
 arxiv_id: "2310.03026"
 ---
@@ -35,6 +35,51 @@ Evaluated across five scenarios in the SUMO traffic simulator, LanguageMPC achie
 - **Text-modulated driving and multi-vehicle coordination:** Demonstrates that natural language can adjust driving style at runtime and that a hybrid centralized-distributed LLM architecture can coordinate multiple vehicles
 
 ## Architecture / Method
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                LanguageMPC Framework                      │
+│                                                         │
+│  ┌─────────────────────────────────────────────┐        │
+│  │  High-Level Loop (LLM, low frequency)       │        │
+│  │                                             │        │
+│  │  ┌──────────────┐                           │        │
+│  │  │ Traffic Scene │  (ego state, trajectories,│        │
+│  │  │ Text Encoding │   road topology, signals) │        │
+│  │  └──────┬───────┘                           │        │
+│  │         ▼                                   │        │
+│  │  ┌──────────────────┐                       │        │
+│  │  │ Stage 1: Scenario │──► Observation Matrix │        │
+│  │  │ Encoding (Attn)   │   (which agents to    │        │
+│  │  └──────┬───────────┘    attend to)          │        │
+│  │         ▼                                   │        │
+│  │  ┌──────────────────┐                       │        │
+│  │  │ Stage 2: Action   │──► Action Intervals   │        │
+│  │  │ Guidance          │   (soft bias terms)   │        │
+│  │  └──────┬───────────┘                       │        │
+│  │         ▼                                   │        │
+│  │  ┌──────────────────┐                       │        │
+│  │  │ Stage 3: Weight   │──► Cost Weights       │        │
+│  │  │ Adjustment        │   (rebalance MPC obj) │        │
+│  │  └──────┬───────────┘                       │        │
+│  └─────────┼───────────────────────────────────┘        │
+│            ▼                                            │
+│  ┌─────────────────────────────────────────────┐        │
+│  │  Low-Level Loop (MPC, real-time frequency)  │        │
+│  │                                             │        │
+│  │  min  w_track * ||x - x_ref||²             │        │
+│  │   u   + w_action * ||u - u_bias||²         │        │
+│  │       + w_safety * safety_cost(obs_matrix)  │        │
+│  │  s.t. vehicle dynamics, constraints         │        │
+│  │                    │                        │        │
+│  │                    ▼                        │        │
+│  │           ┌──────────────┐                  │        │
+│  │           │ Control Cmds │                  │        │
+│  │           │ (steer, acc) │                  │        │
+│  │           └──────────────┘                  │        │
+│  └─────────────────────────────────────────────┘        │
+└─────────────────────────────────────────────────────────┘
+```
 
 ![LanguageMPC Framework](https://paper-assets.alphaxiv.org/figures/2310.03026v4/img-0.jpeg)
 

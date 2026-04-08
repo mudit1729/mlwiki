@@ -31,6 +31,52 @@ AutoVLA builds upon the Qwen2.5-VL-3B vision-language model as its backbone, cho
 
 ![AutoVLA Framework](https://paper-assets.alphaxiv.org/figures/2506.13757v3/img-0.jpeg)
 
+```
+┌────────────────────────────────────────────────────────────┐
+│                     AutoVLA Architecture                    │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Multi-Camera Images     Navigation Instructions           │
+│        │                        │                          │
+│        ▼                        ▼                          │
+│  ┌────────────┐          ┌────────────┐                    │
+│  │ Qwen2.5-VL │          │   Text     │                    │
+│  │ Vision Enc. │          │  Tokenizer │                    │
+│  └─────┬──────┘          └─────┬──────┘                    │
+│        │                       │                           │
+│        └───────────┬───────────┘                           │
+│                    ▼                                       │
+│           ┌────────────────┐                               │
+│           │  Qwen2.5-VL-3B │                               │
+│           │   Backbone      │                               │
+│           └───────┬────────┘                               │
+│                   ▼                                        │
+│          ┌────────────────┐                                │
+│          │ Dual-Process   │                                │
+│          │ Router         │                                │
+│          └───┬────────┬───┘                                │
+│     Simple   │        │  Complex                           │
+│              ▼        ▼                                    │
+│    ┌──────────┐  ┌──────────────┐                          │
+│    │   Fast   │  │    Slow      │                          │
+│    │ Thinking │  │  Thinking    │                          │
+│    │ (direct) │  │ (CoT reason) │                          │
+│    └────┬─────┘  └──────┬───────┘                          │
+│         │               │                                  │
+│         └───────┬───────┘                                  │
+│                 ▼                                          │
+│        ┌────────────────┐                                  │
+│        │ Action Tokens  │  Continuous trajectory ──►       │
+│        │ (discretized)  │  discrete VLM tokens             │
+│        └────────────────┘                                  │
+│                 │                                          │
+│                 ▼                                          │
+│        ┌────────────────┐                                  │
+│        │ RL Fine-Tuning │  (post-SFT refinement)           │
+│        └────────────────┘                                  │
+└────────────────────────────────────────────────────────────┘
+```
+
 The architecture extends Qwen2.5-VL-3B with action tokenization and dual-process reasoning:
 
 1. **Visual encoding:** Multi-camera images are processed through the Qwen2.5 vision encoder

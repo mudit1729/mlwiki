@@ -35,6 +35,52 @@ The key insight is that previous VLAs underinvest in action generation quality: 
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                        DexVLA                               │
+│                                                             │
+│  ┌───────────────────────────────────┐                      │
+│  │     Qwen2-VL (2B params)         │                      │
+│  │  ┌───────────┐  ┌─────────────┐  │                      │
+│  │  │ Multi-view │  │  Language   │  │                      │
+│  │  │  Cameras   │  │Instruction │  │                      │
+│  │  └─────┬─────┘  └──────┬─────┘  │                      │
+│  │        └───────┬───────┘        │                      │
+│  │                ▼                 │                      │
+│  │        ┌──────────────┐         │                      │
+│  │        │  VLM Encoder  │         │                      │
+│  │        └──────┬───────┘         │                      │
+│  │               │                  │                      │
+│  │        ┌──────┴───────┐         │                      │
+│  │        ▼              ▼         │                      │
+│  │  ┌──────────┐  ┌───────────┐   │                      │
+│  │  │ Reasoning│  │  Action   │   │                      │
+│  │  │  Tokens  │  │  Tokens   │   │                      │
+│  │  │(sub-step │  │(condition │   │                      │
+│  │  │ planning)│  │  signal)  │   │                      │
+│  │  └──────────┘  └─────┬─────┘   │                      │
+│  └───────────────────────┼─────────┘                      │
+│                          │ FiLM conditioning               │
+│                          ▼                                  │
+│  ┌───────────────────────────────────┐                      │
+│  │  Scale Diffusion Policy (1B)      │                      │
+│  │  ┌─────────────────────────────┐  │                      │
+│  │  │  Transformer-based Denoiser │  │                      │
+│  │  │  (iterative denoising)      │  │                      │
+│  │  └──────────┬──────────────────┘  │                      │
+│  │             ▼                     │                      │
+│  │  ┌─────────────────────────────┐  │                      │
+│  │  │ Continuous Action Trajectory│  │                      │
+│  │  │ (high-DoF, dexterous)      │  │                      │
+│  │  └─────────────────────────────┘  │                      │
+│  └───────────────────────────────────┘                      │
+└─────────────────────────────────────────────────────────────┘
+
+Three-Stage Curriculum:
+  Stage 1: Cross-embodiment ──► Stage 2: Joint VLM + ──► Stage 3: Sub-step
+            diffusion pre-train     expert training        reasoning FT
+```
+
 ![DexVLA architecture: Qwen2-VL backbone with 1B diffusion expert](https://paper-assets.alphaxiv.org/figures/2502.05855v3/x1.png)
 
 DexVLA's architecture has two main components connected via FiLM (Feature-wise Linear Modulation):

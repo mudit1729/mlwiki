@@ -31,6 +31,39 @@ Llama 2 is one of the most impactful papers in the open-source LLM movement. The
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                   Llama 2 Training Pipeline                  │
+├─────────────────────────────────────────────────────────────┤
+│                                                             │
+│  ┌───────────────┐    ┌──────────────┐    ┌──────────────┐  │
+│  │  Pretraining   │───►│     SFT      │───►│    RLHF      │  │
+│  │  2T tokens     │    │  27.5K demos │    │  (iterative) │  │
+│  │  4K context    │    │  high-quality│    │  x5 rounds   │  │
+│  └───────────────┘    └──────────────┘    └──────┬───────┘  │
+│                                                  │          │
+│                                    ┌─────────────┴────────┐ │
+│                                    │  RLHF Inner Loop     │ │
+│                                    │                      │ │
+│  ┌──────────────┐                  │  1. Rejection Sample │ │
+│  │ Reward Models│◄─── 1M+ human ──►│  2. PPO w/ KL pen.  │ │
+│  │ ┌──────────┐ │     preferences  │  3. Update policy   │ │
+│  │ │Helpfulness│ │                  │  4. Repeat          │ │
+│  │ └──────────┘ │                  └──────────────────────┘ │
+│  │ ┌──────────┐ │                                           │
+│  │ │  Safety  │ │                                           │
+│  │ └──────────┘ │                                           │
+│  └──────────────┘                                           │
+│                                                             │
+│  Transformer Block (70B):                                   │
+│  ┌──────────────────────────────────────┐                   │
+│  │ Input ──► RMSNorm ──► GQA (8 KV, 64Q)──► + ──►         │
+│  │                       ──► RMSNorm ──► SwiGLU FFN ──► +  │
+│  └──────────────────────────────────────┘                   │
+│  + RoPE positional embeddings                               │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ![Llama 2 human evaluation comparison](https://paper-assets.alphaxiv.org/figures/2307.09288v2/img-0.jpeg)
 
 ### Pretraining

@@ -34,6 +34,45 @@ This information-theoretic perspective directly influenced VQ-VAE and subsequent
 - **Information preference property**: By controlling the expressiveness of the autoregressive decoder, the system naturally partitions information: the latent code captures global semantics while the decoder handles local texture and detail
 - **Resolution of posterior collapse**: The lossy compression framework prevents collapse by ensuring z carries complementary information not available through local autoregressive context
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│              Variational Lossy Autoencoder                 │
+│                                                           │
+│  Input x ──────────────────────────────────────────────   │
+│       │                                                  │
+│       ▼                                                  │
+│  ┌──────────────┐                                         │
+│  │   Encoder    │  CNN                                    │
+│  │  q(z | x)    │                                         │
+│  └──────┬───────┘                                         │
+│         │  Discrete latent codes                          │
+│         ▼  (Gumbel-Softmax / straight-through)            │
+│  ┌──────────────┐                                         │
+│  │  z (discrete) │  ◄── KL(q(z|x) || p(z))               │
+│  │  Bottleneck   │      controls rate (bits)              │
+│  └──────┬───────┘                                         │
+│         │  Global info (identity, style, layout)          │
+│         ▼                                                │
+│  ┌──────────────────────────────────┐                     │
+│  │    Autoregressive Decoder        │                     │
+│  │    p(x_i | x_{<i}, z)           │                     │
+│  │    ┌────────────────────────┐    │                     │
+│  │    │  PixelCNN / WaveNet    │    │                     │
+│  │    │  Local context x_{<i}  │    │                     │
+│  │    │  + Global cond. z      │    │                     │
+│  │    └────────────────────────┘    │                     │
+│  └──────────────┬───────────────────┘                     │
+│                 ▼                                         │
+│  Reconstruction x_hat                                     │
+│                                                           │
+│  Info partition: z = global structure                      │
+│                  AR decoder = local texture/detail         │
+│  Loss: -E_q[log p(x|z)] + β·KL(q(z|x) || p(z))          │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 The VLAE architecture consists of three components. The **encoder** processes the input x through a CNN to produce parameters of a discrete latent distribution q(z|x). Unlike standard VAEs that use continuous Gaussians, VLAE uses discrete codes, with the encoder outputting logits over a categorical distribution. The reparameterization trick for discrete variables uses Gumbel-Softmax or straight-through estimators.

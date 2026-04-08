@@ -33,6 +33,47 @@ VAD became a strong baseline and reference point for the vectorized end-to-end d
 - **Vectorized scene constraints**: Introduces three instance-level planning constraints: (1) ego-agent collision constraint with longitudinal and lateral safety thresholds, (2) ego-boundary overstepping constraint that keeps the ego within drivable areas using predicted road boundary vectors, and (3) ego-lane directional constraint that encourages alignment between planned trajectory segments and lane vector directions
 - **Computational efficiency**: Achieves better performance than dense BEV approaches while being significantly faster, since vectorized representations scale with the number of scene elements rather than spatial resolution
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                      VAD Pipeline                         │
+│                                                           │
+│  Multi-camera Images (6 views)                            │
+│       │                                                  │
+│       ▼                                                  │
+│  ┌──────────────┐                                         │
+│  │  Image Backbone│  (ResNet-50)                          │
+│  └──────┬───────┘                                         │
+│         ▼                                                │
+│  ┌──────────────┐                                         │
+│  │ BEV Encoder  │  (LSS / BEVFormer)                      │
+│  │ Dense BEV Map│                                         │
+│  └──────┬───────┘                                         │
+│         │                                                │
+│    ┌────┴────────────────────────┐                        │
+│    │         Cross-Attention      │                       │
+│    ▼              ▼               ▼                       │
+│  ┌──────┐   ┌──────────┐   ┌──────────┐                  │
+│  │ Map   │   │  Agent   │   │  Ego     │                  │
+│  │Queries│   │ Queries  │   │ Planning │                  │
+│  └──┬───┘   └────┬─────┘   │ Queries  │                  │
+│     │            │         └────┬─────┘                   │
+│     ▼            ▼              │                         │
+│  Polylines    Agent Traj.       │  Cross-Attn to          │
+│  (lanes,      (future           │  map & agent vectors    │
+│   edges)      positions)        ▼                         │
+│     │            │         ┌──────────┐                   │
+│     │            └────────►│ Planning │                   │
+│     └─────────────────────►│  Head    │                   │
+│                            └────┬─────┘                   │
+│       Constraint Losses:        ▼                         │
+│       ├─ Collision avoidance   Ego Trajectory              │
+│       ├─ Road boundary         (2D waypoints)              │
+│       └─ Lane direction                                   │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![Comparison between rasterized and vectorized scene representations](https://paper-assets.alphaxiv.org/figures/2303.12077v3/img-0.jpeg)

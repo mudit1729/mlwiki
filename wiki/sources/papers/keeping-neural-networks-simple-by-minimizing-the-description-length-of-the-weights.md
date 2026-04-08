@@ -38,6 +38,37 @@ This paper predates modern Bayesian deep learning by over 25 years and provides 
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────┐
+│              MDL Two-Part Coding Framework               │
+│                                                         │
+│  Sender (has data + trained model)                      │
+│    │                                                    │
+│    ├──► Part 1: Encode Weights                          │
+│    │    ┌───────────┐    ┌───────────┐                  │
+│    │    │ Posterior  │    │   Prior   │                  │
+│    │    │   q(w)     │───►│   p(w)    │                  │
+│    │    └───────────┘    └───────────┘                  │
+│    │    Cost = KL[ q(w) || p(w) ] bits                  │
+│    │                                                    │
+│    ├──► Part 2: Encode Data Errors                      │
+│    │    ┌───────────┐    ┌───────────┐                  │
+│    │    │  Network   │───►│ Residuals │                  │
+│    │    │  w ~ q(w)  │    │  D - f(w) │                  │
+│    │    └───────────┘    └───────────┘                  │
+│    │    Cost = E_q[ -log P(D|w) ] bits                  │
+│    │                                                    │
+│    └──► Total: L_MDL = KL[q||p] + E_q[-log P(D|w)]     │
+│         (= negative ELBO from variational inference)    │
+│                                                         │
+│  Special Case: Gaussian prior p(w) = N(0, σ²)          │
+│    ┌─────────┐                                          │
+│    │ q(w) =  │──► KL term = ||w*||² / (2σ²) + const    │
+│    │ δ(w-w*) │    = L2 weight decay!                    │
+│    └─────────┘                                          │
+└─────────────────────────────────────────────────────────┘
+```
+
 The paper formulates the learning problem as a communication problem. Imagine a sender who has observed both the training data and the trained network, and must transmit enough information for a receiver to reconstruct the training data. The sender and receiver agree on a prior distribution p(w) over weights. The transmission consists of two parts:
 
 Part 1 (Model description): The sender transmits the network weights. Using bits-back coding, the cost of transmitting weights drawn from posterior q(w) when the receiver expects prior p(w) is KL[q(w) || p(w)] bits. If q(w) concentrates near the prior, this cost is small; if q(w) is very different from p(w), this cost is large.

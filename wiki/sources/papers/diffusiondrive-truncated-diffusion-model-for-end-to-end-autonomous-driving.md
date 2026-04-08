@@ -34,6 +34,45 @@ The method achieves 88.1 PDMS on the NAVSIM benchmark with only 2 denoising step
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                      DiffusionDrive                         │
+│                                                             │
+│  Multi-camera    ┌──────────────────┐                       │
+│  Images ────────►│  Scene Encoder   │                       │
+│                  │ (ResNet/Swin-T   │                       │
+│                  │  + BEV proj.)    │                       │
+│                  └────────┬─────────┘                       │
+│                           │ BEV Features                    │
+│                           ▼                                 │
+│  ┌──────────────┐   ┌──────────────────────────────────┐    │
+│  │ K=128 Anchor │   │   Truncated Diffusion Denoiser   │    │
+│  │ Trajectories ├──►│                                  │    │
+│  │ (K-means     │   │  Noised anchors   BEV features   │    │
+│  │  clusters)   │   │       │               │          │    │
+│  └──────────────┘   │       ▼               ▼          │    │
+│                     │  ┌─────────────────────────┐     │    │
+│  Forward diffusion  │  │  Transformer Denoiser   │     │    │
+│  truncated at       │  │  (cross-attention:      │     │    │
+│  T_trunc=5          │  │   traj ◄── BEV scene)   │     │    │
+│  (NOT full T=1000)  │  └───────────┬─────────────┘     │    │
+│                     │              │ × 2 steps only     │    │
+│                     │              ▼                    │    │
+│                     │  ┌───────────────────────┐       │    │
+│                     │  │ K refined trajectories│       │    │
+│                     │  └───────────┬───────────┘       │    │
+│                     └──────────────┼────────────────────┘    │
+│                                    ▼                        │
+│                           ┌────────────────┐                │
+│                           │  Scoring Head  │                │
+│                           │  (select best) │                │
+│                           └───────┬────────┘                │
+│                                   ▼                         │
+│                          Final Trajectory                    │
+│                          (45 FPS, 2 steps)                  │
+└─────────────────────────────────────────────────────────────┘
+```
+
 DiffusionDrive consists of three main components:
 
 1. **Scene Encoder**: A BEV (Bird's Eye View) encoder processes multi-camera images and produces scene features. The encoder follows standard BEV perception pipelines with a backbone (e.g., ResNet-50 or Swin-T) and BEV projection.

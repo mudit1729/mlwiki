@@ -29,6 +29,37 @@ DPO matches or exceeds PPO-based RLHF across sentiment generation, summarization
 
 ## Architecture / Method
 
+```
+Standard RLHF Pipeline (3 stages):
+┌──────────┐    ┌──────────────┐    ┌────────────────────────┐
+│  Stage 1 │    │   Stage 2    │    │       Stage 3          │
+│   SFT    │───►│ Train Reward │───►│  RL (PPO) against      │
+│ π_ref    │    │ Model r(x,y) │    │  reward + KL penalty   │
+└──────────┘    └──────────────┘    └────────────────────────┘
+  Demos          Pref. pairs         Sampling + RL optimization
+                 (y_w, y_l)          (complex, unstable)
+
+DPO Pipeline (2 stages):
+┌──────────┐    ┌─────────────────────────────────────────┐
+│  Stage 1 │    │              Stage 2: DPO               │
+│   SFT    │───►│                                         │
+│ π_ref    │    │  Preference pairs: (x, y_w, y_l)       │
+└──────────┘    │         │                               │
+                │         ▼                               │
+                │  L = -log σ( β · [log π_θ(y_w|x)       │
+                │                      ─────────────      │
+                │                      π_ref(y_w|x)      │
+                │                                         │
+                │                 - log π_θ(y_l|x) ] )   │
+                │                      ─────────────      │
+                │                      π_ref(y_l|x)      │
+                │                                         │
+                │  ► No reward model                      │
+                │  ► No RL sampling                       │
+                │  ► Simple cross-entropy loss             │
+                └─────────────────────────────────────────┘
+```
+
 ![RLHF vs DPO pipeline comparison](https://paper-assets.alphaxiv.org/figures/2305.18290v3/img-0.jpeg)
 
 ### The RLHF Objective

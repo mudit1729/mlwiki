@@ -28,7 +28,47 @@ RoboFlamingo achieves an average task sequence length of 4.09 on CALVIN (complet
 - **Systematic ablation** of VLM components for robotics: the paper isolates the contributions of visual pre-training, language grounding, and the policy head architecture, finding that explicit temporal modeling via LSTM is crucial and cannot be replaced by simple MLP heads.
 - **Accessibility milestone** -- demonstrating that competitive robot learning can be done on a single GPU, democratizing VLA research months before OpenVLA made this a community priority.
 
-## Architecture / Method
+## Architecture
+
+```
+  Language Instruction          Multi-View RGB Images (per timestep)
+        │                              │
+        ▼                              ▼
+┌───────────────┐             ┌─────────────────┐
+│  LLM Backbone │             │  Frozen ViT-L   │
+│  (Flamingo)   │             │  (CLIP)         │
+└───────┬───────┘             └────────┬────────┘
+        │                              │
+        │                     ┌────────┴────────┐
+        │                     │    Perceiver    │
+        │                     │    Resampler    │
+        │                     │ (→ fixed tokens)│
+        │                     └────────┬────────┘
+        │                              │
+        └──────────┐  ┌────────────────┘
+                   ▼  ▼
+        ┌──────────────────────┐
+        │  Gated Cross-Attn    │
+        │  (fuse vision+lang)  │
+        │  interleaved in LLM  │
+        └──────────┬───────────┘
+                   │
+                   │  (per-timestep features)
+                   ▼
+        ┌──────────────────────┐
+        │   LSTM Policy Head   │
+        │  (temporal modeling  │
+        │   over obs history)  │
+        └──────────┬───────────┘
+                   │
+                   ▼
+        ┌──────────────────────┐
+        │  Linear → 7-DoF      │
+        │  Action (pos,rot,grip)│
+        └──────────────────────┘
+```
+
+## Method
 
 ![RoboFlamingo architecture overview](https://paper-assets.alphaxiv.org/figures/2311.01378v3/img-0.jpeg)
 

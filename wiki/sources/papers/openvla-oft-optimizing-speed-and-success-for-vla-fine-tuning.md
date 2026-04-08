@@ -34,6 +34,33 @@ The core architectural change replaces autoregressive (sequential) action token 
 
 ## Architecture / Method
 
+```
+              OpenVLA-OFT vs Original OpenVLA
+              ────────────────────────────────
+
+  Original OpenVLA (Slow):        OpenVLA-OFT (Fast):
+  ┌─────────────────────┐         ┌─────────────────────────┐
+  │ Image + Language     │         │ Image + Language          │
+  └──────────┬──────────┘         └──────────┬──────────────┘
+             ▼                               ▼
+  ┌─────────────────────┐         ┌─────────────────────────┐
+  │   VLM Backbone       │         │   VLM Backbone + FiLM    │
+  └──────────┬──────────┘         │   ┌───────────────────┐  │
+             │                    │   │ Language ──► FiLM  │  │
+             ▼                    │   │ (modulate visual)  │  │
+  Sequential (causal attn):      │   └───────────────────┘  │
+  a₁ ──► a₂ ──► ... ──► a₇      └──────────┬──────────────┘
+  (7 forward passes)                        │
+                                            ▼
+                                 Parallel (bidirectional attn):
+                                 ┌───┬───┬───┬───┬───┬───┬───┐
+                                 │a₁ │a₂ │a₃ │a₄ │a₅ │a₆ │a₇ │
+                                 └───┴───┴───┴───┴───┴───┴───┘
+                                 (1 forward pass ──► 26x faster)
+
+  + LoRA fine-tuning + Proprioception + Multi-camera
+```
+
 ![OpenVLA-OFT architecture with parallel decoding and FiLM](https://paper-assets.alphaxiv.org/figures/2502.19645v2/figure_1_openvla_aloha.001.jpeg)
 
 The key modifications to OpenVLA are:

@@ -35,6 +35,47 @@ The model introduces a hierarchical architecture with two levels: a high-level s
 
 ## Architecture / Method
 
+```
+┌──────────┐  ┌──────────────────────┐
+│  Camera  │  │  "clean the kitchen" │
+│  Images  │  └──────────┬───────────┘
+└────┬─────┘             │
+     └──────────┬────────┘
+                ▼
+┌───────────────────────────────────┐
+│         VLM Backbone              │
+│   (shared vision-language encoder)│
+└───────────┬───────────────────────┘
+            │
+            ▼
+┌───────────────────────────────────┐
+│   High-Level Semantic Module      │
+│   (subtask decomposition)         │
+│                                   │
+│   "pick up plate" ──► "place in   │
+│    dishwasher" ──► "wipe counter" │
+└───────────┬───────────────────────┘
+            │ subtask language commands
+            ▼
+┌───────────────────────────────────┐
+│   Low-Level Action Module         │
+│   (flow matching, per subtask)    │
+│                                   │
+│   Attention mask controls         │
+│   info flow between levels        │
+└───────────┬───────────────────────┘
+            │
+            ▼
+┌───────────────────────────────────┐
+│  Mobile Manipulator Actions       │
+│  (dual 6-DOF arms + holo. base)  │
+└───────────────────────────────────┘
+
+Co-training data sources:
+  [Robot Exp.] [Cross-Embodiment] [Verbal Instr.]
+  [Web V-L Data]  [Semantic Commands]
+```
+
 ![pi0.5 architecture with hierarchical semantic and action modules](https://paper-assets.alphaxiv.org/figures/2504.16054/x2.png)
 
 pi0.5 extends the pi0 architecture with a hierarchical design. The high-level module processes the current visual observation and language instruction to predict a sequence of semantic subtasks (expressed in natural language). The low-level module then executes each subtask using flow matching for continuous action generation. An attention masking scheme controls information flow between the two levels.

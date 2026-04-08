@@ -35,6 +35,51 @@ GPT-3 made in-context learning a first-class systems primitive and catalyzed the
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────┐
+│                  GPT-3 Architecture                      │
+│                                                         │
+│  Input: "Translate English to French: cheese =>"        │
+│         ▼                                               │
+│  ┌─────────────────┐                                    │
+│  │ Token Embedding  │  vocab = 50257 (BPE)              │
+│  │ + Position Embed │  ctx_len = 2048                   │
+│  └────────┬────────┘                                    │
+│           ▼                                             │
+│  ┌─────────────────────────────────┐                    │
+│  │  Transformer Decoder Block x96  │                    │
+│  │  ┌───────────────────────────┐  │                    │
+│  │  │ Layer Norm (pre-norm)     │  │                    │
+│  │  │ Masked Multi-Head Attn   │  │  96 heads           │
+│  │  │ (d_model=12288)          │  │  d_head=128         │
+│  │  │ + Residual               │  │                    │
+│  │  ├───────────────────────────┤  │                    │
+│  │  │ Layer Norm (pre-norm)     │  │                    │
+│  │  │ FFN (4 * 12288 = 49152)  │  │                    │
+│  │  │ + Residual               │  │                    │
+│  │  └───────────────────────────┘  │                    │
+│  └────────────┬────────────────────┘                    │
+│               ▼                                         │
+│  ┌─────────────────┐                                    │
+│  │  Layer Norm      │                                    │
+│  │  Linear ─► Vocab │  175B parameters total             │
+│  │  Softmax         │  ~3.14 x 10²³ FLOPs training      │
+│  └────────┬────────┘                                    │
+│           ▼                                             │
+│  Output: "fromage"                                      │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│            In-Context Learning (no gradient updates)     │
+│                                                         │
+│  Zero-shot:  "Translate English to French: cheese =>"   │
+│  One-shot:   "sea => mer, cheese =>"                    │
+│  Few-shot:   "sea => mer, hello => bonjour, cheese =>"  │
+│                                                         │
+│  Same frozen weights for all tasks                      │
+└─────────────────────────────────────────────────────────┘
+```
+
 ![In-context learning approaches: zero-shot, one-shot, few-shot vs. traditional fine-tuning](https://paper-assets.alphaxiv.org/figures/2005.14165v4/img-4.jpeg)
 
 GPT-3 uses the same basic architecture as GPT-2: a decoder-only transformer with learned positional embeddings, alternating layers of masked multi-head self-attention and position-wise feed-forward networks, with pre-layer normalization (layer norm before attention and FFN, following the pre-activation pattern from residual network research).

@@ -31,6 +31,37 @@ The paper fundamentally redirected the industry. After Chinchilla, the LLM commu
 
 ## Architecture / Method
 
+```
+     Chinchilla: Three Approaches to Compute-Optimal Scaling
+
+  ┌──────────────────────────────────────────────────────────┐
+  │  Approach 1: Fix Model Size N, Vary Data D               │
+  │                                                          │
+  │  Loss │\                                                 │
+  │       │ \___________  ◄── diminishing returns from       │
+  │       │              ──    more data at fixed N           │
+  │       └──────────────────── Tokens D                     │
+  │  Repeat for N = 70M, 150M, ..., 16B                      │
+  ├──────────────────────────────────────────────────────────┤
+  │  Approach 2: IsoFLOP Profiles (Fix Compute C)            │
+  │                                                          │
+  │  Loss │     *                                            │
+  │       │   *   *      ◄── optimal N at each C level       │
+  │       │  *     *                                         │
+  │       └──────────────────── Model Size N                 │
+  │  Repeat for C = 10^18, 10^19, ..., 10^21 FLOPs          │
+  ├──────────────────────────────────────────────────────────┤
+  │  Approach 3: Parametric Fit                              │
+  │                                                          │
+  │  L(N,D) = E + A/N^α + B/D^β                             │
+  │  Minimize over N,D subject to C ≈ 6ND                   │
+  │  ──► N_opt ∝ C^0.5,  D_opt ∝ C^0.5                     │
+  └──────────────────────────────────────────────────────────┘
+
+  All 3 converge: scale params and data equally with compute
+      Gopher (280B, 300B tok) ──► Chinchilla (70B, 1.4T tok)
+```
+
 ![Compute-optimal scaling vs. Kaplan et al. recommendations](https://paper-assets.alphaxiv.org/figures/2203.15556/img-0.jpeg)
 
 ![IsoLoss contours and IsoFLOPs slices showing the efficient frontier](https://paper-assets.alphaxiv.org/figures/2203.15556/img-3.jpeg)
@@ -58,7 +89,7 @@ All three approaches converge: a = b ~ 0.5 in the relationship N_opt ~ C^a, D_op
 
 - **Chinchilla (70B) outperforms Gopher (280B)**: On 72% of evaluation tasks including MMLU (67.6% vs 60.0%), HellaSwag, LAMBADA, and others, despite being 4x smaller and using the same compute budget
 - **Three estimation methods agree**: All three independent approaches for estimating optimal N-D allocation converge on the same scaling relationship (a ~ b ~ 0.5), providing strong evidence for the conclusion
-- **MMLU state-of-the-art**: Chinchilla achieved 67.5% on MMLU, surpassing Gopher (60.0%), GPT-3 (43.9%), and all other models at the time of publication. Also demonstrated lower perplexity and superior performance on HellaSwag, LAMBADA, and other downstream tasks
+- **MMLU state-of-the-art**: Chinchilla achieved 67.5% on MMLU, surpassing Gopher (60.0%), GPT-3 (43.9%), and all other models at the time of publication. Also demonstrated lower perplexity and superior performance on HellaSwag, LAMBADA, and other downstream tasks (note: some tables report 67.6% due to rounding differences across evaluation runs)
 - **Inference efficiency**: As a 4x smaller model, Chinchilla is substantially cheaper and faster at inference time, providing both better quality and lower deployment cost
 - **Existing models are 4-10x undertrained**: Analysis shows GPT-3 should have been trained on ~1.5T tokens (vs 300B actual), and Gopher on ~4T tokens (vs 300B actual) for their compute budgets
 

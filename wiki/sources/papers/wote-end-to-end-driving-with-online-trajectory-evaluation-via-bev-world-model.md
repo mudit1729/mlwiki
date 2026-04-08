@@ -36,6 +36,49 @@ WoTE achieves state-of-the-art on both NAVSIM (open-loop) and Bench2Drive (close
 - **Fully differentiable pipeline**: End-to-end training of perception, BEV world model prediction, trajectory generation, and trajectory evaluation in a unified framework with shared gradients
 - **Dual benchmark state-of-the-art**: Top performance on both NAVSIM (open-loop) and Bench2Drive (closed-loop CARLA), demonstrating robustness across evaluation paradigms
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                    WoTE Pipeline                          │
+│                                                           │
+│  Multi-camera + LiDAR                                     │
+│       │                                                  │
+│       ▼                                                  │
+│  ┌──────────────┐                                         │
+│  │ BEV Encoder  │  Perception backbone                    │
+│  └──────┬───────┘                                         │
+│         │  BEV features                                   │
+│         ▼                                                │
+│  ┌──────────────────────┐                                 │
+│  │ Trajectory Predictor  │  K-means anchors + refinement  │
+│  │ N candidate trajs     │                                │
+│  └──┬───┬───┬───┬───────┘                                 │
+│     │   │   │   │   N trajectories                        │
+│     ▼   ▼   ▼   ▼                                        │
+│  ┌──────────────────────────────────┐                     │
+│  │   BEV World Model (per traj)     │                    │
+│  │   B^i_{t+k} = WM(B^i_{t+k-1},   │                    │
+│  │                    a^i_{t+k-1})  │                    │
+│  │   Predict future BEV states      │                    │
+│  │   for K timesteps each           │                    │
+│  └──────────────┬───────────────────┘                     │
+│                 │  Predicted futures per trajectory        │
+│                 ▼                                         │
+│  ┌──────────────────────────────────┐                     │
+│  │   Reward-Based Evaluator         │                    │
+│  │   r_im  = imitation reward       │                    │
+│  │   r_sim = collision + drivable   │                    │
+│  │          + TTC + comfort + prog  │                    │
+│  │   r_final = log(r_im) +          │                    │
+│  │            Σ w_j·log(r_sim^j)    │                    │
+│  └──────────────┬───────────────────┘                     │
+│                 ▼                                         │
+│         Best-rewarded trajectory                          │
+│         (18.7ms for 256 candidates)                       │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![WoTE approach: predicting multiple trajectories, using BEV world model to imagine futures, and reward-based selection](https://paper-assets.alphaxiv.org/figures/2504.01941v2/x1.png)

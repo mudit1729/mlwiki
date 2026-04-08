@@ -33,6 +33,43 @@ A key insight from the benchmark results is that complex multi-module architectu
 
 ![Comparison of evaluation approaches](https://paper-assets.alphaxiv.org/figures/2406.15349v2/x1.png)
 
+```
+┌───────────────────────────────────────────────────────────┐
+│                   Scene Initialization                     │
+│  Multi-camera images + Ego state + HD Map                 │
+└─────────────────────────┬─────────────────────────────────┘
+                          │
+                          ▼
+┌───────────────────────────────────────────────────────────┐
+│              Driving Agent (queried once)                  │
+│         Outputs: 4-second planned trajectory               │
+└─────────────────────────┬─────────────────────────────────┘
+                          │
+                          ▼
+┌───────────────────────────────────────────────────────────┐
+│              LQR Controller                                │
+│     Converts waypoints ──► steering + acceleration         │
+└─────────────────────────┬─────────────────────────────────┘
+                          │
+                          ▼
+┌───────────────────────────────────────────────────────────┐
+│         Kinematic Bicycle Model (10 Hz)                    │
+│    Propagates ego vehicle ──► simulated trajectory         │
+└─────────────────────────┬─────────────────────────────────┘
+                          │
+                          ▼
+┌───────────────────────────────────────────────────────────┐
+│                   PDM Score                                │
+│  ┌─────────────────────┐  ┌─────────────────────────────┐ │
+│  │ Safety (multiply)   │  │ Performance (weighted avg)   │ │
+│  │  - No Collision     │  │  - Ego Progress             │ │
+│  │  - Drivable Area    │  │  - Time-to-Collision        │ │
+│  └─────────┬───────────┘  │  - Comfort                  │ │
+│            │              └──────────────┬──────────────┘ │
+│            └──────── PDMS = NC*DAC * w_avg(EP,TTC,C) ────┘ │
+└───────────────────────────────────────────────────────────┘
+```
+
 ### Non-Reactive Simulation Pipeline
 
 NAVSIM operates on the **OpenScene** dataset (a public redistribution of nuPlan). At evaluation time:

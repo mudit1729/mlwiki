@@ -40,6 +40,46 @@ GaussianLSS achieves 38.3% IoU for vehicle BEV segmentation -- within 0.4% of th
 
 ![GaussianLSS architecture](https://paper-assets.alphaxiv.org/figures/2504.01957v2/x1.png)
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                     GaussianLSS Pipeline                          │
+│                                                                   │
+│  ┌──────────┐    ┌───────────┐    ┌──────────────────────────┐    │
+│  │ Multi-cam │───►│ Backbone  │───►│ CNN Head (per pixel)     │    │
+│  │ Images    │    │           │    │  ├─ F_i  (features)      │    │
+│  └──────────┘    └───────────┘    │  ├─ α_i  (opacity)       │    │
+│                                   │  └─ P_i  (depth distrib) │    │
+│                                   └────────────┬─────────────┘    │
+│                                                │                  │
+│                         ┌──────────────────────▼───────────────┐  │
+│                         │  Depth Uncertainty Modeling           │  │
+│                         │  μ = Σ P_i · d_i                     │  │
+│                         │  σ² = Σ P_i · (d_i - μ)²            │  │
+│                         │  Soft range: [μ-kσ, μ+kσ]           │  │
+│                         └──────────────────────┬───────────────┘  │
+│                                                │                  │
+│                         ┌──────────────────────▼───────────────┐  │
+│                         │  3D Uncertainty Transformation        │  │
+│                         │  Unproject via intrinsics (I)         │  │
+│                         │  + extrinsics (E) ──►                 │  │
+│                         │  3D Gaussian (μ_3d, Σ)                │  │
+│                         └──────────────────────┬───────────────┘  │
+│                                                │                  │
+│                    g_i = (μ_3d, Σ, F_i, α_i)   │                  │
+│                                                │                  │
+│                         ┌──────────────────────▼───────────────┐  │
+│                         │  Multi-scale BEV Gaussian Splatting   │  │
+│                         │  Project onto BEV at 50/100/200 res   │  │
+│                         │  F_BEV(x) = Σ F_i · α_i · G_i(x)    │  │
+│                         │  (80% Gaussians filtered by opacity)  │  │
+│                         └──────────────────────┬───────────────┘  │
+│                                                │                  │
+│                         ┌──────────────────────▼───────────────┐  │
+│                         │  BEV Decoder ──► Segmentation Map     │  │
+│                         └──────────────────────────────────────┘  │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 The framework processes multi-view images through a backbone network to extract features, then a CNN layer outputs three components per pixel: splatting features (F_i), opacity values (alpha_i), and depth distributions (P_i).
 
 **Depth Uncertainty Modeling:** For each pixel, a soft depth mean and variance are computed from the predicted distribution:

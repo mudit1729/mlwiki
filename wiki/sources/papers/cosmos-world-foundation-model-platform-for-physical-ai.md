@@ -2,7 +2,7 @@
 title: "Cosmos World Foundation Model Platform for Physical AI"
 tags: [world-model, foundation-model, simulation, physical-ai]
 status: active
-type: paper
+type: source-summary
 year: "2025"
 venue: "arXiv"
 citations: 515
@@ -28,6 +28,45 @@ Key technical achievements include tokenization with +4 dB PSNR improvement and 
 - **Multi-domain fine-tuning:** Demonstrated applications in camera control, robotic manipulation, and autonomous driving
 
 ## Architecture / Method
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                    Cosmos Platform Overview                      │
+│                                                                 │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  1. Video Curation Pipeline                               │  │
+│  │  20M hrs raw ──► Filter/Dedup ──► Quality Score ──► 100M  │  │
+│  │                                    + Tag         clips    │  │
+│  └──────────────────────────┬────────────────────────────────┘  │
+│                             │ Curated Video Corpus              │
+│                             ▼                                   │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  2. Visual Tokenizers                                     │  │
+│  │  ┌─────────────────┐      ┌──────────────────┐            │  │
+│  │  │   Continuous    │      │    Discrete      │            │  │
+│  │  │   Tokenizer     │      │    Tokenizer     │            │  │
+│  │  │  (latent vecs)  │      │  (token indices) │            │  │
+│  │  └────────┬────────┘      └────────┬─────────┘            │  │
+│  └───────────┼────────────────────────┼──────────────────────┘  │
+│              ▼                        ▼                          │
+│  ┌───────────────────┐   ┌────────────────────────┐             │
+│  │  3a. Diffusion    │   │  3b. Autoregressive    │             │
+│  │      WFM          │   │      WFM               │             │
+│  │  (iterative       │   │  (next-token           │             │
+│  │   denoising)      │   │   prediction)          │             │
+│  └─────────┬─────────┘   └───────────┬────────────┘             │
+│            └──────────────┬──────────┘                           │
+│                           ▼                                      │
+│  ┌───────────────────────────────────────────────────────────┐  │
+│  │  4. Domain Fine-Tuning                                    │  │
+│  │  ┌────────────┐  ┌──────────────┐  ┌────────────────┐     │  │
+│  │  │  Camera    │  │   Robotic    │  │  Autonomous   │     │  │
+│  │  │  Control   │  │   Manip.     │  │  Driving      │     │  │
+│  │  └────────────┘  └──────────────┘  └────────────────┘     │  │
+│  └───────────────────────────────────────────────────────────┘  │
+└─────────────────────────────────────────────────────────────────┘
+  Trained on 10,000 H100 GPUs
+```
 
 The Cosmos platform has four pillars:
 

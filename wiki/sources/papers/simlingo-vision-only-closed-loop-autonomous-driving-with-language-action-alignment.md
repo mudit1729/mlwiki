@@ -38,6 +38,38 @@ SimLingo validates this alignment-first philosophy by winning the CARLA Challeng
 
 ## Architecture / Method
 
+```
+  ┌──────────────────────────────────────────────────────────┐
+  │                    SimLingo VLA                           │
+  │                                                          │
+  │  ┌────────────────┐        ┌───────────────────┐         │
+  │  │ Multi-Camera   │───────►│  Vision Backbone   │        │
+  │  │ Images         │        └────────┬──────────┘         │
+  │  └────────────────┘                 │                    │
+  │                                     ▼                    │
+  │                          ┌──────────────────┐            │
+  │  ┌────────────────┐      │  Language Model   │            │
+  │  │ Route Command / │─────►│  Backbone         │            │
+  │  │ Text Prompt     │      └──────┬───────────┘            │
+  │  └────────────────┘              │                       │
+  │                    ┌─────────────┼─────────────┐         │
+  │                    ▼             ▼             ▼         │
+  │            ┌─────────────┐ ┌──────────┐ ┌───────────┐   │
+  │            │ Task 1:     │ │ Task 2:  │ │ Task 3:   │   │
+  │            │ Driving     │ │ VQA /    │ │ Action    │   │
+  │            │ Control     │ │ Scene    │ │ Dreaming  │   │
+  │            │             │ │ Comment  │ │ (Bidir.)  │   │
+  │            └──────┬──────┘ └────┬─────┘ └─────┬─────┘   │
+  │                   │             │              │         │
+  │                   ▼             │         ┌────┴────┐    │
+  │           ┌──────────────┐     │         │ Lang──►Act│   │
+  │           │ Steering,    │     │         │ Act──►Lang│   │
+  │           │ Accel, Brake │     │         └─────────┘    │
+  │           └──────────────┘     │                        │
+  │              L_drive       L_vqa          L_AD           │
+  └──────────────────────────────────────────────────────────┘
+```
+
 SimLingo is built as a unified vision-language-action model that processes camera-only input through a shared vision backbone. The architecture consists of a vision encoder (processing multi-camera images), a language model backbone, and action output heads. The system is trained on three tasks simultaneously:
 
 **Task 1 -- Driving Control**: Given multi-camera images and a route command, the model predicts low-level driving actions (steering, acceleration, braking). This is the primary task, trained with standard imitation learning on expert demonstrations in CARLA.

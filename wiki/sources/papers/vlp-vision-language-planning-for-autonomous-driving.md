@@ -35,6 +35,49 @@ This establishes "language as prior" as a distinct paradigm alongside "language 
 - **Compatible with existing BEV planning stacks**: The ALP/SLP modules can augment existing BEV-based AD systems without architectural overhaul, acting as plug-in improvements
 - **Strong empirical validation at CVPR**: Published at a top venue with ~155 citations, demonstrating community interest in the language-as-prior approach
 
+## Architecture
+
+```
+┌──────────────────────────────────────────────────────────┐
+│                    VLP Framework                          │
+│                                                           │
+│  Multi-camera Images     Scene Descriptions (train only)  │
+│       │                        │                         │
+│       ▼                        ▼                         │
+│  ┌──────────────┐    ┌──────────────────┐                 │
+│  │ BEV Encoder  │    │ Pretrained LM    │ (frozen)        │
+│  │ (backbone +  │    │ (CLIP / small LM)│                 │
+│  │  BEV lift)   │    └────────┬─────────┘                 │
+│  └──────┬───────┘             │                          │
+│         │                     │                          │
+│    ┌────┴─────────────┐       │                          │
+│    │                  │       │                          │
+│    ▼                  ▼       ▼                          │
+│  ┌──────┐    ┌──────────────────────┐                     │
+│  │ BEV  │    │  ALP Module          │ (train only)        │
+│  │ Feat │◄───│  Contrastive align   │                    │
+│  │      │    │  BEV ◄──► LM space   │                    │
+│  └──┬───┘    └──────────────────────┘                     │
+│     │                                                    │
+│     ▼                                                    │
+│  ┌──────────────────────────────────┐                     │
+│  │  Transformer Planner             │                    │
+│  │  ┌────────────────────────────┐  │                    │
+│  │  │ Ego queries + cross-attn   │  │                    │
+│  │  │ to BEV features            │  │                    │
+│  │  └────────────────────────────┘  │                    │
+│  │  ┌────────────────────────────┐  │                    │
+│  │  │ SLP: LM-aligned planning   │  │ (train only)       │
+│  │  │ queries (nav goal + ego)   │  │                    │
+│  │  └────────────────────────────┘  │                    │
+│  └──────────────┬───────────────────┘                     │
+│                 ▼                                         │
+│           Ego Trajectory                                  │
+│                                                           │
+│  Inference: LM removed; BEV features retain alignment     │
+└──────────────────────────────────────────────────────────┘
+```
+
 ## Architecture / Method
 
 ![VLP Framework Overview: language models enhancing autonomous driving planning](https://paper-assets.alphaxiv.org/figures/2401.05577v4/x2.png)

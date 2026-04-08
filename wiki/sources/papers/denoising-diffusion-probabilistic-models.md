@@ -44,6 +44,42 @@ The paper's impact extends far beyond image generation. The diffusion framework 
 
 ## Architecture / Method
 
+```
+Forward Process (fixed, no learnable params):
+  x₀ ──────► x₁ ──────► x₂ ──────► ... ──────► x_T
+ (data)   q(x_t|x_{t-1}) = add Gaussian noise    (pure noise)
+          β₁=1e-4  ──────────────────►  β_T=0.02
+
+  Shortcut: x_t = √(ᾱ_t)·x₀ + √(1-ᾱ_t)·ε,  ε ~ N(0,I)
+
+Reverse Process (learned):
+  x_T ──────► x_{T-1} ──────► ... ──────► x₁ ──────► x₀
+ (noise)  p_θ(x_{t-1}|x_t) = denoise one step      (image)
+          ┌──────────────────────────┐
+          │  ε_θ(x_t, t) predicts   │
+          │  the noise ε that was    │
+          │  added at step t         │
+          └──────────────────────────┘
+
+U-Net Denoiser Architecture:
+┌─────────┐     ┌─────────┐     ┌─────────┐
+│ Down    │     │Bottlenck│     │  Up     │
+│ Blocks  │────►│ + Self- │────►│ Blocks  │
+│ (ResNet │     │ Attn at │     │ (ResNet │
+│ +BN+skip│     │ 16x16)  │     │ +BN+skip│
+│ connect)│     │         │     │ connect)│
+└─────────┘     └─────────┘     └─────────┘
+      ▲                               │
+      └──────── Skip Connections ──────┘
+
+  Timestep t ──► Sinusoidal Embedding ──► Added to each ResNet block
+
+Training (one step):
+  1. Sample x₀ ~ data,  t ~ Uniform{1..T},  ε ~ N(0,I)
+  2. Compute x_t = √(ᾱ_t)·x₀ + √(1-ᾱ_t)·ε
+  3. Loss = ‖ε - ε_θ(x_t, t)‖²    (simple MSE)
+```
+
 The forward (noising) process is a fixed Markov chain that gradually adds Gaussian noise to a data sample x_0 over T=1000 steps: q(x_t | x_{t-1}) = N(x_t; sqrt(1 - beta_t) * x_{t-1}, beta_t * I), where beta_t increases linearly from beta_1 = 1e-4 to beta_T = 0.02. A key property is that any intermediate x_t can be sampled directly from x_0 in closed form: x_t = sqrt(alpha_bar_t) * x_0 + sqrt(1 - alpha_bar_t) * epsilon, where alpha_bar_t = product_{s=1}^{t} (1 - beta_s) and epsilon ~ N(0, I).
 
 The reverse (denoising) process learns to undo each noise step: p_theta(x_{t-1} | x_t) = N(x_{t-1}; mu_theta(x_t, t), sigma_t^2 * I). The mean mu_theta is parameterized as a function of the predicted noise: mu_theta(x_t, t) = (1/sqrt(alpha_t)) * (x_t - (beta_t / sqrt(1 - alpha_bar_t)) * epsilon_theta(x_t, t)). The variance sigma_t^2 is fixed to beta_t (not learned).

@@ -32,6 +32,45 @@ SurroundOcc achieved state-of-the-art results on both nuScenes and SemanticKITTI
 
 ![SurroundOcc architecture overview](https://paper-assets.alphaxiv.org/figures/2303.09551v2/img-1.jpeg)
 
+```
+  Multi-Camera Images (N views)
+         │
+         ▼
+  ┌──────────────────────┐
+  │ ResNet-101 + FPN      │
+  │ (1/8, 1/16, 1/32)    │
+  └────────┬─────────────┘
+           │ multi-scale 2D features
+           ▼
+  ┌────────────────────────────────────────────────┐
+  │  2D-to-3D Spatial Cross-Attention              │
+  │                                                │
+  │  3D Volume Queries ──► project ref pts to imgs │
+  │       │                deformable cross-attn   │
+  │       ▼                                        │
+  │  Coarse 3D Volume (25x25x2)                    │
+  └────────┬───────────────────────────────────────┘
+           │
+           ▼
+  ┌────────────────────────────────────────────────┐
+  │  Coarse-to-Fine 3D U-Net Decoder               │
+  │                                                │
+  │  ┌─────────┐   ┌─────────┐   ┌─────────────┐  │
+  │  │ Encoder │──►│ Decoder │──►│  Upsample    │  │
+  │  │ (3D conv│   │ (3D     │   │  stages +    │  │
+  │  │  + pool)│   │  deconv │   │  skip conns  │  │
+  │  └─────────┘   │  + skip)│   └──────┬──────┘  │
+  │                └─────────┘          │          │
+  │                                     ▼          │
+  │  Multi-Scale Supervision at each level:        │
+  │  ├── Scene-class affinity loss                 │
+  │  ├── Lovasz-softmax loss                       │
+  │  └── Cross-entropy loss                        │
+  │                                                │
+  │  Final output: 200x200x16 semantic voxels      │
+  └────────────────────────────────────────────────┘
+```
+
 ### Image Backbone and Multi-Scale Features
 
 SurroundOcc uses a standard image backbone (e.g., ResNet-101 with FPN) to extract multi-scale 2D features from each of the N surrounding cameras. The FPN produces feature maps at multiple resolutions (1/8, 1/16, 1/32), which are used to construct the 3D volume at different scales.

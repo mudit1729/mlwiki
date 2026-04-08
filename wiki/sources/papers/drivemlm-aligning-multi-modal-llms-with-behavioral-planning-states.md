@@ -41,6 +41,47 @@ LLaDA complements DriveMLM by demonstrating that LLMs can interpret traffic rule
 
 ![MLLM Planner architecture: multi-modal tokenizer and MLLM decoder components](https://paper-assets.alphaxiv.org/figures/2312.09245v3/img-4.jpeg)
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│            DriveMLM: LLM as Plug-and-Play Planner             │
+│                                                               │
+│  ┌───────────────────────────────────────────────────┐       │
+│  │           Multi-Modal Tokenizer                    │       │
+│  │                                                    │       │
+│  │  ┌──────────┐  ┌──────────────┐  ┌────────────┐  │       │
+│  │  │ Multi-cam│  │ LiDAR Points │  │ System Msg │  │       │
+│  │  │ Images   │  │              │  │ (decisions)│  │       │
+│  │  └────┬─────┘  └──────┬───────┘  └─────┬──────┘  │       │
+│  │       ▼               ▼                 │         │       │
+│  │  ┌─────────┐   ┌────────────┐           │         │       │
+│  │  │CLIP ViT │   │ SST LiDAR  │           │         │       │
+│  │  │+ Temporal│   │ Encoder    │           │         │       │
+│  │  │CrossAttn │   │(CLIP-align)│           │         │       │
+│  │  └────┬─────┘   └─────┬──────┘           │         │       │
+│  │       └───────┬────────┘                 │         │       │
+│  │               ▼                          │         │       │
+│  │         Visual Tokens                    │         │       │
+│  └───────────────┬──────────────────────────┘         │       │
+│                  ▼                                     │       │
+│  ┌───────────────────────────────────────────┐        │       │
+│  │        LLaMA-7B MLLM Decoder              │        │       │
+│  │  Input: [visual tokens] + [system msg]    │        │       │
+│  └──────────────────┬────────────────────────┘        │       │
+│                     ▼                                  │       │
+│  ┌─────────────────────────────────────┐              │       │
+│  │ Output:                             │              │       │
+│  │  Speed:  KEEP|ACCEL|DECEL|STOP      │              │       │
+│  │  Path:   FOLLOW|LEFT|RIGHT|BORROW   │              │       │
+│  │  + Natural Language Explanation      │              │       │
+│  └──────────────────┬──────────────────┘              │       │
+│                     ▼                                  │       │
+│         ┌──────────────────────┐                       │       │
+│         │ Apollo / Autoware    │                       │       │
+│         │ Motion Planner       │──► Vehicle Control    │       │
+│         └──────────────────────┘                       │       │
+└──────────────────────────────────────────────────────────────┘
+```
+
 DriveMLM's architecture consists of three main components.
 
 **Behavioral Planning States Alignment**: The framework defines two decision categories: Speed Decisions [KEEP, ACCELERATE, DECELERATE, STOP] and Path Decisions [FOLLOW, LEFT CHANGE, RIGHT CHANGE, LEFT BORROW, RIGHT BORROW]. These are incorporated into system messages fed to the MLLM planner, ensuring predictions converge into predefined decisions executable by downstream motion planning and control modules. At each timestep, one speed and one path decision are generated.

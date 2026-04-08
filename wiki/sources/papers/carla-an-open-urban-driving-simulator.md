@@ -41,6 +41,42 @@ CARLA's impact on the autonomous driving research community has been extraordina
 
 ![CARLA simulator showcasing diverse weather conditions in the same urban environment](https://paper-assets.alphaxiv.org/figures/1711.03938v1/img-0.jpeg)
 
+```
+┌────────────────────────────────────────────────────────────┐
+│                CARLA Server-Client Architecture             │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  ┌──────────────────────────────────┐                      │
+│  │         CARLA Server             │                      │
+│  │      (Unreal Engine 4)           │                      │
+│  │                                  │                      │
+│  │  ┌────────────┐ ┌────────────┐   │                      │
+│  │  │  Physics   │ │ Rendering  │   │                      │
+│  │  │  Engine    │ │ (PBR)      │   │                      │
+│  │  └────────────┘ └────────────┘   │                      │
+│  │  ┌────────────┐ ┌────────────┐   │                      │
+│  │  │  NPC AI    │ │  Weather   │   │                      │
+│  │  │ (vehicles, │ │ (rain,fog, │   │                      │
+│  │  │  peds)     │ │  sun,night)│   │                      │
+│  │  └────────────┘ └────────────┘   │                      │
+│  └──────────────┬───────────────────┘                      │
+│                 │  TCP/IP                                   │
+│                 ▼                                          │
+│  ┌──────────────────────────────────┐                      │
+│  │       Python / C++ Client        │                      │
+│  │                                  │                      │
+│  │  ┌──────────┐   ┌────────────┐   │                      │
+│  │  │ Sensors: │   │ Control:   │   │                      │
+│  │  │ RGB, Depth│   │ Steer,     │   │                      │
+│  │  │ Seg, LiDAR│   │ Throttle,  │   │                      │
+│  │  │ GPS, IMU  │   │ Brake      │   │                      │
+│  │  └──────────┘   └────────────┘   │                      │
+│  └──────────────────────────────────┘                      │
+│                                                            │
+│  Benchmark Tasks: Straight │ One-Turn │ Nav │ Nav-Dynamic  │
+└────────────────────────────────────────────────────────────┘
+```
+
 CARLA is built as a server-client architecture. The server runs the Unreal Engine 4 simulation (physics, rendering, NPC AI) and the client connects via a Python/C++ API to control the ego vehicle, configure sensors, and retrieve observations. The simulation runs at a configurable timestep (typically 10-20 FPS for training, up to 60 FPS for evaluation).
 
 The simulator provides several urban maps with varying complexity. Each map includes buildings, roads with lane markings, traffic lights, stop signs, and spawn points for vehicles and pedestrians. Weather is parameterized by cloud coverage, precipitation, sun altitude/azimuth, and fog density. NPC vehicles follow predefined autopilot routes with basic collision avoidance.

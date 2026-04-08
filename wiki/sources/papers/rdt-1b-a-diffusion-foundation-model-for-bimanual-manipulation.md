@@ -32,7 +32,47 @@ The model is pre-trained on a large multi-robot dataset and fine-tuned for biman
 - **Pre-training + fine-tuning paradigm**: Pre-trained on diverse single-arm and bimanual data, then fine-tuned on specific bimanual tasks, showing effective transfer from single-arm to bimanual skills
 - **Scalable diffusion policy**: Demonstrates that DiT-style architecture scales better than U-Net-based diffusion policies for high-dimensional action spaces
 
-## Architecture / Method
+## Architecture
+
+```
+┌─────────────┐  ┌───────────────┐  ┌──────────────────┐
+│ Multi-View  │  │   Language    │  │  Proprioceptive  │
+│ Camera Imgs │  │  Instruction  │  │  State (L+R arm) │
+└──────┬──────┘  └───────┬───────┘  └────────┬─────────┘
+       │                 │                   │
+       ▼                 ▼                   │
+┌──────────────┐ ┌───────────────┐           │
+│ Frozen Vision│ │  Frozen Text  │           │
+│ Encoder      │ │  Encoder      │           │
+│ (CLIP/DINOv2)│ │               │           │
+└──────┬───────┘ └───────┬───────┘           │
+       │                 │                   │
+       │    Cross-Attn   │                   │
+       └────────┐ ┌──────┘                   │
+                ▼ ▼                          │
+┌───────────────────────────────────────┐    │
+│     Diffusion Transformer (1.2B)     │    │
+│  ┌─────────────────────────────────┐  │    │
+│  │ Noised Action Tokens            │◄─┼────┘
+│  │ [L-arm 7D | R-arm 7D | grip 2D]│  │
+│  │ × H timesteps                   │  │
+│  ├─────────────────────────────────┤  │
+│  │ Self-Attention (L+R arms joint) │  │
+│  │ Cross-Attention (vision + lang) │  │
+│  │ adaLN (diffusion timestep t)    │  │
+│  └─────────────────────────────────┘  │
+│          × N DiT blocks              │
+└───────────────────┬───────────────────┘
+                    │
+                    ▼  DDPM/DDIM sampling
+          ┌─────────────────┐
+          │  Action Chunk   │
+          │  (H=16 steps)   │
+          │  Left + Right   │
+          └─────────────────┘
+```
+
+## Method
 
 RDT-1B adapts the Diffusion Transformer (DiT) architecture for robot action generation:
 

@@ -34,6 +34,50 @@ The key insight is that a model that can predict what will happen next in latent
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────┐
+│                   LAW Architecture                       │
+│                                                         │
+│  ┌────────────────┐                                     │
+│  │ Multi-Camera    │                                     │
+│  │ Images (t)      │                                     │
+│  └───────┬────────┘                                     │
+│          ▼                                              │
+│  ┌────────────────┐                                     │
+│  │  BEV Encoder    │  (spatial cross-attention,          │
+│  │  (BEVFormer)    │   camera intrinsics/extrinsics)     │
+│  └───────┬────────┘                                     │
+│          ▼                                              │
+│     BEV Features (t)                                    │
+│          │                                              │
+│     ┌────┴─────────────────────┐                        │
+│     ▼                          ▼                        │
+│  ┌──────────────┐    ┌───────────────────┐              │
+│  │ Planning Head │    │ Latent Encoder E  │              │
+│  │ (waypoints)   │    │ BEV ──► z_t       │              │
+│  └──────┬───────┘    └────────┬──────────┘              │
+│         │                     ▼                         │
+│         │            ┌───────────────────┐              │
+│         │            │ Latent World Model│              │
+│         │            │ z_{t+1} = f(z_t,  │              │
+│         │            │            a_t)   │  (transformer)│
+│         │            └────────┬──────────┘              │
+│         │                     ▼                         │
+│         │            ┌───────────────────┐              │
+│         │            │  Prediction Loss   │              │
+│         │            │ ||z_{t+1}^pred -   │              │
+│         │            │  sg(z_{t+1}^real)||│ ◄─ stop-grad │
+│         │            └───────────────────┘   on target   │
+│         ▼                                               │
+│  ┌──────────────┐                                       │
+│  │ Planning Loss │   L = L_plan + L_latent (+ L_percep) │
+│  │ (L2 waypts)   │                                       │
+│  └──────────────┘                                       │
+│                                                         │
+│  Inference: only BEV Encoder + Planning Head (no WM)    │
+└─────────────────────────────────────────────────────────┘
+```
+
 LAW augments a standard end-to-end driving architecture with a latent world model branch:
 
 1. **Scene Encoder**: Multi-camera images are encoded into BEV features using a standard BEV encoder (e.g., BEVFormer-style with spatial cross-attention). The BEV features at each timestep form the basis for both planning and world modeling.

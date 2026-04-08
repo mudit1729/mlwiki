@@ -29,6 +29,42 @@ Notably, the compact 0.5B variant achieves competitive 0.35m L2 error with low c
 
 ## Architecture / Method
 
+```
+                    OpenDriveVLA Architecture
+                    ────────────────────────
+
+ Multi-view          ┌───────────────────┐
+ Camera    ─────────►│  ResNet-101       │
+ Images              │  (Multi-scale     │
+                     │   Feature Extrac.) │
+                     └─────────┬─────────┘
+                               │ BEV Features
+                  ┌────────────┼────────────┐
+                  ▼            ▼            ▼
+          ┌─────────────┐ ┌─────────┐ ┌─────────────┐
+          │ Global Scene│ │ Agent   │ │ Map         │
+          │ Sampler     │ │ Query   │ │ Query       │
+          │ (Q_scene)   │ │ Transf. │ │ Transf.     │
+          │             │ │(Q_agent)│ │ (Q_map)     │
+          └──────┬──────┘ └────┬────┘ └──────┬──────┘
+                 │             │              │
+                 └──────┬──────┴──────┬───────┘
+                        │  Projectors │
+                        ▼             ▼
+  Ego State ──► ┌───────────────────────────────────┐
+  (text)   ──► │     Qwen 2.5-Instruct LLM         │
+  Language ──► │     (0.5B / 3B / 7B)               │
+  Command  ──► └───────────────┬───────────────────┘
+                               │
+                    ┌──────────┴──────────┐
+                    ▼                     ▼
+             QA Text Output        Trajectory Waypoints
+             (interpretable)       (autoregressive tokens)
+
+  Training: Stage 1 ──► Stage 2 ──► Stage 2.5 ──► Stage 3
+            VL Align   Instruct   Interaction   E2E Plan
+```
+
 ![Architecture](https://paper-assets.alphaxiv.org/figures/2503.23463v2/drivevla-Training.jpg)
 
 The architecture processes multiple input modalities: multi-view camera images through a 3D perception pipeline, ego state (position, velocity, orientation) as text, language commands for high-level instructions, and historical trajectory context for temporal consistency.

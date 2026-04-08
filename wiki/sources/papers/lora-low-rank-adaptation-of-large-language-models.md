@@ -29,6 +29,38 @@ Applied to GPT-3 175B, LoRA reduces trainable parameters by 10,000x (from 175B t
 
 ## Architecture / Method
 
+```
+┌───────────────────────────────────────────────────┐
+│              LoRA: Low-Rank Adaptation             │
+│                                                   │
+│         Input x                                   │
+│           │                                       │
+│     ┌─────┴─────┐                                 │
+│     │           │                                 │
+│     ▼           ▼                                 │
+│  ┌──────┐   ┌──────┐                              │
+│  │  W_0  │   │  A   │  r x k  (Gaussian init)    │
+│  │ (d x k)│   │(rank r)│                           │
+│  │ FROZEN │   └──┬───┘                              │
+│  │        │      ▼                                 │
+│  │        │   ┌──────┐                              │
+│  │        │   │  B   │  d x r  (zero init)        │
+│  │        │   │(rank r)│                           │
+│  └──┬─────┘   └──┬───┘                              │
+│     │           │                                 │
+│     │    h = W_0·x + (α/r)·B·A·x                 │
+│     │           │                                 │
+│     └─────┬─────┘                                 │
+│           ▼                                       │
+│       Output h                                    │
+│                                                   │
+│  At inference: W = W_0 + (α/r)·BA  (merged, no   │
+│  extra latency)                                   │
+│                                                   │
+│  Typical r = 4-8, trainable params: ~0.003% of W_0│
+└───────────────────────────────────────────────────┘
+```
+
 ![LoRA architecture showing low-rank matrices A and B injected alongside frozen pretrained weights](https://paper-assets.alphaxiv.org/figures/2106.09685v2/img-0.jpeg)
 
 ### Core mechanism

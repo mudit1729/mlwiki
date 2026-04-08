@@ -31,6 +31,49 @@ GR-2 achieves a 97.7% success rate across more than 100 tabletop manipulation ta
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│        GR-2: Video-Language-Action Model                     │
+│                                                             │
+│  Stage 1: Video-Language Pretraining (38M clips)            │
+│  ┌────────────┐  ┌────────────┐  ┌──────────────────┐      │
+│  │ Text       │  │ Video      │  │ GPT-Style        │      │
+│  │ Description│──│ Frames     │──│ Autoregressive   │      │
+│  │ Tokens     │  │ (encoded)  │  │ Transformer      │      │
+│  └────────────┘  └────────────┘  │                  │      │
+│                                  │ Objective:       │      │
+│                                  │ predict future   │      │
+│                                  │ video frames     │      │
+│                                  └────────┬─────────┘      │
+│                                           │                │
+│  Stage 2: Robot Fine-tuning               ▼                │
+│  ┌─────────────────────────────────────────────────┐       │
+│  │  Unified Token Sequence                         │       │
+│  │  [text] [video_t] [video_t+1] ... [action]     │       │
+│  │                                                 │       │
+│  │  ┌─────────────────────────────────┐            │       │
+│  │  │  Pretrained Transformer         │            │       │
+│  │  │  (world model backbone)         │            │       │
+│  │  └───────────────┬─────────────────┘            │       │
+│  │                  │                              │       │
+│  │                  ▼                              │       │
+│  │  ┌─────────────────────────────────┐            │       │
+│  │  │  Conditional VAE (cVAE)         │            │       │
+│  │  │  ┌─────────┐    ┌────────────┐  │            │       │
+│  │  │  │ Encoder  │──►│ Latent z   │  │            │       │
+│  │  │  │(train)   │   │            │  │            │       │
+│  │  │  └─────────┘    └─────┬──────┘  │            │       │
+│  │  │                       ▼         │            │       │
+│  │  │               ┌────────────┐    │            │       │
+│  │  │               │ Decoder    │────┼──► Actions │       │
+│  │  │               └────────────┘    │            │       │
+│  │  └─────────────────────────────────┘            │       │
+│  └─────────────────────────────────────────────────┘       │
+│                                                             │
+│  Scaling: 1.1B (39%) ──► 6.8B (60%) success rate           │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ![GR-2 architecture overview](https://paper-assets.alphaxiv.org/figures/2410.06158/x1.png)
 
 GR-2 uses a GPT-style autoregressive transformer as its backbone. The model operates over a unified token sequence that interleaves text tokens, visual tokens (from video frames encoded via a vision encoder), and robot action tokens.

@@ -30,6 +30,42 @@ GenAD achieves a 44.5% improvement in Frechet Video Distance (FVD) compared to d
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│              GenAD: Two-Stage Video Prediction               │
+│                                                             │
+│  Stage 1: Driving Domain Adaptation                         │
+│  ┌──────────┐    fine-tune    ┌─────────────────────┐       │
+│  │  SDXL    │ ──────────────► │  Driving-Adapted    │       │
+│  │(pretrained│   on OpenDV-2K │  Image Diffusion    │       │
+│  │ text2img) │   driving imgs │  Model              │       │
+│  └──────────┘                 └──────────┬──────────┘       │
+│                                          │                  │
+│  Stage 2: Temporal Reasoning             │ freeze spatial   │
+│                                          ▼                  │
+│  ┌───────────────────────────────────────────────────┐      │
+│  │  Spatial Layers (frozen) + Temporal Blocks (new)  │      │
+│  │                                                   │      │
+│  │  Frame t-2 ──► ┌──────────┐                       │      │
+│  │  Frame t-1 ──► │ Causal   │  (future attends      │      │
+│  │  Frame t   ──► │ Temporal │   only to past)       │      │
+│  │                │ Attention│                        │      │
+│  │                └────┬─────┘                        │      │
+│  │                     │                              │      │
+│  │                     ▼                              │      │
+│  │              ┌──────────────┐                      │      │
+│  │              │  Decoupled   │  (handles large      │      │
+│  │              │  Spatial     │   ego-motion          │      │
+│  │              │  Attention   │   displacements)     │      │
+│  │              └──────┬───────┘                      │      │
+│  └─────────────────────┼─────────────────────────────┘      │
+│                        ▼                                    │
+│               Predicted Future Frames                       │
+│                                                             │
+│  Data: OpenDV-2K (2000+ hrs, 40+ countries, 244 cities)     │
+└─────────────────────────────────────────────────────────────┘
+```
+
 ![GenAD architecture overview](https://paper-assets.alphaxiv.org/figures/2403.09630v2/img-0.jpeg)
 
 ### Stage 1: Driving Domain Adaptation

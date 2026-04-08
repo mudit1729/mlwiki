@@ -29,6 +29,47 @@ A memory module stores historical commands, generated programs, and passenger fe
 
 ## Architecture / Method
 
+```
+           Talk2Drive: LLM-based Personalized Driving Pipeline
+
+  Passenger ──► "I'm feeling carsick"
+                      │
+                      ▼
+              ┌───────────────┐
+              │ Speech-to-Text │
+              └───────┬───────┘
+                      ▼
+              ┌───────────────────────────────────────┐
+              │            GPT-4 (Cloud)               │
+              │  ┌─────────────────────────────────┐   │
+              │  │ 1. Command Interpretation        │   │
+              │  │    (explicit/implicit/contextual) │   │
+              │  ├─────────────────────────────────┤   │
+              │  │ 2. Context Integration           │◄──┼── Weather / Traffic APIs
+              │  │    (weather, traffic, perception) │◄──┼── Perception (LiDAR, Cam)
+              │  ├─────────────────────────────────┤   │
+              │  │ 3. Code Generation               │   │
+              │  │    (control param adjustments)    │   │
+              │  └─────────────────────────────────┘   │
+              │         ▲           │                   │
+              │         │           │                   │
+              │  ┌──────┴──────┐   │                   │
+              │  │Memory Module │   │                   │
+              │  │(past cmds,  │   │                   │
+              │  │ feedback)   │   │                   │
+              │  └─────────────┘   │                   │
+              └────────────────────┼───────────────────┘
+                                   ▼
+                      ┌─────────────────────┐
+                      │ Vehicle Control Stack│
+                      │ (speed, accel, dist) │
+                      └──────────┬──────────┘
+                                 ▼
+                      ┌─────────────────────┐
+                      │ Feedback (takeover?) │──► Memory Module
+                      └─────────────────────┘
+```
+
 ![System Architecture](https://paper-assets.alphaxiv.org/figures/2312.09397v3/main.png)
 
 Talk2Drive uses a cloud-based pipeline where the LLM (GPT-4) operates as an intermediary between passenger speech and the vehicle's control stack. The architecture consists of five sequential stages:

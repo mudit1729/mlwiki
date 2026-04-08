@@ -5,7 +5,7 @@ status: active
 type: paper
 year: "2023"
 venue: "arXiv"
-citations: 0 <!-- TODO: fetch citation count from Semantic Scholar -->
+citations: ~200
 arxiv_id: "2306.11706"
 ---
 
@@ -27,7 +27,49 @@ Large-scale evaluations demonstrate that scaling and diversifying training data 
 - **Cross-task transfer:** Empirically validates that heterogeneous multi-task, multi-embodiment data produces positive transfer, with the generalist outperforming single-task specialists on many tasks
 - **Scaling analysis:** Studies the effect of data diversity and scale on generalization, showing consistent improvement as the training mixture grows
 
-## Architecture / Method
+## Architecture
+
+```
+┌──────────────────────────────────────────────────┐
+│              Self-Improvement Loop                │
+│                                                  │
+│  ┌──────────┐    ┌───────────┐   ┌───────────┐  │
+│  │ Train     │──►│ Deploy on │──►│ Filter by │  │
+│  │ RoboCat_i │   │ robots    │   │ success   │  │
+│  └──────────┘    └───────────┘   └─────┬─────┘  │
+│       ▲                                │         │
+│       └────── Add to training data ◄───┘         │
+└──────────────────────────────────────────────────┘
+
+┌────────────────────────────────────────────────┐
+│        RoboCat Architecture (Gato-based)       │
+│                                                │
+│  ┌──────────┐  ┌──────────┐  ┌──────────────┐ │
+│  │ Goal Img │  │ Multi-Cam│  │ Propriocept. │ │
+│  │ or Lang  │  │ RGB Imgs │  │ (joints,grip)│ │
+│  └────┬─────┘  └────┬─────┘  └──────┬───────┘ │
+│       │              │               │         │
+│       ▼              ▼               ▼         │
+│  ┌──────────────────────────────────────────┐  │
+│  │  Tokenize (patches + discretize states)  │  │
+│  │  → unified flat token sequence           │  │
+│  └─────────────────┬────────────────────────┘  │
+│                    │                            │
+│                    ▼                            │
+│  ┌──────────────────────────────────────────┐  │
+│  │  Decoder-Only Transformer                │  │
+│  │  (autoregressive next-token prediction)  │  │
+│  └─────────────────┬────────────────────────┘  │
+│                    │                            │
+│                    ▼                            │
+│  ┌──────────────────────────────────────────┐  │
+│  │  Discretized Action Tokens               │  │
+│  │  (per-dim bins, embodiment-specific)      │  │
+│  └──────────────────────────────────────────┘  │
+└────────────────────────────────────────────────┘
+```
+
+## Method
 
 ![RoboCat overview](https://paper-assets.alphaxiv.org/figures/2306.11706v2/x1.png)
 

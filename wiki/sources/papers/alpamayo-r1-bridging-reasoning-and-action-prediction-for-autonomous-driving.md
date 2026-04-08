@@ -43,6 +43,45 @@ Alpamayo-R1 achieves real-time inference well under the ~150ms threshold for saf
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                     Alpamayo-R1 Architecture                     │
+├──────────────────────────────────────────────────────────────────┤
+│                                                                  │
+│  Multi-Camera    Egomotion     Text                              │
+│  Images          History       Input                             │
+│    │                │            │                                │
+│    ▼                │            │                                │
+│  ┌────────────────┐ │            │                                │
+│  │ Vision Encoder  │ │            │                                │
+│  │ (triplane 3D   │ │            │                                │
+│  │  tokenization)  │ │            │                                │
+│  │ 3.6x-20x       │ │            │                                │
+│  │ compression     │ │            │                                │
+│  └───────┬────────┘ │            │                                │
+│          └─────┬────┘────────────┘                                │
+│                ▼                                                  │
+│  ┌──────────────────────────────────────────────────┐            │
+│  │          Cosmos-Reason VLM Backbone               │            │
+│  │    (pretrained on 3.7M VQA + 24.7K driving)      │            │
+│  │                                                    │            │
+│  │  Autoregressive generation:                        │            │
+│  │  CoT Reasoning ──► Meta-Actions ──► Traj Tokens   │            │
+│  └───────────────────────────────────┬──────────────┘            │
+│                                      ▼                            │
+│                       ┌──────────────────────────┐               │
+│                       │  Diffusion Trajectory     │               │
+│                       │  Decoder                  │               │
+│                       │  (discrete ──► continuous) │               │
+│                       └──────────────┬───────────┘               │
+│                                      ▼                            │
+│                          Continuous Waypoints                     │
+├──────────────────────────────────────────────────────────────────┤
+│  Training: Stage 1 (Action Injection) ──► Stage 2 (SFT on CoC)  │
+│            ──► Stage 3 (GRPO RL with multi-signal rewards)       │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 ![Overall architecture of Alpamayo-R1: multi-camera inputs, Cosmos-Reason VLM backbone, and trajectory decoder generating reasoning traces and continuous waypoints](https://paper-assets.alphaxiv.org/figures/2511.00088v2/img-0.jpeg)
 
 Alpamayo-R1 employs a modular architecture processing multi-camera, multi-timestep observations with egomotion history and optional textual inputs. The system tokenizes inputs into a unified sequence fed into the **Cosmos-Reason VLM backbone**, which autoregressively generates Chain-of-Thought reasoning, meta-actions, and discrete trajectory tokens. The Cosmos-Reason backbone was pre-trained on 3.7 million VQA samples including 24,700 driving-specific video samples, providing general physical common sense and embodied reasoning capabilities.

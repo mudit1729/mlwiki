@@ -29,6 +29,50 @@ When combined with chain-of-thought prompting, PaLM 540B achieved 58% on GSM8K m
 
 ## Architecture / Method
 
+```
+                  PaLM Transformer Block
+                  ──────────────────────
+
+  Input x
+    │
+    ├──────────────────┬──────────────────┐
+    │                  │                  │
+    ▼                  ▼                  │
+ ┌──────────┐   ┌──────────┐             │
+ │LayerNorm │   │LayerNorm │             │
+ └────┬─────┘   └────┬─────┘             │
+      │               │                  │
+      ▼               ▼                  │
+ ┌──────────┐   ┌──────────┐             │
+ │Multi-Query│   │ SwiGLU   │             │
+ │Attention  │   │ MLP      │   Parallel  │
+ │(shared KV │   │          │   Formulation
+ │ heads)    │   │          │             │
+ └────┬─────┘   └────┬─────┘             │
+      │               │                  │
+      └───────┬───────┘                  │
+              │  sum                     │
+              └──────────┬───────────────┘
+                         │  residual add
+                         ▼
+                      Output y = x + Attn(LN(x)) + MLP(LN(x))
+
+                  Pathways Training System
+                  ────────────────────────
+   ┌─────────────────────┐  ┌─────────────────────┐
+   │   TPU v4 Pod 1      │  │   TPU v4 Pod 2      │
+   │   3,072 chips       │  │   3,072 chips       │
+   │   12-way model      │  │   12-way model      │
+   │   parallelism       │  │   parallelism       │
+   └──────────┬──────────┘  └──────────┬──────────┘
+              └──────────┬─────────────┘
+                         │ 2-way pod-level data parallelism
+                         │ (pipeline-free)
+                         ▼
+                    6,144 TPU v4 total
+                    46.2% MFU
+```
+
 ![PaLM architecture and training infrastructure](https://paper-assets.alphaxiv.org/figures/2204.02311v5/img-0.jpeg)
 
 PaLM uses a standard Transformer decoder-only architecture with several modifications optimized for training efficiency and quality at scale:

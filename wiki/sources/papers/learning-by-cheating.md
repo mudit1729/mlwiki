@@ -35,6 +35,52 @@ This teacher-student decomposition became the standard training paradigm for CAR
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────┐
+│  Stage 1: Train Privileged Agent (has ground truth)      │
+│                                                         │
+│  ┌───────────────────┐    ┌──────────────┐              │
+│  │  BEV Rasterized    │    │ CARLA Expert │              │
+│  │  Image (GT state:  │    │ Autopilot    │              │
+│  │  roads, vehicles,  │    │ Demonstrations│              │
+│  │  traffic lights,   │    └──────┬───────┘              │
+│  │  route)            │           │                      │
+│  └────────┬──────────┘           │                      │
+│           ▼                      ▼                      │
+│  ┌────────────────┐     Behavioral Cloning Loss          │
+│  │ CNN Encoder     │◄────────────────────────            │
+│  │ + Command Head  │                                     │
+│  └────────┬───────┘                                     │
+│           ▼                                             │
+│  ┌────────────────┐                                     │
+│  │ Waypoints ──► PID ──► (steer, throttle, brake)       │
+│  └────────────────┘                                     │
+└─────────────────────────────────────────────────────────┘
+
+┌─────────────────────────────────────────────────────────┐
+│  Stage 2: Train Sensorimotor Agent (camera only)         │
+│                                                         │
+│  ┌────────────────┐     ┌────────────────────┐          │
+│  │  Front Camera   │     │ Privileged Agent    │          │
+│  │  RGB Image      │     │ (teacher / oracle)  │          │
+│  └────────┬───────┘     └─────────┬──────────┘          │
+│           ▼                       │                      │
+│  ┌────────────────┐               │                      │
+│  │ CNN Encoder     │  Imitation   │                      │
+│  │ (vision-based)  │◄─── Loss ────┘                      │
+│  │ + Command Heads │  (match teacher's                   │
+│  │ (all branches)  │   representations                   │
+│  └────────┬───────┘   + waypoints)                      │
+│           ▼                                             │
+│  ┌────────────────┐                                     │
+│  │ Waypoints ──► PID ──► (steer, throttle, brake)       │
+│  └────────────────┘                                     │
+│                                                         │
+│  + Online DAgger refinement with privileged agent        │
+│  + White-box supervision (all command branches)          │
+└─────────────────────────────────────────────────────────┘
+```
+
 ![Two-stage learning: (a) privileged agent with BEV imitating expert, (b) sensorimotor agent with camera imitating privileged agent](https://paper-assets.alphaxiv.org/figures/1912.12294/img-0.jpeg)
 
 ![Network architectures for privileged and sensorimotor agents using CNNs to process inputs and predict waypoints](https://paper-assets.alphaxiv.org/figures/1912.12294/img-1.jpeg)

@@ -34,6 +34,41 @@ The model addresses three interconnected challenges in robotics: data scarcity c
 
 ## Architecture / Method
 
+```
+┌──────────┐  ┌───────────────────┐
+│  Camera  │  │ Language Instruction│
+│  Images  │  │  "fold the shirt"  │
+└────┬─────┘  └────────┬──────────┘
+     │                 │
+     ▼                 ▼
+┌────────────────────────────────┐
+│     PaliGemma 3B VLM Backbone  │
+│  (Vision Encoder + LM Decoder) │
+└──────────────┬─────────────────┘
+               │ multimodal features
+               ▼
+┌────────────────────────────────┐
+│     Flow Matching Action Head  │
+│                                │
+│  Noise z ~ N(0,I)             │
+│       │                        │
+│       ▼                        │
+│  ┌──────────────────┐          │
+│  │ Learned Velocity │ ◄─ VLM  │
+│  │ Field v(x_t, t)  │  features│
+│  └────────┬─────────┘          │
+│           │ iterative denoise  │
+│           ▼                    │
+│  Action Chunk (50 steps @50Hz) │
+└──────────────┬─────────────────┘
+               │
+               ▼
+      ┌─────────────────┐
+      │  Robot Actions   │
+      │  (continuous)    │
+      └─────────────────┘
+```
+
 ![pi0 model architecture: PaliGemma VLM with flow matching action head](https://paper-assets.alphaxiv.org/figures/2410.24164v4/img-2.jpeg)
 
 pi0 builds on PaliGemma 3B as the vision-language backbone. Images and language instructions are processed through the VLM to produce rich multimodal representations. Rather than discretizing actions into tokens and predicting them autoregressively (as in RT-2 or OpenVLA), pi0 attaches a flow matching head that generates continuous action trajectories.

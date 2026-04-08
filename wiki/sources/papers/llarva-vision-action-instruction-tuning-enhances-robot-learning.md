@@ -30,6 +30,31 @@ LLARVA achieves 43.3% average success rate on simulated RLBench tasks, dramatica
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                        LLARVA Pipeline                          │
+│                                                                 │
+│  ┌──────────────┐   ┌──────────────────────────────────────┐    │
+│  │ Camera Image  │──►│         Vision Encoder (ViT)         │    │
+│  │ + Visual Trace│   └──────────────┬───────────────────────┘    │
+│  │   (2D proj.)  │                  │ visual tokens              │
+│  └──────────────┘                  ▼                            │
+│                          ┌─────────────────┐                    │
+│  ┌──────────────┐        │   LMM Backbone   │                    │
+│  │  Structured   │───────►│   (LLaVA-style)  │──┬──► Action Head │
+│  │  Instruction  │  text  │                  │  │   (EE pose,    │
+│  │ ┌──────────┐ │ tokens  └─────────────────┘  │    gripper)    │
+│  │ │Robot Type │ │                              │                │
+│  │ │Ctrl Mode  │ │                              └──► Visual Trace│
+│  │ │Task Desc  │ │                                   Prediction  │
+│  │ │Proprio.   │ │                                   (2D coords) │
+│  │ └──────────┘ │                                               │
+│  └──────────────┘                                               │
+│                                                                 │
+│  Training: Stage 1 (8.5M pairs pre-train) ──► Stage 2 (finetune)│
+└─────────────────────────────────────────────────────────────────┘
+```
+
 ![Framework overview](https://paper-assets.alphaxiv.org/figures/2406.11815/x1.png)
 
 LLARVA builds on an open-source large multimodal model backbone (LLaVA-style architecture). The system processes visual observations through a vision encoder and combines them with structured text prompts through the LMM's language backbone. The key modifications are:

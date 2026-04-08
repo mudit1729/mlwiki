@@ -3,8 +3,8 @@ title: "DriveDreamer: Towards Real-World-Driven World Models for Autonomous Driv
 type: source-summary
 status: complete
 updated: 2026-04-05
-year: 2023
-venue: ECCV
+year: 2024
+venue: "ECCV 2024"
 tags:
   - paper
   - autonomous-driving
@@ -34,6 +34,39 @@ The two-stage training pipeline progressively builds understanding: first learni
 - **Data augmentation utility**: Synthetic data from DriveDreamer measurably improves 3D object detection training, demonstrating practical value beyond planning
 
 ## Architecture / Method
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│                 DriveDreamer (Auto-DM)                        │
+│                                                              │
+│  Conditional Inputs:                                         │
+│  ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐  │
+│  │  HD Maps     │ │ 3D Bounding  │ │  Text Prompts        │  │
+│  │ (spatial     │ │ Boxes        │ │ ("rainy, night,      │  │
+│  │  aligned)    │ │ (position    │ │  heavy traffic")     │  │
+│  │              │ │  conditions) │ │                      │  │
+│  └──────┬───────┘ └──────┬───────┘ └──────────┬───────────┘  │
+│         │ spatial enc.   │ BEV proj.           │ text enc.    │
+│         ▼                ▼                     ▼              │
+│  ┌───────────────────────────────────────────────────────┐   │
+│  │              Diffusion U-Net Denoiser                 │   │
+│  │                                                       │   │
+│  │  Noise z_t ──► ResBlocks + Cross-Attention ──► z_{t-1}│   │
+│  │                    ▲          ▲          ▲             │   │
+│  │                    │          │          │             │   │
+│  │              spatial cond. position   text cond.       │   │
+│  └───────────────────────────────────────────────────────┘   │
+│                           │                                  │
+│                           ▼                                  │
+│                  Generated Video Frame(s)                     │
+│                                                              │
+│  ════════════════════════════════════════════════════════     │
+│  Stage 1: Single-frame generation (structural understanding) │
+│  Stage 2: Temporal sequences + action conditioning           │
+│           ──► Imagination-based planning                     │
+│           (roll out futures, select best trajectory)          │
+└──────────────────────────────────────────────────────────────┘
+```
 
 ![DriveDreamer overview](https://paper-assets.alphaxiv.org/figures/2309.09777v2/img-0.jpeg)
 

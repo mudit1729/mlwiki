@@ -37,6 +37,39 @@ The companion Talk2Car-Trajectory extension (IEEE Access, 2022) moved beyond "wh
 
 ## Architecture / Method
 
+```
+              Talk2Car Baseline: Two-Tower Grounding
+
+  ┌─────────────────┐       ┌─────────────────────┐
+  │  Driving Scene   │       │  NL Command          │
+  │  (Camera Image)  │       │  "Park behind the    │
+  └────────┬────────┘       │   white car"         │
+           │                 └──────────┬──────────┘
+           ▼                            ▼
+  ┌─────────────────┐       ┌─────────────────────┐
+  │  Visual Encoder  │       │  Language Encoder    │
+  │  (ResNet / FRCNN)│       │  (LSTM / BERT)       │
+  └────────┬────────┘       └──────────┬──────────┘
+           │                            │
+           ▼                            ▼
+  ┌─────────────────┐       ┌─────────────────────┐
+  │ Region Features  │       │ Sentence Embedding   │
+  │ [r1, r2, ..., rN]│       │        s             │
+  └────────┬────────┘       └──────────┬──────────┘
+           │                            │
+           └──────────┬─────────────────┘
+                      ▼
+             ┌────────────────┐
+             │ Fusion Module   │  score(ri, s) for each region
+             │ (dot-product /  │
+             │  MLP scoring)   │
+             └───────┬────────┘
+                     ▼
+             ┌────────────────┐
+             │ argmax ──► Box  │  ──►  Eval: AP50
+             └────────────────┘
+```
+
 The Talk2Car benchmark provides a dataset and evaluation protocol rather than a single dominant architecture. The dataset is constructed by asking human annotators to write natural-language commands for nuScenes driving scenes. Each command refers to a specific object in the scene (a detected or annotated 3D bounding box), and annotators write action-oriented instructions that a passenger might give.
 
 The baseline models follow a two-tower approach: a visual encoder (e.g., ResNet or Faster R-CNN) extracts region features for detected objects in the scene, while a language encoder (e.g., LSTM or BERT) produces a sentence embedding for the command. A fusion module computes similarity scores between each candidate region and the command, and the region with the highest score is selected as the referred object. Evaluation uses AP50 -- the average precision at 50% IoU threshold between predicted and ground-truth bounding boxes.

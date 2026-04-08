@@ -34,6 +34,49 @@ Flow matching is a generative modeling framework that learns to transport sample
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│              GoalFlow: Goal-Driven Flow Matching             │
+│                                                             │
+│  Multi-Camera Images         Route Info                     │
+│       │                         │                           │
+│       ▼                         ▼                           │
+│  ┌──────────────┐    ┌───────────────────┐                  │
+│  │  BEV Encoder │    │ Goal Proposal MLP │                  │
+│  │  (backbone + │    │                   │                  │
+│  │  view xform) │    │ ──► g1, g2, ..gN  │                  │
+│  └──────┬───────┘    │ ──► score & rank  │                  │
+│         │            └────────┬──────────┘                  │
+│         │                     │                             │
+│         └─────────┬───────────┘                             │
+│                   ▼                                         │
+│  ┌─────────────────────────────────────────┐                │
+│  │   Flow Matching Trajectory Generator    │                │
+│  │                                         │                │
+│  │   For each goal g_i:                    │                │
+│  │                                         │                │
+│  │   x_0 ~ N(straight-line to g_i)        │                │
+│  │     │                                   │                │
+│  │     ▼                                   │                │
+│  │   v_θ(x_0, t=0, c)  ◄── BEV features  │                │
+│  │     │                     + goal g_i    │                │
+│  │     ▼  (single Euler step)              │                │
+│  │   x_1 = x_0 + v_θ   ──► trajectory_i   │                │
+│  │                                         │                │
+│  └───────────────────┬─────────────────────┘                │
+│                      ▼                                      │
+│            ┌──────────────────┐                              │
+│            │ Trajectory Scorer│                              │
+│            │ (collision, comfort,                            │
+│            │  goal alignment) │                              │
+│            └────────┬─────────┘                              │
+│                     ▼                                       │
+│              Best Trajectory                                │
+│                                                             │
+│  Key: Single denoising step ──► ~60 FPS inference           │
+└─────────────────────────────────────────────────────────────┘
+```
+
 GoalFlow consists of three main components:
 
 1. **Scene Encoder**: Multi-camera images are processed through a BEV encoder to produce bird's-eye-view scene features. The encoder follows standard BEV perception practices (backbone + view transformation).

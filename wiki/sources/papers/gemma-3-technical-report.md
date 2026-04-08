@@ -32,6 +32,49 @@ Vision capabilities are added through a SigLIP-based vision encoder that convert
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│                    Gemma 3 Architecture                       │
+│                                                              │
+│  Image Input          Text Input                             │
+│      │                    │                                  │
+│      ▼                    ▼                                  │
+│  ┌────────┐         ┌──────────┐                             │
+│  │ SigLIP │         │Tokenizer │                             │
+│  │ Vision │         └────┬─────┘                             │
+│  │Encoder │              │                                   │
+│  └───┬────┘              │                                   │
+│      │                   │                                   │
+│      ▼                   │                                   │
+│  Pan-and-Scan            │                                   │
+│  (full + crops)          │                                   │
+│      │                   │                                   │
+│      └──► [soft visual tokens] + [text tokens] ◄────┘       │
+│                          │                                   │
+│                          ▼                                   │
+│           ┌──────────────────────────────┐                   │
+│           │  Decoder-Only Transformer     │                  │
+│           │  (5:1 Local/Global Attention) │                  │
+│           │                              │                   │
+│           │  Layer 1: Local (sliding window, 4K)             │
+│           │  Layer 2: Local                │                 │
+│           │  Layer 3: Local                │                 │
+│           │  Layer 4: Local                │                 │
+│           │  Layer 5: Local                │                 │
+│           │  Layer 6: Global (full attn, RoPE 1M base)      │
+│           │  Layer 7: Local                │                 │
+│           │  ...repeat pattern...         │                  │
+│           │                              │                   │
+│           │  ──► ~5x KV-cache savings    │                   │
+│           │       at 128K context        │                   │
+│           └──────────────┬───────────────┘                   │
+│                          ▼                                   │
+│                    Output Tokens                             │
+│                                                              │
+│  Sizes: 1B (text-only) | 4B | 12B | 27B (all multimodal)   │
+└──────────────────────────────────────────────────────────────┘
+```
+
 ![Gemma 3 architecture overview](https://paper-assets.alphaxiv.org/figures/2503.19786/x1.png)
 
 Gemma 3 uses a decoder-only Transformer architecture with several key modifications:

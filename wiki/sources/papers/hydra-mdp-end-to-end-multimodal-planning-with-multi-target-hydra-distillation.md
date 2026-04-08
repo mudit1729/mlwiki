@@ -31,6 +31,50 @@ Hydra-MDP won first place in the NAVSIM challenge, achieving 86.5 PDM Score with
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────────┐
+│                    HYDRA-MDP PIPELINE                             │
+│                                                                  │
+│  ┌──────────┐  ┌──────────┐                                     │
+│  │  Camera   │  │  LiDAR   │                                     │
+│  └────┬─────┘  └────┬─────┘                                     │
+│       │              │                                            │
+│       ▼              ▼                                            │
+│  ┌──────────────────────────────┐                                │
+│  │   TransFuser Perception       │                                │
+│  │   (image + LiDAR fusion)      │                                │
+│  │   via transformer layers      │                                │
+│  └──────────────┬───────────────┘                                │
+│                 │ Environmental tokens                            │
+│                 ▼                                                 │
+│  ┌──────────────────────────────────────────────────────────┐   │
+│  │   Trajectory Scoring (over Planning Vocabulary)           │   │
+│  │   ~700K candidate trajectories (K-means of expert data)   │   │
+│  │                                                           │   │
+│  │   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐│   │
+│  │   │NC Head  │ │DAC Head│ │TTC Head│ │C Head  │ │EP Head ││   │
+│  │   │(collisn)│ │(drivbl)│ │(time-  │ │(comfrt)│ │(progrs)││   │
+│  │   │         │ │        │ │ to-col)│ │        │ │        ││   │
+│  │   └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘ └───┬────┘│   │
+│  │       │          │          │          │          │       │   │
+│  │       └──────────┴──────┬───┴──────────┴──────────┘       │   │
+│  │                         ▼                                 │   │
+│  │              Composite Score per Trajectory                │   │
+│  └──────────────────────┬───────────────────────────────────┘   │
+│                         ▼                                        │
+│              ┌──────────────────────┐                            │
+│              │  Best Trajectory      │                            │
+│              │  (argmax composite)   │                            │
+│              └──────────────────────┘                            │
+│                                                                  │
+│  TEACHER SUPERVISION (training only):                            │
+│  ┌──────────────────────────────────────────────────────┐       │
+│  │  Offline Sim (GT perception) ──► per-metric labels    │       │
+│  │  Human demos ──► expert trajectory targets            │       │
+│  └──────────────────────────────────────────────────────┘       │
+└──────────────────────────────────────────────────────────────────┘
+```
+
 ![Architecture overview](https://paper-assets.alphaxiv.org/figures/2406.06978v4/x1.png)
 
 ### Perception Network

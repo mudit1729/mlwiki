@@ -31,6 +31,47 @@ A particularly significant contribution is the demonstration that reasoning capa
 
 ![Training pipeline overview](https://paper-assets.alphaxiv.org/figures/2501.12948v2/img-0.jpeg)
 
+```
+DeepSeek-R1 Multi-Stage Training Pipeline:
+
+Stage 1              Stage 2              Stage 3              Stage 4
+┌──────────────┐    ┌──────────────┐    ┌──────────────┐    ┌──────────────┐
+│ Cold-Start   │    │ Reasoning    │    │ Rejection    │    │ Alignment    │
+│ SFT          │──►│ RL (GRPO)    │──►│ Sampling +   │──►│ RL           │
+│              │    │              │    │ SFT          │    │              │
+│ Small set of │    │ Math, Code,  │    │ ~800K mixed  │    │ Rule-based + │
+│ long-CoT     │    │ Science,Logic│    │ samples from │    │ Neural RM    │
+│ examples     │    │ Rule-based   │    │ RL ckpt +    │    │ (helpfulness/│
+│              │    │ rewards only │    │ general data │    │  harmlessness)│
+└──────────────┘    └──────────────┘    └──────────────┘    └──────────────┘
+
+GRPO (Group Relative Policy Optimization):
+┌──────────┐     Sample G outputs      ┌─────────────────────────┐
+│ Prompt q │────────────────────────────►│ {o₁, o₂, ..., o_G}    │
+└──────────┘     from old policy        │  ↓ score each           │
+                                        │ {r₁, r₂, ..., r_G}    │
+                                        └───────────┬─────────────┘
+                                                    ▼
+                                        ┌─────────────────────────┐
+                                        │ Aᵢ = (rᵢ - mean) / std │
+                                        │ (group-relative adv.)   │
+                                        └───────────┬─────────────┘
+                                                    ▼
+                                        ┌─────────────────────────┐
+                                        │ Clipped surrogate loss  │
+                                        │ + KL penalty vs ref     │
+                                        │ (No critic network!)    │
+                                        └─────────────────────────┘
+
+DeepSeek-R1-Zero (pure RL, no SFT):
+┌───────────────┐    GRPO    ┌──────────────────────────────────┐
+│ DeepSeek-V3   │──────────►│ Emergent behaviors:              │
+│ Base (671B    │  Rule-    │  - Self-verification             │
+│  MoE)         │  based    │  - Reflection ("Wait...")        │
+└───────────────┘  rewards  │  - Adaptive compute allocation   │
+                   only     └──────────────────────────────────┘
+```
+
 ### GRPO: Group Relative Policy Optimization
 
 DeepSeek-R1 replaces the standard PPO critic with a group-based baseline estimation. For each prompt q, the model samples a group of G outputs {o_1, ..., o_G} from the old policy. Each output receives a reward r_i. The advantage for output o_i is computed as:

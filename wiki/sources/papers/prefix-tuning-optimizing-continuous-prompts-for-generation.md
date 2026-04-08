@@ -29,6 +29,39 @@ Prefix-tuning matches or exceeds full fine-tuning performance on table-to-text g
 
 ## Architecture / Method
 
+```
+  Standard Fine-Tuning              Prefix-Tuning
+  ─────────────────────             ─────────────
+  ┌─────────────────┐               ┌─────────────────┐
+  │ Transformer      │               │ Transformer      │
+  │ (ALL params      │               │ (FROZEN)         │
+  │  updated)        │               │                  │
+  │                  │               │ Layer L:         │
+  │ Layer L:         │               │ K=[P_key;K_orig] │
+  │ K,V from input   │               │ V=[P_val;V_orig] │
+  │                  │               │      ▲           │
+  │ Layer 2:         │               │ Layer 2:         │
+  │ K,V from input   │               │ K=[P_key;K_orig] │
+  │                  │               │ V=[P_val;V_orig] │
+  │ Layer 1:         │               │      ▲           │
+  │ K,V from input   │               │ Layer 1:         │
+  └─────────────────┘               │ K=[P_key;K_orig] │
+                                     │ V=[P_val;V_orig] │
+  Trainable: 100%                    └────────┬────────┘
+                                              │
+                                     ┌────────┴────────┐
+                                     │ Prefix P'(l,d') │
+                                     │       │         │
+                                     │   MLP_theta     │
+                                     │       │         │
+                                     │ P_theta(l,d)    │
+                                     │ (reparameterized│
+                                     │  then discarded │
+                                     │  at inference)  │
+                                     └─────────────────┘
+                                     Trainable: ~0.1%
+```
+
 ![Prefix-tuning method overview](https://paper-assets.alphaxiv.org/figures/2101.00190/img-0.jpeg)
 
 ### How prefixes work

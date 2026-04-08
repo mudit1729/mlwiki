@@ -30,6 +30,51 @@ SelfOcc achieves 45.01% geometric IoU on the nuScenes surround-view occupancy be
 
 ## Architecture / Method
 
+```
+┌──────────────────────────────────────────────────────────────┐
+│                      SelfOcc Pipeline                        │
+├──────────────────────────────────────────────────────────────┤
+│                                                              │
+│  ┌───────────────────┐                                       │
+│  │ Multi-Camera      │                                       │
+│  │ Surround Images   │                                       │
+│  └────────┬──────────┘                                       │
+│           ▼                                                  │
+│  ┌───────────────────┐                                       │
+│  │ 2D Backbone       │                                       │
+│  │ (ResNet-50)       │                                       │
+│  └────────┬──────────┘                                       │
+│           ▼                                                  │
+│  ┌───────────────────────────────────────┐                   │
+│  │ 2D-to-3D Feature Lifting             │                   │
+│  │ (Deformable Cross-Attention,          │                   │
+│  │  BEVFormer/TPVFormer style)           │                   │
+│  └────────┬──────────────────────────────┘                   │
+│           ▼                                                  │
+│  ┌───────────────────────────────────────┐                   │
+│  │ 3D Feature Volume (BEV or TPV)        │                   │
+│  └────────┬──────────────────────────────┘                   │
+│           ▼                                                  │
+│  ┌───────────────────────────────────────┐                   │
+│  │ SDF MLP Decoder                       │                   │
+│  │ query point ──► signed distance + color│                  │
+│  └────────┬──────────────────────────────┘                   │
+│           │                                                  │
+│     ┌─────┴──────┐                                           │
+│     ▼            ▼                                           │
+│  ┌────────┐  ┌───────────────────────────────────────────┐   │
+│  │Occupancy│  │ Differentiable Volume Rendering (NeuS)   │   │
+│  │Output   │  │ SDF ──► opacity weights ──► rendered img │   │
+│  │(SDF < 0 │  └──────────────────┬────────────────────────┘  │
+│  │=occupied)│                    ▼                            │
+│  └─────────┘  ┌──────────────────────────────────────────┐   │
+│               │ Self-Supervision: L1 + SSIM photometric  │   │
+│               │ + Eikonal + Hessian + Sparsity losses    │   │
+│               │ + MVS-embedded multi-depth proposals      │   │
+│               └──────────────────────────────────────────┘   │
+└──────────────────────────────────────────────────────────────┘
+```
+
 ![SelfOcc framework overview](https://paper-assets.alphaxiv.org/figures/2311.12754v2/x1.png)
 
 SelfOcc follows a three-stage pipeline: (1) 2D-to-3D feature lifting, (2) SDF field encoding, and (3) differentiable volume rendering for self-supervision.

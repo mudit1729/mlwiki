@@ -36,6 +36,51 @@ The paper achieves 77.74 driving score and 54.62% success rate on Bench2Drive, s
 
 ## Architecture / Method
 
+```
+                       ORION Architecture
+                       ──────────────────
+
+   Multi-view Cameras (temporal window)
+              │
+              ▼
+   ┌────────────────────────┐
+   │      QT-Former         │
+   │  (Query-Temporal Former)│
+   │  ┌──────────────────┐  │
+   │  │ Perception Queries│  │
+   │  │ Scene Queries     │  │  Self-attn + Cross-attn
+   │  │ History Queries   │  │  over temporal frames
+   │  └────────┬─────────┘  │
+   └───────────┼────────────┘
+               │ visual tokens
+               ▼
+   ┌────────────────────────┐
+   │   LLM Reasoning Core   │
+   │   (Vicuna v1.5 + LoRA) │
+   │                        │
+   │  Scene Description     │
+   │  Action Reasoning      │──────► Text VQA Output
+   │  History Review        │
+   │                        │
+   │  ┌──────────────────┐  │
+   │  │  Planning Token   │  │  Learned embedding bridging
+   │  │  (dense embed.)   │  │  reasoning ──► action space
+   │  └────────┬─────────┘  │
+   └───────────┼────────────┘
+               │
+               ▼
+   ┌────────────────────────┐
+   │   Generative Planner   │
+   │   (VAE-based)          │
+   │                        │
+   │  z ~ Encoder(x)       │  Multimodal trajectory
+   │  traj = Decoder(z,     │  proposals + scoring
+   │         plan_token)    │
+   └───────────┬────────────┘
+               ▼
+        Best Trajectory
+```
+
 ![Comparison of different autonomous driving approaches including ORION's generative planning](https://paper-assets.alphaxiv.org/figures/2503.19755/x1.png)
 
 ![ORION framework architecture: vision space, reasoning space, and action space connected through QT-Former, LLM, and generative planner](https://paper-assets.alphaxiv.org/figures/2503.19755/x2.png)

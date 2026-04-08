@@ -26,7 +26,53 @@ The work comes from Fudan University and NVIDIA Research, and demonstrates stron
 
 ## Architecture / Method
 
-BEVNeXt follows the standard dense BEV pipeline (image backbone → depth estimation → BEV feature construction → detection head) but with two critical upgrades:
+```
+┌────────────────────────────────────────────────────────────┐
+│                   BEVNeXt Architecture                      │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Multi-Camera Images                                       │
+│        │                                                   │
+│        ▼                                                   │
+│  ┌──────────────────┐                                      │
+│  │  Image Backbone   │  (ResNet-50 / ViT-Adapter-L)        │
+│  └────────┬─────────┘                                      │
+│           │                                                │
+│           ▼                                                │
+│  ┌──────────────────────────────┐                          │
+│  │  CRF-Modulated Depth Est.   │                          │
+│  │  ┌────────────────────────┐  │                          │
+│  │  │ Per-pixel depth (LSS)  │  │                          │
+│  │  └──────────┬─────────────┘  │                          │
+│  │             ▼                │                          │
+│  │  ┌────────────────────────┐  │                          │
+│  │  │ CRF Pairwise Potentials│  │                          │
+│  │  │ (mean-field inference) │  │  Spatially smooth,       │
+│  │  └──────────┬─────────────┘  │  consistent depth        │
+│  └─────────────┼────────────────┘                          │
+│                ▼                                           │
+│  ┌──────────────────────────────┐                          │
+│  │  Lift-Splat BEV Construction │                          │
+│  └──────────────┬───────────────┘                          │
+│                 │                                          │
+│                 ▼                                          │
+│  ┌──────────────────────────────┐                          │
+│  │  Recurrent Temporal Agg.     │                          │
+│  │  ┌────────┐   ┌───────────┐  │                          │
+│  │  │Hidden  │──►│GRU-style  │  │  Constant memory,        │
+│  │  │State   │   │Gate Update│  │  arbitrary sequence       │
+│  │  │(t-1)   │   └─────┬─────┘  │  length                  │
+│  │  └────────┘         │        │                          │
+│  └─────────────────────┼────────┘                          │
+│                        ▼                                   │
+│  ┌──────────────────────────────┐                          │
+│  │  CenterPoint Detection Head  │                          │
+│  │  (heatmap + attribute reg.)  │                          │
+│  └──────────────────────────────┘                          │
+└────────────────────────────────────────────────────────────┘
+```
+
+BEVNeXt follows the standard dense BEV pipeline (image backbone -> depth estimation -> BEV feature construction -> detection head) but with two critical upgrades:
 
 **CRF-Modulated Depth**: Standard LSS predicts per-pixel depth distributions independently. BEVNeXt adds a CRF layer that models pairwise potentials between neighboring pixels, encouraging spatially smooth and geometrically consistent depth. The CRF uses learned compatibility functions conditioned on image features, refined through mean-field inference iterations.
 

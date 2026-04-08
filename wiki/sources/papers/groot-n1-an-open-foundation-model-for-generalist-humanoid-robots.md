@@ -29,6 +29,43 @@ A notable contribution is the concept of "neural trajectories" -- AI-generated v
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────────┐
+│                     DATA PYRAMID                            │
+│                                                             │
+│                        /\                                   │
+│                       /  \   Real Robot Trajectories        │
+│                      /    \  (teleoperated demos)           │
+│                     /──────\                                │
+│                    / Synth.  \  Synthetic Simulation         │
+│                   /  (Isaac)  \  (MuJoCo, Isaac Gym)        │
+│                  /────────────\                              │
+│                 / Web + Human   \  Internet Video & Text     │
+│                /  Video Data     \  (neural trajectories)   │
+│               /───────────────────\                          │
+└─────────────────────────────────────────────────────────────┘
+
+┌──────────────────────────────────────────────────────────────┐
+│                  DUAL-SYSTEM ARCHITECTURE                    │
+│                                                              │
+│  ┌─────────────┐    Language     ┌──────────────────────┐   │
+│  │  Camera      │   Instruction  │  System 2 (10 Hz)    │   │
+│  │  Images      │───────────────►│  Eagle-2 VLM (7B)    │   │
+│  └─────────────┘                 │  Scene Understanding │   │
+│                                  │  Task Reasoning      │   │
+│                                  └─────────┬────────────┘   │
+│                                    Semantic │ Embeddings     │
+│                                  (cross-attention)           │
+│                                            ▼                 │
+│  ┌─────────────┐                 ┌──────────────────────┐   │
+│  │ Propriocep.  │───────────────►│  System 1 (120 Hz)   │   │
+│  │ State        │  Embodiment-   │  Diffusion            │   │
+│  │ (joints,     │  Specific      │  Transformer (DiT)    │──►│ Actions
+│  │  forces)     │  Encoders      │  Iterative Denoising  │   │
+│  └─────────────┘                 └──────────────────────┘   │
+└──────────────────────────────────────────────────────────────┘
+```
+
 ![Data Pyramid](https://paper-assets.alphaxiv.org/figures/2503.14734v2/x1.png)
 
 The data pyramid organizes training data by cost and fidelity: internet-scale video and text at the base, synthetic simulation data in the middle, and expensive real robot demonstrations at the peak.

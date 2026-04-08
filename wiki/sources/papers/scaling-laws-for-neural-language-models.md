@@ -38,6 +38,39 @@ This paper, together with the later Chinchilla correction (Hoffmann et al., 2022
 
 ## Architecture / Method
 
+```
+┌────────────────────────────────────────────────────────────┐
+│              Scaling Laws: Three Power Laws                 │
+├────────────────────────────────────────────────────────────┤
+│                                                            │
+│  Loss (L) follows power laws over 7 orders of magnitude:   │
+│                                                            │
+│  ┌──────────────┐  ┌──────────────┐  ┌──────────────┐     │
+│  │ L(N) ~ N^α   │  │ L(D) ~ D^β   │  │ L(C) ~ C^γ   │    │
+│  │ Model Size   │  │ Dataset Size │  │ Compute      │     │
+│  │ α = -0.076   │  │ β = -0.095   │  │ γ = -0.050   │    │
+│  └──────┬───────┘  └──────┬───────┘  └──────┬───────┘     │
+│         │                 │                  │             │
+│         └─────────────────┼──────────────────┘             │
+│                           ▼                                │
+│         ┌─────────────────────────────────┐                │
+│         │  Joint Law: L(N, D) =           │                │
+│         │  [(Nc/N)^αN/αD + (Dc/D)]^αD    │                │
+│         └────────────────┬────────────────┘                │
+│                          │                                 │
+│                          ▼                                 │
+│  Key Prescription:  C ~ 6ND                                │
+│  ┌───────────────────────────────────────────────┐         │
+│  │ "Train large, stop early"                     │         │
+│  │  Allocate most compute to model size N        │         │
+│  │  N_optimal ~ 1.3e9 * C^0.73                   │         │
+│  │                                               │         │
+│  │  (Later revised by Chinchilla: scale N and D  │         │
+│  │   equally for compute-optimal training)       │         │
+│  └───────────────────────────────────────────────┘         │
+└────────────────────────────────────────────────────────────┘
+```
+
 ![Power law relationships between test loss and compute, dataset size, and model parameters](https://paper-assets.alphaxiv.org/figures/2001.08361/img-0.jpeg)
 
 The study trains Transformer language models (decoder-only, GPT-style) on WebText2 across a massive grid of configurations. Model sizes range from 768 parameters to 1.5 billion parameters, varying depth (2-64 layers), width (64-12288 hidden dimensions), and number of attention heads (2-96). Each configuration is trained on varying amounts of data (up to 23B tokens) with varying compute budgets.

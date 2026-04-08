@@ -3,8 +3,8 @@ title: ChauffeurNet: Learning to Drive by Imitating the Best and Synthesizing th
 type: source-summary
 status: seed
 updated: 2026-04-05
-year: 2018
-venue: arXiv
+year: 2019
+venue: RSS 2019
 tags:
   - paper
   - autonomous-driving
@@ -19,7 +19,7 @@ citations: 844
 
 ## Citation
 
-Bansal, Krizhevsky, Ogale (Waymo Research), arXiv / RSS, 2018.
+Bansal, Krizhevsky, Ogale (Waymo Research), RSS, 2019.
 
 ## Canonical link
 
@@ -42,6 +42,50 @@ ChauffeurNet was significant for several reasons. It was one of the first papers
 - **Real-vehicle deployment**: Demonstrated on Waymo's self-driving vehicles in real traffic, validating the approach beyond simulation
 
 ## Architecture / Method
+
+```
+Input: Top-Down Rendered Images (80m x 80m, ~0.2m/pixel)
+┌──────────────────────────────────────────────────────┐
+│  Channels: Road Map │ Traffic Lights │ Speed Limits  │
+│           Route Plan│ Dynamic Agents │ Ego History   │
+└──────────────────────┬───────────────────────────────┘
+                       │
+                       ▼
+              ┌─────────────────┐
+              │   FeatureNet    │
+              │   (CNN encoder) │
+              └────────┬────────┘
+                       │ Spatial Feature Map
+                       ▼
+              ┌─────────────────────────────────────────┐
+              │              AgentRNN                    │
+              │                                         │
+              │  Step 1: Attend features ──► (x,y,θ)₁   │
+              │           │                             │
+              │           ▼ Render predicted box         │
+              │  Step 2: Attend updated map ──► (x,y,θ)₂│
+              │           │                             │
+              │           ▼ Render predicted box         │
+              │  Step N: Attend updated map ──► (x,y,θ)ₙ│
+              └────────────────────┬────────────────────┘
+                                   │ Trajectory
+                                   ▼
+                          ┌─────────────────┐
+                          │  Low-Level      │
+                          │  Controller     │
+                          └─────────────────┘
+
+Training Losses:
+┌──────────┐  ┌───────────┐  ┌──────────┐  ┌─────────┐
+│ Imitation│  │ Collision │  │ On-Road  │  │Geometry │
+│ Loss (L2)│  │ Loss      │  │ Loss     │  │ Loss    │
+└─────┬────┘  └─────┬─────┘  └────┬─────┘  └────┬────┘
+      └─────────────┼─────────────┼──────────────┘
+                    ▼
+        Synthesized Perturbations:
+        (random shift/rotation of ego)
+        ──► Train to recover to expert traj
+```
 
 ChauffeurNet takes as input a stack of top-down rendered images at the current and past timesteps. Each image is a multi-channel representation encoding: road map and lanes, traffic light state, speed limit, route plan, bounding boxes of dynamic agents, and ego vehicle's past trajectory. The images cover a region around the ego vehicle (e.g., 80m x 80m) at a resolution of roughly 0.2m/pixel.
 

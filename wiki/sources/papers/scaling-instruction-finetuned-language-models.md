@@ -31,6 +31,44 @@ The paper also demonstrates that instruction finetuning is architecture-agnostic
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────┐
+│              Flan Instruction Finetuning                 │
+├─────────────────────────────────────────────────────────┤
+│                                                         │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │            1,836 Tasks (473 Datasets)             │   │
+│  │  ┌──────────┐ ┌────────┐ ┌───────┐ ┌──────────┐ │   │
+│  │  │  Muffin  │ │ T0-SF  │ │ NIV2  │ │ CoT Mix  │ │   │
+│  │  │  (FLAN+) │ │        │ │       │ │ (9 sets) │ │   │
+│  │  └────┬─────┘ └───┬────┘ └──┬────┘ └────┬─────┘ │   │
+│  │       └────────────┴─────────┴───────────┘       │   │
+│  └──────────────────────┬───────────────────────────┘   │
+│                         │  10 templates/task            │
+│                         │  (zero-shot + few-shot)       │
+│                         ▼                               │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │          Pretrained Language Model                │   │
+│  │                                                   │   │
+│  │  ┌─────────────────┐    ┌──────────────────────┐ │   │
+│  │  │ T5 (80M - 11B)  │ or │ PaLM (8B - 540B)    │ │   │
+│  │  │ (enc-dec)        │    │ (decoder-only)       │ │   │
+│  │  └─────────────────┘    └──────────────────────┘ │   │
+│  │                                                   │   │
+│  │  Fine-tune with next-token prediction / span loss │   │
+│  │  (~0.2% of pre-training compute for PaLM 540B)   │   │
+│  └──────────────────────┬───────────────────────────┘   │
+│                         │                               │
+│                         ▼                               │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │    Flan-PaLM / Flan-T5                           │   │
+│  │    ├── Direct answer tasks  ✓                    │   │
+│  │    ├── Chain-of-thought     ✓ (zero-shot CoT)    │   │
+│  │    └── Held-out tasks       ✓ (+9.4% avg)        │   │
+│  └──────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+```
+
 ![Instruction finetuning approach overview](https://paper-assets.alphaxiv.org/figures/2210.11416v5/img-0.jpeg)
 
 Instruction finetuning takes a pretrained language model and fine-tunes it on a large mixture of tasks phrased as natural language instructions. The method does not modify the model architecture -- it is purely a training-data and objective intervention applied to existing pretrained models.

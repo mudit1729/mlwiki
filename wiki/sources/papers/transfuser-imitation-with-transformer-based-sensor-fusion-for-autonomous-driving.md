@@ -4,7 +4,7 @@ type: source-summary
 status: complete
 updated: 2026-04-05
 year: 2022
-venue: arXiv
+venue: IEEE TPAMI 2023
 tags:
   - paper
   - autonomous-driving
@@ -34,6 +34,46 @@ TransFuser became one of the most referenced baselines for CARLA-based end-to-en
 - **Multi-task learning framework**: Uses auxiliary supervision including depth estimation, BEV semantic segmentation, HD map prediction, and 3D object detection to regularize the learned representations and improve driving performance
 - **Latent TransFuser variant**: Provides a strong image-only baseline that surpasses reinforcement learning-based image-only methods, establishing new performance standards for camera-only driving
 - **Imitation learning with geometric reasoning**: Shows that transformer attention can implicitly learn geometric correspondences between 2D image features and 3D LiDAR features without explicit geometric projection
+
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────────────────┐
+│                     TransFuser Pipeline                         │
+│                                                                 │
+│  RGB Image              LiDAR BEV                               │
+│     │                      │                                    │
+│  ┌──▼──┐               ┌──▼──┐                                  │
+│  │ResNet│               │ResNet│                                 │
+│  │Blk 1 │               │Blk 1 │                                │
+│  └──┬──┘               └──┬──┘                                  │
+│     │    ┌────────────┐   │                                     │
+│     └───►│ Transformer ◄──┘   (Scale 1: high res)               │
+│     ┌────┤  Fusion     ├───┐                                    │
+│  ┌──▼──┐ └────────────┘┌──▼──┐                                  │
+│  │ResNet│               │ResNet│                                 │
+│  │Blk 2 │               │Blk 2 │                                │
+│  └──┬──┘               └──┬──┘                                  │
+│     │    ┌────────────┐   │                                     │
+│     └───►│ Transformer ◄──┘   (Scale 2: mid res)                │
+│     ┌────┤  Fusion     ├───┐                                    │
+│  ┌──▼──┐ └────────────┘┌──▼──┐                                  │
+│  │ResNet│               │ResNet│                                 │
+│  │Blk 3 │               │Blk 3 │                                │
+│  └──┬──┘               └──┬──┘                                  │
+│     │    ┌────────────┐   │                                     │
+│     └───►│ Transformer ◄──┘   (Scale 3: low res)                │
+│          │  Fusion     │                                        │
+│          └─────┬───────┘                                        │
+│                │  Fused features                                 │
+│          ┌─────▼───────┐                                        │
+│          │  GRU Waypoint│                                       │
+│          │  Predictor   │──► Waypoints ──► PID ──► Steer/Accel  │
+│          └─────────────┘                                        │
+│                                                                 │
+│  Auxiliary:  BEV Seg  │  Depth Est  │  HD Map  │  3D Det        │
+└─────────────────────────────────────────────────────────────────┘
+```
 
 ## Architecture / Method
 

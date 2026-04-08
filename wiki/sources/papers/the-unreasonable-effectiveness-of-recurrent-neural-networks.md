@@ -37,6 +37,44 @@ The post directly foreshadowed the "scaling up language models" paradigm that le
 
 ## Architecture / Method
 
+```
+        Character-Level LSTM Language Model
+
+  Input char c_t ──► One-hot (vocab ~65-100)
+                          │
+                          ▼
+                   ┌─────────────┐
+                   │  Embedding   │  dense vector
+                   └──────┬──────┘
+                          │
+              ┌───────────▼───────────┐
+              │   LSTM Layer 1         │
+              │   h1_t, cell1_t        │◄── h1_{t-1}, cell1_{t-1}
+              └───────────┬───────────┘
+                          │
+              ┌───────────▼───────────┐
+              │   LSTM Layer 2         │
+              │   h2_t, cell2_t        │◄── h2_{t-1}, cell2_{t-1}
+              └───────────┬───────────┘
+                          │
+              ┌───────────▼───────────┐
+              │   (Optional Layer 3)   │
+              └───────────┬───────────┘
+                          │
+                   ┌──────▼──────┐
+                   │   Linear    │
+                   └──────┬──────┘
+                          │
+                   ┌──────▼──────┐
+                   │  Softmax /τ  │  ──► P(c_{t+1})
+                   └─────────────┘
+                          │
+                  Sample c_{t+1} ──► feed back as next input
+
+  Training: Truncated BPTT (~100-200 chars), Cross-Entropy Loss
+  Generation: Autoregressive sampling with temperature τ
+```
+
 The architecture is a multi-layer LSTM (typically 2-3 layers, 256-512 hidden units per layer) trained on raw character sequences. Input characters are one-hot encoded (vocabulary size ~65-100 depending on the corpus) and embedded into a dense vector. At each timestep, the LSTM processes the current character embedding and its previous hidden/cell states, producing a new hidden state that is projected through a linear layer + softmax to produce a probability distribution over the next character.
 
 Training uses truncated backpropagation through time (BPTT) with sequence chunks of ~100-200 characters. The loss is standard cross-entropy between the predicted character distribution and the actual next character. Optimization uses RMSProp or Adam with gradient clipping to prevent exploding gradients.

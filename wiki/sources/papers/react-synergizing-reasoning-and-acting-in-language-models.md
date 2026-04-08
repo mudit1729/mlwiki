@@ -36,7 +36,45 @@ ReAct achieves strong results across diverse tasks: on FEVER fact verification, 
 - **Task-adaptive thought generation:** Demonstrates two thought strategies -- dense thoughts alternating with every action for knowledge tasks, and sparse asynchronous thoughts for decision-making tasks
 - **Complementarity of ReAct and CoT:** Shows that hybrid methods (ReAct → CoT-SC fallback, and vice versa) outperform either alone, establishing that internal and external reasoning are complementary
 
-## Architecture / Method
+## Architecture
+
+```
+┌─────────────────────────────────────────────────────┐
+│                  ReAct Agent Loop                    │
+│                                                     │
+│  ┌───────────────────────────────────────────────┐  │
+│  │ LLM (PaLM-540B) with Few-Shot Exemplars       │  │
+│  │                                                │  │
+│  │  Context: [exemplar trajectories] + [history]  │  │
+│  └────────────────────┬──────────────────────────┘  │
+│                       │                              │
+│            Generate â_t ∈ A ∪ L                      │
+│                       │                              │
+│              ┌────────┴────────┐                     │
+│              ▼                 ▼                      │
+│     ┌────────────────┐ ┌──────────────┐              │
+│     │ Thought (∈ L)  │ │ Action (∈ A) │              │
+│     │ "I need to     │ │ search[query]│              │
+│     │  find..."      │ │ lookup[term] │              │
+│     │                │ │ finish[ans]  │              │
+│     └───────┬────────┘ └──────┬───────┘              │
+│             │                 │                       │
+│             │ (no env effect) │                       │
+│             ▼                 ▼                       │
+│     ┌────────────┐   ┌──────────────┐                │
+│     │ Update     │   │ Environment  │──► Obs         │
+│     │ Context    │   │ (Wikipedia,  │                │
+│     │ Only       │   │  ALFWorld,..)│                │
+│     └────────────┘   └──────────────┘                │
+│             │                 │                       │
+│             └────────┬────────┘                       │
+│                      ▼                               │
+│              Append to history ĉ_t                   │
+│              Loop until finish                       │
+└─────────────────────────────────────────────────────┘
+```
+
+## Method
 
 ![ReAct overview: interleaved reasoning and acting compared to standard prompting, chain-of-thought, and act-only baselines](https://paper-assets.alphaxiv.org/figures/2210.03629v3/img-0.jpeg)
 

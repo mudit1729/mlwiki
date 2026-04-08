@@ -31,6 +31,44 @@ Toolformer demonstrated that a 6.7B parameter model could match or exceed GPT-3 
 
 ## Architecture / Method
 
+```
+         Toolformer: Self-Supervised Tool-Use Learning
+
+  ┌─────────────────────────────────────────────────────┐
+  │                Training Pipeline                     │
+  │                                                     │
+  │  Text Corpus (CCNet subset)                         │
+  │       │                                             │
+  │       ▼                                             │
+  │  ┌──────────────────┐                               │
+  │  │ 1. Sample API     │  Few-shot prompt GPT-J 6.7B  │
+  │  │    candidates     │  to generate <API>...</API>  │
+  │  └────────┬─────────┘                               │
+  │           ▼                                         │
+  │  ┌──────────────────┐                               │
+  │  │ 2. Execute calls  │  Calculator, QA, WikiSearch, │
+  │  │    against tools  │  MT, Calendar ──► results    │
+  │  └────────┬─────────┘                               │
+  │           ▼                                         │
+  │  ┌──────────────────┐                               │
+  │  │ 3. Filter: keep   │  Keep iff L⁻ - L⁺ >= τ      │
+  │  │    only if loss ↓ │  (tool result reduces ppl)   │
+  │  └────────┬─────────┘                               │
+  │           ▼                                         │
+  │  Fine-tune GPT-J on augmented + original data       │
+  └─────────────────────────────────────────────────────┘
+
+  ┌─────────────────────────────────────────────────────┐
+  │                Inference                             │
+  │                                                     │
+  │  "The population of Paris is <API> WikiSearch(Paris  │
+  │   population) ──► 2.1 million </API> 2.1 million."  │
+  │                                                     │
+  │  Model generates ──► <API> triggers tool call ──►   │
+  │  result inserted ──► generation resumes after </API>│
+  └─────────────────────────────────────────────────────┘
+```
+
 ![Toolformer approach overview](https://paper-assets.alphaxiv.org/figures/2302.04761/img-0.jpeg)
 
 ### Data Annotation Pipeline

@@ -35,6 +35,40 @@ Pointer Networks enabled neural approaches to combinatorial optimization problem
 
 ## Architecture / Method
 
+```
+  Standard Seq2Seq                 Pointer Network
+  ────────────────                 ───────────────
+  Input: x1 x2 ... xn             Input: x1 x2 ... xn
+    │                                │
+    ▼                                ▼
+  ┌──────────┐                     ┌──────────┐
+  │  LSTM    │                     │  LSTM    │
+  │ Encoder  │                     │ Encoder  │
+  └──┬───────┘                     └──┬───────┘
+     │ e1..en                         │ e1..en
+     ▼                                ▼
+  ┌──────────┐                     ┌──────────┐
+  │  LSTM    │                     │  LSTM    │
+  │ Decoder  │                     │ Decoder  │
+  └──┬───────┘                     └──┬───────┘
+     │ d_t                            │ d_t
+     ▼                                ▼
+  ┌──────────┐                     ┌────────────────────┐
+  │ Attention│──► context c_t      │ Attention scores   │
+  │          │       │             │ u_i = v^T tanh(    │
+  └──────────┘       ▼             │   W1*e_i + W2*d_t) │
+              ┌────────────┐       └─────────┬──────────┘
+              │ Fixed vocab │                 │
+              │ softmax(Wc) │                 ▼
+              └────────────┘       ┌────────────────────┐
+                                   │ softmax(u) ──► P(i)│
+              Output: tokens       │ "point" to input i │
+              from vocab V         └────────────────────┘
+
+                                   Output: indices into
+                                   input {1..n}
+```
+
 ![Architecture comparison between traditional sequence-to-sequence models and Pointer Networks](https://paper-assets.alphaxiv.org/figures/1506.03134v2/img-0.jpeg)
 
 The architecture follows the encoder-decoder paradigm with a critical modification at the output layer.

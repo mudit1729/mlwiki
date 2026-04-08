@@ -35,6 +35,44 @@ LaneGCN became one of the most influential and durable papers in motion forecast
 
 ## Architecture / Method
 
+```
+┌─────────────────────────────────────────────────────────┐
+│                  LaneGCN Architecture                    │
+│                                                         │
+│  ┌─────────────────┐     ┌──────────────────────┐       │
+│  │ Actor Histories  │     │  HD Map Lane Graph    │       │
+│  │ (2s @ 10Hz)      │     │  (centerlines + topo) │       │
+│  └────────┬────────┘     └──────────┬───────────┘       │
+│           ▼                         ▼                   │
+│  ┌─────────────────┐     ┌──────────────────────┐       │
+│  │   ActorNet       │     │      MapNet           │       │
+│  │ (1D Conv on      │     │ (LaneConv layers      │       │
+│  │  displacement    │     │  with 4 edge types:   │       │
+│  │  vectors)        │     │  pred, succ, left,    │       │
+│  └────────┬────────┘     │  right + dilation)    │       │
+│           │               └──────────┬───────────┘       │
+│           │                          │                   │
+│           ▼                          ▼                   │
+│  ┌──────────────────────────────────────────────┐       │
+│  │            Fusion Modules                     │       │
+│  │  ┌──────────┐              ┌──────────┐       │       │
+│  │  │Actor2Map │──► spatial ──►│Map2Actor │       │       │
+│  │  │attention │   attention  │attention │       │       │
+│  │  └──────────┘              └──────────┘       │       │
+│  │  (actors attend to          (lanes updated    │       │
+│  │   nearby lanes)              by nearby actors)│       │
+│  └──────────────────────┬───────────────────────┘       │
+│                         ▼                               │
+│  ┌──────────────────────────────────────────────┐       │
+│  │            Prediction Header                  │       │
+│  │  Fused actor features ──► K trajectories      │       │
+│  │                          (3s horizon)         │       │
+│  │                       ──► K confidence scores │       │
+│  │  Loss: regression (smooth L1) + classification│       │
+│  └──────────────────────────────────────────────┘       │
+└─────────────────────────────────────────────────────────┘
+```
+
 LaneGCN's architecture consists of four main modules that process information in sequence.
 
 ActorNet encodes each actor's past trajectory (observed positions over the last 2 seconds at 10 Hz) using a 1D convolutional network. The trajectory is represented as a sequence of displacement vectors, and the 1D convolutions extract temporal features at multiple scales. The output is a feature vector for each actor capturing its motion history.
