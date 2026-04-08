@@ -219,8 +219,8 @@ class WikiRepository:
     def featured_pages(self) -> list[Page]:
         featured_paths = [
             "wiki/overview",
-            "wiki/queries/research-tree",
             "wiki/concepts/vision-language-action",
+            "wiki/sources/ilya-top-30",
             "wiki/sources/vla-and-driving",
             "wiki/syntheses/research-thesis",
             "wiki/queries/open-questions",

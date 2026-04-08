@@ -94,5 +94,4 @@ The [[wiki/sources/ilya-top-30|Ilya reading list]]'s emphasis on compression ([[
 ## Related
 
 - [[wiki/queries/open-questions]] — 48 questions across 5 streams
-- [[wiki/queries/research-tree]] — Interactive visual tree
 - [[wiki/overview]] — Wiki overview and five pillars

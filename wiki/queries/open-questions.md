@@ -11,8 +11,7 @@ tags:
 
 # Open Questions
 
-This page is the root of the open-questions tree. Each research pillar has its own dedicated page with stream-specific questions grounded in the papers we've ingested. See [[wiki/queries/research-tree]] for an interactive visual map.
-
+This page is the root of the open-questions tree. Each research pillar has its own dedicated page with stream-specific questions grounded in the papers we've ingested. 
 ## Question tree
 
 ```
@@ -103,7 +102,6 @@ The central tension of the entire wiki: when does hand-designed structure help?
 
 - [[wiki/overview]] — Wiki overview and five research pillars
 - [[wiki/syntheses/research-thesis]] — Current thesis synthesizing these questions
-- [[wiki/queries/research-tree]] — Interactive visual tree of the wiki structure
 - [[wiki/concepts/vision-language-action]] — VLA concept page
 - [[wiki/concepts/end-to-end-architectures]] — E2E concept page
 - [[wiki/concepts/perception]] — BEV/perception concept page

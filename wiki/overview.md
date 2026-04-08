@@ -59,7 +59,7 @@ The wiki also covers the papers that made all of the above possible:
 
 ## Open questions by stream
 
-Each pillar has dedicated open questions grounded in the papers above. See the [[wiki/queries/research-tree|interactive research tree]] for a visual map.
+Each pillar has dedicated open questions grounded in the papers above. See [[wiki/queries/open-questions]] for the full question tree.
 
 | Stream | Questions | Key tension |
 |--------|-----------|-------------|
@@ -75,7 +75,6 @@ Five cross-cutting themes emerge: **RL frontier** (every stream hitting an IL ce
 
 | Section | Description |
 |---------|-------------|
-| [[wiki/queries/research-tree]] | Interactive visual tree of the wiki structure |
 | [[wiki/queries/open-questions]] | Root page for 48 open questions across 5 streams |
 | [[wiki/taxonomies/research-map]] | Field breakdown across research directions |
 | [[wiki/concepts/vision-language-action]] | VLA evolution from CIL to π₀ — the core action paradigm |
