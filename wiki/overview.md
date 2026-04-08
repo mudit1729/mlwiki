@@ -57,24 +57,30 @@ The wiki also covers the papers that made all of the above possible:
 | **Alignment** | [[wiki/sources/papers/training-language-models-to-follow-instructions-with-human-feedback\|InstructGPT]] (24K+), [[wiki/sources/papers/direct-preference-optimization-your-language-model-is-secretly-a-reward-model\|DPO]], [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models\|Chain-of-Thought]] (27K+) |
 | **Agents** | [[wiki/sources/papers/react-synergizing-reasoning-and-acting-in-language-models\|ReAct]] (8K+), [[wiki/sources/papers/toolformer-language-models-can-teach-themselves-to-use-tools\|Toolformer]] |
 
-## What the wiki answers
+## Open questions by stream
 
-- Which papers are actually foundational, and why?
-- Which benchmarks are over-indexed relative to real deployment value?
-- Where do modular systems still dominate?
-- What does "end-to-end" mean in each paper, exactly?
-- How should VLM/VLA progress in robotics be interpreted for autonomous driving?
-- Which open problems are bottlenecked by data, simulation, evaluation, or architecture?
+Each pillar has dedicated open questions grounded in the papers above. See the [[wiki/queries/research-tree|interactive research tree]] for a visual map.
+
+| Stream | Questions | Key tension |
+|--------|-----------|-------------|
+| [[wiki/queries/open-questions-e2e\|End-to-End Driving]] | 9 | Unified vs. decoupled, generative vs. discriminative |
+| [[wiki/queries/open-questions-vla\|VLA Models]] | 10 | Dual-system convergence, cross-embodiment limits |
+| [[wiki/queries/open-questions-llm-reasoning\|LLM Reasoning]] | 9 | Language as scaffold vs. core, reasoning vs. planning |
+| [[wiki/queries/open-questions-foundation-models\|Foundation Models]] | 10 | Open vs. closed, scaling laws for embodied AI |
+| [[wiki/queries/open-questions-bev-perception\|BEV & 3D Occupancy]] | 10 | Dense vs. Gaussian, occupancy in E2E |
+
+Five cross-cutting themes emerge: **RL frontier** (every stream hitting an IL ceiling), **scaling laws for embodied AI**, **distillation as deployment**, **evaluation adequacy**, and **explicit structure vs. learned representations**. The [[wiki/syntheses/research-thesis|Research Thesis]] synthesizes these into a unified view.
 
 ## Navigation
 
 | Section | Description |
 |---------|-------------|
+| [[wiki/queries/research-tree]] | Interactive visual tree of the wiki structure |
+| [[wiki/queries/open-questions]] | Root page for 48 open questions across 5 streams |
 | [[wiki/taxonomies/research-map]] | Field breakdown across research directions |
 | [[wiki/concepts/vision-language-action]] | VLA evolution from CIL to π₀ — the core action paradigm |
 | [[wiki/sources/ilya-top-30]] | Ilya's curated 30-paper curriculum on deep learning foundations |
 | [[wiki/sources/vla-and-driving]] | 90+ driving and robotics VLA papers organized by wave |
 | [[wiki/syntheses/research-thesis]] | Current high-level thesis with evidence for and against |
-| [[wiki/queries/open-questions]] | 15 active research questions with partial answers |
 | [[wiki/comparisons/modular-vs-end-to-end]] | The core systems architecture debate |
 

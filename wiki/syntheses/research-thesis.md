@@ -73,6 +73,26 @@ The 2024 evidence strongly favors **generative over discriminative** action mode
 - Evidence that world-model-based planners outperform VLA + world-model-verifier architectures (would change the complementarity claim).
 - Evidence that closed-source models maintain lead despite open-source momentum (would weaken the acceleration claim).
 
+## Open questions synthesis
+
+The 48 open questions across 5 streams (see [[wiki/queries/open-questions|full tree]]) distill into five cross-cutting themes that shape the thesis:
+
+1. **The RL frontier** — Every stream is hitting an imitation learning ceiling. [[wiki/queries/open-questions-e2e|E2E]] Q5 (CarPlanner beats IL+rules), [[wiki/queries/open-questions-vla|VLA]] Q5 (pi0.6 doubles throughput via RL), [[wiki/queries/open-questions-llm-reasoning|Reasoning]] Q5-6 (DeepSeek-R1 emergent CoT from RL). The thesis predicts RL is essential; the open question is reward design for physical safety.
+
+2. **Scaling laws for embodied AI** — [[wiki/queries/open-questions-foundation-models|Foundation]] Q1 and [[wiki/queries/open-questions-e2e|E2E]] Q6 ask whether language scaling laws transfer to multimodal embodied data. DriveGPT says yes for behavior models; HPT says yes for robot pretraining. The thesis bets they do.
+
+3. **Distillation as deployment** — [[wiki/queries/open-questions-foundation-models|Foundation]] Q4 and [[wiki/queries/open-questions-llm-reasoning|Reasoning]] Q3 converge on train-large-distill-small. Gemma 3, DeepSeek-R1, and DiMA all validate this. The thesis implies the frontier model is a training artifact, not the deployed system.
+
+4. **Evaluation adequacy** — [[wiki/queries/open-questions-e2e|E2E]] Q7 and [[wiki/queries/open-questions-bev-perception|BEV]] Q10 question whether benchmarks measure what matters. No perception metric has been shown to correlate with planning quality. This could falsify progress claims across the field.
+
+5. **Explicit structure vs. learned representations** — The thesis's central claim. [[wiki/queries/open-questions-e2e|E2E]] Q1-3 (unified vs. decoupled), [[wiki/queries/open-questions-bev-perception|BEV]] Q9 (occupancy necessity in E2E), and [[wiki/queries/open-questions-llm-reasoning|Reasoning]] Q4 (structured vs. free-form reasoning) all probe this boundary.
+
 ## Connections to Ilya Top 30
 
 The [[wiki/sources/ilya-top-30|Ilya reading list]]'s emphasis on compression ([[wiki/sources/papers/keeping-neural-networks-simple-by-minimizing-description-length|MDL]], [[wiki/sources/papers/kolmogorov-complexity-and-algorithmic-randomness|Kolmogorov complexity]]) and complexity theory aligns deeply: the shift to learned representations is fundamentally about learning to compress the autonomy task into the right abstractions. [[wiki/sources/papers/scaling-laws-for-neural-language-models|Scaling Laws]] and [[wiki/sources/papers/training-compute-optimal-large-language-models|Chinchilla]] showed this for language; [[wiki/sources/papers/hpt-scaling-proprioceptive-visual-learning-with-heterogeneous-pre-trained-transformers|HPT]] and [[wiki/sources/papers/drivegpt-scaling-autoregressive-behavior-models-for-driving|DriveGPT]] are showing it for embodied AI.
+
+## Related
+
+- [[wiki/queries/open-questions]] — 48 questions across 5 streams
+- [[wiki/queries/research-tree]] — Interactive visual tree
+- [[wiki/overview]] — Wiki overview and five pillars
