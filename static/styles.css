@@ -108,6 +108,16 @@ img { max-width: 100%; border-radius: var(--radius-md); }
   color: var(--text);
   font-weight: 700;
   font-size: 0.95rem;
+  min-width: 0;
+}
+
+.brand-subtitle {
+  font-size: 0.75rem;
+  font-weight: 400;
+  color: var(--text-tertiary);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .brand-mark {
@@ -690,6 +700,8 @@ img { max-width: 100%; border-radius: var(--radius-md); }
 
 .article-panel {
   padding: 2rem;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .article-header {
@@ -733,6 +745,9 @@ img { max-width: 100%; border-radius: var(--radius-md); }
 .prose {
   font-size: 0.98rem;
   line-height: 1.75;
+  overflow-wrap: break-word;
+  word-break: break-word;
+  min-width: 0;
 }
 
 .prose h1 {
@@ -962,6 +977,8 @@ img { max-width: 100%; border-radius: var(--radius-md); }
   background: var(--bg-elevated);
   color: var(--text);
   transition: border-color 0.2s, box-shadow 0.2s, transform 0.15s;
+  overflow: hidden;
+  min-width: 0;
 }
 
 .paper-card:hover {
@@ -1429,13 +1446,14 @@ img { max-width: 100%; border-radius: var(--radius-md); }
   }
 
   .search-trigger span { display: none; }
+  .brand-subtitle { display: none; }
 }
 
 @media (max-width: 720px) {
-  .page-shell { padding: 1rem; }
-  .site-header { padding: 0 1rem; }
-  .hero { padding: 1.5rem; }
-  .article-panel { padding: 1.25rem; }
+  .page-shell { padding: 0.75rem; }
+  .site-header { padding: 0 0.75rem; gap: 0.5rem; }
+  .hero { padding: 1.25rem; }
+  .article-panel { padding: 1rem; }
   .stats-bar { gap: 0.5rem; }
   .stat-row { gap: 0.5rem; }
   .stat-card { padding: 0.6rem 0.85rem; min-width: 70px; }
@@ -1443,4 +1461,108 @@ img { max-width: 100%; border-radius: var(--radius-md); }
   .collection-grid { grid-template-columns: 1fr; }
   .papers-grid { grid-template-columns: 1fr; }
   .featured-grid { grid-template-columns: 1fr; }
+
+  /* Header: truncate brand text */
+  .brand {
+    font-size: 0.85rem;
+    min-width: 0;
+  }
+  .brand span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Search trigger: icon only */
+  .search-trigger { padding: 0.4rem 0.5rem; }
+  .search-trigger kbd { display: none; }
+
+  /* Collection list: allow wrapping */
+  .collection-list li a {
+    white-space: normal;
+    overflow: visible;
+    text-overflow: unset;
+  }
+  .collection-list li {
+    font-size: 0.82rem;
+  }
+  .collection-card { padding: 1rem; }
+
+  /* Prose: smaller text and better mobile fit */
+  .prose { font-size: 0.88rem; line-height: 1.7; }
+  .prose h1 { font-size: clamp(1.4rem, 5vw, 1.8rem); }
+  .prose h2 { font-size: 1.1rem; margin-top: 1.5rem; }
+  .prose h3 { font-size: 0.95rem; margin-top: 1.25rem; }
+  .prose ul, .prose ol { padding-left: 1rem; }
+  .prose li { font-size: 0.86rem; }
+
+  /* Tables: horizontal scroll */
+  .prose table {
+    display: block;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+    font-size: 0.78rem;
+  }
+  .prose th, .prose td {
+    padding: 0.4rem 0.6rem;
+    white-space: nowrap;
+  }
+
+  /* Code blocks / ASCII diagrams: smaller font, ensure scroll */
+  .prose pre {
+    font-size: 0.7rem;
+    padding: 0.75rem;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  /* Article meta bar */
+  .article-meta-bar { gap: 0.3rem; padding: 0.5rem 0; }
+
+  /* Breadcrumbs */
+  .breadcrumbs { font-size: 0.75rem; }
+
+  /* Featured cards */
+  .hero-featured .section-heading h2 { font-size: 1.15rem; }
+  .hero-featured .featured-card { padding: 1rem; }
+  .hero-featured .featured-card strong { font-size: 0.9rem; }
+  .hero-featured .featured-card p { font-size: 0.82rem; }
+
+  /* Paper cards */
+  .paper-card { padding: 0.85rem; }
+  .paper-card-header strong { font-size: 0.84rem; }
+  .paper-card p { font-size: 0.78rem; }
+
+  /* Tags / chips */
+  .chip { padding: 0.3rem 0.65rem; font-size: 0.78rem; }
+  .chips-row { gap: 0.3rem; }
+
+  /* Sidebar: tighter */
+  .sidebar-block { padding: 0.75rem 1rem; }
+  .sidebar-meta { font-size: 0.78rem; }
+
+  /* Section headings */
+  .section-heading h1,
+  .section-heading h2 { font-size: 1rem; }
+
+  /* Stat label */
+  .stat-label { font-size: 0.7rem; }
+
+  /* Eyebrow */
+  .eyebrow { font-size: 0.65rem; }
+}
+
+/* Extra small phones */
+@media (max-width: 400px) {
+  .page-shell { padding: 0.5rem; }
+  .site-header { height: 48px; }
+  .brand-mark { width: 28px; height: 28px; font-size: 0.8rem; }
+  .brand { font-size: 0.8rem; gap: 0.4rem; }
+  .stat-card { min-width: 60px; padding: 0.5rem 0.65rem; }
+  .stat-num { font-size: 1rem; }
+  .stat-label { font-size: 0.65rem; }
+  .prose { font-size: 0.84rem; }
+  .prose pre { font-size: 0.62rem; }
+  .prose table { font-size: 0.72rem; }
+  .hero-featured .featured-card { padding: 0.85rem; }
+  .collection-card { padding: 0.85rem; }
 }
