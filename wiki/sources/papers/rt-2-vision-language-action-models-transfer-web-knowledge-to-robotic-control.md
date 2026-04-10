@@ -11,6 +11,7 @@ tags:
   - vla
   - embodied
 citations: 2686
+paper-faithfullness: audited-fixed
 ---
 
 # RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control
@@ -21,7 +22,7 @@ citations: 2686
 
 RT-2 is the defining paper for the modern Vision-Language-Action (VLA) paradigm. It demonstrates that large vision-language models (VLMs) pretrained on internet-scale data can be directly fine-tuned for robotic control by representing robot actions as text tokens in the model's output vocabulary. This simple idea -- that actions are just another language to be predicted -- enables the transfer of vast web knowledge (semantic understanding, visual reasoning, common sense) to physical robot manipulation without any architectural modification to the underlying VLM.
 
-The key finding is that this transfer is not just possible but dramatically beneficial: RT-2 nearly triples performance on tasks requiring semantic reasoning (e.g., "pick up the object that is a fruit" when presented with novel objects) compared to RT-1, which had no web pretraining. The model can perform rudimentary chain-of-thought reasoning about which actions to take, interpret novel visual concepts it never encountered in robot data, and even follow instructions involving abstract concepts like "move the banana to the country that is on the flag."
+The key finding is that this transfer is not just possible but dramatically beneficial: RT-2 nearly doubles performance on tasks requiring semantic reasoning (e.g., "pick up the object that is a fruit" when presented with novel objects) compared to RT-1, which had no web pretraining. The model can perform rudimentary chain-of-thought reasoning about which actions to take, interpret novel visual concepts it never encountered in robot data, and even follow instructions involving abstract concepts like "move the banana to the country that is on the flag."
 
 Built on top of PaLM-E (a 12B-parameter VLM) and PaLI-X (a 55B-parameter VLM), RT-2 establishes the scaling hypothesis for robotics: larger VLMs with more web pretraining produce better robot policies, even with the same amount of robot data. This paper launched a wave of VLA research and directly inspired driving-domain VLAs like Senna, ORION, and DriveMoE.
 

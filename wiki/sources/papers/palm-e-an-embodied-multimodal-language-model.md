@@ -11,6 +11,7 @@ tags:
   - vlm
   - embodied
 citations: 2491
+paper-faithfullness: audited-fixed
 ---
 
 # PaLM-E: An Embodied Multimodal Language Model
@@ -19,7 +20,7 @@ citations: 2491
 
 ## Overview
 
-PaLM-E is a 562-billion parameter embodied multimodal language model created by Google that injects continuous sensor observations (images, point clouds, robot state vectors) directly into the token embedding space of a frozen PaLM large language model. Rather than converting sensor data to text descriptions before feeding them to an LLM, PaLM-E treats visual and state features as "embodied tokens" that are interleaved with text tokens in the same sequence, enabling the model to ground language understanding in physical sensor data and generate actionable plans for robotic tasks.
+PaLM-E is a 562-billion parameter embodied multimodal language model created by Google that injects continuous sensor observations (images, point clouds, robot state vectors) directly into the token embedding space of a PaLM large language model, which is fine-tuned end-to-end alongside the input encoders. Rather than converting sensor data to text descriptions before feeding them to an LLM, PaLM-E treats visual and state features as "embodied tokens" that are interleaved with text tokens in the same sequence, enabling the model to ground language understanding in physical sensor data and generate actionable plans for robotic tasks.
 
 The central insight is that a sufficiently large pretrained language model can serve as a general-purpose reasoning backbone for embodied tasks if continuous observations are mapped into its embedding space through learned encoders. PaLM-E demonstrates this across three robot platforms (a mobile manipulator for tabletop tasks, a SayCan kitchen robot, and a simulated manipulation environment) while simultaneously maintaining strong performance on standard vision-language benchmarks (VQA, image captioning, visual reasoning). At the 562B scale, the model exhibits "positive transfer" -- training on robot data actually improves vision-language performance compared to the vision-only baseline.
 
@@ -31,7 +32,7 @@ PaLM-E is significant because it showed that the foundation model paradigm scale
 - **Scale enables positive transfer**: At 562B parameters, training on robotic manipulation data improves VQA and captioning performance compared to the vision-only model, suggesting the embodied grounding helps general visual understanding
 - **Multi-embodiment generalization**: A single model operates across three physically different robots (tabletop manipulator, mobile kitchen robot, simulated arm) by conditioning on embodiment-specific state tokens
 - **Long-horizon planning via language**: PaLM-E generates multi-step plans in natural language (e.g., "1. Pick up the sponge. 2. Move to the sink. 3. Place the sponge in the sink.") grounded in the current visual observation, combining high-level reasoning with perceptual grounding
-- **Frozen LLM backbone**: The PaLM language model weights are frozen during embodied training; only the input encoders and projection layers are trained, preserving the LLM's reasoning and language generation capabilities
+- **Fine-tuned LLM backbone**: Both fine-tuning the PaLM language model and keeping it frozen (training only encoders/projections) were explored; fine-tuning yields significantly better results and is the adopted approach in PaLM-E
 
 ## Architecture / Method
 
@@ -54,7 +55,7 @@ PaLM-E is significant because it showed that the foundation model paradigm scale
                             │  Interleaved "multimodal sentence"
                             ▼
               ┌──────────────────────────────┐
-              │   Frozen PaLM LLM            │
+              │   PaLM LLM (fine-tuned)      │
               │   (8B / 62B / 562B)          │
               │                              │
               │   Autoregressive generation  │
@@ -74,14 +75,14 @@ PaLM-E is significant because it showed that the foundation model paradigm scale
 
 ![Multimodal capabilities: VQA, few-shot prompting, chain-of-thought reasoning, robot planning](https://paper-assets.alphaxiv.org/figures/2303.03378/img-1.jpeg)
 
-The architecture combines a frozen PaLM language model (available at 8B, 62B, and 562B scales) with modality-specific encoders. The unified Transformer architecture creates "multimodal sentences" where text and continuous observations are interleaved as latent vectors. The mathematical encoding maps observations to the embedding space: X = phi(o) in R^d. Multiple encoder types handle different modalities:
+The architecture combines a PaLM language model (available at 8B, 62B, and 562B total scales, corresponding to PaLM backbone sizes of 8B, 62B, and 540B) with modality-specific encoders; the LLM is fine-tuned jointly with the encoders. The unified Transformer architecture creates "multimodal sentences" where text and continuous observations are interleaved as latent vectors. The mathematical encoding maps observations to the embedding space: X = phi(o) in R^d. Multiple encoder types handle different modalities:
 - **ViT-22B** for 2D images, producing patch tokens linearly projected into PaLM's embedding dimension
 - **MLPs** for state estimation (joint angles, gripper state, end-effector pose)
 - **Object Scene Representation Transformer (OSRT)** for 3D scene representations from point clouds
 
 The input to PaLM-E is a sequence like: [image tokens] [text: "Pick up the blue block"] [robot state tokens]. The model autoregressively generates text that either describes the scene (for VQA tasks) or specifies a plan step (for robot tasks). For robotic execution, each generated plan step is dispatched to a low-level skill policy (e.g., a pick-and-place primitive) that executes the action, after which a new observation is captured and fed back to generate the next step.
 
-Training combines multiple task datasets: robot manipulation demonstrations (with language-annotated plans), VQA datasets (VQAv2, OK-VQA), image captioning (COCO), and visual reasoning (Winoground). The multi-task training objective is standard next-token prediction with task-specific prompting. LLM fine-tuning shows superior results versus frozen encoders, and model scaling from 8B to 540B parameters improves language retention.
+Training combines multiple task datasets: robot manipulation demonstrations (with language-annotated plans), VQA datasets (VQAv2, OK-VQA), image captioning (COCO), and visual reasoning (Winoground). The multi-task training objective is standard next-token prediction with task-specific prompting. Fine-tuning the full LLM yields better results than freezing it and training only the visual encoders. Model scaling is investigated at 8B, 62B, and 540B PaLM backbone sizes (producing PaLM-E models up to 562B total parameters), with larger models retaining more language capabilities during multimodal training.
 
 The key architectural decision is that all sensor modalities are encoded as "soft tokens" in the LLM's continuous embedding space, rather than being converted to discrete text. This preserves geometric and continuous information that would be lost in text serialization.
 

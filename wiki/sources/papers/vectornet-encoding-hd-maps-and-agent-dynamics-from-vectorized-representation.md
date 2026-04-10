@@ -11,6 +11,7 @@ tags:
   - prediction
   - vectorized-representation
 citations: 1035
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2005.04259)**
@@ -68,9 +69,8 @@ The paper's influence was substantial: VectorNet shifted the motion prediction c
 │                     ▼                                    │
 │  ┌───────────────────────────────┐                        │
 │  │   MLP Prediction Head         │                       │
-│  │   K trajectory hypotheses     │                       │
-│  │   + confidence scores         │                       │
-│  │   (winner-take-all loss)      │                       │
+│  │   Single future trajectory    │                       │
+│  │   (L2 regression loss)        │                       │
 │  └───────────────────────────────┘                        │
 └──────────────────────────────────────────────────────────┘
 ```
@@ -85,7 +85,7 @@ VectorNet processes the driving scene in two stages. **Stage 1 -- Polyline Subgr
 
 **Stage 2 -- Global Interaction Graph**: The polyline-level nodes {p_j} form a fully-connected global graph. A global interaction network (multi-head self-attention, similar to a transformer) processes these nodes, allowing each polyline to attend to all others. This captures long-range spatial relationships: an agent's trajectory attends to nearby lane boundaries, traffic signals, and other agents' trajectories.
 
-**Prediction Head**: The output node for the target agent is passed through an MLP to predict K future trajectory hypotheses, each with an associated confidence score. Training uses a winner-take-all loss where only the trajectory hypothesis closest to the ground truth receives gradient.
+**Prediction Head**: The output node for the target agent is passed through an MLP to predict a single future trajectory. VectorNet does not include a multimodal decoder with multiple hypotheses or winner-take-all loss — that capability came in later work (TNT, DenseTNT).
 
 **Self-supervised Pre-training**: A node completion objective randomly masks a polyline node and trains the network to predict its features from the remaining context, similar to BERT's masked language modeling. This pre-training improves downstream prediction performance.
 
@@ -109,7 +109,7 @@ VectorNet processes the driving scene in two stages. **Stage 1 -- Polyline Subgr
 
 - The fully-connected global graph has O(N^2) complexity in the number of polylines, which can become expensive in dense urban scenes with hundreds of lane segments and agents
 - The vector representation loses some fine-grained geometric information (road surface texture, elevation changes) that rasterized representations can capture through image channels
-- The prediction head is relatively simple (MLP with winner-take-all); more sophisticated decoding strategies (autoregressive, diffusion-based) could further improve multi-modal trajectory prediction
+- The prediction head is a simple MLP predicting a single trajectory; multimodal prediction (multiple hypotheses with confidence scores) is not part of this paper and was addressed in subsequent work (TNT, DenseTNT)
 - No explicit incorporation of traffic rules or semantic constraints beyond what the GNN learns implicitly from data
 
 ## Connections

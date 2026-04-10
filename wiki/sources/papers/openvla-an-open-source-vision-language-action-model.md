@@ -11,6 +11,7 @@ tags:
   - vla
   - open-source
 citations: 1883
+paper-faithfullness: audited-fixed
 ---
 
 # OpenVLA: An Open-Source Vision-Language-Action Model
@@ -28,7 +29,7 @@ OpenVLA addresses a critical bottleneck in robot learning: prior VLA models were
 ## Key Contributions
 
 - **Open-source generalist VLA**: First fully open (weights, code, data pipeline) 7B-parameter VLA model that matches RT-2-X performance on generalist manipulation benchmarks
-- **Efficient fine-tuning recipe**: Demonstrates that LoRA fine-tuning on a single A100 GPU for 1-2 hours adapts the generalist policy to new tasks, achieving performance competitive with or exceeding training from scratch
+- **Efficient fine-tuning recipe**: Demonstrates that LoRA fine-tuning on a single A100 GPU for 10-15 hours adapts the generalist policy to new tasks, achieving performance competitive with or exceeding training from scratch
 - **Action tokenization via discretization**: Robot actions are discretized into 256 bins per dimension and predicted as token sequences through the LLM's vocabulary, avoiding the need for separate action heads
 - **Dual vision encoder**: Uses both SigLIP (semantic) and DinoV2 (spatial/geometric) encoders to provide complementary visual features, which improves manipulation performance over single-encoder baselines
 - **Systematic evaluation across embodiments**: Tests on WidowX, Franka, and Google Robot platforms with real-world evaluations, not just simulation
@@ -98,7 +99,7 @@ For fine-tuning, LoRA fine-tuning matches full fine-tuning performance (68.2% vs
 
 - **Generalist policy performance**: OpenVLA achieved a 16.5% absolute improvement in success rate over RT-2-X (55B parameters) across 29 tasks spanning two robot embodiments (WidowX and Google Robot), establishing a new state-of-the-art for generalist robot manipulation with 7x fewer parameters
 - On the WidowX BridgeV2 evaluation suite, OpenVLA achieves 82% average success rate across 7 tasks, matching RT-2-X (84%) despite being 7B vs. 55B parameters
-- Fine-tuning on a new WidowX task (e.g., "put the spoon on the towel") reaches 90%+ success in 1-2 hours of LoRA training on a single GPU
+- Fine-tuning on a new WidowX task (e.g., "put the spoon on the towel") reaches 90%+ success after 10-15 hours of LoRA training on a single GPU
 - **Adaptation to new robots**: 20.4% improvement over Diffusion Policy on diverse multi-instruction tasks on Franka platforms (10-150 demonstrations). Consistent robustness across all tested tasks (the only method achieving >=50% success rate universally). Superior on tasks requiring language grounding and distractor handling
 - The dual vision encoder (SigLIP + DinoV2) outperforms single-encoder variants by 8-12% on spatial reasoning tasks, validating the complementary feature design
 - **Visual/motion/physical generalization**: Strong performance on unseen backgrounds, distractors, novel object positions/orientations, and different object sizes/shapes, though success rates drop ~15-20% compared to in-distribution evaluation

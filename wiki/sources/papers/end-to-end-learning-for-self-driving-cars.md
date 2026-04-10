@@ -10,6 +10,7 @@ tags:
   - autonomous-driving
   - e2e
 citations: 4537
+paper-faithfullness: audited-fixed
 ---
 
 # End to End Learning for Self-Driving Cars
@@ -30,7 +31,7 @@ This paper is historically significant as the canonical modern reference for cam
 - **Real-world training and deployment:** Trained on 72 hours of real driving data (not simulation) and demonstrated on actual roads, including highway, rural, and suburban environments
 - **Data augmentation via multi-camera setup:** Used three cameras (center, left, right) with steering angle offsets for the side cameras, effectively tripling the training data and teaching the network to recover from off-center positions
 - **Visualization of learned features:** Applied network visualization techniques to show that the CNN learns to detect road edges, lane markings, and other relevant features without explicit supervision
-- **Simplicity of approach:** The entire system is a standard CNN (9 layers: 5 convolutional, 4 fully-connected) trained with MSE loss on steering angles -- no complex architecture or training procedure required
+- **Simplicity of approach:** The entire system is a standard CNN (9 layers: normalization + 5 convolutional + 3 fully-connected + output) trained with MSE loss on the inverse turning radius (1/r) -- no complex architecture or training procedure required
 
 ## Architecture / Method
 
@@ -62,12 +63,12 @@ This paper is historically significant as the canonical modern reference for cam
 │  │  FC1: 1164 neurons                    │                      │
 │  │  FC2: 100 neurons                     │                      │
 │  │  FC3: 50 neurons                      │                      │
-│  │  FC4: 10 neurons                      │                      │
 │  ├───────────────────────────────────────┤                      │
-│  │  Output: 1 (inverse turning radius)   │                      │
+│  │  Output: 1 (1/r, inverse turning      │                      │
+│  │           radius)                     │                      │
 │  └───────────────────────────────────────┘                      │
 │                                                                 │
-│  Loss: MSE(predicted steering, actual steering)                 │
+│  Loss: MSE(predicted 1/r, actual 1/r)                           │
 │  Inference: ~30 FPS on NVIDIA Drive PX                          │
 └─────────────────────────────────────────────────────────────────┘
 ```
@@ -76,11 +77,11 @@ This paper is historically significant as the canonical modern reference for cam
 
 ![Training pipeline: multi-camera data augmentation through shifts, rotations, and corresponding steering command adjustments](https://paper-assets.alphaxiv.org/figures/1604.07316/img-1.jpeg)
 
-The DAVE-2 network architecture is a relatively straightforward CNN for its era. The input is a single camera image (66x200 pixels, YUV color space) captured from the front of the vehicle. The network consists of a normalization layer, five convolutional layers (with 24, 36, 48, 64, and 64 filters respectively, using strided convolutions for downsampling), followed by four fully-connected layers (with 1164, 100, 50, and 10 neurons), outputting a single scalar: the inverse turning radius (rather than steering angle directly), which avoids mathematical singularities associated with straight-line driving.
+The DAVE-2 network architecture is a relatively straightforward CNN for its era. The input is a single camera image (66x200 pixels, YUV color space) captured from the front of the vehicle. The network consists of a normalization layer, five convolutional layers (with 24, 36, 48, 64, and 64 filters respectively, using strided convolutions for downsampling), followed by three fully-connected layers (with 1164, 100, and 50 neurons) and a final output neuron, totaling approximately 250,000 parameters across roughly 27 million connections. The output is a single scalar representing the inverse turning radius (1/r), rather than steering angle directly, which avoids mathematical singularities associated with straight-line driving where radius approaches infinity.
 
 The training data collection uses three cameras mounted behind the windshield: one center, one shifted left, and one shifted right. The center camera provides ground-truth steering labels directly from the human driver. The left and right cameras are paired with adjusted steering angles that add a small correction toward the center, teaching the network to recover from off-center positions. This is a simple but effective form of data augmentation that addresses the distribution shift problem: during autonomous driving, small errors accumulate and push the vehicle off the demonstrated trajectory, so the network needs to learn recovery behaviors.
 
-Training uses standard supervised learning with mean squared error loss between predicted and actual steering angles. Random shifts and rotations are applied as additional data augmentation. The system outputs only the steering angle; throttle and brake are controlled by a separate adaptive cruise control system.
+Training uses standard supervised learning with mean squared error loss between predicted and actual inverse turning radius (1/r) values. Random shifts and rotations are applied as additional data augmentation. The system outputs only the steering angle; throttle and brake are controlled by a separate adaptive cruise control system.
 
 During deployment, the network runs at approximately 30 FPS on an NVIDIA Drive PX computer. The system was tested on a variety of roads in New Jersey, including multi-lane highways, single-lane roads with and without lane markings, and unpaved roads. An autonomy metric tracks the fraction of time the system drives without human intervention.
 

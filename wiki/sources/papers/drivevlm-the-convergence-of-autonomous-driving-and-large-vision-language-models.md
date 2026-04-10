@@ -11,6 +11,7 @@ tags:
   - vlm
   - planning
 citations: 416
+paper-faithfullness: audited-fixed
 ---
 
 # DriveVLM: The Convergence of Autonomous Driving and Large Vision-Language Models
@@ -43,8 +44,8 @@ DriveVLM addresses a practical concern in the VLM-for-driving space: pure VLM-ba
 │         │                                                     │
 │         ▼                                                     │
 │  ┌─────────────────────────────┐                             │
-│  │   InternVL Vision-Language  │                             │
-│  │         Model               │                             │
+│  │   Qwen-VL Vision-Language   │                             │
+│  │    Model (9.6B parameters)  │                             │
 │  │                             │                             │
 │  │  Stage 1: Scene Description │                             │
 │  │  "3 vehicles, ped crossing" │                             │
@@ -80,7 +81,7 @@ DriveVLM addresses a practical concern in the VLM-for-driving space: pure VLM-ba
 └──────────────────────────────────────────────────────────────┘
 ```
 
-DriveVLM uses a large Vision-Language Model (based on InternVL) as its core reasoning engine. The VLM processes multi-camera images along with ego vehicle state information and produces outputs through a three-stage chain-of-thought pipeline.
+DriveVLM uses a large Vision-Language Model (Qwen-VL, 9.6B parameters) as its core reasoning engine. The VLM processes multi-camera images along with ego vehicle state information and produces outputs through a three-stage chain-of-thought pipeline.
 
 Stage 1 (Scene Description): The VLM generates a natural language description of the driving scene, identifying key objects, their positions, velocities, and relationships. This creates a structured understanding of the environment.
 

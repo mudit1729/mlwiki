@@ -13,6 +13,7 @@ tags:
   - evaluation
 citations: 62
 arxiv_id: "2506.04218"
+paper-faithfullness: audited-fixed
 ---
 
 # Pseudo-Simulation for Autonomous Driving (NAVSIM v2)
@@ -86,21 +87,11 @@ The proximity-based weighting scheme is critical: rather than requiring exact tr
 | Best open-loop metric (PDM-Open) | 0.7 |
 | **Pseudo-simulation (NAVSIM v2)** | **0.8** |
 
-### NAVSIM v2 Leaderboard (Selected Methods, EPDMS scores, snapshot 03/2026)
+### NAVSIM v2 Leaderboard
 
 The v2 benchmark uses **EPDMS** (not PDMS), a different metric reflecting pseudo-simulation-based scoring. Scores are not directly comparable to NAVSIM v1 PDMS values.
 
-| Method | EPDMS |
-|---|---|
-| PDM-Closed | 56.6 |
-| DrivoR | 54.5 |
-| SimScale | 53.2 |
-| GuideFlow | 51.5 |
-| RAP | 39.6 |
-| NavFormer | 34.1 |
-| Latent TransFuser | 25.1 |
-| Ego MLP | 14.1 |
-| Constant Velocity | 11.4 |
+The paper establishes a public leaderboard for the community. For current rankings and submitted method scores, see the online leaderboard (not reproduced here to avoid stale snapshot data).
 
 Pseudo-simulation reveals that several methods that score well on open-loop metrics fail in pseudo-simulation due to compounding errors in dynamic scenarios.
 

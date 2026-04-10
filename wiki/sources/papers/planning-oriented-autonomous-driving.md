@@ -12,6 +12,7 @@ tags:
   - planning
   - unified-stack
 citations: 1201
+paper-faithfullness: audited-fixed
 ---
 
 # Planning-oriented Autonomous Driving
@@ -104,15 +105,15 @@ UniAD processes multi-camera images through a BEV feature encoder (BEVFormer-sty
 | Task | UniAD | Best Baseline | Improvement |
 |------|-------|---------------|-------------|
 | Motion Forecasting (minADE) | 0.71m | PnPNet: 1.15m | -38.3% |
-| Planning (L2 error) | 0.44m | ST-P3: 0.90m | -51.2% |
-| Planning (collision rate) | 0.19% | ST-P3: 0.43% | -56.3% |
-| Tracking (AMOTA) | 38.1 | MUTR3D: 31.6 | +6.5 |
+| Planning (avg. L2 error) | 1.03m | ST-P3: 2.11m | -51.2% |
+| Planning (avg. collision rate) | 0.31% | ST-P3: 0.71% | -56.3% |
+| Tracking (AMOTA) | 35.9 | MUTR3D: 29.4 | +6.5 |
 
 - **System-level gains over naive multi-task learning**: 15.2% reduction in minADE and 17.0% reduction in minFDE for motion forecasting, 4.9% improvement in occupancy IoU, 0.15m reduction in average L2 error and 0.51% reduction in collision rate for planning
-- **Multi-object tracking**: 6.5% higher AMOTA than MUTR3D and 14.2% higher than ViP3D (38.1 AMOTA overall)
-- **Motion forecasting**: 38.3% minADE reduction compared to PnPNet and 65.4% reduction compared to ViP3D; 0.71m minADE at 3 seconds
+- **Multi-object tracking**: 6.5 higher AMOTA than MUTR3D and 14.2 higher than ViP3D (35.9 AMOTA overall)
+- **Motion forecasting**: 38.3% minADE reduction compared to PnPNet and 65.4% reduction compared to ViP3D; 0.71m minADE overall (across the full prediction horizon)
 - **Occupancy prediction**: 4.0% higher IoU-near compared to FIERY
-- **Planning**: 51.2% reduction in L2 error and 56.3% reduction in collision rate compared to ST-P3 (0.44m L2 displacement error and 0.19% collision rate)
+- **Planning**: 51.2% reduction in average L2 error and 56.3% reduction in average collision rate compared to ST-P3 (1.03m average L2 error and 0.31% average collision rate; per-horizon breakdown: L2 0.48m/0.96m/1.65m at 1s/2s/3s, collision 0.05%/0.17%/0.71%)
 - **On nuScenes detection**: 45.3 mAP and 55.8 NDS, competitive with dedicated detectors while also performing all downstream tasks
 - **Qualitative robustness**: The system shows robustness to upstream perception failures, with the planner maintaining awareness of missed objects through its attention mechanism; the planner's attention adapts dynamically to navigation commands
 - Ablation studies show removing the tracking module increases planning L2 by 23%, and removing mapping increases it by 18%, quantifying each module's contribution to planning quality

@@ -11,19 +11,20 @@ tags:
   - benchmark
   - simulator
 citations: 6490
+paper-faithfullness: audited-fixed
 ---
 
 # CARLA: An Open Urban Driving Simulator
 
 ## Citation
 
-Dosovitskiy, Ros, Codevilla, Lopez, Koltun (Intel Labs / CVC Barcelona), CoRL, 2017.
+Dosovitskiy, Ros, Codevilla, Lopez, Koltun (Intel Labs / Toyota Research Institute / CVC Barcelona), CoRL, 2017.
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1711.03938)**
 
 ## Overview
 
-CARLA (Car Learning to Act) is an open-source simulator for autonomous driving research, built on Unreal Engine 4, that provides realistic urban environments with dynamic weather, traffic, and pedestrians. The simulator was designed specifically to support development, training, and benchmarking of autonomous driving systems, including sensor-based perception, imitation learning, and reinforcement learning approaches. CARLA provides flexible sensor suites (RGB cameras, depth, semantic segmentation, LiDAR, GPS, IMU), controllable NPCs, and a Python API for programmatic interaction.
+CARLA (Car Learning to Act) is an open-source simulator for autonomous driving research, built on Unreal Engine 4, that provides realistic urban environments with dynamic weather, traffic, and pedestrians. The simulator was designed specifically to support development, training, and benchmarking of autonomous driving systems, including sensor-based perception, imitation learning, and reinforcement learning approaches. CARLA provides flexible sensor suites (RGB cameras, depth maps, semantic segmentation across 12 classes) along with vehicle state data (GPS coordinates, orientation, speed, acceleration), controllable NPCs, and a Python API for programmatic interaction. LiDAR, IMU, and radar were not part of the original 2017 paper and were added in later versions.
 
 The paper introduced CARLA along with a systematic benchmark comparing three approaches to autonomous driving: a modular pipeline (perception + planning), an imitation learning approach (conditional imitation learning), and a reinforcement learning approach (A3C). The benchmark evaluated these methods on goal-directed navigation tasks in both training and novel environments under varying weather conditions. This standardized evaluation framework became critically important for the field, as it provided the first reproducible, controlled comparison of fundamentally different autonomous driving paradigms.
 
@@ -32,7 +33,7 @@ CARLA's impact on the autonomous driving research community has been extraordina
 ## Key Contributions
 
 - **Open-source, high-fidelity driving simulator**: Built on Unreal Engine 4 with physically-based rendering, dynamic weather (rain, fog, sun angle), day/night cycles, and realistic urban layouts with traffic lights, signs, pedestrians, and vehicles
-- **Flexible sensor configuration**: Supports RGB cameras (arbitrary placement and intrinsics), depth maps, semantic segmentation ground truth, LiDAR point clouds, GPS, IMU, and vehicle telemetry -- all accessible via Python API
+- **Flexible sensor configuration**: Supports RGB cameras (arbitrary placement and intrinsics), depth maps, and semantic segmentation ground truth (12 classes: road, lane markings, traffic signs, sidewalks, vehicles, pedestrians, and others), plus vehicle state data (GPS coordinates, orientation, speed, acceleration) -- all accessible via Python API. LiDAR, IMU, and radar are not part of the original paper.
 - **Standardized benchmark for driving approaches**: First controlled comparison of modular pipeline vs. imitation learning vs. reinforcement learning on identical tasks and environments, establishing a reproducible evaluation framework
 - **Goal-directed navigation tasks**: Benchmark tasks include straight driving, single turn, navigation (follow GPS route), and navigation with dynamic obstacles, with separate training and test weather conditions to measure generalization
 - **Controllable traffic and scenarios**: Programmable NPC vehicles and pedestrians, traffic light control, and scenario injection enable systematic testing of edge cases and safety-critical situations
@@ -68,8 +69,8 @@ CARLA's impact on the autonomous driving research community has been extraordina
 │  │  ┌──────────┐   ┌────────────┐   │                      │
 │  │  │ Sensors: │   │ Control:   │   │                      │
 │  │  │ RGB, Depth│   │ Steer,     │   │                      │
-│  │  │ Seg, LiDAR│   │ Throttle,  │   │                      │
-│  │  │ GPS, IMU  │   │ Brake      │   │                      │
+│  │  │ Seg, GPS  │   │ Throttle,  │   │                      │
+│  │  │ State Data│   │ Brake      │   │                      │
 │  │  └──────────┘   └────────────┘   │                      │
 │  └──────────────────────────────────┘                      │
 │                                                            │
@@ -85,11 +86,11 @@ The benchmark defines four task conditions of increasing difficulty: (1) straigh
 
 ## Results
 
-- **Modular pipeline** achieves the highest success rate in training conditions (86-92%) but degrades significantly in novel weather (68-82%), showing overfitting to visual conditions
-- **Imitation learning (CIL)** achieves moderate success (82-89% training, 68-80% new weather) with the simplest training procedure and fastest inference
-- **Reinforcement learning (A3C)** achieves lowest overall success (52-68%) but shows the most consistent behavior across weather conditions, suggesting better generalization from reward-based learning
-- **Dynamic obstacles** dramatically reduce success for all methods, with the RL agent particularly struggling (14% success on navigation dynamic in new weather)
-- **Generalization gap**: All methods show significant performance drops when tested in unseen weather conditions, quantifying the sim-to-real-style domain gap even within the simulator
+- **Modular pipeline** achieves competitive success rates, similar to imitation learning (often within 10%), using semantic segmentation + rule-based planning. Exhibits brittle failure modes where perception failures cause complete breakdown; performs best at avoiding collisions with cars and static objects.
+- **Imitation learning (CIL)** trained on approximately 14 hours of data (80% automated agent, 20% human) achieves comparable performance to the modular pipeline with more graceful degradation under challenging conditions; best at avoiding traffic infractions.
+- **Reinforcement learning (A3C)** achieves substantially lower success rates across all tasks compared to both other approaches, trained over approximately 12 days of simulated driving (~10 million steps). Underperformance attributed to algorithm brittleness and task complexity.
+- **Weather generalization**: Surprisingly, all three approaches generalize well to unseen weather -- performance in new weather conditions was comparable to or better than performance in training weather.
+- **Town/spatial generalization gap**: The critical failure mode is spatial generalization -- success rates dropped by at least 50% on complex navigation tasks when tested in the unseen Town 2 environment, revealing spatial generalization as a fundamental open challenge.
 
 ## Limitations & Open Questions
 

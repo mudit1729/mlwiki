@@ -11,6 +11,7 @@ tags:
   - vla
   - generalist-agent
 citations: 1018
+paper-faithfullness: audited-fixed
 ---
 
 # A Generalist Agent
@@ -27,7 +28,7 @@ Reed et al., arXiv, 2022.
 
 ## Overview
 
-Gato, developed by DeepMind, is a single transformer-based agent capable of performing over 600 distinct tasks spanning text generation, image captioning, playing Atari games, stacking blocks with a real robot arm, and navigating in 3D environments. Rather than training separate specialist models for each domain, Gato serializes all inputs and outputs -- text tokens, image patches, continuous control actions, button presses -- into a single flat sequence of tokens, then trains a single decoder-only transformer to predict the next token across all tasks simultaneously.
+Gato, developed by DeepMind, is a single transformer-based agent capable of performing 604 distinct simulated control tasks (plus language and vision tasks) spanning text generation, image captioning, playing 51 Atari games, stacking blocks with a real robot arm, and navigating in 3D environments. Rather than training separate specialist models for each domain, Gato serializes all inputs and outputs -- text tokens, image patches, continuous control actions, button presses -- into a single flat sequence of tokens, then trains a single decoder-only transformer to predict the next token across all tasks simultaneously.
 
 The core insight is that if you tokenize everything uniformly (text via SentencePiece, images via 16x16 patches mapped to 1024 discrete bins, continuous values via mu-law encoding into 1024 bins, and discrete actions directly), then a standard autoregressive transformer can serve as a generalist policy. Gato uses a 1.2B parameter transformer with 24 layers, 16 heads, and an embedding dimension of 2048. It processes up to 1024 tokens per context window. The model is trained on a large offline dataset of expert demonstrations and text corpora, with no online RL fine-tuning.
 
@@ -36,9 +37,9 @@ Gato matters as the cleanest early demonstration that a single set of weights ca
 ## Key Contributions
 
 - **Universal tokenization scheme**: A single method to serialize text, images, continuous actions, and discrete actions into a flat token sequence, enabling a single model to process all modalities
-- **Single-model multi-domain agent**: Demonstrated that one 1.2B parameter transformer can play Atari (450+ games), control a Sawyer robot arm for block stacking, caption images, and chat -- all with the same weights
+- **Single-model multi-domain agent**: Demonstrated that one 1.2B parameter transformer can play Atari (51 games), control a Sawyer robot arm for block stacking, caption images, and chat -- all with the same weights
 - **Prompted in-context task specification**: At inference time, the desired task is specified by prepending a prompt of expert demonstrations (for control tasks) or text context (for language tasks), requiring no task-specific heads or fine-tuning
-- **Scaling analysis across domains**: Showed that scaling model size from 79M to 1.2B parameters consistently improves performance across domains, with larger models matching or exceeding specialist baselines on 450 of 604 Atari tasks
+- **Scaling analysis across domains**: Showed that scaling model size from 79M to 1.2B parameters consistently improves performance across domains, with larger models achieving above 50% expert score on more than 450 of 604 total simulated control tasks
 - **Real-robot transfer**: Gato controls a physical Sawyer robot for block stacking using the same weights used for Atari and language, demonstrating sim-to-real transfer within a generalist framework
 
 ## Architecture / Method
@@ -86,7 +87,7 @@ At inference time for control tasks, the model receives a prompt consisting of a
 
 ![Scaling results showing consistent performance improvements across model sizes (79M to 1.18B parameters)](https://paper-assets.alphaxiv.org/figures/2205.06175v3/img-15.jpeg)
 
-- **Atari**: Gato achieves over 50% expert performance on 450+ simulated tasks and human-level performance on 23 Atari games. Matches or exceeds specialist DQN baselines on 450 out of 604 Atari games when evaluated with a score threshold of 50% human-normalized score
+- **Atari**: Gato achieves human-level or better performance on 23 of the 51 Atari games it was trained on, and more than double human scores on 11 games. Across all 604 simulated control tasks, Gato achieves above 50% expert score on more than 450 tasks
 - **DM Control Suite**: Competitive with specialist agents on continuous control tasks including cartpole, cheetah run, and walker, though not surpassing state-of-the-art RL agents
 - **Real robot block stacking**: Successfully stacks blocks with a physical Sawyer arm, achieving a 50.2% success rate on unseen object shapes, comparable to specialist behavioral cloning baselines
 - **Image captioning**: Produces reasonable captions on MS-COCO, though below specialist captioning models (CIDEr score not SOTA)
