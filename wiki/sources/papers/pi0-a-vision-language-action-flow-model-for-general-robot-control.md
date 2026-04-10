@@ -4,7 +4,7 @@ type: source-summary
 status: active
 updated: 2026-04-05
 year: 2024
-venue: arXiv
+venue: RSS 2025
 tags:
   - paper
   - robotics
@@ -21,7 +21,7 @@ arxiv_id: "2410.24164"
 
 ## Overview
 
-pi0 is a vision-language-action flow model developed by Physical Intelligence that represents a foundational step toward general-purpose robot control. The key innovation is replacing autoregressive action prediction with flow matching -- a continuous generative approach related to diffusion models -- enabling high-frequency control (up to 50 Hz) necessary for dexterous manipulation. Built on a PaliGemma 3B VLM backbone, pi0 is pre-trained on over 10,000 hours of diverse robot interaction data spanning 7 robot platforms and 68 tasks, then fine-tuned for specific downstream applications.
+pi0 is a vision-language-action flow model developed by Physical Intelligence that represents a foundational step toward general-purpose robot control. The key innovation is replacing autoregressive action prediction with flow matching -- a continuous generative approach related to diffusion models -- enabling high-frequency control (up to 50 Hz) necessary for dexterous manipulation. Built on a PaliGemma 3B VLM backbone (with an additional ~300M-parameter action expert, totaling ~3.3B parameters), pi0 is pre-trained on over 10,000 hours (903 million timesteps) of diverse robot interaction data spanning 7 robot platforms and 68 tasks, then fine-tuned for specific downstream applications. The model takes multiple RGB camera images, language instructions, and proprioceptive state (joint angles) as inputs.
 
 The model addresses three interconnected challenges in robotics: data scarcity compared to text/image domains, limited generalization across environments and embodiments, and lack of robustness in unexpected situations. By scaling up robot data and implementing a pre-train/fine-tune paradigm mirroring LLM development, pi0 demonstrates that a single generalist policy can achieve strong performance across diverse manipulation tasks including dexterous multi-finger control, bimanual coordination, and long-horizon sequential tasks.
 
@@ -71,13 +71,13 @@ The model addresses three interconnected challenges in robotics: data scarcity c
 
 ![pi0 model architecture: PaliGemma VLM with flow matching action head](https://paper-assets.alphaxiv.org/figures/2410.24164v4/img-2.jpeg)
 
-pi0 builds on PaliGemma 3B as the vision-language backbone. Images and language instructions are processed through the VLM to produce rich multimodal representations. Rather than discretizing actions into tokens and predicting them autoregressively (as in RT-2 or OpenVLA), pi0 attaches a flow matching head that generates continuous action trajectories.
+pi0 builds on PaliGemma 3B as the vision-language backbone (~3B parameters), augmented by a dedicated action expert module (~300M parameters), for a total of ~3.3B parameters. Multiple RGB camera images, language instructions, and proprioceptive state (joint angles) are processed through the VLM to produce rich multimodal representations. Rather than discretizing actions into tokens and predicting them autoregressively (as in RT-2 or OpenVLA), pi0 attaches a flow matching head that generates continuous action trajectories. A blockwise causal attention mask separates VLM processing from robotics-specific action generation, preserving pre-trained VLM capabilities.
 
 Flow matching works by learning a velocity field that transforms a simple noise distribution into the target action distribution. During inference, the model iteratively denoises a random sample through the learned flow to produce an action chunk -- a sequence of future actions predicted in parallel. This approach handles multimodal action distributions naturally (unlike MSE regression) and avoids the quantization artifacts of discrete tokenization.
 
 ![Training pipeline: pre-training on diverse data, then fine-tuning](https://paper-assets.alphaxiv.org/figures/2410.24164v4/img-3.jpeg)
 
-The training follows a two-stage recipe: (1) large-scale pre-training on the full cross-embodiment dataset to learn general manipulation primitives and language grounding, and (2) task-specific fine-tuning on targeted demonstrations. Action chunking with chunks of 50 steps at 50 Hz (1 second lookahead) provides temporal coherence and enables the model to plan short-horizon trajectories rather than reacting step-by-step.
+The training follows a two-stage recipe: (1) large-scale pre-training on 903 million timesteps of proprietary dexterous manipulation data (68 tasks, 7 robot configurations, up to 50 Hz) combined with a 9.1% mixture of open-source data from OXE, Bridge v2, and DROID datasets; and (2) task-specific fine-tuning on targeted demonstrations. Task-robot combinations are weighted by n^0.43 to prevent over-represented configurations from dominating. Action chunking with chunks of 50 steps at 50 Hz (1 second lookahead) provides temporal coherence and enables the model to plan short-horizon trajectories rather than reacting step-by-step.
 
 ## Results
 
@@ -100,7 +100,7 @@ The training follows a two-stage recipe: (1) large-scale pre-training on the ful
 
 - Requires large-scale proprietary robot data (10,000+ hours) not publicly available, limiting reproducibility
 - Fine-tuning still needed for each new task family; true zero-shot generalization to novel task categories remains limited
-- Single-image input without temporal history limits reasoning about dynamics and task progress
+- No temporal history of observations; the model processes only current images without memory of past frames, limiting reasoning about dynamics and task progress
 - Evaluation primarily on in-house platforms; limited third-party benchmarking compared to open models like OpenVLA
 
 ## Connections

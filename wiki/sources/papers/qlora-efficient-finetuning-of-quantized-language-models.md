@@ -13,7 +13,7 @@ arxiv_id: "2305.14314"
 
 ## Overview
 
-Full fine-tuning of large language models requires enormous GPU memory -- a 65B-parameter model in 16-bit precision needs over 780 GB of GPU memory for parameters and optimizer states alone. QLoRA solves this by combining 4-bit quantization of the frozen pretrained weights with Low-Rank Adaptation (LoRA), enabling fine-tuning of a 65B model on a single 48GB GPU while matching the task performance of full 16-bit fine-tuning. The result is a roughly 10x reduction in memory compared to standard fine-tuning and 3-4x reduction compared to standard LoRA.
+Full fine-tuning of large language models requires enormous GPU memory -- a 65B-parameter model in 16-bit precision needs over 390 GB of GPU memory for parameters and optimizer states alone. QLoRA solves this by combining 4-bit quantization of the frozen pretrained weights with Low-Rank Adaptation (LoRA), enabling fine-tuning of a 65B model on a single 48GB GPU while matching the task performance of full 16-bit fine-tuning. The result is a roughly 10x reduction in memory compared to standard fine-tuning and 3-4x reduction compared to standard LoRA.
 
 The paper introduces three technical innovations that together make this possible: (1) 4-bit NormalFloat (NF4), a new quantization data type that is information-theoretically optimal for normally distributed weights; (2) Double Quantization, which quantizes the quantization constants themselves to save an additional ~0.37 bits per parameter; and (3) Paged Optimizers, which use NVIDIA unified memory to handle memory spikes during gradient checkpointing by automatically paging optimizer states between GPU and CPU. These components are orthogonal and composable.
 
@@ -69,7 +69,7 @@ Standard quantization maps continuous weight values into a fixed grid of 2^k dis
 2. Normalize input weights to the range [-1, 1] by dividing by the absmax of each block (block size = 64).
 3. Map each normalized weight to the nearest NF4 level via a lookup table.
 
-The result is a 4-bit representation that minimizes expected quantization error under a Gaussian assumption. Empirically NF4 matches FP4 and outperforms Int4 on all benchmarks tested.
+The result is a 4-bit representation that minimizes expected quantization error under a Gaussian assumption. Empirically NF4 outperforms both FP4 and Int4 on all benchmarks tested.
 
 ### Double Quantization
 
@@ -120,7 +120,7 @@ The Guanaco model family (QLoRA-finetuned LLaMA on OASST1) achieved strong chatb
 - **NF4 vs FP4 vs Int4:** NF4 consistently outperforms FP4 and Int4 across model sizes and tasks. The gap is largest on harder benchmarks (MMLU).
 - **LoRA on all layers vs. attention only:** Applying LoRA to all linear projections recovers the full 16-bit performance; attention-only LoRA underperforms.
 - **Data quality vs. quantity:** The 9K-sample OASST1 dataset produces better chatbot performance than the 450K-sample FLAN v2, supporting the hypothesis that data quality matters more than quantity for instruction tuning.
-- **Double quantization impact:** Saves ~0.4 bits per parameter with no measurable quality degradation on any benchmark.
+- **Double quantization impact:** Saves ~0.37 bits per parameter with no measurable quality degradation on any benchmark.
 
 ## Limitations & Open Questions
 

@@ -24,7 +24,7 @@ arxiv_id: "2502.17288"
 
 GaussianFlowOcc (ICCV 2025) introduces a transformative approach to 3D semantic occupancy estimation for autonomous driving by replacing traditional dense voxel grids with sparse 3D Gaussian distributions. The key insight is that most driving scenes are dominated by free space -- dense voxel grids waste computation on empty regions. By representing occupied space as a sparse collection of 3D Gaussians, the method achieves dramatically better efficiency while improving accuracy.
 
-The method combines three innovations: (1) sparse Gaussian representation instead of dense voxels, (2) a Gaussian Transformer with induced attention to avoid expensive 3D convolutions, and (3) a temporal flow module that estimates 3D motion for each Gaussian to handle dynamic objects. Trained with only 2D pseudo-labels (no expensive 3D annotations), GaussianFlowOcc achieves 51%+ mIoU improvement and 50x faster inference than prior SOTA on Occ3D-nuScenes.
+The method combines three innovations: (1) sparse Gaussian representation instead of dense voxels, (2) a Gaussian Transformer with deformable cross-attention and induced self-attention to avoid expensive 3D convolutions, and (3) a temporal flow module that estimates 3D motion for each Gaussian to handle dynamic objects. Trained with only 2D pseudo-labels from Grounded-SAM (semantics) and Metric3D (depth) — no expensive 3D annotations — GaussianFlowOcc achieves 17.08% mIoU on Occ3D-nuScenes, a 29% relative improvement over the prior weakly-supervised SOTA (GaussTR at 13.26%), while running at 10.2 FPS on an A100 — 50x faster than GaussTR's 0.2 FPS.
 
 ## Key Contributions
 
@@ -32,7 +32,7 @@ The method combines three innovations: (1) sparse Gaussian representation instea
 - **Gaussian Transformer with induced attention**: Avoids expensive 3D convolutions by using inducing-point attention mechanisms that scale efficiently with the number of Gaussians
 - **Temporal flow module**: Estimates 3D flow vectors for each Gaussian to model dynamic object motion across frames, improving temporal consistency
 - **Weak supervision from 2D pseudo-labels**: Trains using only 2D semantic pseudo-labels projected from pre-trained models, eliminating the need for costly 3D voxel annotations
-- **Extreme efficiency**: 50x faster inference than current SOTA with 29% accuracy improvement on Occ3D-nuScenes
+- **Extreme efficiency**: 50x faster inference than prior SOTA (GaussTR) at 10.2 FPS vs. 0.2 FPS, with 29% relative mIoU improvement (17.08% vs. 13.26%) on Occ3D-nuScenes
 
 ## Architecture / Method
 
@@ -43,8 +43,8 @@ The method combines three innovations: (1) sparse Gaussian representation instea
 │                   GaussianFlowOcc Pipeline                       │
 │                                                                  │
 │  ┌──────────┐    ┌────────────┐    ┌──────────────────┐          │
-│  │ Multi-cam │───►│ Backbone + │───►│ BEV Feature Map  │          │
-│  │ Images    │    │ LSS Neck   │    └────────┬─────────┘          │
+│  │ Multi-cam │───►│ ResNet-50  │───►│ Per-cam Features │          │
+│  │ Images    │    │ Backbone   │    └────────┬─────────┘          │
 │  └──────────┘    └────────────┘             │                    │
 │                                              ▼                    │
 │                              ┌───────────────────────────┐        │
@@ -81,11 +81,11 @@ The method combines three innovations: (1) sparse Gaussian representation instea
 
 The architecture consists of four main components:
 
-**1. BEV Feature Extraction:** Multi-camera images are encoded into BEV features using a standard backbone (e.g., ResNet + LSS).
+**1. BEV Feature Extraction:** Multi-camera images are encoded using a ResNet-50 backbone into per-camera features, which are then lifted to 3D via learnable initial Gaussian queries (not a standard LSS voxel volume).
 
 **2. Gaussian Initialization:** From BEV features, a set of 3D Gaussians is initialized. Each Gaussian has a 3D center position, covariance (shape/orientation), opacity, and semantic feature vector. Unlike dense voxels that cover the entire volume, Gaussians are placed only in regions likely to be occupied.
 
-**3. Gaussian Transformer:** The core module refines Gaussian parameters through self-attention and cross-attention layers. To handle the potentially large number of Gaussians efficiently, the transformer uses an induced attention mechanism -- a small set of inducing points summarize the Gaussian population, reducing the quadratic attention cost.
+**3. Gaussian Transformer:** The core module refines Gaussian parameters through three sub-modules per block: (a) Gaussian-Image Cross-Attention (GICA) using deformable mechanisms to attend to multi-view image features, (b) Induced Self-Attention (ISA) with trainable bottleneck inducing points that compresses quadratic O(N²) self-attention to linear O(MN) cost (M inducing points, N Gaussians), and (c) Induced Temporal Attention (ITA) for efficient propagation of historical-frame context. This allows the model to handle 10,000+ Gaussians in memory-feasible fashion.
 
 ![Gaussian Transformer architecture](https://paper-assets.alphaxiv.org/figures/2502.17288v4/img-5.jpeg)
 
@@ -95,7 +95,7 @@ The architecture consists of four main components:
 
 ![Temporal module effectiveness](https://paper-assets.alphaxiv.org/figures/2502.17288v4/img-10.jpeg)
 
-For supervision, Gaussians are rendered into 2D views using differentiable Gaussian splatting and compared against 2D semantic pseudo-labels from a pre-trained segmentation model.
+For supervision, Gaussians are rendered into 2D views using differentiable Gaussian splatting and compared against 2D semantic pseudo-labels from Grounded-SAM and depth pseudo-labels from Metric3D. Loss functions include depth MSE and semantic BCE optimized across temporal frames.
 
 ## Results
 
@@ -105,11 +105,10 @@ For supervision, Gaussians are rendered into 2D views using differentiable Gauss
 
 | Method | mIoU | Supervision | Inference Speed |
 |---|---|---|---|
-| SurroundOcc | ~30% | Full 3D | 1x |
-| GaussianOcc | ~31% | Self-supervised | ~10x |
-| GaussianFlowOcc | **~39%** | **2D pseudo-labels** | **~50x** |
+| GaussTR (prior SOTA) | 13.26% | Self-supervised / weak | 0.2 FPS |
+| **GaussianFlowOcc** | **17.08%** | **2D pseudo-labels** | **10.2 FPS** |
 
-The method achieves 51%+ improvement in mIoU over prior weakly-supervised methods while being 50x faster at inference. The temporal flow module contributes a significant portion of the improvement on dynamic object classes.
+GaussianFlowOcc achieves a **29% relative improvement** in mIoU over the previous weakly-supervised SOTA (GaussTR) while running **50x faster** (10.2 vs. 0.2 FPS on a single A100 GPU). The temporal flow module alone contributes a **20% relative mIoU improvement** in ablation studies, demonstrating the critical importance of explicit dynamics modeling for dynamic object classes.
 
 ![Qualitative results](https://paper-assets.alphaxiv.org/figures/2502.17288v4/img-9.jpeg)
 

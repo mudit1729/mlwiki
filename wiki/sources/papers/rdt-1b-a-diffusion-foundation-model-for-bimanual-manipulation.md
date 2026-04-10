@@ -27,10 +27,10 @@ The model is pre-trained on a large multi-robot dataset and fine-tuned for biman
 
 ## Key Contributions
 
-- **Largest diffusion transformer for manipulation**: 1.2B parameters, the biggest diffusion-based robot policy at time of publication, demonstrating that scaling diffusion transformers improves manipulation performance
-- **Bimanual action space handling**: Novel architecture modifications for the 14+ DoF bimanual action space, including arm-specific tokens and coordination attention mechanisms
-- **Pre-training + fine-tuning paradigm**: Pre-trained on diverse single-arm and bimanual data, then fine-tuned on specific bimanual tasks, showing effective transfer from single-arm to bimanual skills
-- **Scalable diffusion policy**: Demonstrates that DiT-style architecture scales better than U-Net-based diffusion policies for high-dimensional action spaces
+- **Largest diffusion transformer for manipulation**: 1.2B parameters, the first diffusion-based foundation model explicitly designed for bimanual manipulation, demonstrating that scaling improves coordination performance
+- **Physically interpretable unified action space**: A 128-dimensional unified action space maps heterogeneous robot actions while preserving physical meaning, enabling cross-robot transfer learning
+- **Architectural adaptations for robotics**: QKNorm, RMSNorm, non-linear MLP decoder, and Alternating Condition Injection (ACI) for balanced vision-language conditioning and stable scaling
+- **Pre-training + fine-tuning paradigm**: Pre-trained on 46 datasets comprising 1M+ trajectories and 21TB of data, then fine-tuned on 6,000+ bimanual task trajectories across 300+ tasks
 
 ## Architecture
 
@@ -38,86 +38,78 @@ The model is pre-trained on a large multi-robot dataset and fine-tuned for biman
 ┌─────────────┐  ┌───────────────┐  ┌──────────────────┐
 │ Multi-View  │  │   Language    │  │  Proprioceptive  │
 │ Camera Imgs │  │  Instruction  │  │  State (L+R arm) │
+│ (3 views)   │  │  (variable)   │  │  MLP + Fourier   │
 └──────┬──────┘  └───────┬───────┘  └────────┬─────────┘
        │                 │                   │
        ▼                 ▼                   │
 ┌──────────────┐ ┌───────────────┐           │
-│ Frozen Vision│ │  Frozen Text  │           │
-│ Encoder      │ │  Encoder      │           │
-│ (CLIP/DINOv2)│ │               │           │
+│ Frozen Vision│ │ Frozen T5-XXL │           │
+│ Encoder      │ │  Text Encoder │           │
+│  (SigLIP)    │ │  + attn mask  │           │
 └──────┬───────┘ └───────┬───────┘           │
        │                 │                   │
-       │    Cross-Attn   │                   │
+       │  Alternating Condition Injection    │
        └────────┐ ┌──────┘                   │
                 ▼ ▼                          │
 ┌───────────────────────────────────────┐    │
 │     Diffusion Transformer (1.2B)     │    │
 │  ┌─────────────────────────────────┐  │    │
 │  │ Noised Action Tokens            │◄─┼────┘
-│  │ [L-arm 7D | R-arm 7D | grip 2D]│  │
-│  │ × H timesteps                   │  │
+│  │ 128-dim unified action space    │  │
 │  ├─────────────────────────────────┤  │
-│  │ Self-Attention (L+R arms joint) │  │
-│  │ Cross-Attention (vision + lang) │  │
-│  │ adaLN (diffusion timestep t)    │  │
+│  │ Self-Attention (QKNorm)         │  │
+│  │ Cross-Attention (ACI)           │  │
+│  │ RMSNorm + MLP decoder           │  │
 │  └─────────────────────────────────┘  │
 │          × N DiT blocks              │
 └───────────────────┬───────────────────┘
                     │
-                    ▼  DDPM/DDIM sampling
+                    ▼  DPM-Solver++ (5 steps)
           ┌─────────────────┐
           │  Action Chunk   │
-          │  (H=16 steps)   │
+          │  @ 6 Hz freq    │
           │  Left + Right   │
           └─────────────────┘
 ```
 
 ## Method
 
-RDT-1B adapts the Diffusion Transformer (DiT) architecture for robot action generation:
+RDT-1B adapts the Diffusion Transformer (DiT) architecture for robot action generation with robotics-specific modifications:
 
 1. **Input Representation**: The model takes as input:
-   - Multi-view camera images (encoded via a frozen vision encoder, e.g., CLIP or DINOv2)
-   - Language instruction (encoded via a frozen text encoder)
-   - Proprioceptive state of both arms (joint positions, velocities, gripper states)
+   - Three camera views (encoded via a frozen SigLIP vision encoder with multi-dimensional positional embeddings)
+   - Language instruction (encoded via a frozen T5-XXL encoder with attention masks for variable-length instructions)
+   - Proprioceptive state of both arms (encoded via MLP with Fourier features for high-frequency dynamics)
    - Noised action sequence (the diffusion input)
 
-2. **Diffusion Transformer (DiT) Backbone**: The core architecture is a 1.2B parameter transformer that processes the noised action tokens conditioned on visual, language, and proprioceptive features:
-   - **Action tokenization**: The bimanual action sequence (left arm 7-DoF + right arm 7-DoF + 2 grippers = 16 dimensions, over H timesteps) is flattened and embedded into action tokens
-   - **Conditioning**: Visual and language features are injected via cross-attention layers. Proprioceptive state is concatenated with action tokens
-   - **Arm coordination**: Alternating self-attention layers process left-arm and right-arm action tokens together, enabling the model to learn coordination patterns
-   - **Timestep conditioning**: Diffusion timestep is injected via adaptive layer normalization (adaLN), following the DiT design
+2. **Diffusion Transformer (DiT) Backbone**: The core architecture is a 1.2B parameter transformer processing noised action tokens over a 128-dimensional unified action space (which maps heterogeneous robot actions while preserving physical meaning):
+   - **Action tokenization**: Actions are represented in the 128-dim unified action space, enabling cross-robot pre-training
+   - **Conditioning via ACI**: Vision and language features are balanced through Alternating Condition Injection (ACI), which alternates the primary conditioning modality across layers
+   - **Normalization**: QKNorm and RMSNorm replace standard LayerNorm for training stability at scale
+   - **Non-linear MLP decoder**: A non-linear MLP output head approximates the nonlinearity in robot action distributions, replacing the standard linear projection
 
-3. **Training**: Standard DDPM training with the denoising objective. The model learns to predict the noise added to the ground-truth action sequence. Training data includes:
-   - Large-scale single-arm data (Open X-Embodiment, DROID)
-   - Bimanual datasets (ALOHA, custom teleoperation data)
-   - Multi-task training with language conditioning
+3. **Training**: Pre-trained on 46 datasets comprising over 1 million trajectories and 21TB of data for one month on 48 H100 GPUs. Fine-tuned on 6,000+ bimanual task trajectories (300+ tasks, 100+ objects, 15+ scenes) for three days on the same hardware. Data augmentation includes color jittering, image corruption, Gaussian noise, and instruction augmentation.
 
-4. **Inference**: DDPM or DDIM sampling with 10-50 denoising steps to generate action chunks (sequences of H=16 future actions). Action chunking provides temporal consistency and enables coordinated bimanual motions.
+4. **Inference**: DPM-Solver++ reduces diffusion steps from 100 to 5, achieving 6 Hz action chunk frequency (with 381 Hz average action predictions from those chunks). Action chunking provides temporal consistency and enables coordinated bimanual motions.
 
-**Scaling**: Models are trained at 150M, 400M, and 1.2B parameters. Performance scales log-linearly with model size on bimanual tasks, with the 1.2B model showing the largest gains on coordination-heavy tasks.
+**Scaling**: Ablations compare a 166M parameter variant to the full 1.2B model. The larger model substantially outperforms the smaller one, with scale particularly benefiting coordination-heavy tasks.
 
 ## Results
 
-| Task Category | RDT-1B | Diffusion Policy (U-Net) | ACT | RT-2-X |
-|---------------|--------|--------------------------|-----|--------|
-| Bimanual pick-place | 82% | 58% | 63% | 45% |
-| Cloth folding | 71% | 35% | 42% | 28% |
-| Bimanual pouring | 68% | 41% | 38% | 32% |
-| Single-arm (transfer) | 79% | 75% | 72% | 70% |
+RDT-1B achieves a **56% average improvement in success rates** over state-of-the-art baselines (ACT, OpenVLA, and Octo) across diverse bimanual tasks on real ALOHA dual-arm robots. Key findings:
 
-- **Bimanual SOTA**: Achieves highest success rates across all bimanual task categories, with particularly large gains on coordination-heavy tasks (cloth folding: 71% vs. 42% for ACT)
-- **Scaling improves coordination**: The 1.2B model outperforms the 400M model by 12% on bimanual tasks but only 3% on single-arm tasks, indicating that scale particularly benefits coordination
-- **Transfer from single-arm**: Pre-training on single-arm data and fine-tuning for bimanual tasks improves over bimanual-only training by ~8%, demonstrating positive transfer
-- **DiT vs. U-Net**: The transformer architecture outperforms U-Net-based diffusion policies by 15-25% on bimanual tasks, likely due to better handling of the high-dimensional action space through self-attention
-- Action chunking with H=16 steps provides optimal tradeoff between temporal consistency and reactivity
-- The model generalizes to novel object arrangements and moderate perturbations during bimanual tasks
+- **Bimanual SOTA**: Highest success rates across all evaluated bimanual task categories vs. ACT, OpenVLA, and Octo
+- **Zero-shot generalization**: Maintains high success rates on unseen objects and scenes (e.g., novel cups, unfamiliar rooms) and follows novel language instructions (e.g., "pour water one-third full")
+- **Few-shot learning**: Learns complex new skills from 1-5 demonstrations, substantially outperforming baselines on tasks like "Handover" (5-shot) and "Fold Shorts" (1-shot)
+- **Diffusion is critical**: Ablating diffusion in favor of regression drops instruction-following success from 100% to 12.5%
+- **Scale matters**: The 1.2B model substantially outperforms the 166M variant, with scale particularly benefiting coordination-heavy tasks
+- **Pre-training is crucial**: Training from scratch without multi-robot pre-training severely degrades generalization to unseen scenarios
 
 ## Limitations & Open Questions
 
 - 1.2B parameters requires substantial GPU memory for inference; real-time deployment on resource-constrained robots is challenging
 - Bimanual training data is much scarcer than single-arm data; the model's performance ceiling may be limited by data availability rather than model capacity
-- DDPM/DDIM sampling requires 10-50 forward passes, limiting inference frequency to ~5-10 Hz, which may be insufficient for dynamic bimanual tasks
+- DPM-Solver++ reduces denoising to 5 steps enabling 6 Hz chunk frequency, but this still limits responsiveness for highly dynamic bimanual tasks
 - The model does not explicitly reason about contact forces or tactile feedback, which are important for tight-tolerance bimanual assembly tasks
 - Evaluation is primarily in simulation and controlled lab settings; robustness to real-world variability is not fully established
 

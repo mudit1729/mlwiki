@@ -84,13 +84,13 @@ The key modifications to OpenVLA are:
 | Configuration | LIBERO Success | Inference Speed | Notes |
 |--------------|---------------|-----------------|-------|
 | OpenVLA (original) | 76.5% | 3-5 Hz | Autoregressive, slow |
-| OpenVLA-OFT | 97.1% | ~80+ Hz | Parallel decoding, 26x faster |
+| OpenVLA-OFT | 97.1% | 109.7 Hz | Parallel decoding + chunking (K=8 sim / K=25 real), 26x faster |
 | Baselines (ACT, DP) | Variable | 10-50 Hz | Task-specific methods |
 
 - **LIBERO benchmark**: 97.1% success rate, a 20.6 percentage point improvement over vanilla OpenVLA
-- **ALOHA bimanual tasks**: Outperforms comparable VLAs and imitation learning baselines despite pre-training only on single-arm data
-- **Language grounding**: Strong performance on tasks requiring distinguishing between similar objects based on language instructions
-- **Parallel decoding** is the single largest contributor to both speed and accuracy improvements
+- **ALOHA bimanual tasks**: OpenVLA-OFT+ achieves 87.8% average success across four dexterous tasks, outperforming π0 (77.1%), RDT-1B (78.4%), ACT (72.3%), and Diffusion Policy (77.5%)
+- **Language grounding**: FiLM conditioning achieves 79.2% on language-conditioned "put X into pot" tasks vs. 33.3% (chance level) without FiLM
+- **Parallel decoding + action chunking** is the single largest contributor to both speed and accuracy improvements, yielding ~14% absolute gain on LIBERO; continuous action representations add another ~5%
 - Fine-tuning generalizes well: single-arm pre-training transfers effectively to bimanual setups through OFT recipe
 
 ![Language grounding evaluation](https://paper-assets.alphaxiv.org/figures/2502.19645v2/aloha_language_grounding_results.001.jpeg)

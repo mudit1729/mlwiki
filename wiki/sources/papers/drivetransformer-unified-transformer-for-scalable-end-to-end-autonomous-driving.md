@@ -90,23 +90,49 @@ The architecture consists of a shared decoder with three attention types:
 ![Attention Mechanisms](https://paper-assets.alphaxiv.org/figures/2503.07656v2/x4.png)
 
 Task-specific innovations include:
-- **Shared agent queries** for detection and motion prediction (single query handles both)
+- **Shared agent queries** for detection and motion prediction (single query handles both); motion prediction operates in local agent coordinate systems
 - **Point-level mapping** with PointNet aggregation instead of dense rasterized maps
-- **Multi-mode planning** with Gaussian Mixture Models to avoid dangerous trajectory averaging
+- **Multi-mode planning** with Gaussian Mixture Models with pre-defined modes (straight, turn left, turn right) to avoid dangerous trajectory averaging
+
+**Training:** Single-stage end-to-end optimization without perception pre-training. Combined DETR-style losses are applied at task heads in all transformer blocks during training (only the final block's output is used at inference), enabling coarse-to-fine refinement.
 
 ## Results
 
 ![Scaling Analysis](https://paper-assets.alphaxiv.org/figures/2503.07656v2/x7.png)
 
-| Benchmark | DriveTransformer | UniAD | VAD | Notes |
-|-----------|-----------------|-------|-----|-------|
-| Bench2Drive (closed-loop) | SOTA | -- | -- | Significantly lower latency |
-| Decoder scaling | Large gains | -- | -- | More impactful than backbone scaling |
-| Inference latency | Low | Higher | Higher | Sparse queries are faster |
+### Bench2Drive (Closed-Loop Simulation)
+
+| Model | Avg. L2 (m) | Driving Score | Success Rate | Inference Latency |
+|-------|-------------|---------------|--------------|-------------------|
+| DriveTransformer-Large | 0.62 | 63.46 | 35.01% | 211.7ms |
+| UniAD-Base | -- | -- | -- | 663.4ms |
+| VAD | -- | -- | -- | 278.3ms |
+
+- Multi-ability score: 38.60% vs. UniAD-Base 15.94%
+
+### nuScenes (Open-Loop)
+
+| Task | DriveTransformer | Baseline | Notes |
+|------|-----------------|----------|-------|
+| Planning Avg. L2 | 0.33m | BEVPlanner++ 0.35m | Best non-ensemble |
+| Planning Collision Rate | 0.07% | ParaDrive 0.48m L2 | -- |
+| Detection NDS | 59.3 | UniAD 49.8 | -- |
+| Motion Prediction minADE | 0.61 | UniAD 0.72 | -- |
+| Online Mapping IoU-Road | 0.39 | UniAD 0.30 | -- |
+
+**Ablation highlights:**
+- Without Sensor Cross Attention: Driving Score collapses to 8.41%
+- Local vs. global motion prediction coordinate system: minADE 1.34 vs. 2.68
+- Point-level vs. line-level mapping: mAP 20.25 vs. 14.55
+- Multi-mode vs. single-mode planning: Driving Score 60.45 vs. 49.19
 
 The scaling analysis reveals a key insight: investing compute in the decoder (where tasks interact) yields greater planning improvements than investing in the backbone (raw perception capacity). This suggests that cross-task reasoning, not just better perception, is the bottleneck in end-to-end driving.
 
-![Robustness](https://paper-assets.alphaxiv.org/figures/2503.07656v2/robustness.png)
+**Robustness under sensor corruption** (Driving Score drop vs. VAD-Base):
+- Camera crash: 2.9% drop vs. 9.2%
+- Incorrect calibration: 5.94% drop vs. 28.04%
+- Motion blur: 10.60% drop vs. 14.93%
+- Gaussian noise: 6.02% drop vs. 16.72%
 
 The system maintains performance under various sensor corruption conditions, demonstrating robustness of the sparse representation approach.
 

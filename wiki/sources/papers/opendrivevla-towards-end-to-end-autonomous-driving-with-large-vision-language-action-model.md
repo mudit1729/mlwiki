@@ -76,7 +76,7 @@ Three specialized query modules ground visual features into the LLM's semantic s
 
 The four-stage training strategy:
 1. **Stage 1 -- Hierarchical Vision-Language Alignment:** Token-specific projectors map visual features to LLM space. Encoder and LLM frozen; only projectors train.
-2. **Stage 2 -- Driving Instruction Tuning:** Supervised tuning on TOD3Cap, nuCaption, nuScenesQA. Projectors and LLM trainable.
+2. **Stage 2 -- Driving Instruction Tuning:** Supervised tuning on TOD3Cap, nuCaption, nuScenesQA, nuX, and GPT-Driver. Projectors and LLM trainable.
 3. **Stage 2.5 -- Interaction Modeling:** Conditional agent trajectory forecasting to instill spatially-grounded interaction priors.
 4. **Stage 3 -- E2E Trajectory Planning:** Full pipeline trains end-to-end. Waypoints tokenized as text for autoregressive generation.
 
@@ -92,7 +92,7 @@ Training uses mixed-precision (bf16) and gradient checkpointing on 4x NVIDIA H10
 | LiDAR-LLM | -- | -- | ~20 |
 | OpenDriveVLA-0.5B | 0.35 | 0.09 | -- |
 | OpenDriveVLA-3B | 0.33 | -- | -- |
-| **OpenDriveVLA-7B** | **0.33** | -- | **27.6** |
+| **OpenDriveVLA-7B** | **0.33** | **0.10** | **27.6** |
 
 Ablation studies confirm the importance of each training stage, with the most substantial gains in collision avoidance occurring after hierarchical vision-language alignment and interaction modeling stages. Comparative visualizations with UniAD show smoother, more semantically consistent trajectories, particularly in challenging scenarios involving narrow roads with parked vehicles or complex intersection navigation.
 

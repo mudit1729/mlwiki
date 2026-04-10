@@ -103,8 +103,8 @@ MomAD builds upon sparse perception backbones (similar to SparseDrive) with a mo
 | Model | Success Rate | Comfortness |
 |-------|-------------|-------------|
 | VAD | baseline | baseline |
-| SparseDrive | +8.4% vs VAD | -- |
-| **MomAD** | **+16.3% vs VAD** | **+7.2%** |
+| SparseDrive | -- | -- |
+| **MomAD** | **+16.3% vs VAD / +8.4% vs SparseDrive** | **+7.2%** |
 
 Inference speed: 7.8 FPS on RTX 4090.
 

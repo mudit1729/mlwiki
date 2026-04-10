@@ -41,7 +41,7 @@ This result triggered a paradigm shift. Within two years, vision transformers re
 - **Patches as tokens**: Divide a 224x224 image into 196 non-overlapping 16x16 patches, flatten each to a 768-dim vector, and linearly project -- creating a sequence that a standard Transformer encoder processes without modification
 - **Learnable [CLS] token and position embeddings**: A prepended classification token aggregates global information; learnable 1D position embeddings encode spatial layout (shown to learn 2D structure automatically)
 - **Scale-dependent performance**: ViT underperforms ResNets when trained only on ImageNet-1k (~1.3M images) but dominates when pre-trained on ImageNet-21k (14M) or JFT-300M (300M), revealing that Transformers need more data to compensate for weaker inductive bias
-- **Compute-efficient scaling**: ViT-L/16 pre-trained on JFT-300M achieves 87.76% ImageNet top-1 accuracy using approximately 2.5x less compute than the best CNN (BiT-L) at similar accuracy
+- **Compute-efficient scaling**: ViT-L/16 pre-trained on JFT-300M achieves 87.76% ImageNet top-1 accuracy using approximately 15x less compute than BiT-L (0.68k vs 9.9k TPUv3-core-days) at similar accuracy
 - **Attention distance analysis**: Early layers attend locally (small attention distance) while later layers attend globally, suggesting the model learns to build hierarchical representations despite having no built-in locality bias
 
 ## Architecture / Method

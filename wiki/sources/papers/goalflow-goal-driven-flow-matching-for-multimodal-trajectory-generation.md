@@ -30,7 +30,7 @@ Flow matching is a generative modeling framework that learns to transport sample
 - **Goal-driven flow matching for driving**: First application of conditional flow matching to trajectory planning with explicit goal conditioning, combining the efficiency of flow matching with interpretable goal-directed behavior
 - **Single-step inference**: Unlike diffusion-based planners that need multiple denoising steps, GoalFlow generates high-quality trajectories in a single step, enabling very fast inference
 - **90.3 PDMS on NAVSIM**: Establishes a new state-of-the-art on the NAVSIM benchmark, surpassing DiffusionDrive (88.1) and prior methods by a substantial margin
-- **Goal-conditioned multimodality**: Goal points from the route planner naturally decompose the multimodal trajectory distribution into mode-specific subproblems, improving both diversity and accuracy
+- **Goal-conditioned multimodality**: A vocabulary of clustered training-data endpoints (4096–8192 points) scored via Distance + DAC dual scoring naturally decomposes the multimodal trajectory distribution into mode-specific subproblems, improving both diversity and accuracy
 
 ## Architecture / Method
 
@@ -38,58 +38,64 @@ Flow matching is a generative modeling framework that learns to transport sample
 ┌─────────────────────────────────────────────────────────────┐
 │              GoalFlow: Goal-Driven Flow Matching             │
 │                                                             │
-│  Multi-Camera Images         Route Info                     │
-│       │                         │                           │
-│       ▼                         ▼                           │
-│  ┌──────────────┐    ┌───────────────────┐                  │
-│  │  BEV Encoder │    │ Goal Proposal MLP │                  │
-│  │  (backbone + │    │                   │                  │
-│  │  view xform) │    │ ──► g1, g2, ..gN  │                  │
-│  └──────┬───────┘    │ ──► score & rank  │                  │
-│         │            └────────┬──────────┘                  │
-│         │                     │                             │
-│         └─────────┬───────────┘                             │
-│                   ▼                                         │
+│  Multi-Camera Images + LiDAR                                │
+│       │                                                     │
+│       ▼                                                     │
+│  ┌──────────────────────────────┐                           │
+│  │  Transfuser-based BEV Encoder│                           │
+│  │  (camera + LiDAR fusion)     │ ──► HD map seg, 3D bbox   │
+│  └──────────────┬───────────────┘     (aux supervision)     │
+│                 │                                           │
+│                 │          Goal Point Vocabulary            │
+│                 │       (N=4096-8192 clustered GT EPs)      │
+│                 │                 │                         │
+│                 │         ┌───────┴──────────────┐          │
+│                 │         │ Dual Scoring:         │          │
+│                 │         │  Distance Score       │          │
+│                 │         │  DAC Score (shadow    │          │
+│                 │         │  vehicle check)       │          │
+│                 │         └───────┬──────────────┘          │
+│                 │                 │ best goal g*             │
+│                 └────────┬────────┘                         │
+│                          ▼                                  │
 │  ┌─────────────────────────────────────────┐                │
 │  │   Flow Matching Trajectory Generator    │                │
 │  │                                         │                │
-│  │   For each goal g_i:                    │                │
-│  │                                         │                │
-│  │   x_0 ~ N(straight-line to g_i)        │                │
+│  │   x_0 ~ N(0, σ=0.1)  (128-256 samples) │                │
 │  │     │                                   │                │
 │  │     ▼                                   │                │
 │  │   v_θ(x_0, t=0, c)  ◄── BEV features  │                │
-│  │     │                     + goal g_i    │                │
-│  │     ▼  (single Euler step)              │                │
-│  │   x_1 = x_0 + v_θ   ──► trajectory_i   │                │
+│  │     │                     + goal g*     │                │
+│  │     ▼  (single Euler step, 10.4ms)      │                │
+│  │   x_1 = x_0 + v_θ   ──► trajectory     │                │
 │  │                                         │                │
-│  └───────────────────┬─────────────────────┘                │
-│                      ▼                                      │
-│            ┌──────────────────┐                              │
-│            │ Trajectory Scorer│                              │
-│            │ (collision, comfort,                            │
-│            │  goal alignment) │                              │
-│            └────────┬─────────┘                              │
-│                     ▼                                       │
-│              Best Trajectory                                │
+│  │   (shadow trajectory fallback if        │                │
+│  │    goal appears unreliable)             │                │
+│  └─────────────────────────────────────────┘                │
 │                                                             │
-│  Key: Single denoising step ──► ~60 FPS inference           │
+│  Key: Single denoising step ──► 10.4ms inference            │
 └─────────────────────────────────────────────────────────────┘
 ```
 
 GoalFlow consists of three main components:
 
-1. **Scene Encoder**: Multi-camera images are processed through a BEV encoder to produce bird's-eye-view scene features. The encoder follows standard BEV perception practices (backbone + view transformation).
+1. **Perception Module (Transfuser-based)**: Multi-view camera images and LiDAR data are fused into a Bird's Eye View (BEV) representation using a Transfuser-based architecture. Auxiliary supervision includes HD map segmentation and 3D bounding box detection tasks (both cross-entropy and L1 losses).
 
-2. **Goal Proposal Module**: Given the high-level route, a lightweight MLP generates a set of candidate goal points representing where the vehicle could plausibly be at the end of the planning horizon. These goals capture the multimodality of driving behavior (e.g., staying in lane vs. changing lanes). A scoring network ranks goals based on scene context.
+2. **Goal Point Construction Module**: A vocabulary of N candidate goal points (N=4096–8192) is built by clustering ground-truth trajectory endpoints from training data. At inference, each candidate is scored via a **dual scoring mechanism**:
+   - *Distance Score*: softmax of negative Euclidean distance from the candidate to the ground-truth endpoint, measuring proximity.
+   - *DAC Score (Drivable Area Compliance)*: binary evaluation placing a "shadow vehicle" at each candidate and checking whether it stays within the drivable area polygon.
+   - Final selection uses weighted aggregation of both scores. A **shadow trajectory mechanism** defaults to non-guided trajectories when the best goal point appears unreliable.
 
-3. **Flow Matching Trajectory Generator**: For each goal, a conditional flow matching model generates the full trajectory connecting the current state to the goal. The flow matching formulation learns a velocity field v(x_t, t, c) that transports a sample x_0 from a simple prior (Gaussian centered on a straight-line path to the goal) to the data distribution at t=1. The velocity field is parameterized by a transformer that cross-attends to BEV features.
+3. **Flow Matching Trajectory Generator**: For each selected goal, a conditional flow matching model learns the velocity field v_θ(x_t, t) that transports a noisy sample x_0 ~ N(0, σ=0.1) to the data distribution along straight-line paths (x_t = (1-t)x_0 + t·x_1). The network encodes x_t, the time step, the goal point, and BEV features through Transformer attention layers. During inference 128–256 trajectory candidates are generated.
 
-**Training**: The model is trained with the flow matching objective: L = ||v_theta(x_t, t, c) - (x_1 - x_0)||^2, where x_t = (1-t)*x_0 + t*x_1 is the interpolation between the prior sample x_0 and the ground truth trajectory x_1. Goal conditioning c includes both the goal point and scene features.
+**Training losses** — three components:
+- *Perception Loss*: cross-entropy for HD map segmentation and 3D bbox classification; L1 for locations.
+- *Goal Loss*: cross-entropy supervising both the distance score and the DAC score predictions.
+- *Planner Loss*: L1 minimizing the difference between predicted and ground-truth trajectory shifts.
 
-**Inference**: At test time, GoalFlow evaluates the velocity field at t=0 and takes a single Euler step to generate the trajectory: x_1 = x_0 + v_theta(x_0, 0, c). The single-step formulation works because the flow matching training with straight-line interpolation paths produces nearly straight velocity fields.
+**Inference**: GoalFlow evaluates the velocity field at t=0 and takes a single Euler step: x_1 = x_0 + v_θ(x_0, 0, c). Single-step inference runs in 10.4 ms (vs. 177.8 ms for multi-step), with only a 1.6% PDM score drop compared to the optimal multi-step result.
 
-**Trajectory Selection**: Multiple goal-conditioned trajectories are scored by a learned evaluator that considers collision risk, comfort, and goal alignment. The highest-scoring trajectory is selected for execution.
+**Trajectory Selection**: The highest-scoring candidate (by the dual scoring mechanism) is selected; if the goal point appears unreliable the shadow trajectory mechanism falls back to non-guided generation.
 
 ## Results
 
@@ -102,11 +108,12 @@ GoalFlow consists of three main components:
 | UniAD | 79.2 | - | ~5 |
 
 - **90.3 PDMS on NAVSIM**, +2.2 over DiffusionDrive and +9.5 over VAD
-- Single-step inference at ~60 FPS, fastest among competitive methods
-- Goal conditioning improves trajectory quality: ablating goals drops PDMS by ~4 points
+- Single-step inference at 10.4ms (6% of the 177.8ms multi-step baseline), with only 1.6% PDM drop
+- Ablation progression: M0 base flow matching = 85.6, +Distance Score = 88.5, +DAC Score = 89.4, +Trajectory Scorer = 90.3
+- Oracle goal points (GoalFlow†) reach 92.1 PDMS, approaching human driving ceiling of 94.8
+- Goal vocabulary uses N=4096–8192 clustered endpoints; larger vocabularies and stronger image backbones consistently improve performance
 - Flow matching outperforms diffusion for the single-step regime -- the straight-line interpolation paths enable better single-step approximation than DDIM/DDPM shortcuts
-- Multimodal trajectory diversity is maintained through the goal proposal mechanism: different goals produce distinct trajectory modes
-- Ablation on goal count shows 8-16 goal proposals provide the best accuracy-diversity tradeoff
+- Multimodal trajectory diversity is maintained through the goal point vocabulary: different selected goals produce distinct trajectory modes
 
 ## Limitations & Open Questions
 

@@ -15,7 +15,7 @@ arxiv_id: "2403.01823"
 
 ## Overview
 
-RT-H (Robot Transformer with Action Hierarchies) introduces a hierarchical approach to multi-task robot control that uses natural language as an intermediate representation between high-level task instructions and low-level robot actions. The core problem it addresses is that flat policy architectures like RT-1 and RT-2 struggle with data sharing across semantically diverse manipulation tasks -- a model trained on "pick up the apple" and "open the drawer" cannot easily share low-level motion primitives because the tasks look completely different at the instruction level.
+RT-H (Robot Transformer with Action Hierarchies) introduces a hierarchical approach to multi-task robot control that uses natural language as an intermediate representation between high-level task instructions and low-level robot actions. The core problem it addresses is that flat policy architectures like RT-1 and RT-2 struggle with data sharing across semantically diverse manipulation tasks -- a model trained on "pick up the apple" and "open the drawer" cannot easily share low-level motion primitives because the tasks look completely different at the instruction level. RT-H is implemented on top of PaLI-X 55B (not RT-2); the two policies (high-level and low-level) are both expressed as prompted queries to this single VLM.
 
 The key insight is that many diverse tasks share common fine-grained motions (e.g., "move arm forward", "close gripper") even when their high-level descriptions differ entirely. RT-H introduces "language motions" -- short natural language descriptions of immediate robot movements -- as a learned intermediate layer. A high-level policy maps observations and task instructions to language motions, and a low-level policy maps observations, tasks, and the predicted language motion to robot actions. Critically, these language motions are not rigid primitives; they are contextual and flexible, adapting execution based on the visual scene and task context.
 
@@ -78,19 +78,19 @@ RT-H achieves a 15% higher average success rate compared to RT-2 on real robot e
 
 ![RT-H teaser showing the hierarchical language motion approach](https://paper-assets.alphaxiv.org/figures/2403.01823v2/teaser_v3.png)
 
-RT-H builds on the RT-2 architecture (a VLM fine-tuned for robot control) but adds a hierarchical decomposition. The system operates in two phases:
+RT-H is built on PaLI-X 55B (a ViT encoder + encoder-decoder transformer) and adds a hierarchical decomposition on top of this VLM. Both the high-level and low-level queries are trained within a single VLM, with the ViT encoder frozen during robot data co-training and action dimensions discretized into 256 bins. The system operates in two phases:
 
 **Phase 1 -- High-level policy (Language Motion Prediction):** Given the current camera observation and the task instruction (e.g., "pick up the apple"), the VLM predicts a language motion -- a short natural language description of the immediate robot movement (e.g., "move arm down toward the apple"). This is generated as free-form text by the VLM.
 
-**Phase 2 -- Low-level policy (Action Generation):** The same or a separate VLM receives the camera observation, the task instruction, AND the predicted language motion, then outputs discretized robot actions (following the RT-2 action tokenization scheme). The language motion serves as an additional conditioning signal that disambiguates what the robot should do next.
+**Phase 2 -- Low-level policy (Action Generation):** The same single VLM receives the camera observation, the task instruction, AND the previously predicted language motion (z_{t-1}), then outputs discretized robot actions (256-bin discretization). The language motion serves as an additional conditioning signal that disambiguates what the robot should do next.
 
 ![Contextual language motions adapt based on scene and task](https://paper-assets.alphaxiv.org/figures/2403.01823v2/contextual_v2.png)
 
-The language motions are learned from demonstrations that have been annotated (either manually or via an automated labeling process using a VLM) with fine-grained motion descriptions. During training, the model learns to predict these annotations; at inference, the predicted language motion provides an interpretable intermediate reasoning step that also improves action quality.
+The language motions are learned from demonstrations that have been automatically annotated by analyzing end-effector pose changes across position, orientation, gripper status, and base movement dimensions -- over 2,500 unique language motions are extracted this way without manual labeling. The training data is the Diverse+Kitchen (D+K) dataset of ~100K demonstrations across 24+ semantic task categories. The training mixture uses 50% original VLM pre-training data and 25% each for the language motion query and action query from robot data, with the ViT encoder frozen throughout. At inference, the predicted language motion provides an interpretable intermediate reasoning step that improves action quality.
 
-The two-phase structure can be implemented as either: (a) two separate forward passes through the same VLM with different prompting, or (b) a single autoregressive generation where language motions are produced first, followed by action tokens. The hierarchical structure enables the low-level policy to share knowledge across tasks that have different high-level instructions but similar motion patterns.
+At inference, the two queries run **asynchronously**: the high-level policy predicts z_t (the next language motion) one step ahead, while the low-level policy uses z_{t-1} (the previously predicted motion) to generate the current action a_t. This pipelining maintains near-identical inference latency to flat models like RT-2, avoiding the cost of sequential double-pass inference. The hierarchical structure enables the low-level policy to share knowledge across tasks that have different high-level instructions but similar motion patterns.
 
-**Human intervention mechanism:** When the robot fails or behaves suboptimally, a human can observe the predicted language motion and provide a correction at that level (e.g., "you should move right, not left"). This correction is far more natural and efficient than providing corrected low-level action vectors. A small number of corrected demonstrations (as few as 30 episodes) can be used to fine-tune the high-level policy, significantly improving performance.
+**Human intervention mechanism:** When the robot fails or behaves suboptimally, a human can observe the predicted language motion and provide a correction at that level (e.g., "you should move right, not left"), bypassing πₕ and feeding the corrected language motion directly into πₗ. Only the language motion query (πₕ) is updated during correction learning -- the action query (πₗ) remains unchanged -- enabling sample-efficient learning. Correction data is co-trained with the original dataset at 50x upweighting. As few as 30 correction episodes per task significantly improve performance.
 
 ## Results
 
@@ -114,8 +114,8 @@ Key experimental findings:
 
 ## Limitations & Open Questions
 
-- **Language motion annotation**: The approach requires language motion annotations for training data, which adds a labeling burden. Automated VLM-based annotation helps but may introduce noise
-- **Two-pass inference cost**: Running two VLM forward passes (one for language motion, one for action) increases inference latency compared to a flat policy
+- **Language motion annotation**: The approach requires language motion annotations for training data. RT-H addresses this via automated extraction from proprioception data (analyzing end-effector pose changes), but the coverage and quality of the resulting vocabulary (2,500+ motions) depends on the diversity of the demonstration dataset
+- **Asynchronous inference complexity**: The asynchronous querying scheme (predicting z_t one step ahead and using z_{t-1} for actions) maintains low latency but introduces a one-step lag in language motion conditioning; the language motion used for action generation is always one observation behind
 - **Language motion vocabulary**: The expressiveness and granularity of language motions is not formally characterized -- it is unclear what the optimal level of description is (e.g., "move arm" vs. "move arm 5cm forward and 2cm down")
 - **Scale of evaluation**: The evaluation is on Google's robot manipulation setup; transferability of the hierarchical language motion idea to other embodiments and domains (e.g., humanoids, driving) is not demonstrated
 - **Comparison to non-language hierarchies**: The paper does not extensively compare against hierarchical policies that use learned latent skills rather than language as the intermediate representation
@@ -123,8 +123,8 @@ Key experimental findings:
 ## Connections
 
 Related papers in the wiki:
-- [[wiki/sources/papers/rt-1-robotics-transformer-for-real-world-control-at-scale]] — RT-H builds directly on RT-1's architecture and dataset
-- [[wiki/sources/papers/rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control]] — RT-H extends RT-2 with hierarchical language motions; RT-2 is the primary baseline
+- [[wiki/sources/papers/rt-1-robotics-transformer-for-real-world-control-at-scale]] — foundational robot transformer in the RT lineage; RT-H uses the same robot and task setup
+- [[wiki/sources/papers/rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control]] — RT-2 is the primary baseline; RT-H uses PaLI-X 55B (same family) but adds hierarchical language motions
 - [[wiki/sources/papers/palm-e-an-embodied-multimodal-language-model]] — provides the VLM backbone paradigm that RT-H leverages
 - [[wiki/sources/papers/openvla-an-open-source-vision-language-action-model]] — open-source VLA that could benefit from RT-H's hierarchical approach
 - [[wiki/sources/papers/ecot-embodied-chain-of-thought-reasoning-for-vision-language-action-models]] — similar idea of using language as intermediate reasoning for VLAs, but via chain-of-thought rather than motion descriptions

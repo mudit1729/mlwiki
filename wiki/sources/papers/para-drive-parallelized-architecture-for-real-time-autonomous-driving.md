@@ -42,8 +42,8 @@ The paper systematically ablates the connectivity, placement, and internal repre
                        │
                        ▼
          ┌─────────────────────────────┐
-         │   Backbone (ResNet/Swin)    │
-         │   + BEV Encoder (LSS)       │
+         │   Backbone (e.g. R101)      │
+         │   + BEV Encoder (BEVFormer) │
          └────────────┬────────────────┘
                       │
                       ▼
@@ -70,7 +70,7 @@ The paper systematically ablates the connectivity, placement, and internal repre
 
 PARA-Drive's architecture consists of three main stages:
 
-1. **BEV Feature Extraction**: Multi-camera images are processed through a backbone (e.g., ResNet-50 or Swin) and projected into a shared BEV (Bird's Eye View) feature space using a BEV encoder (e.g., LSS-based). This produces a set of tokenized BEV query features that serve as the shared representation.
+1. **BEV Feature Extraction**: Multi-camera images are processed through a backbone (e.g., R101) and projected into a shared BEV (Bird's Eye View) feature space using a BEVFormer-style encoder (deformable cross-attention from learnable BEV queries to image features, not LSS). This produces a set of tokenized BEV query features that serve as the shared representation.
 
 2. **Parallel Task Modules**: Three modules operate simultaneously on the shared BEV features:
    - **Perception**: Object detection and semantic map segmentation via BEV query decoding
@@ -117,5 +117,5 @@ PARA-Drive's architecture consists of three main stages:
 - [[wiki/concepts/prediction]] -- motion forecasting in parallel architecture
 - [[wiki/sources/papers/planning-oriented-autonomous-driving]] -- UniAD, the primary sequential baseline
 - [[wiki/sources/papers/vad-vectorized-scene-representation-for-efficient-autonomous-driving]] -- concurrent E2E approach
-- [[wiki/sources/papers/lift-splat-shoot-encoding-images-from-arbitrary-camera-rigs-by-implicitly-unprojecting-to-3d]] -- BEV projection foundation
+- [[wiki/sources/papers/bevformer-learning-birds-eye-view-representation-from-multi-camera-images-via-spatiotemporal-transformers]] -- BEV encoder used by PARA-Drive (deformable cross-attention, not LSS)
 - [[wiki/sources/papers/is-ego-status-all-you-need-for-open-loop-end-to-end-autonomous-driving]] -- complementary critique of nuScenes evaluation

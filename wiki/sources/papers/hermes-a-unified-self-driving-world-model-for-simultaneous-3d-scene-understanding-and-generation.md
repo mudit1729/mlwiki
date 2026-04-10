@@ -21,7 +21,7 @@ The system achieves a 32.4% reduction in Chamfer Distance compared to ViDAR for 
 
 ## Key Contributions
 
-- First unified framework that simultaneously performs 3D scene understanding (captioning, QA) and future scene generation (point cloud prediction) within a single LLM
+- First unified framework that simultaneously performs 3D scene understanding (captioning, QA) and future scene generation (point cloud prediction) within a single LLM (InternVL2)
 - Novel "world queries" mechanism enabling cross-task knowledge transfer between understanding and generation through LLM causal attention
 - BEV tokenization approach that compresses multi-view camera features into LLM-compatible spatial representations using BEVFormer v2
 - Differentiable volume rendering pipeline (SDF-based, similar to NeRF) for converting BEV features into predicted 3D point clouds
@@ -40,7 +40,7 @@ The system achieves a 32.4% reduction in Chamfer Distance compared to ViDAR for 
 │     └──────┼──────┘                                              │
 │            ▼                                                     │
 │  ┌──────────────────┐     ┌──────────────────────┐              │
-│  │  CLIP Encoder     │────►│  BEVFormer v2        │              │
+│  │  CLIP ConvNeX-L  │────►│  BEVFormer v2        │              │
 │  │  (frozen)         │     │  (BEV Tokenizer)     │              │
 │  └──────────────────┘     └─────────┬────────────┘              │
 │                                     │ BEV Features               │
@@ -54,7 +54,7 @@ The system achieves a 32.4% reduction in Chamfer Distance compared to ViDAR for 
 │                          │            └───────┬────────┘        │
 │                          ▼                    ▼                  │
 │               ┌──────────────────────────────────────┐          │
-│               │         LLM Backbone                  │          │
+│               │     LLM Backbone (InternVL2)          │          │
 │               │  [BEV tokens | Text tokens | World Q] │          │
 │               │    Causal Attention ──► Knowledge      │          │
 │               │    Transfer (understanding ─► gen.)    │          │
@@ -75,7 +75,7 @@ The system achieves a 32.4% reduction in Chamfer Distance compared to ViDAR for 
 
 ![Architecture](https://paper-assets.alphaxiv.org/figures/2501.14729v3/x2.png)
 
-The architecture processes multi-view camera images through a pre-trained CLIP encoder, aggregating features into BEV representation via BEVFormer v2. BEV features are compressed through down-sampling and projection to fit within LLM context limits.
+The architecture processes multi-view camera images through a pre-trained CLIP ConvNeX-L encoder, aggregating features into BEV representation via BEVFormer v2. BEV features are compressed through down-sampling and projection to fit within LLM context limits. The LLM backbone is InternVL2, evaluated at scales from 0.8B to 3.8B parameters.
 
 **World Queries Mechanism:**
 - Initialized by max-pooling raw BEV features to capture salient scene information

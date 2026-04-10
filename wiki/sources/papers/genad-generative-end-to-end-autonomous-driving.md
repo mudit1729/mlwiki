@@ -31,7 +31,7 @@ The framework uses instance-centric scene representations with map-aware tokens,
 - **Instance-centric scene representation**: Map-aware instance tokens with self-attention for ego-agent interaction modeling, replacing dense BEV grid representations
 - **Trajectory prior via VAE**: Learns a latent prior that captures structural properties of realistic vehicle trajectories (smoothness, kinematic feasibility), providing strong inductive bias for generation
 - **Progressive waypoint decoding**: GRU-based temporal model generates trajectories step-by-step, enabling autoregressive refinement at each timestep
-- **State-of-the-art planning**: 0.91m L2, 0.43% collision rate on nuScenes -- best results at time of publication
+- **State-of-the-art planning**: 0.91m L2 (best), 0.43% collision rate on nuScenes at time of publication
 
 ## Architecture / Method
 
@@ -122,14 +122,14 @@ A GRU-based temporal decoder progressively generates waypoints:
 | Method | L2 1s (m) | L2 3s (m) | Avg L2 (m) | Col. Rate (%) | FPS |
 |--------|-----------|-----------|------------|---------------|-----|
 | GenAD | **0.36** | **1.83** | **0.91** | **0.43** | 6.7 |
-| UniAD | 0.48 | 1.93 | 1.03 | 0.71 | ~2 |
+| UniAD | 0.48 | 1.93 | 1.03 | 0.29 | ~2 |
 | VAD-Tiny | 0.46 | 1.76 | 0.93 | 0.57 | ~8 |
 | ST-P3 | 1.33 | 2.90 | 1.93 | 1.27 | - |
 
 ![Qualitative results](https://paper-assets.alphaxiv.org/figures/2402.11502v3/img-3.jpeg)
 
 - **0.91m average L2** displacement error -- SOTA on nuScenes planning at time of publication
-- **0.43% collision rate** -- lowest among E2E methods
+- **0.43% collision rate** -- competitive among E2E methods (UniAD achieves 0.29% using additional supervision)
 - **6.7 FPS** on RTX 3090 -- faster than UniAD (~2 FPS) due to efficient instance-centric design
 - Ablations confirm that ego-agent interaction modeling and the VAE trajectory prior each provide significant improvements
 - Removing the generative prior degrades collision rate substantially, confirming the value of learned trajectory structure

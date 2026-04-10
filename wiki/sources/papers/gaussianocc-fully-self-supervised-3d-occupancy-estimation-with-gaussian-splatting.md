@@ -4,7 +4,7 @@ type: source-summary
 status: complete
 updated: 2026-04-05
 year: 2024
-venue: ICCV 2025
+venue: arXiv 2024
 tags:
   - paper
   - autonomous-driving
@@ -22,7 +22,7 @@ arxiv_id: "2408.11447"
 
 ## Overview
 
-GaussianOcc by Gan et al. (University of Tokyo / RIKEN, ICCV 2025) is a systematic method that applies Gaussian splatting in two complementary ways to achieve fully self-supervised and efficient 3D occupancy estimation from surround-view cameras. The core problem is that prior self-supervised 3D occupancy methods still require ground-truth 6D sensor poses during training, and they rely on computationally expensive volume rendering for learning voxel representations from 2D signals. GaussianOcc eliminates both limitations.
+GaussianOcc by Gan et al. (University of Tokyo / RIKEN / South China University of Technology / SIAT-CAS) is a systematic method that applies Gaussian splatting in two complementary ways to achieve fully self-supervised and efficient 3D occupancy estimation from surround-view cameras. The core problem is that prior self-supervised 3D occupancy methods still require ground-truth 6D sensor poses during training, and they rely on computationally expensive volume rendering for learning voxel representations from 2D signals. GaussianOcc eliminates both limitations.
 
 The method enables fully self-supervised training (no ground-truth pose, no 3D annotations) while being 2.7x faster in training and 5x faster in rendering compared to volume-rendering baselines, with competitive or superior occupancy accuracy on the nuScenes-Occupancy benchmark.
 
@@ -95,13 +95,13 @@ The architecture has two training stages:
 
 ### nuScenes-Occupancy Benchmark
 
-| Method | Supervision | GT Pose | RayIoU | Training Speed | Rendering Speed |
-|---|---|---|---|---|---|
-| SurroundOcc | Full 3D | Yes | -- | 1x | 1x |
-| SelfOcc | Self-supervised | Yes | Competitive | 1x | 1x |
-| GaussianOcc | **Fully self-supervised** | **No** | **Competitive** | **2.7x faster** | **5x faster** |
+| Method | Supervision | GT Pose | mIoU* | mIoU | Training Speed | Rendering Speed |
+|---|---|---|---|---|---|---|
+| SurroundOcc | Full 3D | Yes | -- | -- | 1x | 1x |
+| SelfOcc | Self-supervised | Yes | -- | -- | 1x | 1x |
+| GaussianOcc | **Fully self-supervised** | **No** | **11.26** | **9.94** | **2.7x faster** | **5x faster** |
 
-GaussianOcc achieves competitive occupancy quality while eliminating the need for both 3D annotations and ground-truth poses, with major speed improvements from replacing volume rendering with Gaussian splatting.
+GaussianOcc achieves 11.26 mIoU* and 9.94 mIoU on nuScenes-Occupancy (best among fully self-supervised methods), while eliminating both 3D annotations and ground-truth poses, with major speed improvements from replacing volume rendering with Gaussian splatting. Stage 1 depth estimation achieves Abs Rel of 0.258; Stage 2 rendered depth with semantic information achieves Abs Rel of 0.197. It is also the first method to achieve 3D occupancy estimation on the DDAD dataset.
 
 ## Limitations
 

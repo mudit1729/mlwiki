@@ -114,20 +114,28 @@ For text conditioning, tau_theta is a transformer-based text encoder (e.g., BERT
 
 ### Unconditional Image Generation
 
-| Method | Dataset | FID ↓ | Training Cost |
-|--------|---------|-------|---------------|
-| LDM-4 (KL) | CelebA-HQ 256 | 5.11 | ~3.7 V100 days |
-| LDM-8 (VQ) | CelebA-HQ 256 | 4.98 | Reduced |
-| DDPM (pixel) | CelebA-HQ 256 | 7.89 | ~10 V100 days |
-| ADM | CelebA-HQ 256 | 10.39 | >100 V100 days |
+| Method | Dataset | FID ↓ |
+|--------|---------|-------|
+| **LDM-4** | CelebA-HQ 256 | **5.11** |
+| LSGM | CelebA-HQ 256 | 7.22 |
+| UDM | CelebA-HQ 256 | 7.16 |
+| PGGAN | CelebA-HQ 256 | 8.0 |
+| VQGAN+T | CelebA-HQ 256 | 10.2 |
+| DC-VAE | CelebA-HQ 256 | 15.8 |
+
+Note: DDPM and ADM are not reported on CelebA-HQ in the paper. LDM-4 achieves state-of-the-art FID of 5.11. Training LDMs requires dramatically fewer resources than pixel-based diffusion models (150-1000 V100 days), as LDMs were trained on a single A100.
 
 ### Text-to-Image (LAION-400M)
 
 The 1.45B parameter LDM trained on LAION-400M achieves competitive FID with DALL-E (12B parameters, autoregressive) while requiring substantially less compute and enabling much faster inference.
 
+### Class-Conditional ImageNet
+
+LDM-4-G achieves FID 3.60 on ImageNet 256x256 class-conditional synthesis, outperforming the previous best ADM-G (FID 4.59) while using half the parameters and requiring 4x fewer training resources.
+
 ### Inpainting
 
-LDM-based inpainting outperforms prior approaches on both perceptual quality and semantic coherence, achieving state-of-the-art FID on Places benchmark.
+LDM-based inpainting outperforms prior approaches on both perceptual quality and semantic coherence, achieving state-of-the-art FID of 9.39 on the Places benchmark.
 
 ### Super-Resolution
 

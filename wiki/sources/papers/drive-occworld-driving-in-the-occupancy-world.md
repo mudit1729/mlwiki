@@ -27,13 +27,13 @@ Drive-OccWorld introduces a vision-centric 4D occupancy forecasting world model 
 
 The framework operates through an auto-regressive architecture with three main components: a history encoder that builds BEV representations from multi-view cameras, a memory queue with novel conditional normalization that maintains temporal context while addressing semantic discrimination and motion awareness, and a world decoder that predicts future BEV embeddings conditioned on ego actions. The predicted future states feed into an occupancy-based planner that evaluates candidate trajectories against agent safety, road safety, and learned cost functions.
 
-A key capability is action-controllable generation: the model can simulate different future scenarios based on various ego actions (velocity, steering angle, trajectory waypoints, high-level commands), functioning as a neural simulator. Drive-OccWorld achieves 9.4% improvement in occupancy forecasting, 33% reduction in L2 planning error at 1-second horizon compared to UniAD, and demonstrates strong results on the AAAI 2024 benchmark.
+A key capability is action-controllable generation: the model can simulate different future scenarios based on various ego actions (velocity, steering angle, trajectory waypoints, high-level commands), functioning as a neural simulator. Drive-OccWorld achieves a 9.4% improvement in weighted mIoU for future occupancy forecasting over Cam4DOcc on nuScenes, a 33% reduction in L2 planning error at 1-second horizon compared to UniAD, and is further validated on nuScenes-Occupancy and Lyft-Level5.
 
 ## Key Contributions
 
 - **4D occupancy world model for planning:** First system to directly integrate vision-centric 4D occupancy forecasting with end-to-end planning through auto-regressive prediction
-- **Semantic-Conditional Normalization:** Addresses "ray-shaped patterns" in BEV embeddings through adaptive affine transformations based on voxel-wise semantic predictions
-- **Motion-Conditional Normalization:** Accounts for ego-vehicle and agent movements through ego-pose transformation and predicted 3D backward centripetal flow
+- **Semantic-Conditional Normalization:** Enhances semantic discriminability of BEV embeddings through adaptive affine transformations (gamma_s, beta_s) derived from voxel-wise semantic predictions encoded as one-hot embeddings
+- **Motion-Conditional Normalization:** Accounts for ego-vehicle and agent movements through two sets of adaptive affine parameters -- one derived from ego-pose transformation matrices and one from a predicted voxel-wise 3D backward centripetal flow
 - **Action-controllable generation:** Supports conditioning on velocity, steering angle, trajectory waypoints, and high-level commands via unified Fourier embeddings, enabling neural simulation
 - **Occupancy-based planning:** Evaluates candidate trajectories using a three-component cost function (Agent-Safety, Road-Safety, Learned-Volume) that reasons about predicted future occupancy
 
@@ -54,8 +54,8 @@ A key capability is action-controllable generation: the model can simulate diffe
 │  │  ┌─────────────────┐  ┌─────────────────────┐  │         │
 │  │  │  Semantic-Cond.  │  │   Motion-Cond.      │  │         │
 │  │  │  Normalization   │  │   Normalization     │  │         │
-│  │  │  (fix ray-shape  │  │   (ego-pose xform   │  │         │
-│  │  │   artifacts)     │  │   + 3D flow)        │  │         │
+│  │  │  (voxel semantic │  │   (ego-pose xform   │  │         │
+│  │  │   discrimin.)    │  │   + 3D flow)        │  │         │
 │  │  └─────────────────┘  └─────────────────────┘  │         │
 │  └────────────────────┬────────────────────────────┘         │
 │                       │                                      │
@@ -92,9 +92,9 @@ The architecture consists of three main stages operating in an auto-regressive l
 
 **History Encoder:** Processes multi-view camera images using a BEVFormer-based architecture to extract multi-view geometry features and transform them into Bird's-Eye-View embeddings that capture spatial relationships across the scene.
 
-**Memory Queue with Conditional Normalization:** Accumulates historical BEV features with two novel normalization mechanisms:
-- *Semantic-Conditional Normalization:* Applies adaptive affine transformations based on per-voxel semantic predictions, addressing the ray-shaped artifacts that arise from perspective projection into BEV space
-- *Motion-Conditional Normalization:* Incorporates ego-pose transformation matrices and predicted 3D backward centripetal flow to make the representation motion-aware
+**Memory Queue with Conditional Normalization:** Accumulates historical BEV features with two normalization mechanisms:
+- *Semantic-Conditional Normalization:* Applies layer normalization followed by adaptive affine transformations whose parameters are produced by a small convolution over voxel-wise semantic predictions (encoded as one-hot embeddings), enhancing the semantic discriminability of the BEV features
+- *Motion-Conditional Normalization:* Generates two sets of affine parameters -- one from an MLP encoding of ego-pose transformation matrices, and one from a predicted voxel-wise 3D backward centripetal flow -- to make the representation motion-aware for both ego and other agents
 
 **World Decoder:** An auto-regressive transformer using deformable self-attention, temporal cross-attention, and conditional cross-attention to predict future BEV embeddings. Action conditioning is achieved through Fourier embeddings of ego actions (velocity, steering, trajectory waypoints, or high-level commands).
 
@@ -120,10 +120,10 @@ The architecture consists of three main stages operating in an auto-regressive l
 
 | Method | L2 @ 1s | L2 @ 2s | L2 @ 3s | Collision Rate |
 |---|---|---|---|---|
-| UniAD | 0.48 | 0.96 | 1.65 | -- |
-| **Drive-OccWorld** | **0.32** | **0.75** | -- | Competitive |
+| UniAD (baseline) | higher | higher | higher | -- |
+| **Drive-OccWorld** | **-33%** | **-22%** | **-9.7%** | Competitive |
 
-Drive-OccWorld achieves a 33% reduction in L2 error at 1-second horizon (0.32 vs 0.48) and 22% reduction at 2-second horizon compared to UniAD. Ablation studies validate all normalization components, confirm cross-attention superiority for action conditioning, and show that each cost function component contributes to planning quality. The action-controllable generation demonstrates consistent and interpretable behavior across different ego actions.
+Relative to UniAD, Drive-OccWorld achieves a 33% reduction in L2 error at 1-second horizon, a 22% reduction at 2-second horizon, and a 9.7% reduction at 3-second horizon, while maintaining competitive collision rates. On Lyft-Level5, the model also shows a ~6% weighted mIoU and ~5.2% VPQ_f improvement on the future occupancy forecasting task. Ablation studies validate the normalization components and cost function terms, and the action-controllable generation demonstrates consistent and interpretable behavior across different ego actions.
 
 ## Limitations & Open Questions
 

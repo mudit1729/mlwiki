@@ -51,7 +51,7 @@ Large-scale evaluations demonstrate that scaling and diversifying training data 
 │       │              │               │         │
 │       ▼              ▼               ▼         │
 │  ┌──────────────────────────────────────────┐  │
-│  │  Tokenize (patches + discretize states)  │  │
+│  │  Tokenize (VQ-GAN + discretize states)   │  │
 │  │  → unified flat token sequence           │  │
 │  └─────────────────┬────────────────────────┘  │
 │                    │                            │
@@ -73,16 +73,16 @@ Large-scale evaluations demonstrate that scaling and diversifying training data 
 
 ![RoboCat overview](https://paper-assets.alphaxiv.org/figures/2306.11706v2/x1.png)
 
-RoboCat extends the Gato architecture — a decoder-only transformer that treats observations, actions, and goals as a unified token sequence. The architecture processes multi-camera RGB images through a vision encoder (ResNet or ViT-based) that produces visual tokens, which are interleaved with proprioceptive state tokens and discretized action tokens in a causal sequence.
+RoboCat extends the Gato architecture — a decoder-only transformer that treats observations, actions, and goals as a unified token sequence. The architecture processes multi-camera RGB images through a frozen VQ-GAN encoder that produces visual tokens, which are interleaved with proprioceptive state tokens and discretized action tokens in a causal sequence. A key architectural innovation is the prediction of future image tokens (5 time steps ahead) alongside action tokens, which improves visual dynamics understanding and generalization.
 
-**Tokenization:** Images are patchified and encoded into visual tokens. Proprioceptive states (joint angles, gripper state) and actions are discretized into integer bins within per-dimension ranges. All modalities share a single vocabulary and are packed into a flat sequence for autoregressive prediction.
+**Tokenization:** Images are encoded into discrete visual tokens via a frozen VQ-GAN encoder. Proprioceptive states (joint angles, gripper state) and actions are discretized into integer bins within per-dimension ranges. All modalities share a single vocabulary and are packed into a flat sequence for autoregressive prediction.
 
 **Conditioning:** The model is conditioned on task identity through goal images or language tokens prepended to the context. At inference time, the model autoregressively predicts the next action tokens given the observation history and goal specification.
 
 **Self-improvement procedure:**
 1. Train an initial RoboCat model on the full heterogeneous dataset
 2. Use the trained model to autonomously collect practice episodes on target tasks
-3. Filter the collected data by success (using scripted or learned success detectors)
+3. Filter the collected data by success (using hindsight goal relabeling and vision-based reward models as success detectors)
 4. Add successful episodes to the training set
 5. Retrain the model on the expanded dataset
 6. Repeat — each iteration produces a stronger model that generates better practice data
@@ -95,11 +95,12 @@ RoboCat demonstrates strong performance across several evaluation axes:
 
 | Evaluation | Metric | Result |
 |------------|--------|--------|
-| Total tasks mastered | Task count | 253 manipulation tasks |
+| Total tasks mastered | Task count | 253 task variations across 16 task families |
 | Novel embodiment (KUKA 14-DoF) | Success rate | ~80% after few-shot adaptation |
 | Few-shot data requirement | Episodes needed | 100-1000 demonstrations |
 | Self-improvement gain | Avg success delta | Significant improvement over base model across tasks |
 | Cross-task transfer | Specialist vs generalist | Generalist matches or exceeds specialists on many tasks |
+| Model sizes evaluated | Parameters | 1.18B vs 364M (larger model essential for complex tasks) |
 
 **Key experimental findings:**
 

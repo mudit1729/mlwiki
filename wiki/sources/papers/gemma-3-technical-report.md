@@ -56,7 +56,7 @@ Vision capabilities are added through a SigLIP-based vision encoder that convert
 │           │  Decoder-Only Transformer     │                  │
 │           │  (5:1 Local/Global Attention) │                  │
 │           │                              │                   │
-│           │  Layer 1: Local (sliding window, 4K)             │
+│           │  Layer 1: Local (sliding window, 1024)             │
 │           │  Layer 2: Local                │                 │
 │           │  Layer 3: Local                │                 │
 │           │  Layer 4: Local                │                 │

@@ -24,7 +24,7 @@ LanguageMPC addresses a fundamental limitation in autonomous driving: traditiona
 
 The core method operates through a structured three-stage LLM reasoning pipeline: (1) **scenario encoding**, where the LLM processes trajectory predictions and allocates attention to relevant vehicles via dynamic observation matrices; (2) **action guidance**, where the LLM discretizes potential actions into intervals to bias the MPC action space; and (3) **weight adjustment**, where the LLM dynamically selects cost function weights for the MPC optimization. Rather than generating trajectories or control commands directly, the LLM modifies the MPC objective through soft constraints -- a key design decision that preserves the safety guarantees and stability of classical control while injecting semantic reasoning.
 
-Evaluated across five scenarios in the SUMO traffic simulator, LanguageMPC achieves zero collisions in four out of five scenarios (signalized intersections, unsignalized intersections, roundabouts, and lane-changing) and reduces overall costs by 18.1% compared to traditional MPC in signalized intersections, consistently outperforming both classical MPC and RL baselines (DQN, PPO, SAC, ADP). The paper also demonstrates advanced capabilities including text-modulated driving style adjustment via natural language commands and multi-vehicle coordination through a hybrid centralized-distributed LLM architecture.
+Evaluated across five scenarios in the SUMO traffic simulator, LanguageMPC achieves zero collisions in four out of five scenarios (signalized intersections, unsignalized intersections, roundabouts, and lane-changing), reduces overall costs by 18.1% vs. traditional MPC in signalized intersections and 16.4% in unsignalized intersections, and consistently outperforms classical MPC and RL baselines (DQN, PPO, SAC, ADP). In the fifth scenario (emergency obstacle avoidance), LanguageMPC records only 3 collisions versus 7–11 for baseline methods — still best-in-class but not zero. The paper also demonstrates text-modulated driving style adjustment via natural language commands and multi-vehicle coordination through a hybrid centralized-distributed LLM architecture. GPT-3.5 is used as the LLM, operating at ~0.4 Hz with MPC executing at 10 Hz.
 
 ## Key Contributions
 
@@ -93,6 +93,8 @@ The LanguageMPC system operates as a hierarchical controller with two loops:
 
 3. **Weight Adjustment:** Based on the scenario analysis, the LLM selects appropriate weights for the MPC cost function components (tracking deviation, action penalty, safety margin), effectively rebalancing the optimization objective for the current situation.
 
+The LLM used in experiments is **GPT-3.5**, operating at approximately **0.4 Hz** (updates every ~2.5 seconds, or ~1.5 seconds with emergency pre-evaluation). The MPC runs at **10 Hz** for real-time control.
+
 **Low-level loop (MPC):** The MPC controller operates at real-time frequency, optimizing trajectories subject to:
 - Tracking cost (deviation from reference trajectory)
 - Action penalty with LLM-provided bias terms
@@ -107,18 +109,18 @@ The MPC cost function incorporates LLM outputs as soft constraints, allowing the
 
 LanguageMPC was evaluated across five driving scenarios in the SUMO simulator against traditional MPC and four RL baselines (DQN, PPO, SAC, ADP):
 
-| Method | Signalized Intersection | Unsignalized Intersection | Roundabout | Lane-Changing | Ramp Merging |
-|--------|------------------------|--------------------------|------------|---------------|--------------|
-| LanguageMPC | **0 collisions, -18.1% cost** | **0 collisions** | **0 collisions** | **0 collisions** | Best overall |
-| Traditional MPC | Higher cost baseline | Collisions observed | Collisions observed | Collisions observed | Baseline |
-| DQN | Suboptimal | Suboptimal | Suboptimal | Suboptimal | Suboptimal |
-| PPO | Suboptimal | Suboptimal | Suboptimal | Suboptimal | Suboptimal |
-| SAC | Suboptimal | Suboptimal | Suboptimal | Suboptimal | Suboptimal |
-| ADP | Suboptimal | Suboptimal | Suboptimal | Suboptimal | Suboptimal |
+| Method | Signalized Intersection | Unsignalized Intersection | Roundabout | Lane-Changing | Emergency Obstacle Avoidance |
+|--------|------------------------|--------------------------|------------|---------------|------------------------------|
+| LanguageMPC | **0 collisions, -18.1% cost** | **0 collisions, -16.4%** | **0 collisions** | **0 collisions** | **3 collisions** (best) |
+| Traditional MPC | Higher cost baseline | Collisions observed | Collisions observed | Collisions observed | 7–11 collisions |
+| DQN | Suboptimal | Suboptimal | Suboptimal | Suboptimal | 7–11 collisions |
+| PPO | Suboptimal | Suboptimal | Suboptimal | Suboptimal | 7–11 collisions |
+| SAC | Suboptimal | Suboptimal | Suboptimal | Suboptimal | 7–11 collisions |
+| ADP | Suboptimal | Suboptimal | Suboptimal | Suboptimal | 7–11 collisions |
 
 Key findings:
-- **Zero collisions** in 4 out of 5 scenarios, demonstrating strong safety properties from the LLM-MPC coupling
-- **18.1% cost reduction** vs traditional MPC in signalized intersections, showing that LLM reasoning improves efficiency beyond just safety
+- **Zero collisions** in 4 out of 5 scenarios; in the fifth (emergency obstacle avoidance) LanguageMPC records **3 collisions vs. 7–11** for baselines — still best but not zero
+- **18.1% cost reduction** vs traditional MPC in signalized intersections; **16.4% improvement** in unsignalized intersections
 - **Text-modulated driving:** Successfully adjusted driving style (aggressive vs. conservative) via natural language commands at runtime
 - **Novel scenario handling:** The system correctly interpreted and responded to text guidance about road construction avoidance and other uncommon situations
 - **Multi-vehicle coordination:** A hybrid centralized-distributed LLM architecture coordinated multiple autonomous vehicles, with a central LLM providing global strategy and local LLMs handling individual vehicle control
@@ -126,7 +128,7 @@ Key findings:
 ## Limitations & Open Questions
 
 - **SUMO simulator only:** All experiments use the SUMO traffic simulator, which has simpler dynamics than CARLA or real-world driving. Transfer to more realistic environments is unvalidated.
-- **LLM inference cost:** While the dual-frequency design mitigates latency, the computational cost of running an LLM (even at low frequency) may still be prohibitive for production systems with limited onboard compute.
+- **LLM inference latency:** GPT-3.5 takes ~2.5 seconds per standard call (~1.5 seconds with emergency pre-evaluation), yielding ~0.4 Hz update rate. While the dual-frequency design mitigates this, sub-second critical decisions cannot rely on LLM reasoning. The paper acknowledges LLMs have "limited sensitivity to precise numerical values," which is why actions and weights are discretized into predefined pools rather than generated as raw numbers.
 - **Structured text input assumption:** The system requires structured scene descriptions as LLM input, which depends on upstream perception quality. How perception errors propagate through LLM reasoning to MPC parameters is not studied.
 - **Limited scenario complexity:** Five SUMO scenarios, while diverse, do not cover the full tail of real-world driving complexity (pedestrians, cyclists, adverse weather, construction zones beyond text guidance).
 - **No comparison with later LLM-for-driving methods:** As a 2023 paper, it predates Agent-Driver, AsyncDriver, and other LLM-planner integration approaches that might offer different trade-offs.

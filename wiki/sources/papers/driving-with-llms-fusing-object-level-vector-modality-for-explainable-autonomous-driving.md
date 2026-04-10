@@ -84,14 +84,15 @@ Encodes the driving scene as a set of object-level vectors:
 - Each traffic participant is represented by a feature vector: position (x, y, z), velocity (vx, vy), heading, dimensions, and object type
 - Road elements (lanes, traffic lights, signs) are similarly vectorized
 - Ego vehicle state (velocity, acceleration, heading) is included
+- Cross-attention layers map inputs into latent space; ego vehicle features are added to each learned latent vector to maintain consistent self-awareness
 
 ### 2. Vector Former
 
 ![Architecture details](https://paper-assets.alphaxiv.org/figures/2310.01957v2/arc.png)
 
 A transformer module that processes the vectorized scene:
-- Self-attention across all object tokens captures inter-object relationships
-- Produces a fixed-size scene embedding that summarizes the driving context
+- Self-attention and cross-attention layers interact between latent space and question tokens
+- Generates 64 queries that serve as the fixed-size interface between the numeric vector representation and the LLM's token space
 - Acts as a bridge between the vector representation and the LLM's token space
 
 ### 3. Frozen LLaMA-7B with LoRA
@@ -103,7 +104,7 @@ The scene embedding from Vector Former is projected into the LLM's input space:
 
 ### Training Pipeline
 
-**Stage 1 -- Vector Pretraining**: The Vector Encoder and Vector Former are pretrained on perception tasks (object counting, distance estimation, speed estimation) to learn driving-relevant representations.
+**Stage 1 -- Vector Pretraining**: The Vector Encoder and Vector Former are pretrained on 100k pseudo vector-captioning QA pairs (derived from 100k simulated scenarios) to learn driving-relevant representations. The language model remains frozen during this stage.
 
 **Stage 2 -- QA Finetuning**: The full system (Vector Former + LoRA adapters) is finetuned on 160k driving QA pairs:
 
@@ -118,15 +119,32 @@ The scene embedding from Vector Former is projected into the LLM's input space:
 
 ![Results](https://paper-assets.alphaxiv.org/figures/2310.01957v2/main3.png)
 
-| Metric | Without Pretraining | With Pretraining | Improvement |
-|--------|-------------------|-----------------|-------------|
-| Car count MAE | 0.101 | 0.066 | 35% |
-| Action prediction | baseline | improved | significant |
-| Explanation quality | baseline | improved | qualitative |
+**Perception (Mean Absolute Error):**
 
-- **Pretraining substantially improves perception**: Car count MAE drops from 0.101 to 0.066 with vector pretraining
-- **Improved action prediction**: Vector pretraining leads to better driving action prediction compared to Perceiver-BC baselines
-- **Qualitative explanation quality**: The system generates coherent natural language explanations for its driving decisions
+| Metric | Without Pretraining | With Pretraining |
+|--------|---------------------|-----------------|
+| Car count MAE | 0.101 | 0.066 |
+| Pedestrian count MAE | 1.668 | 0.313 |
+| Token prediction loss (L_token) | 0.644 | 0.502 |
+
+**Action prediction vs. Perceiver-BC baseline:**
+
+| Control axis | LLM-Driver | Perceiver-BC |
+|--------------|-----------|--------------|
+| Longitudinal error | 0.066 | 0.180 |
+| Lateral error | 0.014 | 0.111 |
+
+**Driving QA scores (0–10 scale):**
+
+| Grader | Without Pretraining | With Pretraining |
+|--------|---------------------|-----------------|
+| GPT-3.5 automated | 7.48 | 8.39 |
+| Human | 6.63 | 7.71 |
+
+- **Pretraining substantially improves perception**: Car count MAE drops from 0.101 to 0.066 and pedestrian count MAE drops from 1.668 to 0.313 with vector pretraining
+- **Strong action prediction**: LLM-Driver outperforms Perceiver-BC substantially on longitudinal (0.066 vs 0.180) and lateral (0.014 vs 0.111) control error
+- **Traffic light distance regression**: Perceiver-BC (D_TL: 0.410) outperforms LLM-Driver (D_TL: 6.624) on this specific regression task, a known weakness of the approach
+- **QA quality improves ~9–11% with pretraining**: GPT grading 8.39 vs 7.48; human grading 7.71 vs 6.63
 - **Multi-task capability**: A single model handles perception queries, action prediction, and explanation generation
 
 ![Additional results](https://paper-assets.alphaxiv.org/figures/2310.01957v2/more_results.png)
@@ -139,6 +157,7 @@ The scene embedding from Vector Former is projected into the LLM's input space:
 - **Frozen LLM**: LLaMA-7B is not fine-tuned end-to-end; full fine-tuning might unlock better integration
 - **Latency concerns**: LLM inference at 7B parameters may be too slow for real-time driving (not measured in paper)
 - **GPT-3.5 data quality**: Generated QA pairs may contain errors or inconsistencies that limit training quality
+- **Numeric regression weakness**: On traffic light distance estimation, Perceiver-BC (D_TL: 0.410) substantially outperforms LLM-Driver (D_TL: 6.624), indicating the LLM struggles with precise numeric regression tasks
 
 ## Connections
 

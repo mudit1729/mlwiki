@@ -104,13 +104,19 @@ The parallel design means prediction and planning share intermediate representat
 
 ### nuScenes Benchmark
 
-| Method | Detection mAP | Map mAP | Planning L2 (m) | Collision Rate |
-|---|---|---|---|---|
-| UniAD | 38.4 | 31.0 | 1.03 | 0.31% |
-| VAD | 34.2 | 38.5 | 0.72 | 0.22% |
-| **SparseDrive** | **42.1** | **41.3** | **0.63** | **0.13%** |
+**SparseDrive-B (ResNet101, 512×1408 input):**
 
-SparseDrive achieves the best results across perception, mapping, and planning metrics, with a particularly notable 42% reduction in collision rate compared to VAD. Training is 2-3x faster than dense BEV methods due to the sparse representation.
+| Metric | UniAD | VAD | SparseDrive-B |
+|---|---|---|---|
+| Detection mAP | 38.0 | -- | **49.6** (+11.6 vs UniAD) |
+| Multi-Object Tracking AMOTA | 35.9 | -- | **50.1** (+14.2 vs UniAD) |
+| Online Mapping mAP | 47.6 | 47.6 | **56.2** (+8.6 vs VAD) |
+| Planning L2 (m) | 1.03 | 0.72 | **0.58** |
+| Collision Rate | 0.31% | 0.21% | **0.06%** |
+
+**SparseDrive-S (ResNet50, 256×704):** Achieves 9.0 FPS versus 1.8 FPS for UniAD.
+
+SparseDrive achieves the best results across all metrics, with a particularly notable 71.4% reduction in collision rate compared to VAD. Training is 4.8× faster (SparseDrive-B) and 7.2× faster (SparseDrive-S) than UniAD, with inference 4.1× and 5.0× faster respectively.
 
 ## Limitations
 

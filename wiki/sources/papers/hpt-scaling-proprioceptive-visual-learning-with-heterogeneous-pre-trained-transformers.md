@@ -13,7 +13,7 @@ arxiv_id: "2409.20537"
 
 ## Overview
 
-HPT tackles the fundamental challenge of building generalist robot representations that work across heterogeneous embodiments with different sensor configurations, action spaces, and morphologies. The key insight is a modular stem-trunk-head architecture: embodiment-specific stems tokenize diverse proprioceptive and visual inputs into a shared format, a large shared transformer trunk learns cross-embodiment representations, and task-specific heads decode actions. Trained on over 50 datasets spanning simulation and real robots, HPT demonstrates clear scaling laws for robotics -- performance improves predictably with data size, data diversity, model size (up to 1B+ parameters), and compute. This is one of the first works to establish that the scaling paradigm from language models transfers to robotic control.
+HPT tackles the fundamental challenge of building generalist robot representations that work across heterogeneous embodiments with different sensor configurations, action spaces, and morphologies. The key insight is a modular stem-trunk-head architecture: embodiment-specific stems tokenize diverse proprioceptive and visual inputs into a shared format, a large shared transformer trunk learns cross-embodiment representations, and task-specific heads decode actions. Trained on 52 datasets spanning simulation and real robots, HPT demonstrates clear scaling laws for robotics -- performance improves predictably with data size, data diversity, model size (up to 1B+ parameters), and compute. This is one of the first works to establish that the scaling paradigm from language models transfers to robotic control.
 
 ## Key Contributions
 
@@ -52,7 +52,7 @@ HPT tackles the fundamental challenge of building generalist robot representatio
 │  │  ┌──────────────────────────────────────────────┐    │   │
 │  │  │  Cross-Attention: Prop Q ──► Visual K,V       │    │   │
 │  │  │  Self-Attention across all tokens              │    │   │
-│  │  │  (pre-trained on 50+ datasets, up to 1B+)     │    │   │
+│  │  │  (pre-trained on 52 datasets, up to 1B+)      │    │   │
 │  │  └──────────────────────────────────────────────┘    │   │
 │  └──────────────────────┬───────────────────────────────┘   │
 │                         │                                    │
@@ -75,7 +75,7 @@ HPT uses a three-component architecture:
 **Trunk (shared transformer):**
 - Large transformer network shared across all embodiments and tasks
 - Cross-attention mechanism fuses proprioceptive queries with visual keys/values
-- Pre-trained on 50+ datasets spanning simulation (Fleet-Tools, Metaworld, Robomimic) and real robots
+- Pre-trained on 52 datasets spanning simulation (Fleet-Tools, Metaworld, Robomimic) and real robots
 - Scales up to 1B+ parameters
 
 **Heads (task-specific):**

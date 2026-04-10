@@ -4,7 +4,7 @@ type: source-summary
 status: active
 updated: 2026-04-05
 year: 2025
-venue: CVPR
+venue: arXiv
 tags:
   - paper
   - autonomous-driving

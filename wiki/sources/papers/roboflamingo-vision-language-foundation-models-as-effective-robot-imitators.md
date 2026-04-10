@@ -88,7 +88,7 @@ During fine-tuning, the ViT backbone is typically frozen while the Perceiver Res
 
 ### Training
 
-- **Loss:** L1 regression loss on predicted actions (position, rotation, gripper state)
+- **Loss:** MSE loss on continuous end-effector pose prediction, combined with BCE loss on discrete gripper open/close status (weighted by λ_gripper)
 - **Data:** CALVIN benchmark demonstrations -- 24 hours of play data across 34 tasks in 4 environments, with language annotations
 - **Fine-tuning:** The VLM backbone (OpenFlamingo 3B or 9B) is adapted with relatively few gradient steps; the policy head is trained from scratch
 - **Observation history:** The LSTM policy head processes a window of recent observations (typically 10-20 steps) to capture temporal context

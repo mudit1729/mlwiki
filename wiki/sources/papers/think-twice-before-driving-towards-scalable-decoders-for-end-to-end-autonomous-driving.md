@@ -50,10 +50,10 @@ The framework achieved state-of-the-art results on the CARLA Town05 Long benchma
    │              Decoder Layer (x5)                  │
    │                                                  │
    │  Waypoints_i ──► ┌─────────────┐                │
-   │                  │ Look Module  │ Sample BEV     │
-   │                  │ (bilinear    │ features along │
-   │                  │  interp on   │ trajectory     │
-   │                  │  BEV)        │                │
+   │                  │ Look Module  │ Deformable attn│
+   │                  │ (multi-scale │ around traj    │
+   │                  │  deformable  │ reference pts  │
+   │                  │  attention)  │                │
    │                  └──────┬──────┘                │
    │                         │                        │
    │  Waypoints_i ──► ┌──────▼──────┐                │
@@ -80,7 +80,7 @@ The Think Twice architecture follows a standard encoder-decoder paradigm but wit
 **Cascaded Decoder Pipeline:**
 
 1. **Coarse Prediction**: An initial lightweight head produces a rough trajectory estimate from the BEV features
-2. **Look Module**: Given the coarse waypoints, the module samples BEV features along the predicted trajectory path using bilinear interpolation. This provides spatially-relevant context -- the decoder "looks" at where it plans to drive
+2. **Look Module**: Given the coarse waypoints, the module projects the predicted trajectory coordinates back to the image planes and uses multi-scale deformable attention to aggregate visual information around those reference points (and retrieves surrounding voxel features for LiDAR). This provides spatially-relevant context -- the decoder "looks" at where it plans to drive
 3. **Prediction Module**: A spatial-GRU takes the current plan and BEV features to predict future BEV states, simulating how the scene will evolve if the ego vehicle follows the proposed trajectory. This enables the model to anticipate collisions or unsafe situations before committing to the plan
 4. **Refined Prediction**: The retrieved spatial features and predicted future features are combined to produce an updated trajectory
 
@@ -105,7 +105,7 @@ The primary evaluation is on the CARLA Town05 Long benchmark under closed-loop d
 | Method | Driving Score | Route Completion | Infraction Score |
 |--------|:---:|:---:|:---:|
 | **ThinkTwice** | **70.9** | **95.5** | **74.3** |
-| TCP | 55.2 | 84.5 | 67.7 |
+| TCP | 57.2 | 84.5 | 67.7 |
 | TransFuser | 54.5 | 78.4 | 73.1 |
 | LAV | 46.0 | 64.9 | 71.3 |
 | LBC | 30.1 | 55.0 | 57.5 |

@@ -124,7 +124,7 @@ PDMS achieves 0.7--0.8 correlation with closed-loop simulation scores across var
 | PARA-Drive | 84.0% | 80 GPU-days |
 | Latent TransFuser | 83.8% | -- |
 | UniAD | 83.4% | 240 GPU-days |
-| Ego Status MLP | 65.6% | -- |
+| Ego Status MLP | 65.8% | -- |
 | Constant Velocity | 20.6% | -- |
 
 Key observations:

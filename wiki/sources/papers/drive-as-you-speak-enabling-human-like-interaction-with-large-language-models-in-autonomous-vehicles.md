@@ -26,15 +26,15 @@ Drive as You Speak (DAYS) proposes a framework for enabling natural language int
 
 The key insight is that LLMs can serve as an intermediate reasoning layer between human intent expressed in natural language and the low-level control parameters of an autonomous driving system. The framework uses a modular architecture where the LLM processes natural language commands (e.g., "take the next left," "slow down, I'm feeling carsick," "what's that building on the right?"), interprets them in the context of the current driving scenario, and translates them into executable instructions for the vehicle's planning and control stack. The LLM also generates natural language explanations of the vehicle's behavior back to the passenger, creating a bidirectional conversational interface.
 
-DAYS demonstrated that LLM-based interaction can handle a diverse range of passenger requests spanning navigation commands, comfort preferences, safety concerns, and informational queries. The framework was evaluated using both automated metrics and human studies, showing that LLM-mediated interaction significantly improves passenger trust and perceived safety compared to traditional interfaces. This work is notable as an early exploration of the "LLM as vehicle interface" paradigm, distinct from the "LLM as planner" direction taken by GPT-Driver and DriveGPT4 -- here the LLM mediates human-vehicle communication rather than directly generating trajectories.
+DAYS demonstrates that LLM-based interaction can handle a diverse range of passenger requests spanning navigation commands, comfort preferences, safety concerns, and informational queries. The framework is illustrated through qualitative case studies in the HighwayEnv simulator, showing how chain-of-thought prompting enables the LLM to interpret verbal commands, reason over the driving context, and produce appropriate actions and explanations. This work is notable as an early exploration of the "LLM as vehicle interface" paradigm, distinct from the "LLM as planner" direction taken by GPT-Driver and DriveGPT4 -- here the LLM mediates human-vehicle communication rather than directly generating trajectories.
 
 ## Key Contributions
 
-- **Natural language driving interface**: First comprehensive framework for bidirectional natural language interaction between passengers and autonomous vehicles, covering navigation, comfort, safety, and information requests
-- **LLM-based command interpretation**: Demonstrates that LLMs can reliably parse ambiguous, context-dependent natural language driving commands into structured vehicle control instructions
-- **Bidirectional communication**: The system both accepts human commands and generates natural language explanations of vehicle behavior, creating a conversational loop that builds passenger trust
-- **Human evaluation framework**: Establishes evaluation criteria for language-based driving interaction including command accuracy, response naturalness, passenger trust, and perceived safety
-- **Modular integration architecture**: Proposes a clean separation between the language understanding layer (LLM) and the driving execution layer, allowing the framework to work with different underlying AV stacks
+- **Natural language driving interface**: Early framework for bidirectional natural language interaction between passengers and autonomous vehicles, covering navigation, comfort, safety, and information requests
+- **LLM-based command interpretation**: Demonstrates that an LLM with chain-of-thought prompting can parse ambiguous, context-dependent natural language driving commands into driving-relevant actions
+- **Bidirectional communication**: The system both accepts human commands and generates natural language explanations of vehicle behavior, creating a conversational loop
+- **HighwayEnv case studies**: Illustrates the framework through qualitative scenarios in the HighwayEnv simulator, showcasing interpretation, interaction, and reasoning across several driving situations
+- **Modular integration architecture**: Proposes a separation between the language/reasoning layer (LLM with tool use) and the driving execution layer, allowing the framework to work with different underlying AV stacks
 
 ## Architecture / Method
 
@@ -44,43 +44,33 @@ DAYS demonstrated that LLM-based interaction can handle a diverse range of passe
 │                                                             │
 │  Passenger ◄─────────────────────────────────────────┐      │
 │     │ Natural language                               │      │
-│     │ ("Slow down, I'm carsick")            Response │      │
-│     ▼                                      Generation│      │
-│  ┌──────────────────────┐                            │      │
-│  │ Language Understanding│                            │      │
-│  │ Module (LLM)         │                            │      │
-│  │ - Intent parsing     │                            │      │
-│  │ - Command type class.│                            │      │
-│  └──────────┬───────────┘                            │      │
-│             │ Structured intent                      │      │
-│             ▼                                        │      │
-│  ┌──────────────────────┐    ┌───────────────────┐   │      │
-│  │   Cognitive Module   │◄──►│ Driving Context   │   │      │
-│  │ - Dialogue history   │    │ - Speed, location │   │      │
-│  │ - Reference grounding│    │ - Route, environ. │   │      │
-│  │ - Ambiguity resolving│    │ - Nearby objects  │   │      │
-│  │ - Safety checking    │    └───────────────────┘   │      │
-│  └──────────┬───────────┘                            │      │
-│             │ Validated command                       │      │
-│             ▼                                        │      │
-│  ┌──────────────────────┐    ┌───────────────────┐   │      │
-│  │  Execution Module    │───►│  AV Planning &    │───┘      │
-│  │ - Speed adjustment   │    │  Control Stack    │          │
-│  │ - Route modification │    └───────────────────┘          │
-│  │ - Safety constraints │                                   │
-│  └──────────────────────┘                                   │
+│     │ ("Slow down, I'm carsick")      NL explanation │      │
+│     ▼                                                │      │
+│  ┌────────────────────────────────────┐              │      │
+│  │  LLM (chain-of-thought reasoning)  │──────────────┘      │
+│  │  - Intent understanding            │                     │
+│  │  - Personalization / memory        │                     │
+│  │  - Action + explanation generation │                     │
+│  └───┬────────────────────┬───────────┘                     │
+│      │ tool / module calls│                                 │
+│      ▼                    ▼                                 │
+│  ┌─────────────┐   ┌───────────────────┐                    │
+│  │ Perception, │   │  AV Planning &    │                    │
+│  │ localization│   │  Control Stack    │                    │
+│  │ route info  │   │  (HighwayEnv)     │                    │
+│  └─────────────┘   └───────────────────┘                    │
 └─────────────────────────────────────────────────────────────┘
 ```
 
-The DAYS framework consists of several key modules:
+The DAYS framework positions the LLM as the central reasoner that connects the passenger to the vehicle's driving stack, with the following functional roles:
 
-**Language Understanding Module**: Takes raw natural language input from passengers and uses an LLM to parse intent, extract driving-relevant parameters, and classify the command type (navigation, comfort adjustment, information query, safety concern). The LLM is prompted with context about the current driving state including speed, location, route, and surrounding environment.
+**Language understanding and reasoning**: The LLM takes raw natural language input from passengers along with contextual information about the current driving state (speed, location, route, surrounding environment) and reasons about intent using chain-of-thought prompting. This covers navigation requests, comfort adjustments, information queries, and safety concerns.
 
-**Cognitive Module**: Acts as the reasoning bridge between language understanding and vehicle control. This module maintains a dialogue history, resolves ambiguous references (e.g., "that building" requires grounding to a specific object), and determines whether a command requires immediate action, gradual adjustment, or only an informational response. It also handles multi-turn conversations where passengers refine their requests.
+**Tool / module use**: Rather than operating on raw sensor data directly, the LLM interacts with specialized modules of the autonomous driving stack (perception, localization, planning, etc.) via tool-style calls, grounding its language reasoning in the vehicle's real state and capabilities.
 
-**Execution Module**: Converts structured commands from the cognitive module into specific parameter changes for the autonomous driving stack -- speed adjustments, route modifications, lane change requests, or comfort settings. This module also enforces safety constraints, rejecting or modifying commands that would create dangerous situations (e.g., "run that red light").
+**Memory and personalization**: The framework maintains history across interactions so the LLM can adapt driving behavior to individual passenger preferences over time, enabling continuous personalization from verbal feedback.
 
-**Response Generation Module**: Uses the LLM to produce natural language responses that acknowledge the passenger's command, explain what action the vehicle is taking and why, and provide relevant contextual information. Responses are designed to be conversational and reassuring rather than technical.
+**Action and response generation**: The LLM produces both structured instructions that influence the planner/controller (e.g., adjust speed, change lanes, update route) and natural language responses that explain what the vehicle is doing and why, creating the bidirectional conversational loop.
 
 The system handles several categories of interaction:
 - **Navigation commands**: "Turn left at the next intersection," "Take me to the nearest gas station"
@@ -91,29 +81,20 @@ The system handles several categories of interaction:
 
 ## Results
 
-The paper evaluates DAYS across multiple dimensions:
+Evaluation in the paper is qualitative: the authors walk through case studies in HighwayEnv to illustrate how the framework handles different verbal commands and driving situations rather than reporting large-scale quantitative benchmarks or human-subject surveys.
 
-| Evaluation Dimension | Metric | Performance |
-|---------------------|--------|-------------|
-| Command interpretation accuracy | Correct intent classification | ~85-90% |
-| Response quality | Human-rated naturalness (1-5) | 4.2/5.0 |
-| Passenger trust | Pre/post interaction trust survey | Significant improvement |
-| Safety constraint adherence | Unsafe command rejection rate | >95% |
-| Response latency | Average time to respond | <2 seconds |
-
-Key findings include:
-- LLMs handle ambiguous and context-dependent commands significantly better than rule-based NLU systems
-- Bidirectional communication (vehicle explaining its actions) substantially increases passenger trust compared to one-way command interfaces
-- Safety constraint enforcement is critical -- the system must gracefully refuse unsafe requests while maintaining conversational rapport
-- Multi-turn dialogue capability is essential for real-world interaction where passengers frequently refine or clarify requests
+Key observations include:
+- Chain-of-thought prompting leads to noticeably better driving decisions than direct prompting, by letting the LLM reason step-by-step about the scene, rules, and passenger intent before selecting an action
+- The LLM can personalize driving behavior in real time based on verbal feedback (e.g., requests to drive more cautiously, maintain more following distance, or prefer a particular lane)
+- Natural-language explanations of the vehicle's actions improve the transparency of the decision-making process, supporting the paper's goal of "human-like" interaction
+- Integrating the LLM with tool/module calls (perception, localization, routing, etc.) is central to grounding language in the real driving state
 
 ## Limitations & Open Questions
 
 - **Latency**: LLM inference adds latency that may be unacceptable for time-critical safety commands -- the paper does not fully address real-time constraints for urgent situations
 - **Grounding**: Spatial grounding of references like "that building" or "the car ahead" requires integration with perception systems not fully addressed in the framework
-- **Evaluation scope**: Evaluation was conducted in simulated/controlled settings rather than real-world deployment with diverse passengers
+- **Evaluation scope**: Evaluation is limited to qualitative case studies in HighwayEnv rather than large-scale quantitative benchmarking or real-world user studies
 - **Hallucination risk**: LLMs may generate incorrect information about the driving environment or vehicle capabilities, which could erode trust
-- **Language and cultural diversity**: The framework was primarily evaluated in English and may not generalize to other languages or cultural norms for vehicle interaction
 - **Open question**: How should an LLM-based interface handle conflicting commands from multiple passengers?
 - **Open question**: What is the right level of autonomy for the LLM -- should it proactively suggest route changes or only respond to explicit commands?
 

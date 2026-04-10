@@ -87,7 +87,7 @@ DexVLA's architecture has two main components connected via FiLM (Feature-wise L
 
 **Vision-Language Backbone (2B params)**: Qwen2-VL processes multi-view camera observations and language instructions. The model generates two types of outputs: (1) reasoning tokens that represent high-level task understanding and sub-step decomposition, and (2) action tokens that serve as conditioning for the diffusion expert.
 
-**Scale Diffusion Policy (ScaleDP, 1B params)**: A transformer-based diffusion model that generates continuous action trajectories conditioned on the VLM's output through FiLM layers. The 1B scale is a deliberate design choice -- ablations show the billion-parameter expert significantly outperforms smaller variants (100M, 300M).
+**Scale Diffusion Policy (ScaleDP, 1B params)**: A transformer-based diffusion model that generates continuous action trajectories conditioned on the VLM's output through FiLM layers. The 1B scale is a deliberate design choice -- ablations show the billion-parameter expert significantly outperforms smaller variants (93M, 410M).
 
 ![Training stages and data flow](https://paper-assets.alphaxiv.org/figures/2502.05855v3/x3.png)
 
@@ -113,7 +113,7 @@ DexVLA's architecture has two main components connected via FiLM (Feature-wise L
 - **Shirt folding**: 0.92 success rate where all baselines (including pi0) score near zero -- the most striking result, demonstrating the value of a scaled diffusion expert for deformable object manipulation
 - **Data efficiency**: Achieves 0.90 average on novel embodiment tasks (drink pouring, packing) with fewer than 100 demonstrations
 - **Ablation -- Stage 1 critical**: Removing cross-embodiment pre-training causes complete learning failure, confirming the curriculum is essential
-- **Ablation -- expert scale matters**: 1B expert significantly outperforms 100M and 300M variants
+- **Ablation -- expert scale matters**: 1B expert achieved 0.92 on shirt folding vs. 0.17 (93M) and 0.63 (410M)
 - **Ablation -- sub-step reasoning**: Removing sub-step annotations causes dramatic performance drops on long-horizon tasks
 - **Inference speed**: 60 Hz on a single A6000 GPU, viable for real-time deployment
 

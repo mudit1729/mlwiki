@@ -99,14 +99,14 @@ SAM consists of three components designed to separate the expensive image proces
 
 ![Zero-shot transfer results on diverse segmentation benchmarks](https://paper-assets.alphaxiv.org/figures/2304.02643/img-10.jpeg)
 
-**Zero-shot single-point segmentation:** Human evaluators rated SAM's masks as higher quality than those from the strongest baseline (ViTDet) in 7 out of 9 experiments when using a single foreground point prompt. SAM's masks improved further with additional prompts.
+**Zero-shot single-point segmentation:** Human evaluators rated SAM's masks as higher quality than those from the strongest baseline (RITM) in 7 out of 9 experiments when using a single foreground point prompt. SAM's masks improved further with additional prompts.
 
 | Task | Metric | SAM (zero-shot) | Best prior (task-specific) |
 |------|--------|------------------|----------------------------|
 | Edge detection (BSDS500) | ODS (50 NMS) | 76.8 | 78.8 (HED, trained) |
 | Object proposals (LVIS) | AR@1000 | 75.5 | 72.0 (ViTDet-H) |
 | Instance segmentation (LVIS) | AP | comparable | ViTDet (trained on LVIS) |
-| Single-point valid mask | Human preference | **7/9 wins** | ViTDet |
+| Single-point valid mask | Human preference | **7/9 wins** | RITM |
 
 **Key findings:**
 - SAM produces highly coherent object boundaries, even for objects not represented in its training data

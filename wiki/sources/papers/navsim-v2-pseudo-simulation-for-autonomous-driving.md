@@ -72,9 +72,9 @@ The pseudo-simulation pipeline operates in two phases:
 3. This synthetic observation becomes the input for the next step
 4. The process repeats, capturing compounding errors that open-loop evaluation misses
 
-The proximity-based weighting scheme is critical: rather than requiring exact trajectory matching (which would need infinite pre-generated observations), the system weights nearby observations inversely by distance and heading difference, creating a soft approximation of the true closed-loop dynamics.
+The proximity-based weighting scheme is critical: rather than requiring exact trajectory matching (which would need infinite pre-generated observations), the system uses a Gaussian-weighted average with kernel variance σ² (w⁽ⁱ⁾ = exp(−‖xⁱ − x̂‖²/2σ²), optimal at σ²=0.1) to prioritize synthetic observations closest to the Stage 1 endpoint, creating a soft approximation of the true closed-loop dynamics.
 
-**NAVSIM v2 Benchmark Design:** The benchmark uses a curated subset of nuPlan called "navhard" -- challenging scenarios including dense traffic, construction zones, and complex intersections. The PDMS (Planning-Driven Metric Score) evaluates trajectories on safety, progress, comfort, and rule compliance.
+**NAVSIM v2 Benchmark Design:** The benchmark uses a curated subset of nuPlan called "navhard" -- challenging scenarios evaluated over two stages. The primary leaderboard metric is **EPDMS** (Extended PDM Score), adapted to pseudo-simulation scoring.
 
 ## Results
 
@@ -86,14 +86,21 @@ The proximity-based weighting scheme is critical: rather than requiring exact tr
 | Best open-loop metric (PDM-Open) | 0.7 |
 | **Pseudo-simulation (NAVSIM v2)** | **0.8** |
 
-### NAVSIM v2 Leaderboard (Selected Methods)
+### NAVSIM v2 Leaderboard (Selected Methods, EPDMS scores, snapshot 03/2026)
 
-| Method | PDMS (v2) |
+The v2 benchmark uses **EPDMS** (not PDMS), a different metric reflecting pseudo-simulation-based scoring. Scores are not directly comparable to NAVSIM v1 PDMS values.
+
+| Method | EPDMS |
 |---|---|
-| Constant velocity baseline | ~60 |
-| TransFuser | ~70 |
-| UniAD | ~75 |
-| SparseDriveV2 | ~92 (on v1) |
+| PDM-Closed | 56.6 |
+| DrivoR | 54.5 |
+| SimScale | 53.2 |
+| GuideFlow | 51.5 |
+| RAP | 39.6 |
+| NavFormer | 34.1 |
+| Latent TransFuser | 25.1 |
+| Ego MLP | 14.1 |
+| Constant Velocity | 11.4 |
 
 Pseudo-simulation reveals that several methods that score well on open-loop metrics fail in pseudo-simulation due to compounding errors in dynamic scenarios.
 

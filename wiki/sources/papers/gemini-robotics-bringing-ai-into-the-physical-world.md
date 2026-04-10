@@ -15,13 +15,13 @@ arxiv_id: "2503.20020"
 
 Gemini Robotics introduces a family of AI models built on Gemini 2.0 designed to extend advanced multimodal capabilities into physical robotics. The work addresses a fundamental challenge in AI: translating digital understanding abilities into embodied agents capable of safe, effective real-world manipulation and interaction.
 
-The system comprises two core models. Gemini Robotics-ER (Embodied Reasoning) enhances Gemini 2.0 with advanced spatial understanding, enabling object detection, trajectory prediction, grasp estimation, and 3D scene comprehension. Gemini Robotics functions as a full Vision-Language-Action model for direct robot control, combining a cloud-hosted backbone optimized for low latency with a local action decoder on the robot's computer, achieving 50Hz control frequency.
+The system comprises two core models. Gemini Robotics-ER (Embodied Reasoning) enhances Gemini 2.0 with advanced spatial understanding, enabling object detection, pointing, trajectory prediction, top-down grasp prediction, and 3D scene comprehension. Gemini Robotics functions as a full Vision-Language-Action model for direct robot control, combining a cloud-hosted backbone optimized for low latency with a local action decoder on the robot's computer, achieving 50Hz control frequency.
 
 Training leverages thousands of hours of expert teleoperated demonstrations on ALOHA 2 robots, combined with Gemini's extensive multimodal web pretraining. The model achieves over 80% success on half of 20 diverse manipulation tasks, generalizes robustly across visual and instruction variations, and adapts rapidly to new tasks with minimal demonstrations. Specialized variants achieve 79% average success on demanding long-horizon tasks including origami folding. The work also emphasizes responsible development through inherited safety mechanisms and a novel semantic action safety evaluation framework (ASIMOV).
 
 ## Key Contributions
 
-- **Two-tier model family:** Gemini Robotics-ER for embodied reasoning (spatial understanding, grasp estimation) and Gemini Robotics for direct VLA control at 50Hz
+- **Two-tier model family:** Gemini Robotics-ER for embodied reasoning (spatial understanding, top-down grasp prediction) and Gemini Robotics for direct VLA control at 50Hz
 - **Cloud-local hybrid architecture:** Cloud-hosted VLM backbone for rich reasoning with local action decoder for low-latency control
 - **Strong generalization:** Robust performance across visual variations, instruction paraphrasing, and unseen object categories
 - **Long-horizon capabilities:** 79% success on complex multi-step tasks including origami folding
@@ -50,7 +50,7 @@ Training leverages thousands of hours of expert teleoperated demonstrations on A
 │  │         │  understanding)│                │   │  Actions  │ │
 │  │         └────────────────┘                │   │  ──► Robot│ │
 │  │         - Object detection                │   │           │ │
-│  │         - 6-DOF grasp estimation          │   └────────────┘ │
+│  │         - Top-down grasp prediction        │   └────────────┘ │
 │  │         - Trajectory prediction           │                  │
 │  └──────────────────────────────────────────┘                   │
 │                                                                 │
@@ -61,7 +61,7 @@ Training leverages thousands of hours of expert teleoperated demonstrations on A
 
 ![System Overview](https://paper-assets.alphaxiv.org/figures/2503.20020v1/img-0.jpeg)
 
-The architecture builds on Gemini 2.0's multimodal foundation. Gemini Robotics-ER adds spatial understanding modules for object detection, 6-DOF grasp estimation, and trajectory prediction. The full Gemini Robotics model extends this with an action generation head.
+The architecture builds on Gemini 2.0's multimodal foundation. Gemini Robotics-ER adds spatial understanding modules for object detection, pointing, top-down grasp prediction (y, x, rotation angle), and trajectory prediction. The full Gemini Robotics model extends this with an action generation head.
 
 ![Embodied Reasoning](https://paper-assets.alphaxiv.org/figures/2503.20020v1/img-1.jpeg)
 

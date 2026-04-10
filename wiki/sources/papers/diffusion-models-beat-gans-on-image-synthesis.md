@@ -119,15 +119,15 @@ Both stages can use classifier guidance independently.
 | Model | Resolution | FID (down) | Precision | Recall |
 |-------|-----------|-----|-----------|--------|
 | **ADM-G (guided)** | **128x128** | **2.97** | 0.78 | 0.59 |
-| BigGAN-deep | 128x128 | 6.95 | 0.87 | 0.28 |
-| **ADM-G (guided)** | **256x256** | **3.94** | 0.83 | 0.53 |
+| BigGAN-deep | 128x128 | 6.02 | 0.87 | 0.28 |
+| **ADM-G (guided)** | **256x256** | **4.59** | 0.83 | 0.53 |
 | BigGAN-deep | 256x256 | 6.95 | 0.87 | 0.28 |
 | **ADM-G + upsampling** | **256x256** | **3.94** | 0.83 | 0.53 |
 | **ADM-G + upsampling** | **512x512** | **7.72** | 0.87 | 0.42 |
 
 Key findings:
 
-- **FID improvements are dramatic**: The guided diffusion model (ADM-G) achieves FID 2.97 on ImageNet 128x128, cutting BigGAN-deep's 6.95 by more than half
+- **FID improvements are dramatic**: The guided diffusion model (ADM-G) achieves FID 2.97 on ImageNet 128x128, cutting BigGAN-deep's 6.02 by more than half
 - **Better diversity**: While BigGAN achieves higher precision (sharper samples), ADM-G achieves substantially higher recall (better mode coverage), meaning diffusion models generate more diverse samples while maintaining quality
 - **Guidance scale tradeoff**: Increasing `s` from 1.0 to ~2.5 steadily improves FID by trading recall for precision; beyond ~4.0, FID begins to degrade as diversity drops too far
 - **Architecture ablations matter**: The improved U-Net alone (without guidance) substantially narrows the gap to GANs; guidance then closes it entirely

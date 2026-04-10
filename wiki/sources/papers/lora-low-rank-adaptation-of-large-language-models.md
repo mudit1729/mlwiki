@@ -122,7 +122,7 @@ LoRA matches or exceeds all baselines on GPT-3 175B with the fewest trainable pa
 
 ### RoBERTa and DeBERTa results
 
-On RoBERTa-base and RoBERTa-large (GLUE benchmark), LoRA with r = 8 matches full fine-tuning performance. On DeBERTa XXL (1.5B parameters), LoRA achieves 91.1% on MNLI, matching the fine-tuned result.
+On RoBERTa-base (GLUE benchmark), LoRA with r = 8 outperforms full fine-tuning (87.2 vs 86.4 with only 0.3M vs 125M trainable parameters). On RoBERTa-large, performance is similarly competitive. On DeBERTa XXL (1.5B parameters), LoRA achieves 91.1% on MNLI, matching the fine-tuned result.
 
 ### Efficiency gains
 

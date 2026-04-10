@@ -80,7 +80,7 @@ The second major contribution is **Captioning and Filtering (CapFilt)**, a data 
 
 The visual encoder is a Vision Transformer (ViT) that processes the input image into a sequence of patch embeddings. An additional `[CLS]` token is prepended. The text transformer is shared across three functional modes:
 
-1. **Unimodal text encoder** (for ITC): Encodes text independently using bidirectional self-attention. A `[CLS]` token representation is projected to a shared embedding space with the image `[CLS]` token for contrastive alignment. A momentum distillation strategy from MoCo is used to maintain a queue of negative features.
+1. **Unimodal text encoder** (for ITC): Encodes text independently using bidirectional self-attention. A `[CLS]` token representation is projected to a shared embedding space with the image `[CLS]` token for contrastive alignment. Momentum encoders and soft labels (similar to ALBEF) are used to maintain a queue of negative features.
 
 2. **Image-grounded text encoder** (for ITM): Injects visual information into the text transformer via cross-attention layers inserted between the self-attention and feed-forward layers. A binary classifier on the `[Encode]` token output predicts whether the image-text pair matches. Hard negative mining selects contrastive negatives with high ITC similarity but incorrect pairing.
 

@@ -100,21 +100,23 @@ VoxPoser operates through three stages: (1) instruction parsing and code generat
 | Static environment | **88.0%** | 24.0% |
 | Dynamic disturbances | **70.0%** | 0.0% |
 
-VoxPoser was evaluated on 5 representative real-world manipulation tasks including drawer opening, object pick-and-place, and constrained movements. The primitives baseline uses the same LLM to select from a fixed skill library rather than composing value maps.
+VoxPoser was evaluated on 5 representative real-world manipulation tasks: taking bread out of a toaster, pressing a moisturizer pump, turning on a lamp, opening a bottle, and sweeping trash into a dustpan. The primitives baseline uses the same LLM to parameterize pre-defined motion primitives rather than composing value maps.
 
 ### Simulation Generalization
 
-| Generalization Category | VoxPoser | SayCan | Code-as-Policies | ProgPrompt |
-|------------------------|----------|--------|-------------------|------------|
-| Unseen instructions | **High** | Low | Medium | Medium |
-| Novel object attributes | **High** | Low | Medium | Low |
-| Spatial reasoning | **High** | Low | Low | Low |
+VoxPoser was evaluated on 13 highly-randomizable simulated tasks with 2,766 unique instructions, enabling rigorous testing of zero-shot generalization. On object interaction tasks, VoxPoser achieves:
 
-In RLBench simulation, VoxPoser consistently achieved higher success rates across various zero-shot generalization categories, particularly excelling at spatial reasoning tasks that require understanding 3D geometry.
+| Instruction/Attribute Setting | VoxPoser Success Rate |
+|-------------------------------|----------------------|
+| Seen instructions & attributes | 64.0% |
+| Unseen object attributes | 60.0% |
+| Entirely unseen combinations | 65.0% |
+
+VoxPoser consistently outperformed baselines (LLM + Primitives and U-Net + Motion Planning) across generalization categories, particularly excelling at spatial reasoning tasks that require understanding 3D geometry.
 
 ### Dynamics Learning Efficiency
 
-For contact-rich tasks, VoxPoser's zero-shot trajectories as exploration priors reduced the data needed for dynamics model learning to under 3 minutes of robot interaction, compared to hours of random exploration without the prior.
+For contact-rich tasks (e.g., sweeping), VoxPoser's zero-shot trajectories as exploration priors enable 80.0–91.7% success rates with under 3 minutes of online interaction, compared to baselines that exceeded 12-hour time limits without the intelligent prior.
 
 ## Limitations & Open Questions
 

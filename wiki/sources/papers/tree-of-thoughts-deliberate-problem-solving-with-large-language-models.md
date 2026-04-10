@@ -120,7 +120,7 @@ return G(p_theta, S_T)  # final generation from best state
 |--------|-------------|
 | IO prompting | 7.3% |
 | Chain-of-Thought | 4.0% |
-| CoT Self-Consistency (k=100) | 9.0% |
+| CoT Self-Consistency (k=100) | 49.0% |
 | **ToT (BFS, b=5)** | **74.0%** |
 
 ### Creative Writing (Coherence)
@@ -143,7 +143,7 @@ ToT outputs were preferred by GPT-4 judges in 41 out of 100 pairwise comparisons
 
 ## Limitations & Open Questions
 
-- **Computational cost:** ToT requires substantially more LM calls than CoT (e.g., ~100x more tokens for Game of 24), making it expensive for routine tasks. The benefit is most justified for genuinely hard problems where single-pass reasoning fails.
+- **Computational cost:** ToT requires substantially more LM calls than CoT (approximately 3-5x more calls than simpler approaches), making it expensive for routine tasks. The benefit is most justified for genuinely hard problems where single-pass reasoning fails.
 - **Task-specific prompt engineering:** The thought decomposition granularity, generation strategy (sample vs. propose), evaluation strategy (value vs. vote), and search algorithm must be configured per task. There is no automatic way to select these.
 - **Evaluation reliability:** Using the LM as its own evaluator inherits the LM's biases and failure modes. The heuristic quality depends on the base model's capabilities.
 - **Limited depth:** BFS becomes intractable for deep trees; DFS with LM-based pruning can miss correct branches if the evaluator is unreliable at early stages.

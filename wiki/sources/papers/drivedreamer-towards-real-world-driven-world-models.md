@@ -21,86 +21,93 @@ arxiv_id: "2309.09777"
 
 ## Overview
 
-DriveDreamer (ECCV 2024) is the first world model built entirely from real-world driving data, addressing fundamental limitations of prior approaches that relied on simulated environments. The system uses a diffusion-based architecture called Auto-DM (Autonomous-Driving Diffusion Model) to learn controllable video generation from real driving scenarios, enabling both high-fidelity driving video synthesis and action-conditioned future prediction.
+DriveDreamer (ECCV 2024) is the first world model built entirely from real-world driving data, addressing fundamental limitations of prior approaches that relied on simulated environments. The system uses a latent-diffusion-based architecture called Auto-DM (Autonomous-driving Diffusion Model), built on Stable Diffusion v1.4, to learn controllable video generation from real driving scenarios, enabling both high-fidelity driving video synthesis and action-conditioned future prediction.
 
-The two-stage training pipeline progressively builds understanding: first learning static structural constraints (HD maps, 3D bounding boxes), then advancing to dynamic future prediction. DriveDreamer achieves an average L2 trajectory error of 0.29m in open-loop planning and reduces collision rates by approximately 21% compared to baselines, while also generating synthetic training data that significantly improves downstream 3D object detection.
+The two-stage training pipeline progressively builds understanding: Stage 1 ("Structured Traffic Comprehension") first learns to generate images from structured conditions (HD maps, 3D bounding boxes, text) and then extends to video; Stage 2 ("Future State Anticipation") introduces an ActionFormer module that predicts future HD maps and 3D boxes from action sequences, which are then decoded back into future videos and actions. On nuScenes, DriveDreamer achieves FID 14.9 / FVD 340.8 (vs DriveGAN's 27.8 / 390.8), matches AD-MLP's L2 trajectory error of 0.29m with a roughly 21% relative reduction in collision rate, and its synthetic data improves 3D detection (BEVFusion +3.0 mAP / +1.9 NDS; FCOS3D +0.7 mAP / +0.2 NDS).
 
 ## Key Contributions
 
-- **First real-world-driven world model**: Entirely trained on real driving data rather than simulated environments, capturing the complexity of actual road scenarios
-- **Auto-DM architecture**: Diffusion model with three conditional input types -- spatially aligned conditions (HD Maps), position conditions (3D bounding boxes), and text prompts for environmental attributes
-- **Two-stage progressive training**: Stage 1 learns structural understanding from static scene elements; Stage 2 extends to temporal future prediction with action conditioning
+- **First real-world-driven world model**: Entirely trained on real driving data (nuScenes) rather than simulated environments
+- **Auto-DM architecture**: Latent diffusion model (built on Stable Diffusion v1.4) with three conditional input types -- spatially aligned conditions (HD maps, concatenated with noisy latents after convolutional encoding), position conditions (3D bounding boxes, via MLP + Fourier embeddings and gated self-attention), and CLIP-embedded text prompts injected through cross-attention
+- **Two-stage progressive training**: Stage 1 "Structured Traffic Comprehension" (image generation, then video generation by adding temporal attention); Stage 2 "Future State Anticipation" with an ActionFormer module that predicts future HD maps and 3D boxes from action sequences
 - **Controllable generation**: Supports video generation conditioned on traffic layout, text descriptions, and driving actions simultaneously
-- **Data augmentation utility**: Synthetic data from DriveDreamer measurably improves 3D object detection training, demonstrating practical value beyond planning
+- **Data augmentation utility**: Synthetic data from DriveDreamer measurably improves 3D object detection (BEVFusion +3.0 mAP / +1.9 NDS; FCOS3D +0.7 mAP / +0.2 NDS), demonstrating practical value beyond planning
 
 ## Architecture / Method
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │                 DriveDreamer (Auto-DM)                        │
+│               latent diffusion, init from SD v1.4             │
 │                                                              │
 │  Conditional Inputs:                                         │
 │  ┌──────────────┐ ┌──────────────┐ ┌──────────────────────┐  │
 │  │  HD Maps     │ │ 3D Bounding  │ │  Text Prompts        │  │
-│  │ (spatial     │ │ Boxes        │ │ ("rainy, night,      │  │
-│  │  aligned)    │ │ (position    │ │  heavy traffic")     │  │
-│  │              │ │  conditions) │ │                      │  │
+│  │ (lanes /     │ │ Boxes + cat. │ │ ("rainy, night")     │  │
+│  │  dividers /  │ │              │ │                      │  │
+│  │  crossings)  │ │              │ │                      │  │
 │  └──────┬───────┘ └──────┬───────┘ └──────────┬───────────┘  │
-│         │ spatial enc.   │ BEV proj.           │ text enc.    │
+│         │ conv enc.      │ MLP + Fourier       │ CLIP enc.   │
+│         │ concat w/      │ gated self-attn     │ cross-attn  │
+│         │ noisy latent   │                     │             │
 │         ▼                ▼                     ▼              │
 │  ┌───────────────────────────────────────────────────────┐   │
 │  │              Diffusion U-Net Denoiser                 │   │
-│  │                                                       │   │
-│  │  Noise z_t ──► ResBlocks + Cross-Attention ──► z_{t-1}│   │
-│  │                    ▲          ▲          ▲             │   │
-│  │                    │          │          │             │   │
-│  │              spatial cond. position   text cond.       │   │
+│  │  Noise z_t ──► ResBlocks + Attention ──► z_{t-1}      │   │
+│  │  Loss: MSE between predicted and added noise          │   │
 │  └───────────────────────────────────────────────────────┘   │
 │                           │                                  │
 │                           ▼                                  │
 │                  Generated Video Frame(s)                     │
 │                                                              │
 │  ════════════════════════════════════════════════════════     │
-│  Stage 1: Single-frame generation (structural understanding) │
-│  Stage 2: Temporal sequences + action conditioning           │
-│           ──► Imagination-based planning                     │
-│           (roll out futures, select best trajectory)          │
+│  Stage 1 "Structured Traffic Comprehension":                 │
+│    Step 1: image gen (no temporal attn)                      │
+│    Step 2: video gen (add temporal attn)                     │
+│  Stage 2 "Future State Anticipation":                        │
+│    ActionFormer predicts future HD maps & 3D boxes from      │
+│    action sequences (GRU + attention); fed back into Auto-DM │
+│    to generate future videos + actions jointly               │
+│    (video: MSE/Gaussian, action: L1/Laplace)                 │
 └──────────────────────────────────────────────────────────────┘
 ```
 
 ![DriveDreamer overview](https://paper-assets.alphaxiv.org/figures/2309.09777v2/img-0.jpeg)
 
-DriveDreamer's Auto-DM architecture integrates three types of conditional inputs into a diffusion denoising process:
+DriveDreamer's Auto-DM is a latent diffusion model (initialized from Stable Diffusion v1.4) that integrates three types of conditional inputs into the denoising process:
 
-1. **Spatially Aligned Conditions**: HD map rasterizations provide road topology and lane structure, encoded via a spatial encoder and injected into the diffusion UNet through cross-attention layers.
+1. **Spatially Aligned Conditions (HD maps)**: Lane boundaries, dividers, and pedestrian crossings are encoded through convolutional layers and **concatenated with the noisy latent features** during diffusion (rather than injected via cross-attention).
 
-2. **Position Conditions**: 3D bounding boxes of traffic participants are projected into BEV (Bird's Eye View) and image planes, providing object-level layout constraints. These are encoded separately and fused with the map conditions.
+2. **Position Conditions (3D bounding boxes)**: Vehicle and pedestrian 3D bounding boxes together with their category labels are processed through MLP layers and Fourier embeddings, and then integrated via **gated self-attention** so the generated scenes reflect object positions.
 
-3. **Text Prompts**: Natural language descriptions of environmental attributes (weather, time of day, traffic density) are encoded with a text encoder and provide global scene-level conditioning.
+3. **Text Prompts**: Natural language descriptions of environmental attributes (sunny, rainy, night, traffic density) are converted to CLIP embeddings and injected through cross-attention layers to control scene style.
 
 ![Training pipeline](https://paper-assets.alphaxiv.org/figures/2309.09777v2/img-1.jpeg)
 
-**Stage 1 -- Structural Understanding**: The model learns to generate single frames conditioned on HD maps and 3D boxes, ensuring spatial consistency and structural adherence to road layouts.
+**Stage 1 -- Structured Traffic Comprehension**: Trained in two steps. Step 1 generates single images from HD maps, 3D boxes, and text, with temporal attention layers omitted. Step 2 adds temporal attention to extend the model to video generation, learning motion dynamics. The objective is the standard diffusion MSE between predicted and added noise.
 
-**Stage 2 -- Future Prediction**: The model extends to temporal sequences, learning to predict future frames conditioned on the current scene and planned driving actions. This enables action-conditioned video rollouts for planning evaluation.
+**Stage 2 -- Future State Anticipation**: An **ActionFormer** module encodes the initial structured conditions (HD maps, 3D boxes) into a 1D latent space and, using attention together with GRU-based iterative updates, predicts future hidden states from input driving action sequences. These are decoded back into future HD maps and 3D boxes, which feed (together with a reference image and text prompt) back into the pre-trained Auto-DM to generate future videos and actions jointly. Video prediction uses an MSE (Gaussian) loss; action prediction uses an L1 (Laplace) loss.
 
 ![Auto-DM architecture](https://paper-assets.alphaxiv.org/figures/2309.09777v2/img-3.jpeg)
 
-For planning, DriveDreamer generates multiple future rollouts conditioned on candidate action sequences, then selects the best trajectory based on predicted outcomes. This "imagination-based" planning approach parallels model-based RL.
+This yields action-conditioned video rollouts suitable for planning.
 
 ## Results
 
-| Metric | DriveDreamer | DriveGAN | Improvement |
-|--------|-------------|----------|-------------|
-| L2 trajectory error (m) | 0.29 | - | SOTA |
-| Collision rate reduction | ~21% | baseline | significant |
-| FID (video quality) | superior | baseline | - |
-| 3D detection (w/ synthetic data) | improved | - | measurable |
+| Metric | DriveDreamer | Comparison |
+|--------|-------------|------------|
+| FID (video quality) | 14.9 | DriveGAN: 27.8 |
+| FVD | 340.8 | DriveGAN: 390.8 |
+| L2 trajectory error (m) | 0.29 | AD-MLP: 0.29 (tied) |
+| Collision rate reduction | ~21% relative | vs. AD-MLP baseline |
+| 3D detection aug. (BEVFusion) | +3.0 mAP / +1.9 NDS | -- |
+| 3D detection aug. (FCOS3D) | +0.7 mAP / +0.2 NDS | -- |
 
-- **Open-loop planning**: 0.29m average L2 error on nuScenes, competitive with specialized planners
-- **Video generation quality**: Significantly outperforms DriveGAN in FID and structural adherence metrics
-- **Data augmentation**: Adding DriveDreamer-generated synthetic data to 3D detection training improves detection performance, validating the realism of generated scenes
+- **Video generation quality**: Substantially outperforms DriveGAN on both FID (14.9 vs 27.8) and FVD (340.8 vs 390.8)
+- **Open-loop planning (nuScenes)**: 0.29m average L2 error, matching the AD-MLP baseline while cutting collision rate by roughly 21% relative
+- **Data augmentation**: Adding DriveDreamer-generated synthetic data to 3D detection training improves BEVFusion by 3.0 mAP / 1.9 NDS and FCOS3D by 0.7 mAP / 0.2 NDS
 - **Controllability**: Successfully generates diverse scenarios by varying text prompts and traffic layouts
+- **Dataset/hardware**: Trained on nuScenes (700 training / 150 validation scenes) on A800 GPUs with AdamW
 
 ![Comparison results](https://paper-assets.alphaxiv.org/figures/2309.09777v2/img-5.jpeg)
 

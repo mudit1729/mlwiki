@@ -111,24 +111,13 @@ The only hyperparameter beyond standard training settings is `β`, which control
 
 DPO achieves the most efficient reward-KL frontier, strictly dominating PPO at every KL budget. It reaches higher reward for the same amount of KL divergence from the reference.
 
-### Summarization (TL;DR, GPT-J 6B)
+### Summarization (TL;DR, GPT-J)
 
-| Method | Win Rate vs. Human (GPT-4) | Win Rate vs. PPO (Human) |
-|--------|----------------------------|--------------------------|
-| PPO | ~57% | — |
-| DPO | **61%** | **58%** |
-| Best-of-N (N=128) | 57% | — |
+On the Reddit TL;DR summarization task (fine-tuning GPT-J from an SFT checkpoint), DPO achieves a GPT-4-judged win rate of approximately **61%** versus reference summaries at temperature 0.0, exceeding PPO's best result of ~57% (also at its optimal temperature). DPO is also more robust to sampling temperature than PPO, which degrades quickly as temperature rises.
 
 ### Dialogue (Anthropic HH, Pythia 2.8B)
 
-| Method | Win Rate |
-|--------|----------|
-| Preferred | 0.0% (reference) |
-| PPO | 48% |
-| DPO | **55%** |
-| Best of 128 | 56% |
-
-DPO nearly matches Best-of-128 sampling (which requires 128 forward passes per response) using only a single forward pass.
+On the Anthropic Helpful-Harmless single-turn dialogue task, DPO is reported as "the only computationally efficient method that improves over the preferred completions in the dataset," providing similar or better performance to the computationally demanding Best-of-128 sampling baseline while requiring only a single forward pass per response. PPO and Preferred-FT fail to match this on the same task.
 
 ![Dialogue results and training dynamics](https://paper-assets.alphaxiv.org/figures/2305.18290v3/img-2.jpeg)
 

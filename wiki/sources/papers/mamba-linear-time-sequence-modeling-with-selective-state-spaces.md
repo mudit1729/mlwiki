@@ -129,7 +129,7 @@ On synthetic tasks requiring long-range reasoning (selective copying, induction 
 
 ### Audio and Genomics
 
-On audio classification (SC10) and DNA sequence modeling (HG38 genome), Mamba achieves state-of-the-art with the same architecture used for language, demonstrating genuine cross-modal generality.
+On audio generation (SC09) and DNA sequence modeling (HG38 genome), Mamba achieves state-of-the-art with the same architecture used for language, demonstrating genuine cross-modal generality.
 
 ![Scaling and throughput comparison](https://paper-assets.alphaxiv.org/figures/2312.00752v2/img-5.jpeg)
 

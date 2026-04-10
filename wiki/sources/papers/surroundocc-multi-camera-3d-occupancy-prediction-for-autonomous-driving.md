@@ -99,7 +99,7 @@ The multi-scale supervision is critical -- it provides dense gradients throughou
 
 A major practical contribution is the pipeline for generating dense occupancy labels without manual voxel annotation:
 
-1. **Multi-frame LiDAR aggregation**: Accumulate LiDAR sweeps from multiple consecutive frames (typically ~10 sweeps), transforming all points into a common ego-centric coordinate frame using ego-motion compensation
+1. **Multi-frame LiDAR aggregation**: Accumulate LiDAR sweeps from multiple consecutive frames, transforming all points into world coordinates; static scene and dynamic object points are aggregated separately across sequences
 2. **Poisson surface reconstruction**: Apply Poisson reconstruction to the aggregated point cloud to generate a continuous surface mesh, filling in gaps between sparse LiDAR returns
 3. **Voxelization**: Discretize the reconstructed surface into a regular voxel grid at the target resolution
 4. **Semantic label propagation**: For each filled voxel, assign the semantic label of the nearest annotated LiDAR point using k-nearest-neighbor lookup

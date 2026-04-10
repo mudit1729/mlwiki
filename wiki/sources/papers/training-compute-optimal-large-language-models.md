@@ -87,9 +87,9 @@ All three approaches converge: a = b ~ 0.5 in the relationship N_opt ~ C^a, D_op
 | GPT-3 | 175B | 300B | 43.9% | - |
 | Jurassic-1 | 178B | - | 46.8% | - |
 
-- **Chinchilla (70B) outperforms Gopher (280B)**: On 72% of evaluation tasks including MMLU (67.6% vs 60.0%), HellaSwag, LAMBADA, and others, despite being 4x smaller and using the same compute budget
+- **Chinchilla (70B) outperforms Gopher (280B)**: On the majority of evaluation tasks including MMLU (67.5% vs 60.0%), HellaSwag, LAMBADA, and others, despite being 4x smaller and using the same compute budget
 - **Three estimation methods agree**: All three independent approaches for estimating optimal N-D allocation converge on the same scaling relationship (a ~ b ~ 0.5), providing strong evidence for the conclusion
-- **MMLU state-of-the-art**: Chinchilla achieved 67.5% on MMLU, surpassing Gopher (60.0%), GPT-3 (43.9%), and all other models at the time of publication. Also demonstrated lower perplexity and superior performance on HellaSwag, LAMBADA, and other downstream tasks (note: some tables report 67.6% due to rounding differences across evaluation runs)
+- **MMLU state-of-the-art**: Chinchilla achieved 67.5% on MMLU, surpassing Gopher (60.0%), GPT-3 (43.9%), and all other models at the time of publication. Also demonstrated lower perplexity and superior performance on HellaSwag, LAMBADA, and other downstream tasks
 - **Inference efficiency**: As a 4x smaller model, Chinchilla is substantially cheaper and faster at inference time, providing both better quality and lower deployment cost
 - **Existing models are 4-10x undertrained**: Analysis shows GPT-3 should have been trained on ~1.5T tokens (vs 300B actual), and Gopher on ~4T tokens (vs 300B actual) for their compute budgets
 

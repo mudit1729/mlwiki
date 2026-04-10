@@ -26,7 +26,7 @@ Flamingo set a new state of the art on 16 multimodal benchmarks spanning visual 
 - **Few-shot multimodal learning**: Demonstrated that in-context learning -- previously shown only for text -- extends to interleaved image/video and text inputs, enabling rapid adaptation to new vision-language tasks without fine-tuning
 - **Perceiver Resampler**: A transformer-based module using learned latent queries to compress variable-length visual feature maps (from single images or video frames) into a fixed set of 64 visual tokens, providing an efficient and resolution-agnostic visual interface to the language model
 - **Gated cross-attention layers**: Novel GATED XATTN-DENSE layers interleaved with frozen LM layers, where a tanh gate initialized to zero allows the model to smoothly transition from pure language modeling to visually-grounded generation during training
-- **Frozen backbone strategy**: By keeping both the vision encoder and language model frozen and training only the cross-modal bridges (~1.4B trainable parameters out of 80B total), Flamingo preserves the generalization capabilities of both pretrained components while achieving strong multimodal performance
+- **Frozen backbone strategy**: By keeping both the vision encoder and language model frozen and training only the cross-modal bridges (~10.2B trainable parameters out of 80B total for the largest model), Flamingo preserves the generalization capabilities of both pretrained components while achieving strong multimodal performance
 - **Multi-image and video support**: A single architecture handles interleaved sequences of images and text (e.g., multi-turn visual dialogue) as well as video inputs, using a simple "assign visual tokens to the most recent preceding image" attention masking scheme
 
 ## Architecture / Method
@@ -85,16 +85,17 @@ Flamingo's architecture connects a frozen vision encoder to a frozen language mo
 
 **Perceiver Resampler**: Takes the variable-size spatial features from the vision encoder (e.g., a grid of features from different resolution images or varying numbers of video frames) and produces a fixed set of 64 visual tokens. It uses a small transformer with learned latent query vectors that cross-attend to the visual features. This design is inspired by Perceiver IO and ensures constant computational cost regardless of input resolution or number of video frames.
 
-**Gated Cross-Attention Dense Layers (GATED XATTN-DENSE)**: These are inserted before every frozen LM layer (or every Kth layer in some configurations). Each layer performs:
+**Gated Cross-Attention Dense Layers (GATED XATTN-DENSE)**: These are inserted before every Kth frozen LM layer (typically every 4th-7th layer in practice). Each layer performs:
 1. Cross-attention from the text hidden state to the 64 visual tokens produced by the Perceiver Resampler
-2. The output is multiplied by `tanh(alpha)` where `alpha` is a learned scalar initialized to 0
-3. The gated output is added to the residual stream
+2. The cross-attention output is multiplied by `tanh(α_xattn)` (a learned scalar initialized to 0) and added to the residual stream
+3. A dense FFN sub-layer follows, also gated by a separate `tanh(α_dense)` scalar initialized to 0
+4. Both gates starting at zero ensure the block has no effect at initialization, preserving the frozen LM behavior at the start of training
 
 The zero initialization is critical: at the start of training, the gated cross-attention has no effect, so the model behaves exactly like the original frozen LM. This ensures training stability and allows the model to gradually learn how to use visual information.
 
 **Interleaved attention masking**: When processing sequences with multiple images interleaved with text, each text token only attends to the visual tokens from the most recent preceding image. This simple scheme enables the model to handle multi-image prompts (for few-shot learning) and visual dialogue naturally.
 
-**Model scales**: Flamingo comes in three sizes -- 3B (1.4B LM), 9B (7B LM), and 80B (70B Chinchilla LM). The 80B model has approximately 10.2B trainable parameters (the cross-attention layers and Perceiver Resampler), with the remaining ~70B frozen.
+**Model scales**: Flamingo comes in four sizes -- 3B (1.4B LM), 9B (7B LM), 30B, and 80B (70B Chinchilla LM). The 80B model has approximately 10.2B trainable parameters (the cross-attention layers and Perceiver Resampler), with the remaining ~70B frozen.
 
 ![Flamingo few-shot examples and results across benchmarks](https://paper-assets.alphaxiv.org/figures/2204.14198v2/img-1.jpeg)
 
@@ -131,7 +132,7 @@ Key findings:
 
 - **Gating mechanism**: Removing the tanh gating degrades performance significantly; without it, the model struggles to preserve the LM's language capabilities
 - **Perceiver Resampler vs. alternatives**: The Perceiver Resampler outperforms MLP projection and vanilla transformer pooling, while being more compute-efficient
-- **Cross-attention frequency**: Inserting XATTN layers at every LM layer works best; every-4th or every-8th reduces performance
+- **Cross-attention frequency**: Inserting XATTN layers every 4th-7th LM layer provides the optimal balance; inserting at every single LM layer is not required and adding them too sparsely (e.g., every-8th) reduces performance
 - **Training data mixture**: The combination of all three web corpora (interleaved webpages, image-text pairs, video-text pairs) outperforms any single source; the interleaved webpage data (MultiModal MassiveWeb) is particularly important for few-shot ability
 
 ## Training

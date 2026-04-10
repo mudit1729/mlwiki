@@ -41,7 +41,7 @@ GaussianFormer introduces a fundamentally different scene representation for 3D 
 │                          │                                        │
 │  ┌────────────────────┐  │                                        │
 │  │ Learnable Gaussian  │  │                                        │
-│  │ Queries (144K)      │  │                                        │
+│  │ Queries (20K)       │  │                                        │
 │  │ (mean, cov, sem)    │  │                                        │
 │  └─────────┬──────────┘  │                                        │
 │            │              │                                        │
@@ -102,7 +102,7 @@ GaussianFormer also achieves 18.1% mAP on 3D detection as a byproduct. The Gauss
 
 - ~2% mIoU gap vs. dense methods (SurroundOcc, OccFormer) -- the efficiency comes at an accuracy cost
 - Gaussian initialization is learned but static; adaptive initialization based on scene complexity could improve results
-- Evaluation limited to Occ3D-nuScenes; generalization to other datasets and domains not demonstrated
+- Evaluated primarily on nuScenes and KITTI-360; generalization to other domains not demonstrated
 - The splatting operation assumes Gaussians have limited spatial extent; very large objects may require many Gaussians
 
 ## Connections

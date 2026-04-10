@@ -21,8 +21,9 @@ The work comes from Fudan University and NVIDIA Research, and demonstrates stron
 
 1. **CRF-modulated depth estimation**: Introduces conditional random field (CRF) potentials into LSS-style depth prediction, capturing pairwise relationships between neighboring pixels for geometrically consistent depth maps
 2. **Long-term temporal aggregation**: Replaces sliding-window multi-frame fusion with a recurrent mechanism that efficiently aggregates temporal information across arbitrarily long sequences
-3. **Scalable dense BEV pipeline**: Demonstrates that dense BEV frameworks scale effectively with stronger backbones, achieving SOTA results with ViT-Adapter-L
-4. **Comprehensive benchmarking**: Thorough comparison against both dense (BEVDet, BEVDepth, SOLOFusion) and sparse (DETR3D, PETR, StreamPETR) paradigms
+3. **Two-stage object decoder**: Combines perspective-based techniques with CRF-modulated depth embedding in a two-stage detection head, going beyond simple CenterPoint-style heatmap prediction
+4. **Scalable dense BEV pipeline**: Demonstrates that dense BEV frameworks scale effectively with stronger backbones, achieving SOTA results with ViT-Adapter-L
+5. **Comprehensive benchmarking**: Thorough comparison against both dense (BEVDet, BEVDepth, SOLOFusion) and sparse (DETR3D, PETR, StreamPETR) paradigms
 
 ## Architecture / Method
 
@@ -66,8 +67,9 @@ The work comes from Fudan University and NVIDIA Research, and demonstrates stron
 │  └─────────────────────┼────────┘                          │
 │                        ▼                                   │
 │  ┌──────────────────────────────┐                          │
-│  │  CenterPoint Detection Head  │                          │
-│  │  (heatmap + attribute reg.)  │                          │
+│  │  Two-Stage Object Decoder    │                          │
+│  │  (perspective + CRF depth    │                          │
+│  │   embedding)                 │                          │
 │  └──────────────────────────────┘                          │
 └────────────────────────────────────────────────────────────┘
 ```
@@ -78,7 +80,7 @@ BEVNeXt follows the standard dense BEV pipeline (image backbone -> depth estimat
 
 **Recurrent Temporal Aggregation**: Instead of concatenating BEV features from a fixed window of past frames (typical 3-8 frames), BEVNeXt maintains a hidden state that is updated recurrently. This allows the model to aggregate information from the entire driving sequence while keeping memory costs constant. The recurrence uses a gated update mechanism similar to GRU/LSTM cells but operating on BEV feature maps.
 
-The detection head uses CenterPoint-style center heatmap prediction with attribute regression.
+The detection head is a two-stage object decoder that combines perspective-based techniques with CRF-modulated depth embedding, rather than a simple single-stage heatmap head.
 
 ## Results
 

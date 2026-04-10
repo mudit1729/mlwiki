@@ -24,7 +24,7 @@ arxiv_id: "2412.12725"
 
 RaCFormer by Chu et al. (USTC, CVPR 2025) addresses a fundamental problem in radar-camera fusion for 3D object detection: the image-to-BEV transformation introduces depth estimation errors that misalign visual content, making naive BEV-level fusion of radar and camera features unreliable. The core insight is that query-based architectures can bypass this problem by adaptively sampling instance-relevant features from both the BEV and the original image view, allowing the model to fall back to perspective-view features when BEV projection is inaccurate.
 
-Radar is attractive as a replacement for expensive LiDAR because it provides direct distance and velocity measurements at low cost and works in all weather conditions. However, radar point clouds are sparse and noisy, making fusion with camera challenging. RaCFormer achieves 64.9% mAP and 70.2% NDS on nuScenes, establishing state-of-the-art radar-camera fusion performance that approaches LiDAR-based systems at a fraction of the sensor cost.
+Radar is attractive as a replacement for expensive LiDAR because it provides direct distance and velocity measurements at low cost and works in all weather conditions. However, radar point clouds are sparse and noisy, making fusion with camera challenging. RaCFormer achieves 64.9% mAP and 70.2% NDS on the nuScenes test set (with VoVNet-99 backbone), establishing state-of-the-art radar-camera fusion performance that approaches LiDAR-based systems at a fraction of the sensor cost.
 
 ## Key Contributions
 
@@ -106,17 +106,25 @@ The framework consists of several key modules:
 
 ## Results
 
-### nuScenes Validation Set
+### nuScenes Validation Set (ResNet-50, 256×704)
 
 | Method | Sensors | mAP | NDS |
 |---|---|---|---|
-| BEVFormer (camera-only) | C | 41.6% | 51.7% |
-| CRN (radar-camera) | R+C | 57.5% | 62.4% |
-| RCBEVDet++ (radar-camera) | R+C | 60.1% | 66.1% |
-| **RaCFormer** (radar-camera) | **R+C** | **64.9%** | **70.2%** |
-| CenterPoint (LiDAR) | L | 60.3% | 67.3% |
+| HyDRa (radar-camera) | R+C | 49.4% | 58.5% |
+| **RaCFormer** (radar-camera) | **R+C** | **54.1%** | **61.3%** |
 
-RaCFormer's radar-camera fusion surpasses LiDAR-only baselines while using sensors that cost a fraction of the price. It also achieves SOTA on the View-of-Delft (VoD) dataset.
+RaCFormer outperforms HyDRa by 4.7% mAP and 2.8% NDS on the validation set.
+
+### nuScenes Test Set (VoVNet-99, extended temporal context)
+
+| Method | Sensors | mAP | NDS |
+|---|---|---|---|
+| CenterPoint (LiDAR) | L | 60.3% | 67.3% |
+| VoxelNeXt (LiDAR) | L | 64.5% | — |
+| HVDetFusion (radar-camera) | R+C | 60.9% | 67.4% |
+| **RaCFormer** (radar-camera) | **R+C** | **64.9%** | **70.2%** |
+
+RaCFormer's radar-camera fusion surpasses all LiDAR-only baselines on the test set. It also achieves SOTA on the View-of-Delft (VoD) dataset (54.44% mAP full area; 78.57% mAP in the region of interest, an 8.77% improvement over RCBEVDet).
 
 ![Detection examples across conditions](https://paper-assets.alphaxiv.org/figures/2412.12725v2/img-5.jpeg)
 

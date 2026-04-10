@@ -10,7 +10,7 @@ tags:
   - robotics
   - video-prediction
   - foundation-model
-  - inverse-dynamics
+  - diffusion-policy
 citations: 139
 arxiv_id: "2412.14803"
 ---
@@ -21,16 +21,16 @@ arxiv_id: "2412.14803"
 
 ## Overview
 
-Video Prediction Policy (VPP) by Wen et al. (RobotEra, ICML 2025 Spotlight) proposes that video diffusion models (VDMs) are not just generators of future frames but also powerful visual encoders whose internal representations encode both current scene understanding and future dynamics prediction. Rather than using VDMs to generate future frames and then planning on them, VPP extracts the predictive visual representations from a single forward pass through a fine-tuned VDM and feeds them into an implicit inverse dynamics model to predict robot actions.
+Video Prediction Policy (VPP) by Wen et al. (RobotEra, ICML 2025 Spotlight) proposes that video diffusion models (VDMs) are not just generators of future frames but also powerful visual encoders whose internal representations encode both current scene understanding and future dynamics prediction. Rather than using VDMs to generate future frames and then planning on them, VPP extracts the predictive visual representations from a single forward pass through a fine-tuned VDM and feeds them into a Diffusion Policy head (Diffusion Transformer) to predict robot actions.
 
-This reinterpretation of video diffusion models as predictive encoders (rather than generators) yields a simple but effective robot policy: fine-tune a video foundation model on robot data, extract internal representations, and learn a lightweight action head. VPP achieves an 18.6% relative improvement on the CALVIN ABC-D generalization benchmark (4.33 vs. 3.06 prior SOTA) and a 31.6% success rate increase on complex real-world dexterous manipulation tasks.
+This reinterpretation of video diffusion models as predictive encoders (rather than generators) yields a simple but effective robot policy: fine-tune a video foundation model on robot data, extract internal representations, and learn a lightweight action head. VPP achieves a 41.5% relative improvement on the CALVIN ABC-D generalization benchmark (4.33 vs. 3.06 prior SOTA) and a 31.6% success rate increase on complex real-world dexterous manipulation tasks.
 
 ## Key Contributions
 
 - **Video diffusion models as predictive visual encoders**: Demonstrates that the internal representations of VDMs inherently encode future dynamics, making them powerful visual backbones for robot policies without requiring explicit future frame generation
-- **Two-stage training pipeline**: Stage 1 fine-tunes a video foundation model on robot datasets + internet human manipulation data; Stage 2 trains an inverse dynamics action head conditioned on the VDM's internal representations
-- **Generalist robot policy**: A single model handles multiple robot embodiments (Panda arm, XHand dexterous hand) and diverse manipulation tasks with language conditioning
-- **Strong empirical results**: 18.6% improvement on CALVIN ABC-D, 10.8% absolute improvement on MetaWorld, 31.6% real-world dexterous improvement
+- **Two-stage training pipeline**: Stage 1 fine-tunes a video foundation model on robot datasets + internet human manipulation data; Stage 2 trains a Diffusion Policy action head (Diffusion Transformer) conditioned on the VDM's internal representations
+- **Generalist robot policy**: A single model handles multiple robot embodiments (Franka Panda arm, Xarm dexterous hand) and diverse manipulation tasks with language conditioning
+- **Strong empirical results**: 41.5% relative improvement on CALVIN ABC-D, 10.8% absolute improvement on MetaWorld, 31.6% real-world dexterous improvement
 
 ## Architecture
 
@@ -63,7 +63,7 @@ This reinterpretation of video diffusion models as predictive encoders (rather t
 │              │                                            │
 │              ▼                                            │
 │  ┌────────────────────────┐                               │
-│  │  Inverse Dynamics Head  │  Lightweight action predictor │
+│  │  Diffusion Policy Head  │  Diffusion Transformer        │
 │  │  (trained on demos)     │                              │
 │  └───────────┬────────────┘                               │
 │              ▼                                            │
@@ -79,7 +79,7 @@ This reinterpretation of video diffusion models as predictive encoders (rather t
 
 **Stage 1 -- Video Foundation Model Fine-tuning:** A pre-trained video diffusion model (e.g., based on Stable Video Diffusion) is fine-tuned on a mixture of robot demonstration videos and internet human manipulation videos. The fine-tuning adapts the model's learned visual dynamics to the robot manipulation domain. The key insight is that this fine-tuning process causes the model's internal representations to encode task-relevant dynamics (what will happen next) rather than just static scene features.
 
-**Stage 2 -- Inverse Dynamics Action Head:** Given a current observation, a single forward pass through the fine-tuned VDM produces internal feature representations at multiple timesteps and layers. These representations -- which encode predicted future visual states -- are extracted and fed into a lightweight action prediction network (the inverse dynamics model). The action head is trained on paired (observation, action) data from robot demonstrations.
+**Stage 2 -- Diffusion Policy Action Head:** Given a current observation, a single forward pass through the fine-tuned VDM produces internal feature representations at multiple up-sampling layers. These representations -- which encode predicted future visual states -- are aggregated and compressed by a Video Former module (learnable query tokens processed through spatial-temporal attention), then fed into a Diffusion Policy head (Diffusion Transformer) that denoises actions conditioned on the compressed representations. The action head is trained on paired (observation, action) data from robot demonstrations.
 
 The critical design choice is using the VDM's internal representations rather than generated frames. Generated frames introduce compounding errors and are expensive to produce; internal representations capture the same predictive information in a compact, differentiable form suitable for policy learning.
 
@@ -97,7 +97,7 @@ The critical design choice is using the VDM's internal representations rather th
 |---|---|
 | SuSIE | 2.48 |
 | GR-1 | 3.06 |
-| **VPP** | **4.33** (+18.6% relative) |
+| **VPP** | **4.33** (+41.5% relative) |
 
 ### MetaWorld Multi-task
 
@@ -109,7 +109,7 @@ The critical design choice is using the VDM's internal representations rather th
 
 ### Real-world Dexterous Manipulation (XHand)
 
-VPP achieves a 31.6% success rate increase over baselines on complex real-world dexterous manipulation tasks with the XHand robotic hand, demonstrating that video diffusion representations transfer effectively to high-DoF control.
+VPP achieves a 31.6% success rate increase over baselines on complex real-world dexterous manipulation tasks with a dexterous hand (Xarm), demonstrating that video diffusion representations transfer effectively to high-DoF control.
 
 ![Generalization to novel objects](https://paper-assets.alphaxiv.org/figures/2412.14803v2/x6.png)
 
@@ -118,7 +118,7 @@ VPP achieves a 31.6% success rate increase over baselines on complex real-world 
 - Requires fine-tuning a large video diffusion model, which is computationally expensive (Stage 1)
 - Action frequency is limited by the forward pass speed of the VDM backbone
 - Relies on quality of internet manipulation data for generalization; domain gap between internet videos and robot workspace may limit transfer
-- Currently uses implicit inverse dynamics rather than explicit planning, which may limit long-horizon task performance
+- Currently predicts actions via a Diffusion Policy head rather than explicit planning, which may limit long-horizon task performance
 
 ## Connections
 

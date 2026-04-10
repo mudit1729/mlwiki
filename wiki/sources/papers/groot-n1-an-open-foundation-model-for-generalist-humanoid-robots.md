@@ -15,14 +15,14 @@ arxiv_id: "2503.14734"
 
 GR00T N1 addresses the challenge of creating general-purpose humanoid robots through an innovative "data pyramid" approach. Rather than relying solely on expensive real-world data collection, the model integrates heterogeneous data sources including web data, human videos, synthetic simulations, and actual robot trajectories. This hierarchical data strategy enables training at scale while keeping real-world data requirements manageable.
 
-The architecture uses a dual-system design that separates reasoning from motor control. A vision-language module (System 2) based on Eagle-2 VLM handles high-level scene understanding and task reasoning at 10Hz, while a diffusion transformer (System 1) generates continuous motor commands at 120Hz. These two systems communicate through cross-attention mechanisms with embodiment-specific encoders, allowing the model to adapt to different robot morphologies.
+The architecture uses a dual-system design that separates reasoning from motor control. A vision-language module (System 2) based on Eagle-2 VLM handles high-level scene understanding and task reasoning at 10Hz, while a flow-matching diffusion transformer (System 1) generates 16-action chunks at 120Hz. These two systems communicate through cross-attention mechanisms with embodiment-specific encoders, allowing the model to adapt to different robot morphologies.
 
 A notable contribution is the concept of "neural trajectories" -- AI-generated videos augmented with pseudo-action labels via learned action prediction and inverse dynamics models (LAPA and IDM). These synthetic trajectories consistently improve real-world performance by 4-9%, effectively bridging the gap between cheap video data and expensive teleoperated demonstrations.
 
 ## Key Contributions
 
 - **Data pyramid framework:** Hierarchical integration of web/human video (base), synthetic simulation (middle), and real robot trajectories (peak) for scalable training
-- **Dual-system architecture:** Separation of slow reasoning (VLM at 10Hz) from fast action generation (diffusion transformer at 120Hz) via cross-attention
+- **Dual-system architecture:** Separation of slow reasoning (VLM at 10Hz) from fast action generation (flow-matching diffusion transformer at 120Hz) via cross-attention
 - **Neural trajectory augmentation:** AI-generated videos with pseudo-action labels that improve task success by 4-9% over baselines without this data
 - **Open foundation model:** Released as an open model enabling the broader robotics community to build on generalist humanoid control
 - **Cross-embodiment design:** Embodiment-specific encoders allow the same architecture to be deployed on different robot platforms
@@ -61,7 +61,7 @@ A notable contribution is the concept of "neural trajectories" -- AI-generated v
 │  │ Propriocep.  │───────────────►│  System 1 (120 Hz)   │   │
 │  │ State        │  Embodiment-   │  Diffusion            │   │
 │  │ (joints,     │  Specific      │  Transformer (DiT)    │──►│ Actions
-│  │  forces)     │  Encoders      │  Iterative Denoising  │   │
+│  │  forces)     │  Encoders      │  Flow Matching        │   │
 │  └─────────────┘                 └──────────────────────┘   │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -72,7 +72,7 @@ The data pyramid organizes training data by cost and fidelity: internet-scale vi
 
 ![Dual-System Architecture](https://paper-assets.alphaxiv.org/figures/2503.14734v2/x2.png)
 
-System 2 (Vision-Language) processes camera images and language instructions through Eagle-2 VLM, producing semantic embeddings at 10Hz. System 1 (Diffusion Transformer) consumes these embeddings alongside proprioceptive state and generates smooth action sequences at 120Hz through iterative denoising.
+System 2 (Vision-Language) processes camera images and language instructions through Eagle-2 VLM, producing semantic embeddings at 10Hz. System 1 (Flow-Matching DiT) consumes these embeddings alongside proprioceptive state and generates 16-action chunks at 120Hz via flow matching.
 
 ![Detailed Architecture](https://paper-assets.alphaxiv.org/figures/2503.14734v2/x3.png)
 

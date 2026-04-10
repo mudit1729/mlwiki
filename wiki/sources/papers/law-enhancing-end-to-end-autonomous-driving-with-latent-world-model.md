@@ -27,10 +27,11 @@ The key insight is that a model that can predict what will happen next in latent
 
 ## Key Contributions
 
-- **Self-supervised latent world model**: A dynamics model in latent space that predicts future scene states, trained entirely self-supervised without requiring ground-truth future labels
-- **Auxiliary training objective**: The world model serves as a representation learning mechanism during training; it can be discarded at inference time, adding zero computational overhead to the driving policy
-- **Multi-benchmark SOTA**: Achieves state-of-the-art results on nuScenes (planning metrics), NAVSIM (PDMS), and CARLA (driving score), demonstrating broad applicability
-- **Latent dynamics learning**: The latent world model captures temporal dynamics, agent interactions, and environmental constraints in a compressed space, providing richer gradients for the planning module
+- **Self-supervised latent world model**: A dynamics model in latent space that predicts next-frame visual features, trained entirely self-supervised using MSE against actual future latents -- no ground-truth future labels required
+- **Action-aware future prediction**: Ego vehicle trajectories are explicitly incorporated into the latent world model input (A_t = MLP(Concat(V_t, e_{W_t}))), enabling the model to account for the ego's own actions when predicting future scene states
+- **Universal framework compatibility**: LAW is compatible with both perception-free (perspective-view latents) and perception-based (BEV latents) end-to-end driving architectures
+- **Auxiliary training objective**: The world model serves as a representation learning mechanism during training; it is discarded at inference time, adding zero computational overhead to the driving policy
+- **Multi-benchmark SOTA**: Achieves state-of-the-art results on nuScenes (planning metrics), NAVSIM (PDMS: 84.6), and CARLA (driving score: 70.1), demonstrating broad applicability
 
 ## Architecture / Method
 
@@ -44,73 +45,78 @@ The key insight is that a model that can predict what will happen next in latent
 │  └───────┬────────┘                                     │
 │          ▼                                              │
 │  ┌────────────────┐                                     │
-│  │  BEV Encoder    │  (spatial cross-attention,          │
-│  │  (BEVFormer)    │   camera intrinsics/extrinsics)     │
+│  │ Image Backbone  │  (Swin-T / ResNet-34)               │
+│  │ + View Attn     │  → Visual Latents V_t               │
 │  └───────┬────────┘                                     │
-│          ▼                                              │
-│     BEV Features (t)                                    │
 │          │                                              │
 │     ┌────┴─────────────────────┐                        │
 │     ▼                          ▼                        │
 │  ┌──────────────┐    ┌───────────────────┐              │
-│  │ Planning Head │    │ Latent Encoder E  │              │
-│  │ (waypoints)   │    │ BEV ──► z_t       │              │
-│  └──────┬───────┘    └────────┬──────────┘              │
-│         │                     ▼                         │
-│         │            ┌───────────────────┐              │
-│         │            │ Latent World Model│              │
-│         │            │ z_{t+1} = f(z_t,  │              │
-│         │            │            a_t)   │  (transformer)│
+│  │ Waypoint Head │    │ Action-Aware      │              │
+│  │ W_t (traj)    │───►│ Latents           │              │
+│  └──────┬───────┘    │ A_t=MLP(V_t,e_Wt) │              │
 │         │            └────────┬──────────┘              │
 │         │                     ▼                         │
 │         │            ┌───────────────────┐              │
-│         │            │  Prediction Loss   │              │
-│         │            │ ||z_{t+1}^pred -   │              │
-│         │            │  sg(z_{t+1}^real)||│ ◄─ stop-grad │
-│         │            └───────────────────┘   on target   │
+│         │            │ Latent World Model│              │
+│         │            │ (Transformer      │              │
+│         │            │  blocks)          │              │
+│         │            │ V̂_{t+1}=LWM(A_t) │              │
+│         │            └────────┬──────────┘              │
+│         │                     ▼                         │
+│         │            ┌───────────────────┐              │
+│         │            │  L_latent = MSE   │              │
+│         │            │ (V̂_{t+1}, V_{t+1})│              │
+│         │            └───────────────────┘              │
 │         ▼                                               │
 │  ┌──────────────┐                                       │
-│  │ Planning Loss │   L = L_plan + L_latent (+ L_percep) │
-│  │ (L2 waypts)   │                                       │
+│  │ L_waypoint   │  L_total = L_waypoint + L_latent      │
+│  │ (traj loss)  │           (+ L_percep if perc-based)  │
 │  └──────────────┘                                       │
 │                                                         │
-│  Inference: only BEV Encoder + Planning Head (no WM)    │
+│  Inference: only Backbone + Waypoint Head (no LWM)      │
 └─────────────────────────────────────────────────────────┘
 ```
 
-LAW augments a standard end-to-end driving architecture with a latent world model branch:
+LAW augments a standard end-to-end driving architecture with a latent world model branch. Two variants are described:
 
-1. **Scene Encoder**: Multi-camera images are encoded into BEV features using a standard BEV encoder (e.g., BEVFormer-style with spatial cross-attention). The BEV features at each timestep form the basis for both planning and world modeling.
+**Perception-Free Variant** (nuScenes, NAVSIM, CARLA):
+- Image backbone (Swin-Transformer-Tiny for nuScenes; ResNet-34 for NAVSIM and CARLA) processes multi-view camera images into perspective-view latent features V_t via a view attention mechanism
+- Learnable waypoint queries predict the ego vehicle's future trajectory W_t
+- Action-aware latents are formed: A_t = MLP(Concat(V_t, e_{w_t})), fusing visual features with the flattened trajectory embedding
+- Stacked transformer blocks (the latent world model) predict the next frame's visual features: V̂_{t+1} = LWM(A_t)
+- Latent loss: L_latent = MSE(V̂_{t+1}, V_{t+1})
 
-2. **Latent Space Construction**: BEV features are projected into a lower-dimensional latent space z_t via a learned encoder E. This latent space is designed to be compact yet information-rich, capturing the essential state of the driving scene.
+**Perception-Based Variant**:
+- BEV queries project image features into a flattened BEV feature map, supporting intermediate perception tasks (motion prediction, map construction)
+- Same latent world model is applied on top of BEV features
+- Training on nuScenes uses a two-stage approach: initial perception training, then joint fine-tuning
 
-3. **Latent World Model**: A temporal dynamics model predicts future latent states: z_{t+1} = f(z_t, a_t), where a_t is the ego action at time t. The dynamics model is implemented as a transformer that attends over the current latent state and action sequence to predict the next latent state. The prediction is trained with a contrastive or reconstruction loss against the actual future latent state z_{t+1} = E(BEV_{t+1}).
-
-4. **Planning Head**: The standard planning module takes the enriched BEV features (which have been shaped by the world model's training signal) and outputs future waypoints. At inference time, only the scene encoder and planning head are used.
-
-**Training**: Multi-task learning with three losses: (1) planning loss (L2 on waypoints), (2) latent prediction loss (MSE or contrastive between predicted and actual future latent states), (3) optional perception losses (3D detection, map segmentation). The latent prediction loss provides a self-supervised signal that does not require any additional annotations.
+**Training**: Total loss = L_waypoint + L_latent (+ perception losses for perception-based variants). The latent prediction loss is purely self-supervised, requiring no additional annotations beyond the ego trajectory.
 
 **Key Design Choices**:
-- Latent space dimensionality is kept small (e.g., 256-512) to prevent the world model from memorizing rather than understanding
-- Multi-step prediction (predicting 2-4 steps ahead) is more effective than single-step prediction
-- Stop-gradient on the target latent state prevents representational collapse
+- Optimal prediction horizon is 1.5 seconds (validated through ablation); shorter windows are insufficient, longer windows degrade performance
+- Explicitly conditioning on the ego trajectory (action-aware latents) is crucial; using visual latents alone provides substantially less benefit
+- Transformer blocks for the latent world model significantly outperform linear projections and MLP-only architectures
 
 ## Results
 
-| Benchmark | LAW | Previous SOTA | Metric |
-|-----------|-----|---------------|--------|
-| nuScenes | 0.28m | 0.31m (VAD) | L2 @ 3s |
-| nuScenes | 0.18% | 0.22% (VAD) | Collision Rate |
-| NAVSIM | 87.5 | 85.2 | PDMS |
-| CARLA | 78.3 | 71.8 | Driving Score |
+| Benchmark | Setting | LAW | Previous SOTA | Metric |
+|-----------|---------|-----|---------------|--------|
+| nuScenes | Perception-based | 0.49m | 0.72m (VAD), 1.03m (UniAD) | Avg L2 |
+| nuScenes | Perception-based | 0.19% | — | Avg Collision Rate |
+| nuScenes | Perception-free | 0.61m | 0.71m (w/o LAW) | Avg L2 |
+| nuScenes | Perception-free | 0.30% | 0.41% (w/o LAW) | Avg Collision Rate |
+| NAVSIM | Perception-free | 84.6 | 84.0 (PARA-Drive, TransFuser) | PDMS |
+| CARLA | Perception-free | 70.1 | 65.9 (DriveAdapter), 65.0 (ThinkTwice) | Driving Score |
 
-- **nuScenes**: 0.28m average L2 displacement at 3s horizon (previous SOTA: 0.31m), 18% reduction in collision rate compared to VAD
-- **NAVSIM**: 87.5 PDMS, competitive with concurrent methods
-- **CARLA**: 78.3 driving score in closed-loop evaluation, +6.5 over previous best, demonstrating strong closed-loop transfer
-- **Ablation -- world model importance**: Removing the latent world model branch degrades performance by 8-12% across all benchmarks, confirming its value as a representation learning mechanism
-- Multi-step prediction (3 steps ahead) outperforms single-step by ~3%, indicating that longer-horizon dynamics modeling provides richer training signal
+- **nuScenes (perception-based)**: 0.49m average L2 (vs. 0.72m VAD, 1.03m UniAD), 0.19% average collision rate
+- **nuScenes (perception-free)**: 0.61m average L2 and 0.30% collision rate, compared to 0.71m / 0.41% without the latent world model
+- **NAVSIM**: 84.6 PDMS, surpassing PARA-Drive and TransFuser (both 84.0)
+- **CARLA**: 70.1 driving score in closed-loop evaluation, vs. 65.9 (DriveAdapter) and 65.0 (ThinkTwice)
+- **Ablation -- world model importance**: Adding the latent task reduces nuScenes perception-free L2 from 0.71m to 0.61m and collision rate from 0.41% to 0.30%
+- **Ablation -- prediction horizon**: A 1.5-second window is optimal; shorter windows are insufficient and longer windows degrade performance
 - The latent world model adds zero inference latency since it is discarded after training
-- Visualization shows that the latent space learns meaningful structure: similar driving scenarios cluster together, and latent trajectories reflect physical plausibility
 
 ## Limitations & Open Questions
 

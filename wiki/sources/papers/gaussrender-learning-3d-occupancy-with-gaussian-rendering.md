@@ -70,7 +70,7 @@ GaussRender is architecture-agnostic, requiring no modifications to the base occ
 │         │  │  Differentiable Gaussian Splatting  │                  │
 │         │  │  from virtual cameras:              │                  │
 │         │  │  - Fixed BEV camera (top-down)      │                  │
-│         │  │  - Dynamic cameras (maximize info)  │                  │
+│         │  │  - Dynamic cameras (Elevated+Around) │                  │
 │         │  └───────────────┬───────────────────┘                  │
 │         │                  │                                      │
 │         │         2D rendered semantic maps                        │
@@ -92,7 +92,7 @@ The GaussRender module operates as follows:
 
 **Voxel Gaussianization:** Each occupied voxel in the predicted 3D grid is converted into a spherical Gaussian primitive. The Gaussian center is placed at the voxel center, the covariance is set proportional to voxel size (spherical), and opacity is predicted by the base model or learned. Semantic class labels are assigned to each Gaussian based on the voxel's predicted class.
 
-**Camera Placement:** To render the Gaussians into 2D, virtual cameras are placed at strategic viewpoints. The system uses: (1) a fixed Bird's-Eye View camera looking down, which captures the spatial layout of the scene; and (2) dynamically positioned cameras that are placed to maximize information about regions of disagreement between prediction and ground truth.
+**Camera Placement:** To render the Gaussians into 2D, virtual cameras are placed at strategic viewpoints. The system uses: (1) a fixed Bird's-Eye View orthographic camera looking down, which captures the spatial layout of the scene; and (2) dynamic virtual cameras placed using an "Elevated + Around" strategy — cameras are lifted along the z-axis and translated randomly in the xy-plane, covering both visible and occluded regions from varied perspectives.
 
 **Gaussian Rendering + Loss:** Both the predicted voxel grid and the ground-truth voxel grid are Gaussianized and rendered into 2D semantic maps from each camera viewpoint using a fast differentiable Gaussian splatting rasterizer. The loss penalizes pixel-wise disagreements between the predicted and ground-truth rendered maps. Because Gaussian splatting naturally handles occlusion through depth-sorted alpha compositing, the loss correctly accounts for visibility.
 

@@ -83,7 +83,7 @@ SparseOcc consists of two main stages:
 
 **Temporal fusion.** Multi-frame history is incorporated by warping and aggregating sparse voxel features from previous timesteps using ego-motion compensation, providing velocity and temporal context without requiring dense 4D volumes.
 
-**Training.** The model is trained with a combination of binary cross-entropy for voxel occupancy (at each pruning stage), cross-entropy for semantic classification, and dice loss for mask prediction. The coarse-to-fine pruning is supervised at multiple scales to ensure geometry is preserved through progressive refinement.
+**Training.** The model is trained with a combination of binary cross-entropy (BCE) for voxel occupancy at each pruning stage (with class weighting for imbalance), and focal loss for semantic classification plus dice loss and BCE mask loss for mask prediction in the Mask Transformer stage. Hungarian matching associates ground-truth segments with predictions. The coarse-to-fine pruning is supervised at multiple scales to ensure geometry is preserved through progressive refinement.
 
 ## RayIoU Metric
 

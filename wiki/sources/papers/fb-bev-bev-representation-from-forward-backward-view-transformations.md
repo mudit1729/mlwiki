@@ -95,7 +95,7 @@ Task-specific heads (a DETR-style head for 3D detection, convolutional decoder f
 
 FB-BEV was evaluated on the nuScenes dataset for both 3D object detection and BEV map segmentation.
 
-### 3D Object Detection (nuScenes val)
+### 3D Object Detection (nuScenes test)
 
 | Method | Backbone | NDS | mAP |
 |--------|----------|-----|-----|

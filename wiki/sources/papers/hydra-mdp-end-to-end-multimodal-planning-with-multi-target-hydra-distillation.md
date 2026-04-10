@@ -24,7 +24,7 @@ Hydra-MDP won first place in the NAVSIM challenge, achieving 86.5 PDM Score with
 ## Key Contributions
 
 - **Multi-target Hydra distillation:** Separate prediction heads for each closed-loop metric (NC, DAC, TTC, Comfort, EP), avoiding information loss from score aggregation
-- **Planning vocabulary via K-means clustering:** Discretizes continuous trajectory space into ~700K expert trajectory clusters, converting planning into a scoring/selection problem
+- **Planning vocabulary via K-means clustering:** Discretizes continuous trajectory space into 4,096–8,192 representative trajectory clusters (selected from 700,000 expert trajectories via K-means), converting planning into a scoring/selection problem
 - **Offline simulation for teacher labels:** Runs ground-truth-perception simulation for every trajectory candidate in the vocabulary, generating per-metric supervision without online simulation
 - **Elimination of non-differentiable post-processing:** The neural network directly learns the relationship between sensor observations and safety metrics, enabling end-to-end gradient flow
 - **Scaling behavior:** Demonstrates consistent improvements with larger vision backbones and planning vocabularies, contradicting prior claims of diminishing returns
@@ -49,7 +49,7 @@ Hydra-MDP won first place in the NAVSIM challenge, achieving 86.5 PDM Score with
 │                 ▼                                                 │
 │  ┌──────────────────────────────────────────────────────────┐   │
 │  │   Trajectory Scoring (over Planning Vocabulary)           │   │
-│  │   ~700K candidate trajectories (K-means of expert data)   │   │
+│  │   4,096–8,192 candidates (K-means of 700K expert trajs)   │   │
 │  │                                                           │   │
 │  │   ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐ ┌────────┐│   │
 │  │   │NC Head  │ │DAC Head│ │TTC Head│ │C Head  │ │EP Head ││   │
@@ -83,7 +83,7 @@ Hydra-MDP builds on the TransFuser architecture for sensor fusion. The perceptio
 
 ### Planning Vocabulary
 
-Rather than predicting continuous trajectories directly, Hydra-MDP discretizes the action space using a **planning vocabulary** created by K-means clustering of ~700,000 expert trajectories from the training dataset. Each trajectory in the vocabulary consists of 40 timesteps of (x, y, heading) coordinates over a 4-second planning horizon. At inference, the model scores every trajectory in the vocabulary and selects the highest-scoring one.
+Rather than predicting continuous trajectories directly, Hydra-MDP discretizes the action space using a **planning vocabulary** created by K-means clustering of ~700,000 expert trajectories from the training dataset down to 4,096–8,192 representative trajectories (V4096 and V8192 variants). Each trajectory in the vocabulary consists of 40 timesteps of (x, y, heading) coordinates over a 4-second planning horizon. At inference, the model scores every trajectory in the vocabulary and selects the highest-scoring one.
 
 ### Multi-Target Hydra Heads
 
@@ -117,7 +117,7 @@ Hydra-MDP achieved first place in the NAVSIM challenge with state-of-the-art per
 | **Hydra-MDP (best single)** | **86.5** | **97.9** | **96.1** | -- | -- | -- |
 | **Hydra-MDP (large backbone)** | **91.0** | -- | -- | -- | -- | -- |
 | TransFuser baseline | -- | -- | -- | -- | -- | -- |
-| Single aggregated score distillation | degraded | -- | -- | -- | -- | -- |
+| Single aggregated score distillation | 80.2 | -- | -- | -- | -- | -- |
 
 Key findings from ablations:
 

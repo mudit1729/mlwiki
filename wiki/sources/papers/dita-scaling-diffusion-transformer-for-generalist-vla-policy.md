@@ -68,7 +68,7 @@ This architectural choice makes Dita inherently scalable: by scaling the diffusi
 │  │  [Δx, Δy, Δz, Δroll, Δpitch, Δyaw, gripper]       │     │
 │  └─────────────────────────────────────────────────────┘     │
 │                                                              │
-│  DDIM Sampling: 10-20 denoising steps at inference           │
+│  DDIM Sampling: 20 denoising steps at inference (T_eval=20)  │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -85,7 +85,7 @@ This architectural choice makes Dita inherently scalable: by scaling the diffusi
 - Causal Transformer (LLaMA-style architecture, trained from scratch)
 - In-context conditioning: language tokens + image features + diffusion timestep embeddings are concatenated and placed before the noisy action sequence in the input
 - Standard denoising diffusion objective with MSE loss
-- DDIM sampling reduces denoising steps to 10-20 for efficient inference
+- DDIM sampling with T_eval = 20 denoising steps at inference (versus 1000-step DDPM training schedule)
 
 **Training**: 100,000 steps, batch size 8,192, across 32 A100 GPUs. The model explicitly models action deltas and environmental nuances through fine-grained visual-action alignment.
 

@@ -17,7 +17,7 @@ arxiv_id: "2412.14058"
 
 RoboVLMs is a large-scale empirical study from Tsinghua University, ByteDance Research, and collaborators that systematically investigates the design principles for building effective Vision-Language-Action (VLA) models. While VLA models have emerged as a compelling paradigm for generalist robot control -- leveraging powerful vision-language representations from pretrained VLMs -- the field has lacked systematic understanding of which design choices actually matter. RoboVLMs addresses this gap through over 600 experiments spanning VLM backbone selection, VLA architectural formulations, action space design, and cross-embodiment data strategies.
 
-The study introduces the RoboVLMs framework, a flexible codebase supporting systematic comparison across eight VLM backbones (3B to 9B parameters, including Flamingo, LLaVA, Qwen-VL, KosMos, and PaliGemma) and four VLA formulations (one-step continuous, one-step discrete, interleaved-continuous history, and policy-head-continuous history). Evaluation covers both simulation benchmarks (CALVIN, SimplerEnv) and real-world experiments on a 7-DoF Kinova Gen3 robot with 100 tasks and 74K trajectories.
+The study introduces the RoboVLMs framework, a flexible codebase supporting systematic comparison across eight VLM backbones (3B to 9B parameters, including Flamingo, LLaVA, Qwen-VL, MoonDream, UForm, KosMos, and PaliGemma) and four VLA formulations (one-step continuous, one-step discrete, interleaved-continuous history, and policy-head-continuous history). Evaluation covers both simulation benchmarks (CALVIN, SimplerEnv) and real-world experiments on a 7-DoF Kinova Gen3 robot with 100 tasks and 74K trajectories.
 
 The key findings provide concrete, actionable guidance: KosMos and PaliGemma backbones significantly outperform alternatives due to comprehensive vision-language pretraining; continuous action spaces consistently beat discrete autoregressive tokenization, especially on longer-horizon tasks; policy-head architectures for history integration outperform interleaved approaches; and a post-training strategy (pretrain on cross-embodiment data, fine-tune on target domain) is the most effective way to leverage heterogeneous robot datasets. The best-performing RoboVLM configuration achieves state-of-the-art results with a 12.6% absolute gain on single tasks and 30.3% improvement on 5 consecutive tasks on the CALVIN unseen split, with emergent self-correction behavior in real-world settings.
 
@@ -68,7 +68,7 @@ The RoboVLMs framework supports four VLA formulations built on a common VLM back
 - *Interleaved-Continuous*: Multiple timesteps of images and proprioception are interleaved as tokens in the VLM's context window, with a continuous action head
 - *Policy-Head-Continuous*: Current observation is processed by the VLM, but a separate policy head (e.g., a small transformer or MLP) aggregates VLM features with historical embeddings to produce actions
 
-The system processes multi-camera RGB images and proprioceptive state, outputting 7-dimensional action vectors. Eight VLM backbones are tested: variants from the Flamingo family, LLaVA, Qwen-VL, KosMos, and PaliGemma.
+The system processes multi-camera RGB images and proprioceptive state, outputting 7-dimensional action vectors. Eight VLM backbones are tested: variants from the Flamingo family, LLaVA, Qwen-VL, MoonDream, UForm, KosMos, and PaliGemma.
 
 ### Key findings on architecture
 

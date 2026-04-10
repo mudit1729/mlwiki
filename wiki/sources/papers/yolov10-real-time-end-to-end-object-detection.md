@@ -47,7 +47,7 @@ YOLOv10 establishes a new Pareto frontier on COCO. Across six model scales (N/S/
 │  │  └───────────────────────────┘   │                    │
 │  │  + Large-kernel DWConv (7x7)     │  (L/X models)      │
 │  │  + Decoupled downsampling:       │                    │
-│  │    DWConv(s=2) → PWConv(1x1)     │                    │
+│  │    PWConv(1x1) → DWConv(s=2)     │                    │
 │  └──────────────┬───────────────────┘                     │
 │                 │                                         │
 │                 ▼                                         │
@@ -82,7 +82,7 @@ YOLOv10 builds on the standard YOLO architecture (CSPDarknet backbone + PAN neck
 
 **Backbone and neck**: The rank-guided block design replaces standard bottleneck blocks with Compact Inverted Blocks (CIB) in stages where the intrinsic rank of features is low (indicating redundancy). CIB uses an inverted bottleneck structure (expand channels -> depthwise 3x3 -> compress) that is more parameter-efficient. Larger models (L/X) additionally integrate large-kernel depthwise convolutions (7x7) to expand the effective receptive field without adding dense parameters.
 
-**Downsampling**: Standard YOLO downsampling uses stride-2 convolutions that simultaneously halve spatial resolution and double channels. YOLOv10 decouples this into two steps: (1) a depthwise conv with stride 2 for spatial reduction, (2) a pointwise 1x1 conv for channel adjustment. This avoids the information bottleneck of joint spatial-channel transformation.
+**Downsampling**: Standard YOLO downsampling uses stride-2 convolutions that simultaneously halve spatial resolution and double channels. YOLOv10 decouples this into two steps: (1) a pointwise 1x1 conv for channel adjustment, (2) a depthwise conv with stride 2 for spatial reduction. This avoids the information bottleneck of joint spatial-channel transformation.
 
 **Detection heads**: The classification head is made lightweight by using depthwise separable convolutions instead of standard 3x3 convolutions, since classification is less spatially sensitive than bounding box regression. The regression head retains standard convolutions for precise localization.
 

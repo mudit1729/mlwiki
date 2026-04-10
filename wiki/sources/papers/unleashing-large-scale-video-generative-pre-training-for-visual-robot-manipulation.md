@@ -95,7 +95,7 @@ The combined fine-tuning loss is:
 
 $$L_{\text{finetune}} = L_{\text{arm}} + L_{\text{gripper}} + L_{\text{video}}$$
 
-where $L_{\text{arm}}$ is MSE loss on arm joint actions, $L_{\text{gripper}}$ is binary cross-entropy on gripper open/close, and $L_{\text{video}}$ is the video prediction loss that serves as an auxiliary regularizer. Strategic masking during training maintains the autoregressive property of the transformer, ensuring that predictions at each timestep only attend to past context.
+where $L_{\text{arm}}$ is Smooth-L1 loss on arm joint actions, $L_{\text{gripper}}$ is binary cross-entropy on gripper open/close, and $L_{\text{video}}$ is the video prediction loss that serves as an auxiliary regularizer. Strategic masking during training maintains the autoregressive property of the transformer, ensuring that predictions at each timestep only attend to past context.
 
 ## Results
 

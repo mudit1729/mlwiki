@@ -87,11 +87,11 @@ The generation operates hierarchically:
 ![Method details](https://paper-assets.alphaxiv.org/figures/2310.06114v3/x7.png)
 
 **Training data.** UniSim is trained on a diverse mixture of datasets:
-- Robotic manipulation data (RT-1 style)
-- Internet video (human activities)
-- Indoor panorama scans (for view synthesis)
-- Driving logs
-- Simulated environments (Habitat, etc.)
+- Robotic manipulation data (Bridge Data, RT-1)
+- Human activity video (Ego4D, EPIC-KITCHENS, Something-Something V2)
+- Internet image-text data (LAION, ALIGN)
+- Indoor panorama scans (Matterport3D, for view synthesis)
+- Simulated environments (Habitat, Language Table)
 
 The model has 5.6 billion parameters and was trained on 512 TPU-v3 units for 20 days.
 

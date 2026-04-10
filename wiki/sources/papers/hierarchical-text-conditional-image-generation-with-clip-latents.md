@@ -114,7 +114,7 @@ where $P(z_i|y)$ is the prior and $P(x|z_i, y)$ is the decoder. The caption $y$ 
 ### Key Findings
 
 - **Diversity advantage:** Human evaluators prefer unCLIP over GLIDE for diversity (photo and caption similarity) while GLIDE is preferred slightly for photorealism. At higher guidance scales, GLIDE's diversity drops sharply while unCLIP maintains it.
-- **Prior comparison:** The diffusion prior achieves better FID than the autoregressive prior (lower by ~1 point on MS-COCO) while being substantially more compute-efficient (the AR prior requires hundreds of tokens per sample).
+- **Prior comparison:** The diffusion prior achieves better FID than the autoregressive prior on MS-COCO while being substantially more compute-efficient (the AR prior requires hundreds of tokens per sample).
 - **Ablation -- conditioning signals:** Conditioning the decoder on both the CLIP embedding and the text caption outperforms either alone; dropping the text caption has minimal impact (most information is in the CLIP embedding), but dropping the CLIP embedding significantly degrades quality.
 
 ## Limitations & Open Questions

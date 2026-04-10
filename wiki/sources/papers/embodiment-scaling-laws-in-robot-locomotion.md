@@ -77,7 +77,7 @@ Using GENBOT-1K -- a dataset of nearly 1,000 procedurally generated robots spann
 │  Stage 1: Expert Training (PPO)     Stage 2: Distillation       │
 │  ┌───────────────────────────┐      ┌──────────────────────┐    │
 │  │ Per-embodiment PPO experts│      │ Behavior Cloning     │    │
-│  │ Isaac Gym, 160 GPUs      │─────►│ 2B samples           │    │
+│  │ Isaac Lab, 160 RTX GPUs  │─────►│ 2B samples           │    │
 │  │ 2T+ simulation steps     │      │ ──► Single Universal  │    │
 │  └───────────────────────────┘      │     Policy           │    │
 │                                     └──────────────────────┘    │
@@ -93,8 +93,8 @@ Using GENBOT-1K -- a dataset of nearly 1,000 procedurally generated robots spann
 - **Universal decoder**: Generates joint-specific actions by concatenating a global representation with individual joint descriptions
 
 **Two-Stage Training:**
-1. **Expert training**: PPO across all embodiments in Isaac Gym (2+ trillion steps, 160 GPUs, 5 days)
-2. **Student distillation**: Behavior cloning from expert demonstrations (2 billion samples), producing a single universal policy
+1. **Expert training**: PPO across all embodiments in NVIDIA Isaac Lab, 4,096 parallel environments (2+ trillion steps, 160 RTX 4090/3090 GPUs, ~5 days), with domain randomization and performance-based curriculum
+2. **Student distillation**: Behavior cloning from expert demonstrations (2 billion samples), producing a single universal policy (1 week on a single NVIDIA H100 GPU)
 
 ## Results
 
@@ -110,7 +110,7 @@ Using GENBOT-1K -- a dataset of nearly 1,000 procedurally generated robots spann
 - **Real-world transfer**: Unitree Go2 achieves stable walking across grass, cobblestone, and gravel; Unitree H1 walks on flat surfaces -- all zero-shot from simulation
 - **Kinematic adaptation**: Policy learns stable limping gaits when robot has restricted knee range of motion, demonstrating morphological robustness
 
-**Computational requirements**: Full training takes ~1 week on NVIDIA H100 GPUs (160 GPUs for expert training).
+**Computational requirements**: Expert training takes ~5 days on 160 NVIDIA RTX 4090/3090 GPUs (NVIDIA Isaac Lab). Distillation takes ~1 week on a single NVIDIA H100 GPU.
 
 ## Limitations
 

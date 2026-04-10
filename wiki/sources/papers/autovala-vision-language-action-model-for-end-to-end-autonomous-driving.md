@@ -53,7 +53,7 @@ AutoVLA builds upon the Qwen2.5-VL-3B vision-language model as its backbone, cho
 │                   ▼                                        │
 │          ┌────────────────┐                                │
 │          │ Dual-Process   │                                │
-│          │ Router         │                                │
+│          │ Thinking Mode  │                                │
 │          └───┬────────┬───┘                                │
 │     Simple   │        │  Complex                           │
 │              ▼        ▼                                    │
@@ -81,13 +81,13 @@ The architecture extends Qwen2.5-VL-3B with action tokenization and dual-process
 
 1. **Visual encoding:** Multi-camera images are processed through the Qwen2.5 vision encoder
 2. **Language conditioning:** Navigation instructions and optional reasoning prompts are encoded as text tokens
-3. **Dual-process routing:** A learned router decides whether to engage slow thinking (chain-of-thought) or fast thinking (direct action) based on the input complexity
+3. **Dual-process thinking:** The model supports both slow thinking (chain-of-thought) and fast thinking (direct action) modes, trained via SFT on both modes and refined by GRPO to reduce unnecessary reasoning in straightforward scenarios
 4. **Action generation:** Physical actions are tokenized and generated autoregressively alongside language tokens
-5. **RL fine-tuning:** After supervised pretraining, reinforcement learning refines the policy to improve closed-loop driving
+5. **RL fine-tuning:** After SFT, Group Relative Policy Optimization (GRPO) refines the policy using a reward combining driving quality (PDMS for nuPlan, ADE for Waymo) minus a CoT length penalty to discourage unnecessary reasoning
 
 ![Action Tokenization](https://paper-assets.alphaxiv.org/figures/2506.13757v3/img-6.jpeg)
 
-The action tokenization maps continuous trajectory waypoints into discrete tokens compatible with the VLM vocabulary. This enables the model to generate both reasoning text and driving actions within the same autoregressive framework.
+The action tokenization maps continuous trajectory waypoints into discrete tokens compatible with the VLM vocabulary. Each token represents short-term spatial position and heading movements (delta-x, delta-y, delta-theta) over 0.5-second intervals, drawn from a codebook of 2,048 tokens built via K-disk clustering on real-world and simulation data. This enables the model to generate both reasoning text and driving actions within the same autoregressive framework.
 
 ## Results
 

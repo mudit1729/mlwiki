@@ -13,7 +13,7 @@ arxiv_id: "2401.12963"
 
 ## Overview
 
-AutoRT addresses the critical data scarcity problem in robotics by using foundation models not as end-effectors but as intelligent orchestrators of large-scale robot data collection. Developed by Google DeepMind, the system deploys fleets of up to 20 robots simultaneously across real office environments, using VLMs for scene understanding and LLMs for task generation. Over 7 months, AutoRT collected 77,000 real-world episodes across 53 robots in 4 buildings -- a scale unprecedented in robotic data collection. A "Robot Constitution" inspired by constitutional AI embeds safety rules directly into task generation, improving safe task proposals from 26% to 87% under adversarial testing.
+AutoRT addresses the critical data scarcity problem in robotics by using foundation models not as end-effectors but as intelligent orchestrators of large-scale robot data collection. Developed by Google DeepMind, the system deploys fleets of 20+ robots simultaneously across real office environments, using VLMs for scene understanding and LLMs for task generation. Over 7 months, AutoRT collected 77,000 real-world episodes across 53 robots in 4 buildings -- a scale unprecedented in robotic data collection. A "Robot Constitution" inspired by constitutional AI embeds safety rules directly into task generation, improving safe task proposals from 26% to 87% under adversarial testing.
 
 ## Key Contributions
 

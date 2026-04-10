@@ -4,7 +4,7 @@ type: source-summary
 status: active
 updated: 2026-04-05
 year: 2025
-venue: CoRL 2025
+venue: arXiv
 tags:
   - paper
   - robotics
@@ -22,7 +22,7 @@ arxiv_id: "2504.16054"
 
 ## Overview
 
-pi0.5 is the successor to pi0, developed by Physical Intelligence, and represents the first VLA model capable of performing 10-15 minute long-horizon tasks in previously unseen real homes. The key advance is a comprehensive co-training framework that integrates five knowledge sources: first-hand robot experience, cross-embodiment data, verbal instruction data, web-scale vision-language data, and high-level semantic command data. This diverse training mixture enables the model to generalize to open-world environments -- homes it has never seen, with novel objects, layouts, and task requirements.
+pi0.5 is the successor to pi0, developed by Physical Intelligence, and represents the first VLA model capable of performing 10-15 minute long-horizon tasks in previously unseen real homes. The key advance is a comprehensive co-training framework that integrates six heterogeneous data sources: mobile manipulator data (MM), multi-environment non-mobile robot data (ME), cross-embodiment lab data (CE), high-level semantic subtask prediction examples (HL), web-scale vision-language data (WD), and verbal instructions (VI). This diverse training mixture enables the model to generalize to open-world environments -- homes it has never seen, with novel objects, layouts, and task requirements.
 
 The model introduces a hierarchical architecture with two levels: a high-level semantic module that predicts subtask decompositions from language instructions and visual context, and a low-level action module that generates motor commands via flow matching. This hierarchy allows the model to reason about multi-step task structure (e.g., "clean the kitchen" decomposes into subtasks like "pick up the plate", "place in dishwasher") while maintaining the precise continuous control needed for physical manipulation.
 
@@ -30,7 +30,7 @@ The model introduces a hierarchical architecture with two levels: a high-level s
 
 - **Open-world generalization**: First VLA deployed in unseen real homes performing complex household tasks (organizing, bed-making, cleaning) lasting 10-15 minutes -- a major step beyond lab demonstrations
 - **Hierarchical VLA architecture**: Combines high-level semantic subtask prediction with low-level flow matching action generation, enabling long-horizon task execution through natural language decomposition
-- **Five-source co-training**: Integrates robot experience, cross-embodiment data, verbal instructions, web data, and semantic commands -- each contributing distinct capabilities (web data for semantic understanding, cross-embodiment for motor transfer)
+- **Six-source co-training**: Integrates six heterogeneous data types -- mobile manipulator (MM), multi-environment non-mobile robot (ME), cross-embodiment lab (CE), high-level semantic subtask examples (HL), web vision-language data (WD), and verbal instructions (VI) -- each contributing distinct capabilities
 - **Scaling analysis**: Demonstrates performance scaling with training environment diversity, providing empirical evidence for the data-scaling hypothesis in robot learning
 
 ## Architecture / Method
@@ -71,9 +71,9 @@ The model introduces a hierarchical architecture with two levels: a high-level s
 │  (dual 6-DOF arms + holo. base)  │
 └───────────────────────────────────┘
 
-Co-training data sources:
-  [Robot Exp.] [Cross-Embodiment] [Verbal Instr.]
-  [Web V-L Data]  [Semantic Commands]
+Co-training data sources (6 types):
+  [MM: Mobile Manip.] [ME: Multi-Env.] [CE: Cross-Embod.]
+  [HL: Semantic HL]   [WD: Web Data]  [VI: Verbal Instr.]
 ```
 
 ![pi0.5 architecture with hierarchical semantic and action modules](https://paper-assets.alphaxiv.org/figures/2504.16054/x2.png)
@@ -82,7 +82,7 @@ pi0.5 extends the pi0 architecture with a hierarchical design. The high-level mo
 
 ![Attention mask structure for hierarchical processing](https://paper-assets.alphaxiv.org/figures/2504.16054/attention_mask.png)
 
-The co-training framework is central to the model's generalization. Each of the five data sources contributes differently: first-hand robot data provides direct manipulation experience; cross-embodiment data enables motor skill transfer; verbal instruction data teaches task decomposition from human narration; web data provides semantic world knowledge (object categories, spatial relationships, common sense); and semantic command data bridges high-level goals to subtask sequences.
+The co-training framework is central to the model's generalization. Each of the six data sources contributes differently: mobile manipulator (MM) data provides direct on-platform experience; multi-environment non-mobile robot (ME) data broadens environmental diversity; cross-embodiment lab (CE) data enables motor skill transfer; high-level semantic subtask (HL) examples teach task decomposition; web data (WD) provides semantic world knowledge (object categories, spatial relationships, common sense); and verbal instructions (VI) from human supervisors teach language-grounded task understanding. The architecture also incorporates the FAST tokenizer for action compression and tokenization in the low-level action module.
 
 The hardware platform is a mobile manipulator with dual 6-DOF arms and a holonomic base, enabling the model to navigate homes while performing bimanual manipulation tasks.
 
@@ -121,4 +121,4 @@ The hardware platform is a mobile manipulator with dual 6-DOF arms and a holonom
 - [[wiki/concepts/vision-language-action]] -- demonstrates the frontier of VLA capabilities in real-world deployment
 - [[wiki/concepts/robotics]] -- mobile manipulation in unstructured home environments
 - [[wiki/concepts/foundation-models]] -- co-training framework integrating multiple data modalities mirrors foundation model scaling strategies
-- [[wiki/sources/papers/rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control]] -- RT-2 showed web knowledge transfer to robots; pi0.5 scales this with five data sources
+- [[wiki/sources/papers/rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control]] -- RT-2 showed web knowledge transfer to robots; pi0.5 scales this with six heterogeneous data sources

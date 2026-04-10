@@ -108,11 +108,11 @@ LLaVA is evaluated on two custom benchmarks using GPT-4 as a judge, scoring mode
 
 | Model | LLaVA-Bench (COCO) | LLaVA-Bench (In-the-Wild) |
 |-------|--------------------:|---------------------------:|
-| LLaVA | **85.1%** | -- |
+| LLaVA | **85.1%** | **67.3%** |
 | BLIP-2 | 65.0% | -- |
 | OpenFlamingo | 37.1% | -- |
 
-Instruction tuning improved LLaVA's relative score by over 50 points compared to the base model without instruction tuning. On in-the-wild images, LLaVA outperformed OpenFlamingo by 48% and BLIP-2 by 29%.
+Instruction tuning improved LLaVA's relative score by over 50 points compared to the base model without instruction tuning. On in-the-wild images, LLaVA outperformed OpenFlamingo by 48% and BLIP-2 by 29%. LLaVA achieves 81.7% relative score on complex reasoning within the In-the-Wild benchmark.
 
 ### ScienceQA
 

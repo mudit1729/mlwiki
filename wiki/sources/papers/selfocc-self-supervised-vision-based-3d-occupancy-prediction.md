@@ -100,7 +100,7 @@ SelfOcc follows a three-stage pipeline: (1) 2D-to-3D feature lifting, (2) SDF fi
 | Method | Supervision | IoU (%) |
 |--------|-------------|---------|
 | MonoScene | 3D supervised | 6.06 |
-| TPVFormer | 3D supervised | 7.16 |
+| TPVFormer | LiDAR supervised | 17.20 |
 | **SelfOcc (BEV)** | **Self-supervised** | **36.83** |
 | **SelfOcc (TPV)** | **Self-supervised** | **45.01** |
 

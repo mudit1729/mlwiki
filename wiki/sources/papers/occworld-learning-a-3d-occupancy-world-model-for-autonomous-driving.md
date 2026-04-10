@@ -110,7 +110,7 @@ OccWorld introduces a generative world model that operates in 3D semantic occupa
 | Method | Avg L2 (m) | L2 @1s | L2 @3s | Supervision |
 |--------|-----------|--------|--------|-------------|
 | UniAD | 1.03 | -- | -- | HD maps + instances |
-| OccWorld-O | 1.17 | 0.43 | -- | Occupancy only |
+| OccWorld-O | 1.17 | 0.43 | 1.99 | Occupancy only |
 | OccWorld-D | 1.34 | -- | -- | Dense LiDAR only |
 
 OccWorld achieves competitive planning (1.17m vs UniAD 1.03m) despite requiring far less supervision.

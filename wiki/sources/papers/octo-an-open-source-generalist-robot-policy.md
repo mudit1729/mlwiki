@@ -33,22 +33,22 @@ Octo-Base (93M parameters) achieves a 29% higher success rate than RT-1-X on lan
                           Octo Architecture
                           ─────────────────
 
-  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐  ┌──────────┐
-  │  Image(s)    │  │  Language     │  │ Proprioception│  │ Readout  │
-  │  (cameras)   │  │  Instruction  │  │ (joints,      │  │ Token    │
-  └──────┬───────┘  └──────┬───────┘  │  gripper)     │  │ [ACT]    │
-         │                 │          └───────┬───────┘  └────┬─────┘
-         ▼                 ▼                  ▼               │
-  ┌──────────────┐  ┌──────────────┐  ┌───────────────┐      │
-  │  ViT         │  │  Language     │  │  MLP          │      │
-  │  Tokenizer   │  │  Encoder      │  │  Tokenizer    │      │
-  │  (ViT-S/B)   │  │  (pretrained) │  │               │      │
-  └──────┬───────┘  └──────┬───────┘  └───────┬───────┘      │
-         │                 │                  │               │
-         └────────┬────────┴──────────┬───────┘               │
-                  │    Concatenate    │                        │
-                  └────────┬─────────┘                        │
-                           │◄─────────────────────────────────┘
+  ┌──────────────┐  ┌──────────────┐  ┌──────────┐
+  │  Image(s)    │  │  Language     │  │ Readout  │
+  │  (cameras)   │  │  Instruction  │  │ Token    │
+  └──────┬───────┘  └──────┬───────┘  │ [ACT]    │
+         │                 │          └────┬─────┘
+         ▼                 ▼               │
+  ┌──────────────┐  ┌──────────────┐      │
+  │  CNN + Patch │  │  T5-base     │      │
+  │  Tokenizer   │  │  Encoder     │      │
+  │  (ViT-S/B)   │  │  (111M)      │      │
+  └──────┬───────┘  └──────┬───────┘      │
+         │                 │               │
+         └────────┬────────┘               │
+                  │    Concatenate         │
+                  └────────┬──────────────┘
+                           │◄─────────────────────────────────
                            ▼
               ┌────────────────────────────┐
               │   Transformer Backbone     │
@@ -74,7 +74,7 @@ Octo-Base (93M parameters) achieves a 29% higher success rate than RT-1-X on lan
 
 Octo uses a modular encoder-decoder architecture:
 
-**Observation Tokenization.** Each input modality is processed by a dedicated tokenizer. Images are encoded via a Vision Transformer (ViT) into patch token sequences. Language instructions are tokenized via a pretrained language encoder. Proprioceptive state (joint positions, gripper state) is projected through an MLP tokenizer. A learned readout token is appended to the sequence as the action query.
+**Observation Tokenization.** Each input modality is processed by a dedicated tokenizer. Images are encoded via a shallow CNN followed by 16×16 pixel patch tokenization using a "transformer-first" approach (ViT-S/B backbone). Language instructions are encoded via a pretrained T5-base transformer (111M parameters). Proprioceptive state was explored but excluded from the final model due to causal confusion issues. A learned readout token is appended to the sequence as the action query.
 
 **Transformer Backbone.** All tokenized observations are concatenated into a single sequence and processed by a standard transformer with causal attention masking. The backbone processes temporal windows of observations (typically 2 frames) to capture short-horizon dynamics. The shared backbone learns cross-modal representations that ground language instructions in visual context.
 
@@ -107,7 +107,7 @@ Octo was evaluated across 9 robotic platforms at 4 institutions, testing both ze
 
 ### Fine-tuning results
 
-Octo demonstrates strong fine-tuning transfer to novel robots including WidowX, Franka, and custom platforms. Fine-tuning with ~100 demonstrations on a single A5000 GPU in <5 hours consistently yields competitive or superior performance compared to training specialist policies from scratch.
+Octo demonstrates strong fine-tuning transfer to novel robots including WidowX, Franka, and custom platforms. Fine-tuning with ~100 demonstrations on a single A5000 GPU in <5 hours outperforms training from scratch and state-of-the-art visual representation fine-tuning (VC-1) by an average of 52% across six diverse fine-tuning setups.
 
 ![Fine-tuning overview](https://paper-assets.alphaxiv.org/figures/2405.12213v2/img-6.jpeg)
 

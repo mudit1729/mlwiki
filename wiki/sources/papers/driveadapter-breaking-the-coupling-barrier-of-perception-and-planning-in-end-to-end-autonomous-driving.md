@@ -17,17 +17,16 @@ arxiv_id: "2308.00398"
 
 DriveAdapter (Jia et al., ICCV 2023) identifies and addresses a fundamental structural problem in end-to-end autonomous driving: the tight coupling between perception and planning modules. In the standard privileged distillation paradigm (established by [[wiki/sources/papers/learning-by-cheating]]), a teacher agent with access to ground-truth BEV information is first trained, and then a student agent learns to mimic the teacher using only sensor inputs. The student must simultaneously learn both perception (extracting a good BEV representation from cameras) and planning (making driving decisions from that representation). DriveAdapter argues this coupling creates a chicken-and-egg problem: the perception encoder cannot learn good features without a competent planner providing useful gradients, and the planner cannot learn good policies without reliable perception features.
 
-The core insight is to decouple these two learning problems by introducing an "adapter" module between perception and planning. The adapter is a small transformer-based network that translates the imperfect intermediate representations produced by a sensor-based perception encoder into a format compatible with a pre-trained, frozen privileged planner. This means the privileged teacher's planning weights are reused directly -- the adapter learns to bridge the domain gap between ground-truth BEV features and sensor-derived features, rather than requiring the student to learn planning from scratch. This decoupling allows perception and planning to be trained and improved independently.
+The core insight is to decouple these two learning problems by introducing "adapter" modules between perception and planning that are trained with a **feature alignment objective**: the adapters encourage student perception features to match the privileged features the (reused) teacher planner was trained on, rather than forcing the student to learn planning from scratch. This means the privileged teacher's planning weights are reused directly -- the adapters bridge the distribution gap between predicted privileged inputs and the ground-truth privileged inputs. This decoupling allows perception and planning to be trained and improved independently.
 
-DriveAdapter achieves state-of-the-art results on the CARLA closed-loop benchmarks (Town05 Long and Longest6), significantly outperforming prior methods including TCP, InterFuser, and TransFuser. A key practical benefit is modularity: any perception encoder (TransFuser, BEVFormer, etc.) can be plugged in with any privileged planner, and each can be upgraded independently. The paper also demonstrates that the adapter can incorporate action-conditioned features to handle multi-modal driving behaviors (e.g., turning left vs. right at an intersection).
+Because the learning-based teacher itself is imperfect and occasionally breaks safety rules, DriveAdapter additionally proposes **action-guided feature learning with a mask**: a mask identifies imperfect teacher features, and hand-crafted rule priors are injected for those masked regions, so the student does not blindly inherit unsafe teacher behaviors. DriveAdapter achieves strong results on the CARLA closed-loop benchmarks (Town05 Long and Longest6), outperforming prior methods including TCP, InterFuser, and TransFuser.
 
 ## Key Contributions
 
-- **Decoupled perception-planning training**: Identifies the coupling barrier in privileged distillation and proposes a principled decomposition where the perception encoder and planning policy are trained separately, connected by a lightweight adapter
-- **Adapter module**: A transformer-based network that translates sensor-derived features into the feature space of a pre-trained privileged planner, enabling direct reuse of privileged planning weights without retraining
-- **Action-conditioned multi-modal planning**: Introduces action conditioning into the adapter to handle multi-modal driving behaviors at decision points (intersections, lane changes), addressing the mode averaging problem in imitation learning
-- **Plug-and-play modularity**: Any perception backbone and any privileged planner can be combined through the adapter, enabling independent upgrades to either component
-- **State-of-the-art CARLA performance**: Achieves top driving scores on Town05 Long and Longest6 benchmarks, surpassing TCP, InterFuser, and TransFuser by significant margins
+- **Decoupled perception-planning training**: Identifies the coupling barrier in privileged distillation and proposes to directly reuse a strong privileged teacher's planning module while the student focuses on perception
+- **Feature alignment via adapters**: Adapter modules are inserted between student perception and teacher planning, trained with a feature alignment objective that closes the distribution gap between predicted and ground-truth privileged inputs
+- **Action-guided feature learning with a mask**: Because the learning-based teacher is imperfect and sometimes violates safety rules, a mask identifies imperfect teacher features and injects hand-crafted rule priors into the learning process for those regions
+- **Strong CARLA performance**: Competitive driving scores on Town05 Long and Longest6 benchmarks, outperforming TCP, InterFuser, and TransFuser
 
 ## Architecture / Method
 
@@ -37,55 +36,54 @@ DriveAdapter achieves state-of-the-art results on the CARLA closed-loop benchmar
 │                                                              │
 │  Camera/LiDAR  ┌─────────────────────────┐                   │
 │  Inputs ──────►│  Perception Encoder     │                   │
-│                │  (TransFuser / ResNet / │                   │
-│                │   BEVFormer -- any)     │  Trainable        │
+│                │  (sensor-based student) │  Trainable        │
 │                └───────────┬─────────────┘                   │
-│                            │ Sensor features z_s             │
+│                            │ Predicted privileged-like feat. │
 │                            ▼                                 │
-│  Nav Command  ┌─────────────────────────────┐                │
-│  (left/right/ │      Adapter Module         │                │
-│   straight)   │  ┌───────────────────────┐  │                │
-│  ────────────►│  │  Cross-Attention      │  │  Trainable     │
-│    (FiLM)     │  │  Learnable queries    │  │                │
-│               │  │  attend to z_s        │  │                │
-│               │  │  + action conditioning│  │                │
-│               │  └───────────┬───────────┘  │                │
-│               │              │ Adapted feat. │                │
-│               └──────────────┼──────────────┘                │
-│                              │ (matches privileged           │
-│                              │  feature space)               │
-│                              ▼                               │
 │               ┌─────────────────────────────┐                │
-│               │    Frozen Privileged Planner │                │
-│               │  (pre-trained on GT BEV)    │  Frozen        │
-│               │  Roach / TCP-teacher        │                │
+│               │      Adapter Modules        │                │
+│               │  (feature-alignment loss    │  Trainable     │
+│               │   to GT privileged features)│                │
+│               │                             │                │
+│               │  + Action-guided feature    │                │
+│               │    learning with a MASK     │                │
+│               │    over imperfect teacher   │                │
+│               │    features (inject hand-   │                │
+│               │    crafted rule priors)     │                │
 │               └──────────────┬──────────────┘                │
 │                              ▼                               │
-│                      Waypoint Trajectory                     │
+│               ┌─────────────────────────────┐                │
+│               │    Reused Teacher Planner    │                │
+│               │  (pre-trained on privileged │  Reused        │
+│               │   ground-truth inputs)      │                │
+│               └──────────────┬──────────────┘                │
+│                              ▼                               │
+│                   Actions / Waypoints                        │
 └──────────────────────────────────────────────────────────────┘
 
-Training: L2(predicted waypoints, expert waypoints) + aux perception losses
+Core loss: feature alignment between student-predicted privileged
+           features and ground-truth privileged features, plus
+           masked action-guided supervision.
 ```
 
-DriveAdapter's architecture consists of three components:
+DriveAdapter's architecture has three elements:
 
-**1. Privileged Teacher (frozen at student training time):**
-A standard privileged agent (e.g., Roach, TCP-teacher) is trained with access to ground-truth BEV information from the CARLA simulator. This teacher learns a strong planning policy parameterized as a neural network that maps privileged BEV features to waypoint trajectories. Once trained, the teacher's planning weights are frozen.
+**1. Teacher model (reused at student training time):**
+A learning-based privileged teacher (trained with ground-truth states of surrounding agents and map elements) provides both its planning module -- which the student directly reuses rather than retraining from scratch -- and the ground-truth privileged features used as alignment targets.
 
-**2. Sensor-based Perception Encoder:**
-Any camera-based perception backbone (e.g., TransFuser's ResNet+Transformer, BEVFormer, or a simple ResNet) processes raw sensor inputs (multi-view cameras, optionally LiDAR) and produces intermediate feature representations. This encoder is trained to produce features that, after adaptation, can drive the frozen planner effectively.
+**2. Sensor-based perception (student):**
+A camera/LiDAR perception network is trained to predict the privileged inputs that the teacher's planning module expects. Directly feeding these predicted inputs to the teacher was shown to yield poor driving due to the distribution gap between predicted and ground-truth privileged inputs.
 
-**3. Adapter Module (the key novelty):**
-A small transformer network sits between the perception encoder and the frozen planner. It takes the sensor-derived features as input and outputs features in the same space as the privileged BEV features the planner was trained on. The adapter uses cross-attention: learnable query tokens attend to the perception features, and the output is projected to match the privileged feature dimensionality.
+**3. Adapter modules (the key novelty):**
+Adapters are inserted between student features and the teacher's planning module and trained with a **feature alignment objective**: student features are aligned with the corresponding ground-truth privileged features so the reused teacher planner receives inputs inside its training distribution.
 
-The adapter also supports **action conditioning**: a high-level navigation command (from the route planner) is encoded and used to modulate the adapter's queries via FiLM conditioning or concatenation. This allows the adapter to produce different feature translations depending on the intended maneuver, addressing the multi-modality problem where the same scene could require different actions depending on the driver's intent.
+**Action-guided feature learning with a mask:**
+Because the pure learning-based teacher itself is imperfect and occasionally breaks safety rules, DriveAdapter adds a mask that identifies which teacher features are imperfect; for those regions the method injects hand-crafted rule priors via action-guided supervision, so the student is not blindly cloning unsafe teacher behavior.
 
 **Training procedure:**
-1. Train the privileged teacher agent with ground-truth BEV inputs (standard privileged training)
-2. Freeze the teacher's planning network
-3. Train the perception encoder + adapter jointly, where the loss is computed on the final waypoint outputs from the frozen planner. The adapter bridges the gap between sensor features and privileged features.
-
-The key equation is straightforward: given sensor features `z_s = Encoder(images)` and the adapter `A`, the final output is `waypoints = FrozenPlanner(A(z_s, command))`. The loss is L2 between predicted and expert waypoints, plus any auxiliary perception losses.
+1. Obtain a privileged teacher trained with ground-truth privileged inputs.
+2. Reuse the teacher's planning module directly.
+3. Train the student perception network and the adapters end-to-end, minimizing a feature alignment loss between predicted and ground-truth privileged features, combined with the masked action-guided feature learning loss for safety.
 
 ## Results
 
@@ -115,18 +113,16 @@ DS = Driving Score, RC = Route Completion, IS = Infraction Score.
 
 ### Key ablation findings
 
-- **Adapter vs. direct distillation**: Adding the adapter module improves driving score by ~10-15 points over standard feature-level distillation, confirming the coupling barrier hypothesis
-- **Action conditioning**: Action-conditioned adapter improves performance at intersections by 8-12% compared to unconditional adapter, particularly reducing wrong-turn infractions
-- **Perception backbone flexibility**: DriveAdapter works with multiple perception encoders (TransFuser, ResNet-34, BEVFormer), consistently improving each, demonstrating true plug-and-play modularity
-- **Frozen vs. fine-tuned planner**: Keeping the planner frozen performs comparably to or better than fine-tuning it jointly, validating the decoupling hypothesis
+- **Feature alignment vs. direct teacher reuse**: Directly feeding student-predicted privileged inputs to the reused teacher planner yields poor driving; adding the adapters with feature alignment closes the distribution gap and recovers strong performance, confirming the coupling barrier hypothesis
+- **Action-guided masking**: Masking imperfect teacher features and injecting hand-crafted rule priors improves safety-related metrics over using teacher features directly
+- **Decoupled training**: Reusing the teacher planning module while training only perception + adapters outperforms training a student planning head from scratch
 
 ## Limitations & Open Questions
 
-- **Still relies on privileged training in simulation**: The approach requires access to a simulator with ground-truth BEV information for teacher training, limiting direct applicability to real-world data without sim-to-real transfer
+- **Still relies on privileged training in simulation**: The approach requires access to a simulator with ground-truth privileged information for teacher training, limiting direct applicability to real-world data without sim-to-real transfer
 - **CARLA-only evaluation**: All experiments are conducted in CARLA; generalization to real-world driving or other simulators (nuPlan, Waymo) is not demonstrated
-- **Adapter adds a module but not much compute**: The adapter is lightweight, but the overall system still requires the full perception encoder and full planner at inference time
-- **Multi-modal planning is limited**: The action conditioning handles discrete mode selection (turn left/right/straight) but does not address continuous multi-modality in trajectory space (cf. diffusion-based planners like [[wiki/sources/papers/diffusiondrive-truncated-diffusion-model-for-end-to-end-autonomous-driving]])
-- **Open question**: Can the adapter paradigm scale to larger foundation-model-based planners? If the planner is a VLM, does the coupling barrier still exist or does the VLM's generality already bridge the gap?
+- **Imperfect teacher**: Even with masked action-guided feature learning, performance is bottlenecked by the quality of the learning-based teacher whose imperfections the mask is designed to paper over
+- **Open question**: Can the adapter / feature-alignment paradigm scale to larger foundation-model-based planners? If the planner is a VLM, does the coupling barrier still exist or does the VLM's generality already bridge the gap?
 
 ## Connections
 

@@ -71,7 +71,7 @@ In a standard transformer, each layer computes attention over the key-value pair
 - For autoregressive models (GPT-2): prefix matrices `P_key[i]` and `P_value[i]` of shape `(l, d)` for each layer `i`, prepended to the key and value matrices so that all subsequent tokens can attend to these virtual prefix tokens
 - For encoder-decoder models (BART): separate prefixes for the encoder and the decoder, allowing independent steering of encoding and generation
 
-The prefix length `l` is the primary capacity knob. Optimal values are approximately 200 for GPT-2 on table-to-text tasks and 10-200 depending on task and architecture.
+The prefix length `l` is the primary capacity knob. Optimal values are approximately 200 for GPT-2 on summarization tasks and 10-20 for BART on table-to-text (structured-to-text) tasks; shorter prefixes suffice for encoder-decoder architectures because cross-attention already provides strong conditioning.
 
 ### Reparameterization trick
 
@@ -114,7 +114,7 @@ Prefix-tuning matches or slightly exceeds full fine-tuning across all three benc
 
 ### Abstractive summarization (XSUM with GPT-2 / BART)
 
-On XSUM, prefix-tuning with BART-Large achieves comparable ROUGE scores to full fine-tuning. The optimal prefix length for BART is much shorter (10-200 tokens vs. 200 for GPT-2), likely because the encoder-decoder architecture already provides strong conditioning through cross-attention.
+On XSUM, prefix-tuning with BART-Large achieves comparable ROUGE scores to full fine-tuning. The optimal prefix length for BART is much shorter (10-20 tokens vs. ~200 for GPT-2 on summarization), likely because the encoder-decoder architecture already provides strong conditioning through cross-attention.
 
 ### Low-data regime
 

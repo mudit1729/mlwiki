@@ -85,7 +85,7 @@ Deep interaction between temporal and spatial modules enables rich feature excha
 
 OpenDV-2K is constructed by:
 1. Collecting 1,700+ hours of driving videos from YouTube spanning 40+ countries and 244 cities
-2. Combining these with seven existing public driving datasets (nuScenes, Waymo, KITTI, etc.)
+2. Combining these with seven existing public driving datasets (nuScenes, nuPlan, ONCE, Honda-HAD/HDD, Talk2Car, etc.)
 3. Annotating with multimodal captions describing weather, road type, agent behavior, and driving context
 
 The geographic and scenario diversity is critical: models trained only on single-city datasets (e.g., nuScenes from Boston/Singapore) fail to generalize to different road styles, driving conventions, and environments.

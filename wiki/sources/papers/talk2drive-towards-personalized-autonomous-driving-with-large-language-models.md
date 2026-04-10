@@ -21,7 +21,7 @@ A memory module stores historical commands, generated programs, and passenger fe
 
 ## Key Contributions
 
-- **First real-world LLM-driven personalized driving system**: Deployed on a physical test vehicle with full sensor suite (LiDAR, cameras, radar, GNSS), not just simulation or open-loop evaluation
+- **First real-world LLM-driven personalized driving system**: Deployed on a physical test vehicle with full sensor suite (LiDAR, front camera, radar, GNSS), not just simulation or open-loop evaluation
 - **Multi-level command interpretation**: Handles explicit commands, implicit preferences, and contextual hints through GPT-4's commonsense reasoning, covering a broader range of human communication than prior structured-command approaches
 - **Memory module for persistent personalization**: Stores and retrieves historical interaction patterns to build individualized driving profiles, reducing repeated instruction and improving passenger satisfaction over time
 - **Cloud-based LLM-to-control pipeline**: Five-step architecture converting speech to executable control parameter adjustments via code generation, with contextual integration from weather, traffic, and perception APIs
@@ -77,14 +77,14 @@ Talk2Drive uses a cloud-based pipeline where the LLM (GPT-4) operates as an inte
 1. **Speech-to-text**: Passenger verbal commands are transcribed via speech recognition
 2. **Command interpretation**: GPT-4 classifies the command type (explicit instruction, implicit preference, or contextual hint) and extracts the intended driving behavior modification
 3. **Context integration**: The system queries external APIs for weather conditions, traffic state, and onboard perception outputs (object detection, lane detection from the sensor suite) to ground the LLM's reasoning in the current driving scenario
-4. **Code generation**: GPT-4 generates executable code that adjusts specific control parameters (target speed, following distance, acceleration profiles, steering aggressiveness) based on the interpreted command and context
+4. **Code generation**: GPT-4 generates executable ROS topic commands that adjust specific control parameters (look-ahead distance, pure pursuit ratio, and target velocity) based on the interpreted command and context
 5. **Execution and feedback**: The generated code is executed on the vehicle's control stack, and the passenger's feedback (acceptance or takeover) is recorded
 
 ![System Flowchart](https://paper-assets.alphaxiv.org/figures/2312.09397v3/flowchart_update.png)
 
 The **memory module** is the key differentiator from a stateless LLM interface. It maintains a structured history of: (1) raw commands issued by each passenger, (2) the generated control programs, and (3) feedback signals (takeover events, explicit approval/disapproval). When a new command is received, the memory module retrieves relevant past interactions for the current passenger, providing them as context to GPT-4. This allows the system to learn individual preferences without retraining -- the LLM adapts its code generation based on what has worked (and failed) for this specific passenger in similar scenarios.
 
-The test vehicle is a 2019 Lexus RX450h equipped with a Velodyne VLP-32C LiDAR, multiple cameras, radar, GNSS, and an Intel i9-9900 ECU for onboard computation. The LLM inference runs in the cloud, introducing latency that constrains the system to parameter adjustment rather than real-time trajectory planning.
+The test vehicle is a 2019 Lexus RX450h equipped with a Velodyne VLP-32C LiDAR, a Mako G-319C front camera, an Aptiv ESR 2.5 radar, Novatel GNSS, and an Intel i9-9900 ECU for onboard computation. The LLM inference runs in the cloud, introducing latency that constrains the system to parameter adjustment rather than real-time trajectory planning.
 
 ![Hardware Configuration](https://paper-assets.alphaxiv.org/figures/2312.09397v3/sensor_setup.png)
 
