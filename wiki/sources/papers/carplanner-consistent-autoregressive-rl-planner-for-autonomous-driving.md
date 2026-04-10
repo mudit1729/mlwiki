@@ -23,12 +23,12 @@ arxiv_id: "2502.19908"
 
 CarPlanner (Zhejiang University, CVPR 2025) introduces a consistent autoregressive reinforcement learning planner that is the first RL-based planner to surpass imitation learning (IL) + rule-based methods on the nuPlan benchmark. While IL-based planners suffer from distribution shift (the model encounters states at test time that differ from training demonstrations) and rule-based post-processing adds fragile hand-crafted heuristics, CarPlanner uses RL to learn a planner that is robust to its own generated states.
 
-The key technical contribution is a consistency-regularized autoregressive architecture that generates trajectory waypoints sequentially while maintaining temporal consistency across waypoints. Standard autoregressive generation suffers from compounding errors (each waypoint conditions on potentially erroneous previous waypoints), which is especially problematic in safety-critical driving. CarPlanner addresses this with a consistency loss that penalizes kinematic violations and ensures smooth, physically plausible trajectories.
+The key technical contribution is a consistent autoregressive architecture that generates trajectory waypoints sequentially while maintaining temporal consistency. Standard autoregressive generation suffers from compounding errors (each waypoint conditions on potentially erroneous previous waypoints), which is especially problematic in safety-critical driving. CarPlanner addresses this through a generation-selection framework: a mode selector first identifies a stable driving mode representation that remains constant across all time steps, and the trajectory generator conditions on this fixed mode, preventing drift and ensuring coherent trajectories.
 
 ## Key Contributions
 
 - **First RL planner to beat IL+rules on nuPlan**: Demonstrates that RL-based planning can surpass the dominant paradigm of imitation learning with rule-based refinement on a large-scale real-world planning benchmark
-- **Consistency-regularized autoregressive generation**: Novel architecture that generates waypoints autoregressively while enforcing temporal consistency through kinematic constraints, preventing the compounding error problem
+- **Consistent autoregressive generation**: Novel generation-selection architecture where a mode selector provides a stable mode representation that anchors the autoregressive trajectory generator, preventing compounding error drift
 - **RL training for driving planners**: Develops a practical RL training pipeline for trajectory planning, addressing reward design, exploration, and sample efficiency challenges specific to the driving domain
 - **Closed-loop superior performance**: Strong results in closed-loop simulation, where the planner must react to its own actions' consequences
 
@@ -50,35 +50,29 @@ The key technical contribution is a consistency-regularized autoregressive archi
 │                     │ Scene Features                        │
 └─────────────────────┼───────────────────────────────────────┘
                       │
-                      ▼
-┌─────────────────────────────────────────────────────────────┐
-│            Autoregressive Trajectory Decoder                │
-│                                                             │
-│  Scene Features ──► ┌──────────────────────┐                │
-│                     │  Transformer Decoder  │                │
-│  w_{t-1} ─────────► │  (causal attention)   │──► w_t        │
-│                     └──────────┬───────────┘                │
-│                                │                            │
-│           ┌────────────────────┼────────────────────┐       │
-│           ▼                    ▼                    ▼       │
-│      ┌─────────┐     ┌──────────────┐     ┌────────────┐   │
-│      │Kinematic│     │  Temporal    │     │   Self-    │   │
-│      │Consist. │     │  Smoothness  │     │ Consistency│   │
-│      └─────────┘     └──────────────┘     └────────────┘   │
-│           └────────────────┼────────────────────┘           │
-│                    Consistency Losses                        │
-└─────────────────────────────────────────────────────────────┘
+          ┌───────────┴───────────┐
+          ▼                       ▼
+┌──────────────────┐   ┌──────────────────────────────────────┐
+│  Mode Selector   │   │   Autoregressive Trajectory Generator│
+│                  │   │                                      │
+│  Scene ──► P(m)  │   │  Scene + mode c ──► Transformer     │
+│  (cross-entropy  │   │  w_{t-1} ────────► (causal attn)    │
+│   + L1 side task)│   │                          │           │
+│       │          │   │                          ▼           │
+│       ▼          │   │                    w_t (waypoint)    │
+│  mode c (stable, │   │                                      │
+│  fixed across    │──►│  mode c remains constant             │
+│  all time steps) │   │  across all autoregressive steps     │
+└──────────────────┘   └──────────────────────────────────────┘
 
 Training Pipeline:
   ┌──────────┐    ┌───────────────┐    ┌──────────────────┐
   │ Expert   │    │  IL Pretrain   │    │   RL Fine-tune   │
-  │ Demos    │──►│  (Behav.Clone) │──►│  (PPO + Rewards) │
+  │ Demos    │──►│  (L1 loss)     │──►│  (PPO)           │
   └──────────┘    └───────────────┘    └──────────────────┘
                                               │
-                              ┌────────────────┼────────────┐
-                              ▼                ▼            ▼
-                         Progress         Safety       Comfort
-                         Reward           Reward       Reward
+                                  R = -DE + R_collision
+                                       + R_drivable
 ```
 
 CarPlanner consists of:
@@ -87,18 +81,18 @@ CarPlanner consists of:
 
 2. **Autoregressive Trajectory Generator**: A transformer decoder generates trajectory waypoints one at a time. At each step, the model attends to the scene features and all previously generated waypoints to produce the next waypoint. This autoregressive structure naturally captures the sequential, causal nature of trajectory planning.
 
-3. **Consistency Regularization**: To prevent compounding errors, CarPlanner enforces:
-   - **Kinematic consistency**: Predicted waypoints must satisfy bicycle model constraints (curvature limits, acceleration bounds)
-   - **Temporal smoothness**: L2 penalty on jerk (third derivative of position) to prevent jerky trajectories
-   - **Self-consistency**: The trajectory generated from any intermediate waypoint should match the remaining suffix of the full trajectory, implemented via a self-consistency loss
+3. **Consistent Autoregressive Generation**: Rather than penalty-based regularization, CarPlanner achieves consistency through its generation-selection architecture:
+   - A **mode selector** assigns probabilities to driving behaviors (e.g., lane change, yield, follow) and selects a stable mode representation `c`
+   - The trajectory generator conditions on this mode `c`, which **remains constant across all time steps**, ensuring coherent temporal consistency
+   - This avoids compounding errors because each waypoint is anchored to the same stable mode rather than drifting
 
-4. **RL Training**: The model is first pre-trained with imitation learning (behavioral cloning on expert demonstrations), then fine-tuned with RL. The RL reward combines:
-   - Progress reward (distance traveled toward goal)
-   - Safety reward (penalty for collisions, near-misses)
-   - Comfort reward (penalty for high jerk, lateral acceleration)
-   - Rule compliance (traffic light violations, lane departures)
+4. **RL Training**: The model is first pre-trained with imitation learning (L1 loss on trajectory error), then fine-tuned with RL using PPO. The RL reward is:
+   - `R_t = -DE_t + R_collision + R_drivable`
+   - **DE** (Displacement Error): expert-guided deviation from ground truth
+   - **R_collision**: -1 for collisions, 0 otherwise
+   - **R_drivable**: -1 for out-of-drivable-area violations, 0 otherwise
 
-   Training uses PPO with the IL-pretrained policy as initialization, which provides stable exploration from a reasonable starting point.
+   The mode selector is trained with cross-entropy loss on the positive mode plus an L1 regression side task. The IL-pretrained policy provides stable initialization for RL exploration.
 
 ## Results
 
