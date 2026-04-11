@@ -7,6 +7,7 @@ year: "2024"
 venue: "COLM"
 citations: 9619
 arxiv_id: "2312.00752"
+paper-faithfullness: audited-fixed
 ---
 
 # Mamba: Linear-Time Sequence Modeling with Selective State Spaces
@@ -26,7 +27,7 @@ The resulting Mamba architecture is remarkably simple: it replaces the Transform
 - **Selective state space models (S6):** Makes SSM parameters (discretization step delta, B, C matrices) input-dependent, enabling content-based reasoning and resolving the performance gap between SSMs and Transformers on discrete modalities
 - **Hardware-aware selective scan algorithm:** A fused CUDA kernel that computes the selective SSM recurrence without materializing the full expanded state in HBM, using parallel scan and kernel fusion to achieve GPU-efficient execution
 - **Simplified architecture:** The Mamba block replaces both attention and MLP sub-layers with a single gated module containing a selective SSM, 1D convolution, and SiLU gating -- yielding a homogeneous architecture with 3-5x fewer parameters per layer than a Transformer block at equivalent performance
-- **State-of-the-art across modalities:** Achieves best results on language modeling (matching 2x-size Transformers), audio classification, and genomics benchmarks, demonstrating that selection is the key missing ingredient for SSMs on discrete data
+- **State-of-the-art across modalities:** Achieves best results on language modeling (matching 2x-size Transformers), audio generation and modeling (SC09 speech generation, YouTubeMix autoregressive pretraining), and genomics benchmarks, demonstrating that selection is the key missing ingredient for SSMs on discrete data
 - **Linear-time inference with constant memory:** Unlike Transformers whose KV cache grows linearly with context, Mamba maintains a fixed-size hidden state, enabling true O(1) per-step inference with O(n) total sequence cost
 
 ## Architecture / Method
@@ -73,7 +74,7 @@ The foundation is the continuous-time state space model: dx/dt = Ax + Bu, y = Cx
 - **delta(t) = softplus(Linear(x(t)))** -- controls how much of the current input to incorporate vs. how much of the prior state to retain. Large delta means "remember this token"; small delta means "skip it."
 - **B(t) = Linear(x(t))** -- input-dependent input projection
 - **C(t) = Linear(x(t))** -- input-dependent output projection
-- **A** remains fixed (initialized as the S4 HiPPO matrix) and is discretized via A_bar = exp(delta * A)
+- **A** remains fixed (initialized as a learned diagonal matrix) and is discretized via A_bar = exp(delta * A)
 
 This input-dependence is the selection mechanism. It allows the model to selectively propagate relevant information and ignore irrelevant tokens, analogous to the forget gate in LSTMs but operating in the structured state space.
 
@@ -98,7 +99,7 @@ The full Mamba block is a gated architecture:
 3. The other branch applies SiLU activation and serves as a multiplicative gate
 4. The gated output is projected back down to model dimension
 
-This replaces both the self-attention and MLP blocks of a Transformer with a single module, yielding roughly 3x parameter efficiency at the same hidden dimension.
+This replaces both the self-attention and MLP blocks of a Transformer with a single module; two Mamba blocks are roughly equivalent in parameter count to one Transformer MHA+MLP block.
 
 ![Results comparison](https://paper-assets.alphaxiv.org/figures/2312.00752v2/img-4.jpeg)
 

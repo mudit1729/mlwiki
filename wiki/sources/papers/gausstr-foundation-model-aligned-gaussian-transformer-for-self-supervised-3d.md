@@ -1,10 +1,10 @@
 ---
 title: "GaussTR: Foundation Model-Aligned Gaussian Transformer for Self-Supervised 3D Spatial Understanding"
 type: source-summary
-status: active
-updated: 2026-04-05
-year: 2025
-venue: CVPR
+status: complete
+updated: 2026-04-11
+year: 2024
+venue: arXiv
 tags:
   - paper
   - autonomous-driving
@@ -14,6 +14,7 @@ tags:
   - gaussian
 citations: 41
 arxiv_id: "2412.13193"
+paper-faithfullness: audited-fixed
 ---
 
 # GaussTR: Foundation Model-Aligned Gaussian Transformer for Self-Supervised 3D Spatial Understanding

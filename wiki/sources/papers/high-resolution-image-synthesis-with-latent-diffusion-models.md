@@ -7,6 +7,7 @@ year: "2022"
 venue: "CVPR 2022"
 citations: 31987
 arxiv_id: "2112.10752"
+paper-faithfullness: audited-fixed
 ---
 
 # High-Resolution Image Synthesis with Latent Diffusion Models
@@ -123,7 +124,7 @@ For text conditioning, tau_theta is a transformer-based text encoder (e.g., BERT
 | VQGAN+T | CelebA-HQ 256 | 10.2 |
 | DC-VAE | CelebA-HQ 256 | 15.8 |
 
-Note: DDPM and ADM are not reported on CelebA-HQ in the paper. LDM-4 achieves state-of-the-art FID of 5.11. Training LDMs requires dramatically fewer resources than pixel-based diffusion models (150-1000 V100 days), as LDMs were trained on a single A100.
+Note: DDPM and ADM are not reported on CelebA-HQ in the paper. LDM-4 achieves state-of-the-art FID of 5.11. By contrast, pixel-based diffusion models (ADM) required 150-1000 V100 days of training; LDMs achieve competitive or better results while training on significantly fewer resources (e.g., a single A100 GPU).
 
 ### Text-to-Image (LAION-400M)
 

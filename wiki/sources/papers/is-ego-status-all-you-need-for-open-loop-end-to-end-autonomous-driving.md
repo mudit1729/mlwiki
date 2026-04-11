@@ -13,6 +13,7 @@ tags:
   - end-to-end
 citations: ~199
 arxiv_id: "2312.03031"
+paper-faithfullness: audited-clean
 ---
 
 # Is Ego Status All You Need for Open-Loop End-to-End Autonomous Driving?

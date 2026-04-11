@@ -4,15 +4,16 @@ type: source-summary
 status: active
 updated: 2026-04-05
 year: 2025
-venue: NeurIPS 2025 Spotlight
+venue: arXiv preprint
 tags:
   - paper
   - robotics
   - vla
   - knowledge-preservation
   - training
-citations: 68
+citations: ~0
 arxiv_id: "2505.23705"
+paper-faithfullness: audited-fixed
 ---
 
 # Knowledge Insulating Vision-Language-Action Models
@@ -32,7 +33,7 @@ Built on PaliGemma (2B parameters) with a 300M parameter action expert, knowledg
 - **Three-part combined loss (L_CO-VLA = L_VLM + L_FAST + L_FLOW)**: Co-training combines VLM objectives (captioning, VQA), a discrete FAST-tokenizer action loss for backbone adaptation, and a continuous flow-matching loss for real-time control
 - **Co-training with VLM objectives**: Maintains VLM capabilities by continuing vision-language pre-training objectives alongside action prediction, preventing catastrophic forgetting
 - **7.5x faster convergence**: The insulated training recipe converges dramatically faster than standard end-to-end training
-- **NeurIPS 2025 Spotlight**: Recognized as a significant contribution to the field
+- **Comprehensive ablation study**: Extensive analysis of design choices including gradient insulation placement, co-training data mix, discrete tokenization strategy, and state representation formats
 
 ## Architecture / Method
 

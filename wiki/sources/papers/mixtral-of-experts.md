@@ -7,6 +7,7 @@ year: "2024"
 venue: "arXiv"
 citations: 3089
 arxiv_id: "2401.04088"
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2401.04088)**
@@ -69,7 +70,7 @@ Mixtral builds on the Mistral 7B decoder-only transformer architecture, replacin
 - **Expert feedforward dimension:** 14336 per expert
 - **8 experts per MoE layer**, with top-2 gating per token
 - **Vocabulary size:** 32000 (SentencePiece BPE tokenizer)
-- **Sliding Window Attention (SWA):** Attention window of 4096 tokens per layer, with a rolling buffer KV cache. Because of the 32-layer stack, the effective receptive field spans the full 32k context (4096 x 8 = 32768 via the cascading effect across layers)
+- **Sliding Window Attention (SWA):** Attention window of 4096 tokens per layer, with a rolling buffer KV cache. Mixtral was trained with a 32k token context size; the effective receptive field across the 32-layer stack can theoretically reach up to 32 × 4096 = ~131k tokens via cascading attention, though the model is trained for 32k
 
 The MoE routing mechanism works as follows. For each token representation x at a given layer, the router computes:
 

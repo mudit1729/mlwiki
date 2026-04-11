@@ -7,6 +7,7 @@ year: "2023"
 venue: "arXiv"
 citations: 26297
 arxiv_id: "2303.08774"
+paper-faithfullness: audited-clean
 ---
 
 # GPT-4 Technical Report

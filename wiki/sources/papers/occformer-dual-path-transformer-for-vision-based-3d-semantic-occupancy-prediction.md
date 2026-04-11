@@ -7,6 +7,7 @@ year: "2023"
 venue: "ICCV"
 citations: 280
 arxiv_id: "2304.05316"
+paper-faithfullness: audited-fixed
 ---
 
 # OccFormer: Dual-path Transformer for Vision-based 3D Semantic Occupancy Prediction
@@ -78,7 +79,7 @@ OccFormer achieved 12.32% mIoU on the SemanticKITTI benchmark (a 1.24% improveme
 
 OccFormer operates in three stages: (1) a 2D image backbone extracts multi-view image features, (2) a view transformer lifts these features into a 3D voxel volume, and (3) the dual-path transformer encoder + Mask2Former decoder produce the final semantic occupancy predictions.
 
-**Image backbone and view transformer**: Multi-view camera images are processed through a 2D backbone (ResNet-50 or EfficientNet) to extract image features. A view transformer (following the LSS lift-splat paradigm from [[wiki/sources/papers/lift-splat-shoot-encoding-images-from-arbitrary-camera-rigs-by-implicitly-unprojecting-to-3d]]) predicts per-pixel depth distributions and lifts 2D features into a 3D voxel grid of shape `(X, Y, Z, C)`.
+**Image backbone and view transformer**: Multi-view camera images are processed through a 2D backbone (EfficientNetB7 on SemanticKITTI, ResNet-101 on nuScenes, following the compared methods) to extract image features. A view transformer (following the LSS lift-splat paradigm from [[wiki/sources/papers/lift-splat-shoot-encoding-images-from-arbitrary-camera-rigs-by-implicitly-unprojecting-to-3d]]) predicts per-pixel depth distributions and lifts 2D features into a 3D voxel grid of shape `(X, Y, Z, C)`.
 
 **Dual-path transformer encoder**: The 3D voxel volume is processed through L encoder layers, each containing:
 - **Local path**: The 3D volume is sliced along the height (Z) axis into Z independent 2D BEV planes of shape `(X, Y, C)`. Each slice is processed with standard 2D windowed attention (following Swin Transformer), capturing fine-grained local spatial patterns within each horizontal cross-section. This avoids 3D attention entirely -- each slice is a standard 2D attention problem.
@@ -124,9 +125,9 @@ The decoder outputs per-class binary occupancy masks, which are combined to prod
 
 ### Ablation Highlights
 
-- Removing the global path drops mIoU by 1.8%, confirming that scene-level context is important beyond local geometry
-- Replacing preserve-pooling with bilinear interpolation drops mIoU by 0.9%, with the largest degradation on thin objects (poles, pedestrians)
-- Disabling class-guided sampling drops mIoU by 0.7%, with rare classes (bicycle, motorcycle) affected most
+- Removing the global path (local-only) drops mIoU by ~0.53 pp (13.46 → 12.93), confirming that scene-level context is important beyond local geometry
+- Replacing preserve-pooling with trilinear interpolation drops mIoU by ~0.52 pp (12.13 → 11.61 with uniform sampling), with the largest degradation on thin/sparse structures
+- Switching from class-guided to uniform sampling drops mIoU by ~1.33 pp (13.46 → 12.13 with max-pool), with rare classes affected most; the paper describes this as the most impactful single modification
 
 ## Limitations & Open Questions
 

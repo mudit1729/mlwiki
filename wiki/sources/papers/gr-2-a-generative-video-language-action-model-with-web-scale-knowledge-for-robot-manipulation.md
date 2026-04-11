@@ -7,6 +7,7 @@ year: "2024"
 venue: "arXiv"
 citations: 50
 arxiv_id: "2410.06158"
+paper-faithfullness: audited-clean
 ---
 
 # GR-2: A Generative Video-Language-Action Model with Web-Scale Knowledge for Robot Manipulation

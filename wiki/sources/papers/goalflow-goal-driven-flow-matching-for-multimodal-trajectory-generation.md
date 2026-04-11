@@ -13,6 +13,7 @@ tags:
   - trajectory-prediction
 citations: ~25
 arxiv_id: "2503.05689"
+paper-faithfullness: audited-clean
 ---
 
 # GoalFlow: Goal-Driven Flow Matching for Multimodal Trajectory Generation

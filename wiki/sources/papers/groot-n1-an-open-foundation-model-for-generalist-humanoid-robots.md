@@ -7,6 +7,7 @@ year: "2025"
 venue: "arXiv"
 citations: 602
 arxiv_id: "2503.14734"
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2503.14734)**
@@ -50,7 +51,7 @@ A notable contribution is the concept of "neural trajectories" -- AI-generated v
 │                                                              │
 │  ┌─────────────┐    Language     ┌──────────────────────┐   │
 │  │  Camera      │   Instruction  │  System 2 (10 Hz)    │   │
-│  │  Images      │───────────────►│  Eagle-2 VLM (7B)    │   │
+│  │  Images      │───────────────►│  Eagle-2 VLM (2B)    │   │
 │  └─────────────┘                 │  Scene Understanding │   │
 │                                  │  Task Reasoning      │   │
 │                                  └─────────┬────────────┘   │

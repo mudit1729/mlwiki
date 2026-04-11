@@ -14,6 +14,7 @@ tags:
   - self-supervised
 citations: 47
 arxiv_id: "2408.11447"
+paper-faithfullness: audited-clean
 ---
 
 # GaussianOcc: Fully Self-supervised and Efficient 3D Occupancy Estimation with Gaussian Splatting

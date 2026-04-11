@@ -1,12 +1,13 @@
 ---
 title: "Mistral 7B"
-tags: [nlp, language-modeling, transformer, foundation-model, mixture-of-experts, efficient-inference]
+tags: [nlp, language-modeling, transformer, foundation-model, efficient-inference]
 status: active
 type: paper
 year: "2023"
 venue: "arXiv"
 citations: 4052
 arxiv_id: "2310.06825"
+paper-faithfullness: audited-fixed
 ---
 
 # Mistral 7B

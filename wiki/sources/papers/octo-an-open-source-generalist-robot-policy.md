@@ -7,6 +7,7 @@ year: "2024"
 venue: "RSS"
 citations: 400
 arxiv_id: "2405.12213"
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2405.12213)**

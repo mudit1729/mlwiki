@@ -7,6 +7,7 @@ year: "2024"
 venue: "NeurIPS 2024"
 citations: 100
 arxiv_id: "2406.15349"
+paper-faithfullness: audited-fixed
 ---
 
 # NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking
@@ -19,7 +20,7 @@ Autonomous vehicle evaluation has long been split between two unsatisfying extre
 
 The paper's central empirical finding is that its proposed evaluation metric, **PDM Score (PDMS)**, achieves 0.7--0.8 correlation with closed-loop simulation scores, while traditional open-loop metrics (e.g., Average Displacement Error) achieve only 0.2--0.5 correlation. This validates the non-reactive assumption for short-horizon evaluation and provides a computationally tractable yet meaningful benchmark. NAVSIM also introduces a principled data curation strategy that filters out trivially easy and unsolvable scenarios from nuPlan, yielding a challenging subset where high performance requires genuine perception and planning. The CVPR 2024 NAVSIM Challenge attracted 143 teams and 463 submissions, rapidly establishing the benchmark as a community standard for end-to-end driving evaluation.
 
-A key insight from the benchmark results is that complex multi-module architectures (UniAD at 83.4% PDMS, PARA-Drive at 84.0% PDMS trained for 240 and 80 GPU-days respectively) achieve only marginal gains over simpler architectures like TransFuser (84.0% PDMS trained in 1 GPU-day), suggesting potential over-engineering in the field. Even the best models trail human expert performance (94.8% PDMS) by roughly 10 percentage points, highlighting substantial remaining challenges.
+A key insight from the benchmark results is that complex multi-module architectures (UniAD at 83.4% PDMS trained for ~240 GPU-days, PARA-Drive at 84.0% PDMS trained for ~240 GPU-days) achieve only marginal gains over simpler architectures like TransFuser (84.0% PDMS trained in 1 GPU-day), suggesting potential over-engineering in the field. Even the best models trail human expert performance (94.8% PDMS) by roughly 10 percentage points, highlighting substantial remaining challenges.
 
 ## Key Contributions
 
@@ -121,10 +122,10 @@ PDMS achieves 0.7--0.8 correlation with closed-loop simulation scores across var
 |-------|------|-----------------|
 | Human Expert | 94.8% | -- |
 | TransFuser | 84.0% | 1 GPU-day |
-| PARA-Drive | 84.0% | 80 GPU-days |
+| PARA-Drive | 84.0% | 240 GPU-days |
 | Latent TransFuser | 83.8% | -- |
 | UniAD | 83.4% | 240 GPU-days |
-| Ego Status MLP | 65.8% | -- |
+| Ego Status MLP | 65.6% | -- |
 | Constant Velocity | 20.6% | -- |
 
 Key observations:

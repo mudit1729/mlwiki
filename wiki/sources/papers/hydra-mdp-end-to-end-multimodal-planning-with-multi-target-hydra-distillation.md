@@ -4,9 +4,10 @@ tags: [autonomous-driving, end-to-end, planning, knowledge-distillation, imitati
 status: active
 type: paper
 year: "2024"
-venue: "NeurIPS 2024 (NAVSIM Challenge Winner)"
+venue: "CVPR 2024 Autonomous Grand Challenge (1st place)"
 citations: 50
 arxiv_id: "2406.06978"
+paper-faithfullness: audited-fixed
 ---
 
 # Hydra-MDP: End-to-End Multimodal Planning with Multi-Target Hydra-Distillation
@@ -116,7 +117,7 @@ Hydra-MDP achieved first place in the NAVSIM challenge with state-of-the-art per
 |--------|-----------|--------|---------|-----|---------|-----|
 | **Hydra-MDP (best single)** | **86.5** | **97.9** | **96.1** | -- | -- | -- |
 | **Hydra-MDP (large backbone)** | **91.0** | -- | -- | -- | -- | -- |
-| TransFuser baseline | -- | -- | -- | -- | -- | -- |
+| TransFuser baseline | 78.0 | 97.2 | 89.1 | -- | -- | 76.0 |
 | Single aggregated score distillation | 80.2 | -- | -- | -- | -- | -- |
 
 Key findings from ablations:

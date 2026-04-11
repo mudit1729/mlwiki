@@ -7,6 +7,7 @@ year: "2021"
 venue: "ICML 2021"
 citations: 57987
 arxiv_id: "2103.00020"
+paper-faithfullness: audited-fixed
 ---
 
 # Learning Transferable Visual Models From Natural Language Supervision
@@ -122,7 +123,7 @@ For zero-shot classification, the class names are embedded in prompt templates (
 
 ## Limitations & Open Questions
 
-- CLIP struggles with fine-grained classification tasks (distinguishing car models, flower species, aircraft types), abstract tasks, and counting, though it performs well on common objects. Even zero-shot human performance substantially outperforms CLIP on many tasks, with CLIP generally falling short of one-shot human performance
+- CLIP struggles with fine-grained classification tasks (distinguishing car models, flower species, aircraft types), abstract tasks, and counting, though it performs well on common objects. CLIP outperforms zero-shot humans on some tasks but generally falls short of one-shot human performance; human performance (even zero-shot) substantially exceeds CLIP on many specialized tasks
 - The model relies on English text supervision, limiting its applicability to non-English visual concepts and culturally specific imagery
 - Zero-shot performance remains below state-of-the-art fine-tuned models on most benchmarks, suggesting that task-specific adaptation still provides significant benefit when labeled data is available
 - **Social bias concerns**: Extensive analysis revealed concerning patterns -- e.g., CLIP shows stereotyped associations between gender and occupations, appearances, and other attributes. Potential surveillance applications are acknowledged, though CLIP's performance was not exceptional compared to specialized models for those purposes

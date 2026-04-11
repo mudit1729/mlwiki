@@ -4,9 +4,10 @@ tags: [autonomous-driving, vla, end-to-end, language-model]
 status: active
 type: paper
 year: "2025"
-venue: "AAAI"
-citations: 109
+venue: "arXiv"
+citations: 0
 arxiv_id: "2503.23463"
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2503.23463)**

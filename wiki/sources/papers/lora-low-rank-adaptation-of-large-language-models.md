@@ -7,6 +7,7 @@ year: "2022"
 venue: "ICLR 2022"
 citations: 29175
 arxiv_id: "2106.09685"
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2106.09685)**
@@ -111,12 +112,12 @@ Analysis of the learned Delta-W matrices reveals that the top singular values co
 
 | Method | WikiSQL Acc | MNLI-m Acc | SAMSum R1 | SAMSum R2 | SAMSum RL | Trainable Params |
 |--------|-------------|------------|-----------|-----------|-----------|------------------|
-| Full fine-tuning | 73.8 | 89.5 | 52.0 | 28.0 | 49.8 | 175.0B |
+| Full fine-tuning | 73.8 | 89.5 | 52.0 | 28.0 | 44.5 | 175.0B |
 | BitFit | 71.3 | 91.0 | 51.3 | 27.6 | 49.1 | 14.2M |
 | Prefix-embed | 63.1 | 88.6 | 49.2 | 25.6 | 46.7 | 3.5M |
 | Prefix-layer | 70.1 | 89.7 | 50.8 | 27.5 | 48.5 | 20.2M |
 | Adapter (H) | 73.2 | 91.5 | 53.0 | 28.9 | 50.8 | 7.1M |
-| **LoRA (r=4)** | **73.4** | **91.7** | **53.8** | **29.8** | **51.6** | **4.7M** |
+| **LoRA (r=4)** | **73.4** | **91.7** | **53.8** | **29.8** | **45.9** | **4.7M** |
 
 LoRA matches or exceeds all baselines on GPT-3 175B with the fewest trainable parameters, achieving the best results on MNLI and SAMSum while being competitive on WikiSQL.
 

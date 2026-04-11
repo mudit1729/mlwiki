@@ -4,9 +4,10 @@ tags: [autonomous-driving, world-model, 3d-occupancy, gaussian-splatting, percep
 status: active
 type: paper
 year: "2024"
-venue: "CVPR 2025"
+venue: "arXiv 2024"
 citations: 59
 arxiv_id: "2412.10373"
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2412.10373)**
@@ -94,9 +95,8 @@ The architecture processes historical and current information through specialize
 
 | Method | Type | mIoU | Overhead |
 |--------|------|------|----------|
-| BEVFormer | Single-frame | baseline | -- |
-| OccFormer | Single-frame | baseline | -- |
-| Multi-frame fusion | Temporal | +~1% | Increased |
+| GaussianFormer (GF-B) | Single-frame | baseline | -- |
+| GF-T (temporal fusion) | Temporal | +~1% | Increased |
 | **GaussianWorld** | **World model** | **+2%+** | **None at inference** |
 
 **Ablation Results:**

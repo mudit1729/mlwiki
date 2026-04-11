@@ -7,6 +7,7 @@ year: "2024"
 venue: "CVPR 2024 Highlight"
 citations: 0
 arxiv_id: "2403.09630"
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2403.09630)**
