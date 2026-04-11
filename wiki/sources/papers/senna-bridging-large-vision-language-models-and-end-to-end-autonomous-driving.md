@@ -14,6 +14,7 @@ tags:
   - e2e
   - decoupled
 citations: 102
+paper-faithfullness: audited-solid
 ---
 
 # Senna: Bridging Large Vision-Language Models and End-to-End Autonomous Driving
@@ -26,14 +27,14 @@ Two dominant paradigms exist in autonomous driving: large vision-language models
 
 Unlike ORION, which bridges the reasoning-action gap via a dense learned planning token, Senna uses human-readable natural language as the interface between reasoning and planning. The LVLM generates driving decisions like "decelerate and yield to crossing pedestrian, then proceed straight," which condition the E2E trajectory prediction module alongside visual features. This makes the reasoning-to-planning bridge interpretable and debuggable, a significant practical advantage for safety-critical deployment.
 
-The decoupled LVLM+E2E design pattern achieves a 27% planning error reduction and 33% collision rate reduction over baselines, demonstrating that the combination genuinely outperforms either component alone. This architecture is shared by NVIDIA's Alpamayo-R1, suggesting it may become the dominant VLA architecture for autonomous driving, where human-readable intermediate representations provide both performance and interpretability benefits.
+The decoupled LVLM+E2E design pattern achieves a 27.12% planning error reduction and 33.33% collision rate reduction over the model without pre-training (pre-trained on DriveX, fine-tuned on nuScenes), demonstrating that domain-specific pre-training and the combined architecture genuinely outperform either component alone. This architecture is shared by NVIDIA's Alpamayo-R1, suggesting it may become the dominant VLA architecture for autonomous driving, where human-readable intermediate representations provide both performance and interpretability benefits.
 
 ## Key Contributions
 
 - **Decoupled LVLM + E2E architecture**: LVLM generates natural-language driving decisions, which condition a separate E2E trajectory prediction module alongside visual features, letting each module do what it does best
 - **Natural language as interpretable bridge**: The interface between reasoning and planning is human-readable text, unlike dense embeddings (ORION) or tightly coupled outputs (DriveGPT4), enabling debugging and interpretability
 - **Large-scale LVLM pre-training on driving data**: Pre-training the vision-language component on diverse driving data substantially improves downstream performance, demonstrating the value of domain-specific foundation model preparation
-- **Significant quantitative improvements**: 27.12% planning error (L2) reduction and 33.33% collision rate reduction over baselines
+- **Significant quantitative improvements**: 27.12% planning error (L2) reduction and 33.33% collision rate reduction over the model without pre-training, measured when pre-training on DriveX and fine-tuning on nuScenes
 - **Best-of-both-worlds validation**: First clear demonstration that LVLM-level reasoning combined with E2E-level trajectory precision outperforms either paradigm individually
 
 ## Architecture / Method
@@ -102,9 +103,9 @@ At training time, both modules are optimized jointly: the LVLM with language sup
 
 ![Planning-oriented Q&A examples showing scene descriptions, driving decisions, and explanatory reasoning](https://paper-assets.alphaxiv.org/figures/2410.22313/x5.png)
 
-- **27.12% planning error reduction (L2)** and **33.33% collision rate reduction** over baselines, demonstrating that decoupling improves both precision and safety
+- **27.12% planning error reduction (L2)** and **33.33% collision rate reduction** over the model without pre-training (with DriveX pre-training + nuScenes fine-tuning), demonstrating that domain-specific pre-training and the decoupled architecture improve both precision and safety
 - **LVLM-level reasoning quality** alongside **E2E model-level trajectory accuracy**, validating the best-of-both-worlds claim
-- **Pre-training the LVLM component on driving data substantially improves performance**, showing a 15%+ gain from domain-specific pretraining versus generic VLM initialization
+- **Pre-training the LVLM component on driving data substantially improves performance**, as demonstrated by the cross-scenario transfer gains from DriveX pre-training
 - **Decoupled design outperforms tightly coupled approaches** where a single model must handle both reasoning and precise coordinate generation
 - **Ablation studies confirm both modules are necessary**: removing the LVLM decisions degrades to baseline E2E performance, removing the E2E module degrades trajectory precision
 - **Multi-image input significantly improved performance** versus front-view only; three-stage training yielded best results among training ablations

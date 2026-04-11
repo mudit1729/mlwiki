@@ -13,7 +13,7 @@ tags:
   - parallel-architecture
 citations: ~179
 arxiv_id: null
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # PARA-Drive: Parallelized Architecture for Real-time Autonomous Driving

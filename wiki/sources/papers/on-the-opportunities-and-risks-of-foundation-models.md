@@ -7,7 +7,7 @@ year: "2021"
 venue: "arXiv (Stanford HAI)"
 citations: 6057
 arxiv_id: "2108.07258"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2108.07258)**

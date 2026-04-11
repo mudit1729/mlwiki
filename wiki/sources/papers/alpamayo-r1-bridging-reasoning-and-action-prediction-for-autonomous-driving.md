@@ -14,6 +14,7 @@ tags:
   - planning
   - deployment
 citations: 42
+paper-faithfullness: audited-solid
 ---
 
 # Alpamayo-R1: Bridging Reasoning and Action Prediction for Generalizable Autonomous Driving in the Long Tail
@@ -34,7 +35,7 @@ Alpamayo-R1 achieves real-time inference well under the ~150ms threshold for saf
 
 ## Key Contributions
 
-- **Real-time VLA at 99ms latency**: Production-viable inference speed for a full VLM reasoning + trajectory generation pipeline, compared to 200ms+ for most academic VLA models
+- **Real-time VLA at 99ms latency**: Production-viable inference speed for a full VLM reasoning + trajectory generation pipeline on an NVIDIA RTX 6000 Pro Blackwell platform
 - **Causally-grounded dataset via hybrid labeling**: Training data built with combined human annotation and automated methods that explicitly labels why actions are correct (causal reasoning chains), not just the actions themselves, with focus on long-tail scenarios
 - **Multi-stage training pipeline**: Stage 1 (VLM pre-training on driving data), Stage 2 (supervised learning on expert trajectories), Stage 3 (reinforcement learning for safety refinement)
 - **Modular VLM + trajectory generation architecture**: Separates reasoning from trajectory prediction, following the pattern established by ORION and Senna

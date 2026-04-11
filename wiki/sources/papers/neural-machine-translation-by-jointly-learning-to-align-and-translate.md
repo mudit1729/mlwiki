@@ -2,7 +2,7 @@
 title: Neural Machine Translation by Jointly Learning to Align and Translate
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2014
 venue: ICLR 2015
 tags:
@@ -12,6 +12,7 @@ tags:
   - machine-translation
   - sequence-to-sequence
 citations: 29150
+paper-faithfullness: audited-solid
 ---
 
 # Neural Machine Translation by Jointly Learning to Align and Translate

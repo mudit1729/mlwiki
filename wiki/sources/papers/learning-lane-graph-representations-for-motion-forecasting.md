@@ -11,6 +11,7 @@ tags:
   - prediction
   - lanegcn
 citations: 750
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2007.13732)**
@@ -29,7 +30,7 @@ LaneGCN became one of the most influential and durable papers in motion forecast
 
 - **Lane graph representation:** Encodes HD map lanes as a graph with four edge types (predecessor, successor, left neighbor, right neighbor), preserving topological connectivity that rasterization destroys
 - **Lane graph convolution (LaneConv):** A specialized graph neural network layer that propagates features along lane topology, with separate kernels for each edge type and dilated graph convolutions to capture long-range lane dependencies
-- **Actor-map fusion modules:** Four interaction blocks (ActorNet, MapNet, Actor2Map, Map2Actor) that enable bidirectional information flow between agent trajectory features and map structure features
+- **Actor-map fusion modules:** Four interaction blocks in the FusionNet (A2L: actors-to-lanes, L2L: lanes-to-lanes, L2A: lanes-to-actors, A2A: actors-to-actors) that enable bidirectional information flow between agent trajectory features and map structure features
 - **Multi-modal trajectory prediction:** Outputs K trajectory hypotheses with associated confidence scores, handling the inherent multimodality of future motion (an agent at an intersection could go straight, turn left, or turn right)
 - **Argoverse benchmark results:** State-of-the-art on the Argoverse motion forecasting benchmark at time of publication, with strong performance maintained over subsequent years
 
@@ -54,13 +55,12 @@ LaneGCN became one of the most influential and durable papers in motion forecast
 │           │                          │                   │
 │           ▼                          ▼                   │
 │  ┌──────────────────────────────────────────────┐       │
-│  │            Fusion Modules                     │       │
-│  │  ┌──────────┐              ┌──────────┐       │       │
-│  │  │Actor2Map │──► spatial ──►│Map2Actor │       │       │
-│  │  │attention │   attention  │attention │       │       │
-│  │  └──────────┘              └──────────┘       │       │
-│  │  (actors attend to          (lanes updated    │       │
-│  │   nearby lanes)              by nearby actors)│       │
+│  │       FusionNet (4 stacked modules)           │       │
+│  │  ┌──────┐  ┌──────┐  ┌──────┐  ┌──────┐     │       │
+│  │  │ A2L  │─►│ L2L  │─►│ L2A  │─►│ A2A  │     │       │
+│  │  │actor │  │lane  │  │lane  │  │actor │     │       │
+│  │  │→lane │  │→lane │  │→actor│  │→actor│     │       │
+│  │  └──────┘  └──────┘  └──────┘  └──────┘     │       │
 │  └──────────────────────┬───────────────────────┘       │
 │                         ▼                               │
 │  ┌──────────────────────────────────────────────┐       │
@@ -79,13 +79,13 @@ ActorNet encodes each actor's past trajectory (observed positions over the last 
 
 MapNet encodes the lane graph. Each lane segment is represented as a node with initial features derived from the lane's geometry (centerline coordinates, lane width, speed limit, turn direction). LaneConv layers propagate information through the graph using four types of edges: predecessor (lane continuations), successor (following lanes), left neighbor, and right neighbor. Dilated graph convolutions extend the receptive field along lanes, allowing the network to reason about distant but topologically connected road structure. Multiple rounds of message passing build up rich lane features.
 
-Actor2Map and Map2Actor modules perform bidirectional fusion. Actor2Map attention allows each actor to attend to nearby lane features, pulling in relevant map context based on spatial proximity and heading alignment. Map2Actor attention allows lane features to be updated based on nearby actors, incorporating traffic context into the map representation. These fusion modules use spatial attention where the attention weights depend on the relative spatial positions and headings of actors and lanes.
+The FusionNet performs bidirectional fusion through four stacked interaction modules: A2L (actors-to-lanes) introduces real-time traffic information to lane nodes. L2L (lanes-to-lanes) propagates traffic information over the lane graph using LaneGCN. L2A (lanes-to-actors) fuses updated map features back to the actors. A2A (actors-to-actors) handles interactions between actors and produces the final actor features used by the prediction header. These fusion modules use spatial attention where the attention weights depend on the relative spatial positions and headings of actors and lanes.
 
 The prediction header takes each actor's fused feature and generates K trajectory hypotheses (each a sequence of 2D coordinates over a 3-second future horizon) along with K confidence scores. The training loss combines a regression loss (smooth L1 on the trajectory closest to ground truth) with a classification loss on the confidence scores.
 
 ## Results
 
-- State-of-the-art on the Argoverse motion forecasting benchmark at publication, with minADE (minimum average displacement error over K predictions) of 1.35m and minFDE (final displacement error) of 2.97m for K=6 predictions
+- State-of-the-art on the Argoverse motion forecasting benchmark at publication, with minADE (minimum average displacement error over K predictions) of 0.87m and minFDE (final displacement error) of 1.36m for K=6 predictions (K=1 results: minADE 1.71m, minFDE 3.78m)
 - The lane graph representation significantly outperforms rasterized map baselines, demonstrating that topological structure provides information beyond what spatial images capture
 - Ablation studies confirm that all four edge types contribute positively, with successor and predecessor edges being most important (capturing lane continuation) and neighbor edges providing complementary lateral context
 - The dilated LaneConv layers are critical for long-range reasoning -- removing dilation significantly degrades prediction accuracy for long trajectories and complex maneuvers

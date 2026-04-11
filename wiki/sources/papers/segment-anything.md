@@ -7,7 +7,7 @@ year: "2023"
 venue: "ICCV 2023"
 citations: 19692
 arxiv_id: "2304.02643"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # Segment Anything

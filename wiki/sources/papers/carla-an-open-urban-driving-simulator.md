@@ -2,7 +2,7 @@
 title: CARLA: An Open Urban Driving Simulator
 type: source-summary
 status: seed
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2017
 venue: CoRL
 tags:
@@ -11,7 +11,7 @@ tags:
   - benchmark
   - simulator
 citations: 6490
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # CARLA: An Open Urban Driving Simulator
@@ -28,11 +28,11 @@ CARLA (Car Learning to Act) is an open-source simulator for autonomous driving r
 
 The paper introduced CARLA along with a systematic benchmark comparing three approaches to autonomous driving: a modular pipeline (perception + planning), an imitation learning approach (conditional imitation learning), and a reinforcement learning approach (A3C). The benchmark evaluated these methods on goal-directed navigation tasks in both training and novel environments under varying weather conditions. This standardized evaluation framework became critically important for the field, as it provided the first reproducible, controlled comparison of fundamentally different autonomous driving paradigms.
 
-CARLA's impact on the autonomous driving research community has been extraordinary. With over 6,000 citations, it became the default evaluation platform for end-to-end driving research. The CARLA Leaderboard established standardized benchmarks that enabled direct comparison between methods, accelerating progress in the field. Nearly every major end-to-end driving paper published between 2018 and 2024 (including ChauffeurNet, LMDrive, and many VLA driving systems) either evaluates on CARLA or uses CARLA-generated training data.
+CARLA's impact on the autonomous driving research community has been extraordinary. With over 6,000 citations, it became one of the most widely used evaluation platforms for simulation-based driving research. Later CARLA releases and the CARLA Leaderboard further standardized comparisons between methods, accelerating progress in the field.
 
 ## Key Contributions
 
-- **Open-source, high-fidelity driving simulator**: Built on Unreal Engine 4 with physically-based rendering, dynamic weather (rain, fog, sun angle), day/night cycles, and realistic urban layouts with traffic lights, signs, pedestrians, and vehicles
+- **Open-source, high-fidelity driving simulator**: Built on Unreal Engine 4 with physically-based rendering, dynamic weather, two lighting conditions (midday and sunset), and realistic urban layouts with traffic lights, signs, pedestrians, and vehicles
 - **Flexible sensor configuration**: Supports RGB cameras (arbitrary placement and intrinsics), depth maps, and semantic segmentation ground truth (12 classes: road, lane markings, traffic signs, sidewalks, vehicles, pedestrians, and others), plus vehicle state data (GPS coordinates, orientation, speed, acceleration) -- all accessible via Python API. LiDAR, IMU, and radar are not part of the original paper.
 - **Standardized benchmark for driving approaches**: First controlled comparison of modular pipeline vs. imitation learning vs. reinforcement learning on identical tasks and environments, establishing a reproducible evaluation framework
 - **Goal-directed navigation tasks**: Benchmark tasks include straight driving, single turn, navigation (follow GPS route), and navigation with dynamic obstacles, with separate training and test weather conditions to measure generalization
@@ -58,7 +58,7 @@ CARLA's impact on the autonomous driving research community has been extraordina
 │  │  ┌────────────┐ ┌────────────┐   │                      │
 │  │  │  NPC AI    │ │  Weather   │   │                      │
 │  │  │ (vehicles, │ │ (rain,fog, │   │                      │
-│  │  │  peds)     │ │  sun,night)│   │                      │
+│  │  │  peds)     │ │  sun,set)  │   │                      │
 │  │  └────────────┘ └────────────┘   │                      │
 │  └──────────────┬───────────────────┘                      │
 │                 │  TCP/IP                                   │
@@ -78,9 +78,9 @@ CARLA's impact on the autonomous driving research community has been extraordina
 └────────────────────────────────────────────────────────────┘
 ```
 
-CARLA is built as a server-client architecture. The server runs the Unreal Engine 4 simulation (physics, rendering, NPC AI) and the client connects via a Python/C++ API to control the ego vehicle, configure sensors, and retrieve observations. The simulation runs at a configurable timestep (typically 10-20 FPS for training, up to 60 FPS for evaluation).
+CARLA is built as a server-client architecture. The server runs the Unreal Engine 4 simulation (physics, rendering, NPC AI) and the client connects via a Python/C++ API to control the ego vehicle, configure sensors, and retrieve observations.
 
-The simulator provides several urban maps with varying complexity. Each map includes buildings, roads with lane markings, traffic lights, stop signs, and spawn points for vehicles and pedestrians. Weather is parameterized by cloud coverage, precipitation, sun altitude/azimuth, and fog density. NPC vehicles follow predefined autopilot routes with basic collision avoidance.
+The simulator provides two towns with varying complexity: Town 1 for training and Town 2 for testing. Each town includes buildings, roads with lane markings, traffic lights, stop signs, and spawn points for vehicles and pedestrians. Weather is parameterized by cloud coverage, precipitation, sun altitude/azimuth, and fog density. NPC vehicles follow predefined autopilot routes with basic collision avoidance.
 
 The benchmark defines four task conditions of increasing difficulty: (1) straight -- drive straight to a goal; (2) one turn -- navigate one intersection; (3) navigation -- follow a multi-waypoint route; (4) navigation dynamic -- same as navigation but with other vehicles and pedestrians. Success is measured by percentage of goal-reaching episodes within a time limit. The three baseline approaches evaluated are: a modular pipeline using semantic segmentation + rule-based planning, conditional imitation learning (CIL) trained on expert demonstrations with high-level commands, and A3C reinforcement learning trained from raw pixels.
 
@@ -106,4 +106,3 @@ The benchmark defines four task conditions of increasing difficulty: (1) straigh
 - [[wiki/sources/papers/end-to-end-driving-via-conditional-imitation-learning]]
 - [[wiki/sources/papers/chauffeurnet-learning-to-drive-by-imitating-the-best-and-synthesizing-the-worst]]
 - [[wiki/sources/papers/lmdrive-closed-loop-end-to-end-driving-with-large-language-models]]
-

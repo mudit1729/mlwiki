@@ -7,7 +7,7 @@ year: "2024"
 venue: "CVPR 2024 Autonomous Grand Challenge (1st place)"
 citations: 50
 arxiv_id: "2406.06978"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Hydra-MDP: End-to-End Multimodal Planning with Multi-Target Hydra-Distillation

@@ -13,7 +13,7 @@ tags:
   - trajectory-prediction
 citations: ~189
 arxiv_id: "2402.11502"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # GenAD: Generative End-to-End Autonomous Driving

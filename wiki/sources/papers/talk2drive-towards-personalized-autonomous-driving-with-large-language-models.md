@@ -7,7 +7,7 @@ year: "2024"
 venue: "IEEE ITSC 2024"
 citations: 80
 arxiv_id: "2312.09397"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2312.09397)**

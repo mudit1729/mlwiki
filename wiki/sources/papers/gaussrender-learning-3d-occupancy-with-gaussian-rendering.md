@@ -13,7 +13,7 @@ tags:
   - gaussian-rendering
 citations: 13
 arxiv_id: "2502.05040"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # GaussRender: Learning 3D Occupancy with Gaussian Rendering

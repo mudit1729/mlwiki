@@ -2,7 +2,7 @@
 title: "DriveDreamer: Towards Real-World-Driven World Models for Autonomous Driving"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2024
 venue: "ECCV 2024"
 tags:
@@ -13,6 +13,7 @@ tags:
   - video-prediction
 citations: ~452
 arxiv_id: "2309.09777"
+paper-faithfullness: audited-solid
 ---
 
 # DriveDreamer: Towards Real-World-Driven World Models for Autonomous Driving
@@ -117,7 +118,7 @@ This yields action-conditioned video rollouts suitable for planning.
 - HD map dependency limits applicability to map-free driving scenarios
 - Video generation resolution and temporal horizon are constrained by computational cost
 - The relationship between video generation quality and downstream planning performance is not fully characterized
-- Single-camera generation; multi-view consistency for surround-view driving is not addressed
+- The main planning evaluation remains open-loop and map-conditioned; while the paper also presents separate multi-view image/video generation extensions, downstream surround-view planning utility is not fully characterized
 
 ## Connections
 

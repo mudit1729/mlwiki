@@ -12,6 +12,7 @@ tags:
   - molecular-property-prediction
   - message-passing
 citations: 8754
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1704.01212)**
@@ -82,7 +83,7 @@ For QM9, atoms are nodes with features (atomic number, charge, etc.) and bonds a
 ## Results
 
 - Reimplementing GCN, GGNN, and other architectures within the MPNN framework and training them identically reveals that architectural differences (not training details) account for performance gaps
-- On several QM9 targets (internal energy U, enthalpy H, free energy G), MPNN predictions reach chemical accuracy thresholds (~1 kcal/mol), suggesting viability as fast surrogates for DFT calculations
+- The best MPNN variant (enn-s2s, combining edge network message function with Set2Set readout) achieves chemical accuracy on 11 out of 13 QM9 targets; an ensemble of the top five models (enn-s2s-ens5) further reduces errors across all targets
 - The edge network message function outperforms simpler message functions by 15-30% on most QM9 targets, demonstrating the importance of edge-conditioned communication
 - Set2Set readout outperforms sum/mean readout by 5-15% on properties that depend on global molecular structure, validating the attention-based aggregation
 - Virtual master nodes improve performance on larger molecules where message passing alone cannot propagate information across the full graph in T steps

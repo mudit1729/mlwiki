@@ -13,7 +13,7 @@ tags:
   - flow-matching
 citations: 1381
 arxiv_id: "2410.24164"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # pi0: A Vision-Language-Action Flow Model for General Robot Control

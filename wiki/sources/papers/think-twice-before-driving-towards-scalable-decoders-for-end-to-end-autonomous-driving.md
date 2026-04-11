@@ -7,7 +7,7 @@ year: "2023"
 venue: "CVPR 2023"
 citations: 180
 arxiv_id: "2305.06242"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Think Twice before Driving: Towards Scalable Decoders for End-to-End Autonomous Driving

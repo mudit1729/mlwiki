@@ -7,7 +7,7 @@ year: "2022"
 venue: "arXiv 2022"
 citations: 8653
 arxiv_id: "2204.06125"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # Hierarchical Text-Conditional Image Generation with CLIP Latents (DALL-E 2)

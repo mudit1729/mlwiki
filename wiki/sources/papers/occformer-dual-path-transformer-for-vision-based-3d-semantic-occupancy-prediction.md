@@ -7,7 +7,7 @@ year: "2023"
 venue: "ICCV"
 citations: 280
 arxiv_id: "2304.05316"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # OccFormer: Dual-path Transformer for Vision-based 3D Semantic Occupancy Prediction

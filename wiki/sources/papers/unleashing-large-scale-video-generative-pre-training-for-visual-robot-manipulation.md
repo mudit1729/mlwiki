@@ -7,7 +7,7 @@ year: "2024"
 venue: "ICLR 2024"
 citations: 150
 arxiv_id: "2312.13139"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Unleashing Large-Scale Video Generative Pre-training for Visual Robot Manipulation (GR-1)

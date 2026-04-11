@@ -4,7 +4,7 @@ type: source-summary
 status: complete
 updated: 2026-04-05
 year: 2025
-venue: ICCV
+venue: arxiv
 tags:
   - paper
   - autonomous-driving
@@ -14,6 +14,7 @@ tags:
   - reasoning
   - e2e
 citations: 100
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2503.19755)**
@@ -29,7 +30,7 @@ The paper achieves 77.74 driving score and 54.62% success rate on Bench2Drive, s
 ## Key Contributions
 
 - **Planning token bridge**: A learned embedding emitted by the LLM that encodes the semantic driving decision in a format the generative planner can condition on, bridging reasoning space and action space without precision loss from text-based coordinate generation
-- **QT-Former (Query-Temporal Former)**: Aggregates long-term visual context from multi-view camera sequences and converts visual features into tokens the LLM can process, handling the temporal dimension that single-frame processing misses
+- **QT-Former (Query-based Temporal Transformer)**: Aggregates long-term visual context from multi-view camera sequences and converts visual features into tokens the LLM can process, handling the temporal dimension that single-frame processing misses
 - **Generative planner**: Dedicated diffusion/GMM-based trajectory generator conditioned on the planning token, optimized for trajectory quality, multimodality (multiple valid paths), and physical feasibility
 - **Three-component architecture**: Clean separation of visual encoding (QT-Former), semantic reasoning (LLM), and trajectory generation (generative planner)
 - **Strong Bench2Drive results**: 77.74 driving score and 54.62% success rate, validating the approach in closed-loop evaluation
@@ -44,8 +45,8 @@ The paper achieves 77.74 driving score and 54.62% success rate on Bench2Drive, s
               │
               ▼
    ┌────────────────────────┐
-   │      QT-Former         │
-   │  (Query-Temporal Former)│
+   │      QT-Former                    │
+   │  (Query-based Temporal Transformer)│
    │  ┌──────────────────┐  │
    │  │ Perception Queries│  │
    │  │ Scene Queries     │  │  Self-attn + Cross-attn
@@ -87,7 +88,7 @@ The paper achieves 77.74 driving score and 54.62% success rate on Bench2Drive, s
 
 The architecture has three distinct components connected through the planning token:
 
-**QT-Former (Query-Temporal Former)**: Takes multi-view camera images across a temporal window and processes them using perception, scene, and history queries through self-attention and cross-attention mechanisms, efficiently aggregating long-term temporal context. The output is a set of visual tokens in the LLM's embedding space that encode the driving scene with temporal context.
+**QT-Former (Query-based Temporal Transformer)**: Takes multi-view camera images across a temporal window and processes them using perception, scene, and history queries through self-attention and cross-attention mechanisms, efficiently aggregating long-term temporal context. The output is a set of visual tokens in the LLM's embedding space that encode the driving scene with temporal context.
 
 **LLM Reasoning Core**: Vicuna v1.5 fine-tuned with Low-Rank Adaptation (LoRA), receiving visual tokens from QT-Former interleaved with text prompts. The LLM performs scene description, analysis, action reasoning, and history review. It produces two outputs: (1) text-based reasoning for VQA tasks, and (2) a special "planning token" -- a dense embedding that encodes the high-level driving decision in a trajectory-compatible format, bridging the reasoning space and action space.
 

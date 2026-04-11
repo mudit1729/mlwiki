@@ -11,7 +11,7 @@ tags:
   - vla
   - open-source
 citations: 1883
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # OpenVLA: An Open-Source Vision-Language-Action Model

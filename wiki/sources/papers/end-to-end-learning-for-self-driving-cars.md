@@ -10,7 +10,7 @@ tags:
   - autonomous-driving
   - e2e
 citations: 4537
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # End to End Learning for Self-Driving Cars

@@ -14,7 +14,7 @@ tags:
   - 3d-detection
 citations: 15
 arxiv_id: "2412.12725"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # RaCFormer: Towards High-Quality 3D Object Detection via Query-based Radar-Camera Fusion

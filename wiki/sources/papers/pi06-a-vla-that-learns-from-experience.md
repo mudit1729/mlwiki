@@ -13,7 +13,7 @@ tags:
   - self-improvement
 citations: 93
 arxiv_id: "2511.14759"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # pi*0.6: A VLA That Learns From Experience

@@ -3,10 +3,12 @@ title: "SurroundOcc: Multi-camera 3D Occupancy Prediction for Autonomous Driving
 tags: [autonomous-driving, perception, occupancy, 3d-reconstruction, computer-vision, multi-camera, cnn]
 status: active
 type: paper
+updated: 2026-04-11
 year: "2023"
 venue: "ICCV"
 citations: 350 <!-- TODO: fetch citation count from Semantic Scholar -->
 arxiv_id: "2303.09551"
+paper-faithfullness: audited-solid
 ---
 
 # SurroundOcc: Multi-camera 3D Occupancy Prediction for Autonomous Driving
@@ -24,9 +26,9 @@ SurroundOcc achieved state-of-the-art results on both nuScenes and SemanticKITTI
 ## Key Contributions
 
 - **Multi-scale 2D-to-3D spatial attention**: Lifts multi-view 2D image features into a 3D volume using cross-attention between learnable 3D volume queries and multi-scale image features, avoiding explicit depth estimation while preserving geometric structure
-- **Coarse-to-fine 3D decoder with multi-scale supervision**: A 3D U-Net decoder progressively upsamples voxel features (e.g., from 25x25x2 to 200x200x16), with scene-class affinity loss and lovasz-softmax loss applied at each resolution level to provide dense gradient signal
+- **Coarse-to-fine 3D decoder with multi-scale supervision**: A 3D U-Net decoder progressively upsamples voxel features (e.g., from 25x25x2 to 200x200x16), with cross-entropy and scene-class affinity supervision applied at each resolution level to provide dense gradient signal
 - **Dense occupancy ground truth generation pipeline**: Automatically generates voxel-level annotations by (1) aggregating multi-frame LiDAR point clouds across consecutive sweeps, (2) applying Poisson surface reconstruction to fill in sparse regions, and (3) propagating semantic labels from annotated points to reconstructed surfaces via nearest-neighbor assignment
-- **Strong benchmark results**: Achieved SOTA on nuScenes occupancy and SemanticKITTI, demonstrating that camera-only systems can produce dense 3D scene understanding competitive with LiDAR-based approaches
+- **Strong benchmark results**: Achieved SOTA on nuScenes occupancy and SemanticKITTI, demonstrating that camera-only systems can produce strong dense 3D scene understanding
 
 ## Architecture / Method
 
@@ -64,7 +66,6 @@ SurroundOcc achieved state-of-the-art results on both nuScenes and SemanticKITTI
   │                                     ▼          │
   │  Multi-Scale Supervision at each level:        │
   │  ├── Scene-class affinity loss                 │
-  │  ├── Lovasz-softmax loss                       │
   │  └── Cross-entropy loss                        │
   │                                                │
   │  Final output: 200x200x16 semantic voxels      │
@@ -90,7 +91,6 @@ The initial coarse 3D volume is progressively refined through a 3D U-Net archite
 The multi-scale supervision is critical -- it provides dense gradients throughout the network rather than only at the final high-resolution output. The losses used include:
 
 - **Scene-class affinity loss**: Encourages voxels of the same class to have similar features while pushing apart features of different classes, applied in a pairwise manner across neighboring voxels
-- **Lovasz-softmax loss**: A surrogate for IoU optimization that handles the extreme class imbalance in occupancy prediction (most voxels are free space)
 - **Cross-entropy loss**: Standard per-voxel classification loss
 
 ![Multi-scale occupancy prediction and ground truth generation](https://paper-assets.alphaxiv.org/figures/2303.09551v2/img-2.jpeg)
@@ -112,14 +112,13 @@ This pipeline produces much denser ground truth than single-frame LiDAR annotati
 
 ### nuScenes Occupancy
 
-| Method | Input | mIoU |
+| Method | Input | SSC mIoU |
 |--------|-------|------|
-| MonoScene | Camera | 6.06 |
-| TPVFormer | Camera | 7.16 |
+| MonoScene | Camera | 7.31 |
+| TPVFormer | Camera | 11.66 |
 | **SurroundOcc** | **Camera** | **20.30** |
-| LiDAR baseline | LiDAR | 23.82 |
 
-SurroundOcc dramatically outperformed prior camera-based methods, nearly tripling the mIoU of TPVFormer and closing much of the gap to LiDAR-based approaches.
+SurroundOcc dramatically outperformed prior camera-based methods, substantially improving over both MonoScene and TPVFormer on nuScenes semantic occupancy.
 
 ### SemanticKITTI
 

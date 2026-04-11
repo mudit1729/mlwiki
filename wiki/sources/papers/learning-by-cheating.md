@@ -11,6 +11,7 @@ tags:
   - imitation-learning
   - privileged-supervision
 citations: 632
+paper-faithfullness: audited-needs-tightening
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1912.12294)**

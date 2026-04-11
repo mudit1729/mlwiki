@@ -3,10 +3,12 @@ title: "Scaling Cross-Embodied Learning: One Policy for Manipulation, Navigation
 tags: [robotics, transformer, cross-embodiment, imitation-learning, foundation-model, multimodal]
 status: active
 type: paper
+updated: 2026-04-11
 year: "2024"
 venue: "CoRL 2024 Oral"
 citations: 100
 arxiv_id: "2408.11812"
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2408.11812)**

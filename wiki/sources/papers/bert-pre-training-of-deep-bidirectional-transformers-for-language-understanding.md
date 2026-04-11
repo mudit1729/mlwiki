@@ -2,7 +2,7 @@
 title: BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
 type: source-summary
 status: seed
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2019
 venue: NAACL
 tags:
@@ -11,6 +11,7 @@ tags:
   - transformer
   - foundation
 citations: 112487
+paper-faithfullness: audited-solid
 ---
 
 # BERT: Pre-training of Deep Bidirectional Transformers for Language Understanding
@@ -32,7 +33,7 @@ BERT (Bidirectional Encoder Representations from Transformers) introduced the no
 
 The pre-training procedure uses two objectives: (1) Masked Language Modeling, where 15% of input tokens are masked and the model predicts the original token, and (2) Next Sentence Prediction (NSP), where the model predicts whether two segments are consecutive in the original text. After pre-training on BooksCorpus (800M words) and English Wikipedia (2,500M words), BERT is fine-tuned by adding a single task-specific output layer and training all parameters end-to-end on the target task.
 
-BERT's impact was enormous. It achieved state-of-the-art results on 11 NLP benchmarks simultaneously upon release, including pushing the GLUE benchmark score from 75.1 to 80.5 (BERT-BASE) and 86.7 (BERT-LARGE, with ensembles). It demonstrated that pre-trained representations could dramatically reduce the need for task-specific architectures -- the same pre-trained model could be fine-tuned for question answering, sentiment analysis, named entity recognition, and textual entailment. BERT established encoder-only transformers as the dominant paradigm for NLU and remains the foundation for representation learning in multimodal systems.
+BERT's impact was enormous. It achieved state-of-the-art results on 11 NLP benchmarks simultaneously upon release, including pushing the official GLUE leaderboard score to 80.5 with BERT-LARGE and MultiNLI accuracy to 86.7. It demonstrated that pre-trained representations could dramatically reduce the need for task-specific architectures -- the same pre-trained model could be fine-tuned for question answering, sentiment analysis, named entity recognition, and textual entailment. BERT established encoder-only transformers as the dominant paradigm for NLU and remains the foundation for representation learning in multimodal systems.
 
 ## Key Contributions
 
@@ -90,7 +91,7 @@ BERT's impact was enormous. It achieved state-of-the-art results on 11 NLP bench
 
 BERT uses the encoder portion of the original Transformer architecture. BERT-BASE has 12 transformer layers, 12 attention heads, hidden dimension 768, and 110M parameters. BERT-LARGE has 24 layers, 16 heads, hidden dimension 1024, and 340M parameters. Input sequences can be up to 512 tokens, constructed as [CLS] + tokens_A + [SEP] + tokens_B + [SEP] for sentence-pair tasks, or [CLS] + tokens + [SEP] for single-sentence tasks.
 
-Each input token's representation is the sum of three embeddings: the WordPiece token embedding, a learned positional embedding, and a segment embedding (indicating whether the token belongs to sentence A or B). Pre-training runs for 1M steps on 256 sequences of length 512, using Adam with learning rate 1e-4 and warmup. The total pre-training compute was roughly 4 days on 4 Cloud TPU Pods (16 TPU chips each).
+Each input token's representation is the sum of three embeddings: the WordPiece token embedding, a learned positional embedding, and a segment embedding (indicating whether the token belongs to sentence A or B). Pre-training runs for 1M steps on 256 sequences of length 512, using Adam with learning rate 1e-4 and warmup. BERTBASE was trained on 4 Cloud TPUs (16 TPU chips total) and BERTLARGE on 16 Cloud TPUs (64 TPU chips total), with each pretraining run taking about 4 days.
 
 For fine-tuning, a task-specific head (typically a linear layer) is added on top of the [CLS] token representation (for classification) or on top of each token representation (for token-level tasks like NER). All parameters -- including the pre-trained transformer layers -- are fine-tuned end-to-end with a small learning rate (2e-5 to 5e-5) for 2-4 epochs. This makes fine-tuning extremely fast (typically under an hour on a single GPU).
 
@@ -100,12 +101,12 @@ For fine-tuning, a task-specific head (typically a linear layer) is added on top
 
 | Benchmark | BERT-LARGE | Previous SOTA | Improvement |
 |-----------|-----------|---------------|-------------|
-| GLUE | 80.5 (86.7 ensemble) | 75.1 | +7.7 pts |
+| GLUE | 80.5 | 72.8 | +7.7 pts |
 | SQuAD v1.1 (F1) | 93.2 | 91.7 | +1.5 pts |
 | SQuAD v2.0 (F1) | 83.1 | 78.0 | +5.1 pts |
 | MultiNLI | 86.7% | 82.1% | +4.6% |
 
-- **GLUE benchmark**: BERT-LARGE achieves 80.5 average score (single model), pushing to 86.7 with ensembles, surpassing the previous best by 7.7 points absolute
+- **GLUE benchmark**: BERT-LARGE achieves 80.5 on the official GLUE leaderboard, surpassing OpenAI GPT's 72.8 by 7.7 points absolute
 - **SQuAD 1.1 (reading comprehension)**: F1 of 93.2 (single model), surpassing human performance (91.2 F1) for the first time
 - **SQuAD 2.0 (with unanswerable questions)**: F1 of 83.1, surpassing the previous best by 5.1 points
 - **SWAG (commonsense inference)**: 86.3% accuracy, surpassing human expert performance (85.0%) and the previous SOTA by 27.1% absolute
@@ -125,4 +126,3 @@ For fine-tuning, a task-specific head (typically a linear layer) is added on top
 - [[wiki/sources/papers/attention-is-all-you-need]]
 - [[wiki/sources/papers/an-image-is-worth-16x16-words-transformers-for-image-recognition-at-scale]]
 - [[wiki/sources/papers/scaling-laws-for-neural-language-models]]
-

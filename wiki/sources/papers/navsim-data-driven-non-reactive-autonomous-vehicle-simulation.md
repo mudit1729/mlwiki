@@ -7,7 +7,7 @@ year: "2024"
 venue: "NeurIPS 2024"
 citations: 100
 arxiv_id: "2406.15349"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # NAVSIM: Data-Driven Non-Reactive Autonomous Vehicle Simulation and Benchmarking

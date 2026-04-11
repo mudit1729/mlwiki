@@ -7,7 +7,7 @@ year: "2025"
 venue: "CVPR"
 citations: 60
 arxiv_id: "2503.03125"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2503.03125)**

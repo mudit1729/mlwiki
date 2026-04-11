@@ -11,6 +11,7 @@ tags:
   - perception
   - bev
 citations: 1510
+paper-faithfullness: audited-needs-correction
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2008.05711)**

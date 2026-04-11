@@ -11,13 +11,14 @@ tags:
   - benchmark
   - dataset
 citations: 7791
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1903.11027)**
 
 ## Overview
 
-nuScenes is a large-scale multimodal dataset for autonomous driving that provides synchronized data from 6 cameras (360-degree coverage), 1 LiDAR, 5 radars, GPS, and IMU collected across 1000 driving scenes in Boston and Singapore. Each scene is 20 seconds long with keyframe annotations at 2 Hz, yielding approximately 1.4 million 3D bounding box annotations across 23 object classes. The dataset was created by Motional (formerly nuTonomy) and released in 2019, quickly becoming the de facto benchmark for 3D object detection, tracking, and BEV-centric perception in autonomous driving research.
+nuScenes is a large-scale multimodal dataset for autonomous driving that provides synchronized data from 6 cameras (360-degree coverage), 1 LiDAR, 5 radars, GPS, and IMU collected across 1000 driving scenes in Boston and Singapore. Each scene is 20 seconds long with keyframe annotations at 2 Hz, yielding approximately 1.4 million 3D bounding box annotations across 23 object classes. The dataset was created by nuTonomy (an APTIV company) and released in 2019, quickly becoming the de facto benchmark for 3D object detection, tracking, and BEV-centric perception in autonomous driving research.
 
 What distinguishes nuScenes from prior datasets like KITTI (which provided only front-facing stereo camera and single LiDAR) is its full 360-degree sensor coverage and the diversity of its collection environments. Boston provides North American urban driving conditions while Singapore adds tropical weather, left-hand traffic, and dense urban scenarios with many vulnerable road users. This geographic diversity, combined with the full sensor suite, made nuScenes the first dataset that could credibly evaluate surround-view perception systems operating in varied conditions.
 

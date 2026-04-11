@@ -34,6 +34,7 @@ This is the navigation entry point for the wiki.
 ## Queries
 
 - [[wiki/queries/open-questions]] - Priority research questions and unresolved tensions the wiki should keep testing.
+- [[wiki/queries/paper-fact-check-tracker]] - Corpus-wide paper validation tracker covering metadata checks and sentence-level faithfulness audit status.
 
 ## Source Programs
 

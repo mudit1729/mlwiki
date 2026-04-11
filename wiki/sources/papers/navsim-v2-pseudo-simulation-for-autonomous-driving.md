@@ -13,7 +13,7 @@ tags:
   - evaluation
 citations: 62
 arxiv_id: "2506.04218"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Pseudo-Simulation for Autonomous Driving (NAVSIM v2)

@@ -13,6 +13,7 @@ tags:
   - vla
   - benchmark
 citations: 448
+paper-faithfullness: audited-solid
 ---
 
 # DriveLM: Driving with Graph Visual Question Answering

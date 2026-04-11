@@ -12,6 +12,7 @@ tags:
   - residual-networks
   - image-classification
 citations: 224592
+paper-faithfullness: audited-solid
 ---
 
 # Deep Residual Learning for Image Recognition

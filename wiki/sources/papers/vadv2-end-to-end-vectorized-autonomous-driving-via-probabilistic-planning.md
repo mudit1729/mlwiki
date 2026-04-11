@@ -7,7 +7,7 @@ year: "2024"
 venue: "arXiv"
 citations: 140
 arxiv_id: "2402.13243"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # VADv2: End-to-End Vectorized Autonomous Driving via Probabilistic Planning

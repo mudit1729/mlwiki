@@ -14,6 +14,7 @@ tags:
   - reasoning
   - grpo
 citations: 75
+paper-faithfullness: audited-solid
 ---
 
 # AlphaDrive: Unleashing the Power of VLMs in Autonomous Driving via Reinforcement Learning and Reasoning
@@ -28,14 +29,14 @@ Bo Jiang, Shaoyu Chen, Qian Zhang, Wenyu Liu, Xinggang Wang, arXiv, 2025.
 
 AlphaDrive is the first application of GRPO (Group Relative Policy Optimization) reinforcement learning to driving VLMs, using four domain-specific reward functions to develop emergent multimodal planning reasoning beyond what supervised fine-tuning alone can teach. Inspired by reasoning-enhanced LLMs like DeepSeek R1 and OpenAI o1, AlphaDrive applies RL to make driving VLMs "think before they act."
 
-Supervised fine-tuning of VLMs for driving teaches the model to imitate expert behavior but does not develop reasoning about why certain actions are correct. The GRPO approach generates multiple trajectory candidates, scores them with driving-specific rewards (trajectory quality, collision avoidance, reasoning coherence, plan-reasoning consistency), and uses relative rankings for policy improvement -- no separate reward model needed. The result is emergent multimodal planning capabilities: reasoning patterns that are not present in the supervised training data but emerge from RL optimization.
+Supervised fine-tuning of VLMs for driving teaches the model to imitate expert behavior but does not develop reasoning about why certain actions are correct. The GRPO approach generates multiple trajectory candidates, scores them with driving-specific rewards (planning accuracy, action-weighted safety, planning diversity, planning format), and uses relative rankings for policy improvement -- no separate reward model needed. The result is emergent multimodal planning capabilities: reasoning patterns that are not present in the supervised training data but emerge from RL optimization.
 
 From the same team as Senna, AlphaDrive represents the RL enhancement of the decoupled VLA paradigm. It demonstrates that the reasoning-via-RL approach that proved transformative for language models also applies to embodied driving agents, opening a new direction for driving VLA research beyond pure imitation learning.
 
 ## Key Contributions
 
 - **First GRPO-based RL for driving VLMs**: Adapts the Group Relative Policy Optimization technique from language model reasoning (DeepSeek R1) to autonomous driving planning
-- **Four domain-specific reward functions**: (1) trajectory quality (L2 error to expert), (2) collision avoidance (safety constraints), (3) reasoning coherence (chain-of-thought quality), (4) planning consistency (action matches reasoning)
+- **Four domain-specific reward functions**: (1) planning accuracy (F1-score alignment with ground truth actions), (2) action-weighted reward (higher weight for safety-critical ops like braking/steering), (3) planning diversity (encourages multiple viable strategies to avoid mode collapse), (4) planning format (structured, consistent output formatting)
 - **Two-stage training**: SFT stage for basic driving competence from expert data, then RL stage with GRPO rewards for planning reasoning refinement
 - **Emergent multimodal planning capabilities**: RL discovers reasoning patterns not present in training data, developing novel planning strategies beyond imitation
 - **No separate reward model required**: GRPO uses group relative rankings, avoiding the need for a trained reward model (unlike PPO/RLHF)

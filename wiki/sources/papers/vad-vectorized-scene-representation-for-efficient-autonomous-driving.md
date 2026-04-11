@@ -11,6 +11,7 @@ tags:
   - planning
   - vectorized-representation
 citations: 567
+paper-faithfullness: audited-needs-correction
 ---
 
 # VAD: Vectorized Scene Representation for Efficient Autonomous Driving

@@ -12,7 +12,7 @@ tags:
   - variational-autoencoders
   - information-theory
 citations: 700
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1611.02731)**

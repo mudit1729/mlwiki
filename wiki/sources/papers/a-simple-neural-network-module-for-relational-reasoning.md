@@ -12,6 +12,7 @@ tags:
   - visual-question-answering
   - inductive-bias
 citations: 1679
+paper-faithfullness: audited-solid
 ---
 
 # A Simple Neural Network Module for Relational Reasoning

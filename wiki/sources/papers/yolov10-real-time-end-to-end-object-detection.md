@@ -7,7 +7,7 @@ year: "2024"
 venue: "NeurIPS 2024"
 citations: 5988
 arxiv_id: "2405.14458"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # YOLOv10: Real-Time End-to-End Object Detection

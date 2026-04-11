@@ -14,7 +14,7 @@ year: "2023"
 venue: "ICLR 2023"
 citations: 8533
 arxiv_id: "2210.03629"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # ReAct: Synergizing Reasoning and Acting in Language Models

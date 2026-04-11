@@ -11,7 +11,7 @@ tags:
   - vlm
   - embodied
 citations: 2491
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # PaLM-E: An Embodied Multimodal Language Model

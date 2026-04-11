@@ -13,7 +13,7 @@ tags:
   - attention
   - permutation-invariance
 citations: 1018
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1511.06391)**

@@ -15,7 +15,7 @@ year: "2023"
 venue: "NeurIPS 2023"
 citations: 3561
 arxiv_id: "2305.10601"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Tree of Thoughts: Deliberate Problem Solving with Large Language Models

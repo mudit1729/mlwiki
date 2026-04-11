@@ -2,9 +2,9 @@
 title: "SimLingo: Vision-Only Closed-Loop Autonomous Driving with Language-Action Alignment"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2025
-venue: CVPR
+venue: CVPR 2025
 tags:
   - paper
   - autonomous-driving
@@ -14,9 +14,10 @@ tags:
   - closed-loop
   - e2e
 citations: 89
+paper-faithfullness: audited-solid
 ---
 
-📄 **[Read on arXiv](https://arxiv.org/abs/2503.09530)**
+📄 **[Read on arXiv](https://arxiv.org/abs/2503.09594)**
 
 # SimLingo: Vision-Only Closed-Loop Autonomous Driving with Language-Action Alignment
 

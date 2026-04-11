@@ -2,7 +2,7 @@
 title: ImageNet Classification with Deep Convolutional Neural Networks
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2012
 venue: NeurIPS 2012
 tags:
@@ -14,6 +14,7 @@ tags:
   - foundation
   - gpu-training
 citations: 127906
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read Paper](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)**

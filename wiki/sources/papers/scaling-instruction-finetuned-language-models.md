@@ -7,7 +7,7 @@ year: "2022"
 venue: "JMLR 2024"
 citations: 3987
 arxiv_id: "2210.11416"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Scaling Instruction-Finetuned Language Models (Flan-PaLM / Flan-T5)

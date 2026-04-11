@@ -13,7 +13,7 @@ tags:
   - end-to-end
 citations: ~40
 arxiv_id: "2406.08481"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # LAW: Enhancing End-to-End Autonomous Driving with Latent World Model

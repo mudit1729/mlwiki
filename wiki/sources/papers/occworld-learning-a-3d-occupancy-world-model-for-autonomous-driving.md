@@ -7,7 +7,7 @@ year: "2024"
 venue: "ECCV"
 citations: 198
 arxiv_id: "2311.16038"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2311.16038)**

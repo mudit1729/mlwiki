@@ -2,7 +2,7 @@
 title: The First Law of Complexodynamics
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2011
 venue: Blog Post (Shtetl-Optimized)
 tags:
@@ -12,6 +12,7 @@ tags:
   - information-theory
   - thermodynamics
 citations: 0
+paper-faithfullness: audited-needs-tightening
 ---
 
 📄 **[Read Blog Post](https://scottaaronson.blog/?p=762)**
@@ -20,11 +21,11 @@ citations: 0
 
 ## Overview
 
-Scott Aaronson's blog post identifies a deep asymmetry between entropy and complexity that has profound implications for understanding structure formation in physical and computational systems. While the second law of thermodynamics dictates that entropy monotonically increases, complexity -- the "interestingness" or structural richness of a system -- follows a non-monotonic arc: low at early times (ordered initial state), high at intermediate times (transitional dynamics with rich structure), and low again at equilibrium (featureless thermal noise).
+Scott Aaronson's blog post highlights an asymmetry between entropy and complexity as a way of thinking about structure formation in physical and computational systems. While the second law of thermodynamics dictates that entropy monotonically increases, complexity -- the "interestingness" or structural richness of a system -- is argued to follow a non-monotonic arc: low at early times (ordered initial state), high at intermediate times (transitional dynamics with rich structure), and low again at equilibrium (featureless thermal noise).
 
 This observation, while intuitively obvious (a cup of coffee is most "interesting" while cooling, not when uniformly hot or uniformly room-temperature), resists formal mathematical treatment. Aaronson proposes "complextropy" as a formal measure based on Kolmogorov complexity that could capture this phenomenon: the length of the shortest program that can generate strings indistinguishable from samples of the target distribution. Pure randomness has low complextropy (sample from a uniform distribution), perfect order has low complextropy (output a constant), but structured intermediate states have high complextropy.
 
-Ilya Sutskever likely included this in his recommended reading list because it provides a theoretical lens for phenomena central to deep learning: why neural networks at intermediate stages of training exhibit the most structured internal representations, why phase transitions occur during optimization, and why both underfitting (too simple) and overfitting (memorizing noise) represent low-complexity states while good generalization occupies a complexity peak. The framework connects to double descent, grokking, and the edge-of-chaos hypothesis in neural network training dynamics.
+In this wiki, the post is useful mainly as a conceptual prompt linking entropy, description length, and emergent structure. It is explicitly a speculative blog essay rather than a finished theorem or an empirical study of learning dynamics.
 
 ## Key Contributions
 

@@ -2,7 +2,7 @@
 title: Keeping Neural Networks Simple by Minimizing the Description Length of the Weights
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 1993
 venue: COLT
 tags:
@@ -14,6 +14,7 @@ tags:
   - bayesian-inference
   - generalization
 citations: 1279
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read Paper](https://www.cs.toronto.edu/~hinton/absps/colt93.pdf)**

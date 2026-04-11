@@ -13,6 +13,7 @@ tags:
   - vla
   - closed-loop
 citations: 294
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2312.07488)**
@@ -73,9 +74,9 @@ The system fuses camera and LiDAR inputs through separate encoders with a Queryi
 
 ![Detailed model architecture showing vision encoder pipeline, Q-Former visual token compression, and LLM integration](https://paper-assets.alphaxiv.org/figures/2312.07488v2/x3.png)
 
-LMDrive uses a multi-modal encoder-adapter-LLM architecture. Camera images are processed through a vision encoder (ResNet or ViT-based) to produce visual tokens, while LiDAR point clouds are processed through a separate 3D encoder (VoxelNet-style). A multimodal adapter projects both modalities into the LLM's embedding space, where they are concatenated with tokenized language instructions.
+LMDrive uses a multi-modal encoder-adapter-LLM architecture. Camera images are processed through a ResNet backbone to produce image feature maps, which are then fused across views via a transformer encoder to produce visual tokens. LiDAR point clouds are processed through a PointPillars backbone, with PointNet aggregating features into BEV queries. A BEV decoder transformer attends from LiDAR BEV queries to multi-view image features to generate BEV tokens. A Q-Former (adapted from BLIP-2) then efficiently compresses these visual tokens before they are projected into the LLM's embedding space alongside tokenized language instructions.
 
-The LLM backbone (LLaMA-based) is kept frozen during training. Learnable adapter modules are inserted at each transformer layer to inject driving-specific knowledge without corrupting the pretrained language representations. The output head maps the LLM's final hidden states to continuous control signals (steering, throttle, brake).
+The LLM backbone (LLaMA-based, e.g., LLaVA-v1.5 7B) is kept frozen during training. Two-layer MLP adapters bridge the Q-Former output to the LLM's input dimension and convert the LLM's final hidden states to future waypoints and an instruction completion flag. These predicted waypoints are then converted into low-level control signals (throttle, brake, steering) using standard PID controllers.
 
 The LangAuto benchmark is constructed by driving expert agents in CARLA and recording ~64K clips with corresponding language instructions. Instructions are generated in three categories: navigation commands ("turn right at the next intersection"), cautionary notices ("slow down, pedestrian ahead"), and adversarial instructions ("ignore the stop sign"). ChatGPT is used to augment instruction diversity with paraphrases.
 

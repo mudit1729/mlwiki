@@ -2,7 +2,7 @@
 title: "S4-Driver: Scalable Self-Supervised Driving MLLM with Spatio-Temporal Visual Representation"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2025
 venue: "CVPR"
 tags:
@@ -15,6 +15,7 @@ tags:
   - planning
 citations: 16
 arxiv_id: "2505.24139"
+paper-faithfullness: audited-solid
 ---
 
 # S4-Driver: Scalable Self-Supervised Driving MLLM with Spatio-Temporal Visual Representation

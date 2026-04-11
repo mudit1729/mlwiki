@@ -13,7 +13,7 @@ tags:
   - deployment
 citations: 364
 arxiv_id: "2502.19645"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # OpenVLA-OFT: Optimizing Speed and Success for VLA Fine-Tuning

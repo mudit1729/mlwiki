@@ -13,7 +13,7 @@ tags:
   - foundation-model
 citations: ~0
 arxiv_id: "2412.14415"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # DriveGPT: Scaling Autoregressive Behavior Models for Driving

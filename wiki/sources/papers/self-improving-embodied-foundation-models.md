@@ -2,9 +2,9 @@
 title: "Self-Improving Embodied Foundation Models"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2025
-venue: "arXiv"
+venue: "NeurIPS 2025"
 tags:
   - paper
   - robotics
@@ -15,6 +15,7 @@ tags:
   - vla
 citations: 18
 arxiv_id: "2509.15155"
+paper-faithfullness: audited-solid
 ---
 
 # Self-Improving Embodied Foundation Models
@@ -99,7 +100,7 @@ The RL training uses standard policy gradient methods on top of the foundation m
 | BananaTable (novel objects) | Success rate | ~63% | ~85% |
 | Aloha (bimanual) | Insertion success | Baseline BC | Improved with RL |
 
-In simulation, 10% imitation data + 1% autonomous interaction outperforms 20% and even 80% imitation-only baselines, demonstrating a 10-80x reduction in required human demonstrations. Real-world LanguageTable experiments show success rates improving from ~62% to ~88%. The BananaTable experiment demonstrates behavioral generalization: robots trained only on geometric blocks learn to manipulate bananas, discovering effective strategies never shown in demonstrations.
+In simulation, 10% imitation data + 1% autonomous interaction outperforms 20% and even 80% imitation-only baselines, demonstrating a roughly 2-8x reduction in required imitation data rather than scaling demonstrations alone. Real-world LanguageTable experiments show success rates improving from ~62% to ~88%. The BananaTable experiment demonstrates behavioral generalization: robots trained only on geometric blocks learn to manipulate bananas, discovering effective strategies never shown in demonstrations.
 
 ![Behavioral generalization with novel objects](https://paper-assets.alphaxiv.org/figures/2509.15155v1/bananatable_figure_smaller_arxiv.png)
 

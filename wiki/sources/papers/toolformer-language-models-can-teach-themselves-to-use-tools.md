@@ -7,7 +7,7 @@ year: "2023"
 venue: "NeurIPS 2023"
 citations: 3994
 arxiv_id: "2302.04761"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Toolformer: Language Models Can Teach Themselves to Use Tools

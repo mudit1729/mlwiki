@@ -2,7 +2,7 @@
 title: Machine Super Intelligence
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2008
 venue: PhD Thesis, University of Lugano
 tags:
@@ -12,6 +12,7 @@ tags:
   - intelligence-measurement
   - algorithmic-information-theory
 citations: 63
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read Thesis](https://www.vetta.org/documents/Machine_Super_Intelligence.pdf)**

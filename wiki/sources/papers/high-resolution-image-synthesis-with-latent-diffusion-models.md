@@ -7,7 +7,7 @@ year: "2022"
 venue: "CVPR 2022"
 citations: 31987
 arxiv_id: "2112.10752"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # High-Resolution Image Synthesis with Latent Diffusion Models

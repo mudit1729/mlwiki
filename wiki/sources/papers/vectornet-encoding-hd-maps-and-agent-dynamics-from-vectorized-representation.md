@@ -11,7 +11,7 @@ tags:
   - prediction
   - vectorized-representation
 citations: 1035
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2005.04259)**

@@ -7,7 +7,7 @@ year: "2023"
 venue: "TMLR 2023"
 citations: ~200
 arxiv_id: "2306.11706"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2306.11706)**

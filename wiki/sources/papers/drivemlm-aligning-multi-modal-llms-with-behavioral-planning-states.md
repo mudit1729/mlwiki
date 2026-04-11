@@ -13,7 +13,7 @@ tags:
   - planning
   - modular
 citations: 241
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2312.09245)**

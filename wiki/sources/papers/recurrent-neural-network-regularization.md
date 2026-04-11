@@ -2,7 +2,7 @@
 title: Recurrent Neural Network Regularization
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2014
 venue: arXiv (1409.2329)
 tags:
@@ -14,6 +14,7 @@ tags:
   - dropout
   - language-modeling
 citations: 2986
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1409.2329)**

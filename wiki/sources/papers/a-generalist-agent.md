@@ -11,7 +11,7 @@ tags:
   - vla
   - generalist-agent
 citations: 1018
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # A Generalist Agent

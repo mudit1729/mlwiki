@@ -7,7 +7,7 @@ year: "2024"
 venue: "ECCV"
 citations: 50
 arxiv_id: "2404.15014"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # OccGen: Generative Multi-modal 3D Occupancy Prediction for Autonomous Driving

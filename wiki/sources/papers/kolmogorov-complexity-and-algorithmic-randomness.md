@@ -2,7 +2,7 @@
 title: Kolmogorov Complexity and Algorithmic Randomness
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2017
 venue: AMS Mathematical Surveys and Monographs
 tags:
@@ -13,6 +13,7 @@ tags:
   - algorithmic-randomness
   - computability
 citations: 106
+paper-faithfullness: audited-solid
 ---
 
 📄 **[AMS Book Page](https://bookstore.ams.org/surv-220)**

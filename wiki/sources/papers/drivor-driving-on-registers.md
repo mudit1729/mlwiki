@@ -14,6 +14,7 @@ tags:
   - transformer
   - vit
 citations: 3
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2601.05083)**
@@ -32,7 +33,7 @@ This aligns with the broader trend toward end-to-end systems that learn their ow
 
 - **Camera-aware register tokens:** Extends the ViT register token concept (Darcet et al., ICLR 2024) to multi-camera driving -- each register token is conditioned on camera intrinsics/extrinsics, creating a compact, planning-relevant scene representation without explicit 3D construction
 - **Full-transformer architecture:** Avoids complex intermediate representations (BEV, occupancy grids, vectorized maps) in favor of pure attention-based reasoning from image tokens to trajectory output
-- **Disentangled generation and scoring:** Separate transformer decoders for trajectory generation and scoring with interpretable sub-score components (progress, comfort, collision avoidance), enabling behavior-conditioned driving without retraining
+- **Disentangled generation and scoring:** Separate transformer decoders for trajectory generation and scoring with interpretable sub-score components (safety, comfort, efficiency), enabling behavior-conditioned driving without retraining
 - **LoRA finetuning of DINOv2 backbone:** Efficient adaptation of pretrained ViT-S with minimal trainable parameters, leveraging strong visual features from self-supervised pretraining
 - **3x compute reduction:** Over 3x reduction in GFLOPs and peak memory versus ViT-L baselines while maintaining SOTA performance
 
@@ -118,7 +119,7 @@ In the scene compression stage, the register tokens from all cameras are collect
 
 ## Limitations & Open Questions
 
-- Evaluated only on NAVSIM benchmarks -- no closed-loop evaluation in CARLA or Bench2Drive, and no real-world deployment evidence
+- Evaluated primarily on NAVSIM benchmarks and HUGSIM (zero-shot, photorealistic closed-loop); no evaluation in CARLA or Bench2Drive, and no real-world deployment evidence
 - Camera-only approach does not incorporate LiDAR, raising questions about robustness in adverse weather and lighting conditions
 - The register token approach compresses aggressively -- unclear if this loses fine-grained spatial information needed for rare edge cases like small objects or unusual road geometries
 - Future directions include incorporating historical frames, additional sensor modalities beyond cameras, and map information into the register-based compression scheme

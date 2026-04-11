@@ -11,7 +11,7 @@ tags:
   - vlm
   - planning
 citations: 416
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # DriveVLM: The Convergence of Autonomous Driving and Large Vision-Language Models

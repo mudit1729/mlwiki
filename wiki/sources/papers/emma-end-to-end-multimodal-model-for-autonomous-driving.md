@@ -14,6 +14,7 @@ tags:
   - planning
   - perception
 citations: 150
+paper-faithfullness: audited-solid
 ---
 
 # EMMA: End-to-End Multimodal Model for Autonomous Driving

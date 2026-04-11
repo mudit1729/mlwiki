@@ -7,7 +7,7 @@ year: "2023"
 venue: "arXiv"
 citations: 4052
 arxiv_id: "2310.06825"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Mistral 7B

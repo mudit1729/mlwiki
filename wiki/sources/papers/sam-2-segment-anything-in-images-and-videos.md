@@ -7,7 +7,7 @@ year: "2024"
 venue: "arXiv (ECCV 2024 submission)"
 citations: 3925
 arxiv_id: "2408.00714"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # SAM 2: Segment Anything in Images and Videos

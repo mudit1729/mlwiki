@@ -12,6 +12,7 @@ tags:
   - attention
   - differentiable-programming
 citations: 2505
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1410.5401)**
@@ -29,7 +30,7 @@ This work launched the memory-augmented neural network line of research, leading
 - **Differentiable external memory**: An N x M memory matrix read and written through soft attention weights, keeping the entire system differentiable and trainable with gradient descent
 - **Hybrid addressing**: Content-based addressing (cosine similarity lookup) combined with location-based addressing (interpolation, shift, sharpening) allows both associative retrieval and sequential pointer manipulation
 - **Erase-then-add write mechanism**: A gated write operation that first erases selected memory locations then adds new content, analogous to a programmable register file
-- **Generalization beyond training distribution**: On the copy task, networks trained on sequences of length 1-20 generalize to length 50+, suggesting the learned program is genuinely algorithmic
+- **Generalization beyond training distribution**: On the copy task, networks trained on sequences of length 1-20 generalize to length 120 (6x longer), suggesting the learned program is genuinely algorithmic
 - **Multiple read/write heads**: Parallel heads enable simultaneous memory operations, increasing the expressiveness of learned programs
 
 ## Architecture / Method
@@ -87,12 +88,12 @@ The controller emits all addressing parameters (k, beta, g, s, gamma, e, a) at e
 
 ![Memory usage patterns during copy task execution, showing clear sequential write and read patterns](https://paper-assets.alphaxiv.org/figures/1410.5401v2/img-11.jpeg)
 
-- NTM outperforms LSTM on all five algorithmic tasks (copy, repeat copy, associative recall, sorting, and priority sort): NTM converges faster and achieves near-zero error, while LSTM struggles especially as sequence length grows
-- **Copy task**: NTMs learned much faster than LSTMs and successfully copied sequences up to 6x longer than training examples; learned behavior reveals an algorithmic approach -- writing inputs sequentially to memory, then returning to the beginning and reading sequentially, with write operations following a clear diagonal pattern
+- NTM outperforms LSTM on all six algorithmic tasks (copy, repeat copy, associative recall, dynamic N-grams, priority sort, and sorting): NTM converges faster and achieves near-zero error, while LSTM struggles especially as sequence length grows
+- **Copy task**: NTMs learned much faster than LSTMs and successfully copied sequences up to 6x longer than training examples (trained on lengths up to 20, generalized to length 120); learned behavior reveals an algorithmic approach -- writing inputs sequentially to memory, then returning to the beginning and reading sequentially, with write operations following a clear diagonal pattern
 - **Associative recall**: NTM substantially outperformed LSTM, learning to create compressed representations and use content-based addressing to locate queried items followed by location-based shifts to retrieve associated values; LSTM error rate grows linearly with stored pairs
 - **Priority sorting**: Required multiple parallel read/write heads; NTM successfully learned to sort by mapping priorities to specific memory locations during writing, then reading sequentially from sorted locations
 - Learned addressing patterns are interpretable: visualizations of attention weights reveal sequential sweeps during copy and content-based lookups during recall, matching hand-designed algorithms
-- Length generalization is robust: copy task accuracy remains high at 2-5x the training length (trained on 1-20, tested on 50+), whereas LSTM degrades rapidly beyond training lengths
+- Length generalization is robust: copy task accuracy remains high at 6x the training length (trained on lengths up to 20, tested on length 120), whereas LSTM degrades rapidly beyond training lengths
 - The LSTM controller variant outperforms the feedforward controller, suggesting that maintaining internal state complements external memory
 
 ## Limitations & Open Questions

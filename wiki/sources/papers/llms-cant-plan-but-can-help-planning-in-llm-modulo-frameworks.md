@@ -7,7 +7,7 @@ year: "2024"
 venue: "ICML 2024 Spotlight"
 citations: 200
 arxiv_id: "2402.01817"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # LLMs Can't Plan, But Can Help Planning in LLM-Modulo Frameworks

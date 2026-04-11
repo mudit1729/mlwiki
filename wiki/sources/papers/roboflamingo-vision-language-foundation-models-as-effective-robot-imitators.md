@@ -7,7 +7,7 @@ year: "2024"
 venue: "ICLR 2024"
 citations: 100
 arxiv_id: "2311.01378"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # RoboFlamingo: Vision-Language Foundation Models as Effective Robot Imitators

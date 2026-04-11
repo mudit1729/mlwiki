@@ -14,6 +14,7 @@ tags:
   - planning
   - e2e
 citations: 81
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2504.01941)**
@@ -112,9 +113,9 @@ WoTE's architecture consists of four main components operating in sequence.
 - **Ablation progression**: Adding trajectory evaluation without future prediction improved PDMS from 81.0 to 83.2; incorporating BEV world model for future state prediction boosted performance to 85.6, demonstrating both components contribute significantly
 - **Reward composition**: Combining imitation and simulation rewards is crucial -- imitation rewards excel in collision avoidance while simulation rewards better capture rule compliance and progress metrics
 - **Computational efficiency**: Complete system achieves latency of only 18.7 milliseconds on NVIDIA L20 GPU when evaluating 256 trajectory candidates; BEV-space operations are orders of magnitude faster than diffusion-based image prediction
-- **Online evaluation improves trajectory safety**: WoTE preserves multiple valid driving modes while filtering unsafe options and suppresses low-quality trajectories; compared to single-trajectory prediction, online evaluation with K=5-10 candidates reduces collision rate by 25-40%
+- **Online evaluation improves trajectory safety**: WoTE preserves multiple valid driving modes while filtering unsafe options and suppresses low-quality trajectories; the trajectory evaluation module assigns significantly lower rewards to unsafe or unreasonable trajectories, effectively eliminating them from selection
 - **BEV representation sufficiency validated**: Compact top-down maps encode enough information for meaningful trajectory evaluation without full RGB rendering
-- **Scaling K improves safety with diminishing returns**: Performance improves consistently from K=1 to K=10, with most gains captured by K=5
+- **Scaling trajectory count improves performance with diminishing returns**: PDMS improves from 84.5 (64 trajectories) to 85.4 (128) to 85.6 (256), with the default set at 256 for optimal balance
 - **Strong generalization**: Handles unseen trajectory configurations and dynamic refinements, demonstrating robust applicability
 
 ## Limitations & Open Questions

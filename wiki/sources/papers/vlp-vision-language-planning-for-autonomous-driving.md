@@ -13,6 +13,7 @@ tags:
   - planning
   - bev
 citations: 155
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2401.05577)**
@@ -29,8 +30,8 @@ This establishes "language as prior" as a distinct paradigm alongside "language 
 
 ## Key Contributions
 
-- **ALP (Aligned Language Planning)**: Aligns local BEV features with pretrained language model feature space through contrastive learning, injecting richer semantic representations into the spatial planning pipeline without requiring language input at test time
-- **SLP (Structured Language Planning)**: Uses language model comprehension to align planning queries with navigation goals and ego status, providing high-level semantic guidance to the planner via feature-space conditioning
+- **ALP (Agent-centric Learning Paradigm)**: Aligns region-of-interest BEV features for each agent (ego-vehicle, foreground objects, lane elements) with LM-generated "agent expectation features" via contrastive learning, injecting richer semantic representations into the spatial planning pipeline without requiring language input at test time
+- **SLP (Self-driving-car-centric Learning Paradigm)**: Aligns the planner's ego-vehicle query with an LM-generated "ego-vehicle planning feature" derived from high-level driving commands and ground-truth trajectories via sample-wise contrastive learning, providing semantically grounded planning guidance
 - **Language as internal prior paradigm**: LM knowledge improves planning without requiring language input at inference time, distinguishing VLP from instruction-following approaches and making it compatible with standard AD deployment
 - **Compatible with existing BEV planning stacks**: The ALP/SLP modules can augment existing BEV-based AD systems without architectural overhaul, acting as plug-in improvements
 - **Strong empirical validation at CVPR**: Published at a top venue with ~155 citations, demonstrating community interest in the language-as-prior approach
@@ -84,9 +85,9 @@ This establishes "language as prior" as a distinct paradigm alongside "language 
 
 VLP builds on a standard BEV-based autonomous driving pipeline and adds two language-guided modules during training. The base system extracts multi-camera features, lifts them to BEV space, and uses a transformer-based planner to predict ego trajectories.
 
-**ALP (Aligned Language Planning)**: During training, scene descriptions are encoded by a frozen pretrained language model (e.g., CLIP text encoder or a small LM) to produce text feature vectors. A contrastive alignment loss encourages the local BEV features at specific spatial locations to match the text features describing what is at those locations (e.g., "pedestrian crossing ahead" aligns with the BEV features at the crosswalk location). At inference time, the language model is removed entirely -- the BEV encoder has learned to produce features that are semantically richer due to the training-time alignment.
+**ALP (Agent-centric Learning Paradigm)**: During training, structured language prompts are generated for each agent (ego-vehicle, foreground objects, lane elements) using ground-truth bounding boxes, labels, and future trajectories (e.g., "This object is {a truck}. Its 3D bounding box is {...}. Its future trajectory will be {...}."). These prompts are fed into a frozen pretrained language model (e.g., CLIP text encoder) to produce "agent expectation features." A contrastive loss maximizes similarity between each agent's BEV region-of-interest feature and its corresponding expectation feature while minimizing similarity with other agents' features. At inference time, the language model and adaptation layers are removed entirely -- the BEV encoder retains the semantically richer representations learned during training.
 
-**SLP (Structured Language Planning)**: The planner's ego queries are conditioned on structured language descriptions of the navigation goal ("turn left at the next intersection") and ego status ("currently traveling at 30 km/h in the right lane"). During training, these are encoded by the LM and fused with the planning queries via cross-attention. At inference, the SLP module can either be removed (if no language input is available) or used with template-based descriptions generated from the navigation system.
+**SLP (Self-driving-car-centric Learning Paradigm)**: The planner's ego-vehicle query is aligned with an LM-generated "ego-vehicle planning feature." During training, a language prompt encoding the current high-level driving command ("going straight") and ground-truth future trajectory is fed into the same frozen LM. A sample-wise contrastive loss aligns the ego-vehicle query feature with this planning feature, embedding human driving logic into the planning representation. At inference, the LM and adaptation layers are discarded entirely.
 
 Both modules use training-time language supervision to shape the feature space of the vision-only driving system. The total loss combines standard planning losses (waypoint L2, collision penalty) with the ALP contrastive loss and SLP alignment loss.
 

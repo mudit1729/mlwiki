@@ -7,7 +7,7 @@ year: "2024"
 venue: "RSS 2024"
 citations: 0 <!-- TODO: fetch citation count -->
 arxiv_id: "2403.01823"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # RT-H: Action Hierarchies Using Language

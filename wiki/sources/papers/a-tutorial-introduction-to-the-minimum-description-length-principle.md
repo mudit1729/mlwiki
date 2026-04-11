@@ -2,7 +2,7 @@
 title: A Tutorial Introduction to the Minimum Description Length Principle
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2004
 venue: arXiv / MIT Press
 tags:
@@ -13,6 +13,7 @@ tags:
   - compression
   - mdl
 citations: 381
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/math/0406077)**

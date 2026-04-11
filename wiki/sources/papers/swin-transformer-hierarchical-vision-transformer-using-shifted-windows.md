@@ -7,7 +7,7 @@ year: "2021"
 venue: "ICCV 2021"
 citations: 44596
 arxiv_id: "2103.14030"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # Swin Transformer: Hierarchical Vision Transformer using Shifted Windows

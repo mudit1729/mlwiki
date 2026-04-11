@@ -7,7 +7,7 @@ year: "2024"
 venue: "CoRL 2024"
 citations: ~50
 arxiv_id: "2406.11815"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # LLARVA: Vision-Action Instruction Tuning Enhances Robot Learning

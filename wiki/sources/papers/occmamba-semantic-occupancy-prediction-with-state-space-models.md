@@ -14,7 +14,7 @@ tags:
   - state-space
 citations: 32
 arxiv_id: "2408.09859"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # OccMamba: Semantic Occupancy Prediction with State Space Models

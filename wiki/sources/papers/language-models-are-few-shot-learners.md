@@ -2,7 +2,7 @@
 title: Language Models are Few-Shot Learners
 type: source-summary
 status: seed
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2020
 venue: NeurIPS
 tags:
@@ -11,6 +11,7 @@ tags:
   - in-context-learning
   - foundation
 citations: 56138
+paper-faithfullness: audited-solid
 ---
 
 # Language Models are Few-Shot Learners
@@ -125,4 +126,3 @@ Training uses Adam optimizer with a cosine learning rate schedule, batch size ra
 - [[wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models]]
 - [[wiki/sources/papers/gpt-driver-learning-to-drive-with-gpt]]
 - [[wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision]]
-

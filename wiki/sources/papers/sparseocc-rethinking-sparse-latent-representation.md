@@ -7,7 +7,7 @@ year: "2024"
 venue: "CVPR"
 citations: 50
 arxiv_id: "2404.09502"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # SparseOcc: Rethinking Sparse Latent Representation for Vision-Based Semantic Occupancy Prediction

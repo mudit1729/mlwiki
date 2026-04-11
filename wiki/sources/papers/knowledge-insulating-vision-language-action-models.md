@@ -13,7 +13,7 @@ tags:
   - training
 citations: ~0
 arxiv_id: "2505.23705"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Knowledge Insulating Vision-Language-Action Models

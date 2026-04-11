@@ -11,6 +11,7 @@ tags:
   - imitation-learning
   - planning
 citations: 844
+paper-faithfullness: audited-solid
 ---
 
 # ChauffeurNet: Learning to Drive by Imitating the Best and Synthesizing the Worst

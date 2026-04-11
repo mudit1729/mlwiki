@@ -12,6 +12,7 @@ tags:
   - transformer
   - sensor-fusion
 citations: 600
+paper-faithfullness: audited-needs-tightening
 ---
 
 # TransFuser: Imitation with Transformer-Based Sensor Fusion for Autonomous Driving

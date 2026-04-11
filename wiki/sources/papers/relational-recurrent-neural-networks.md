@@ -12,6 +12,7 @@ tags:
   - relational-reasoning
   - memory-augmented-networks
 citations: 220
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1806.01822)**
@@ -93,7 +94,7 @@ The overall architecture can be seen as applying a single transformer layer recu
 
 ## Results
 
-- **Improved language modeling**: RMC achieves lower perplexity than LSTM baselines on WikiText-103 and GigaWord, suggesting that relational memory interactions capture useful linguistic structure beyond what compressed hidden states provide
+- **Improved language modeling**: RMC achieves lower perplexity than LSTM baselines on WikiText-103, Project Gutenberg, and GigaWord, achieving state-of-the-art results on all three benchmarks and suggesting that relational memory interactions capture useful linguistic structure beyond what compressed hidden states provide
 - **Superior relational reasoning**: On synthetic tasks requiring tracking and reasoning about multiple entities (e.g., the nth-farthest task where the model must track positions of N objects and determine distance ordering), RMC significantly outperforms LSTMs, which fail to generalize beyond training sequence lengths
 - **Compositional generalization**: RMC shows stronger generalization to longer sequences and more entities at test time compared to LSTMs, indicating that slot-based relational memory provides a more appropriate inductive bias for compositional tasks
 - **Program evaluation tasks**: On tasks requiring execution of simple programs with multiple variables, RMC maintains accuracy where LSTMs degrade, demonstrating the benefit of discrete memory slots for variable binding

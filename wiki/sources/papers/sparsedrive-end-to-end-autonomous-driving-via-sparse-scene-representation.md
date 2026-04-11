@@ -2,7 +2,7 @@
 title: "SparseDrive: End-to-End Autonomous Driving via Sparse Scene Representation"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2024
 venue: ICRA 2025
 tags:
@@ -13,6 +13,7 @@ tags:
   - planning
 citations: 181
 arxiv_id: "2405.19620"
+paper-faithfullness: audited-solid
 ---
 
 # SparseDrive: End-to-End Autonomous Driving via Sparse Scene Representation

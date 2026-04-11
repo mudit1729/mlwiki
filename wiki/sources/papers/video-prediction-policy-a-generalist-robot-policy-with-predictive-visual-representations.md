@@ -13,7 +13,7 @@ tags:
   - diffusion-policy
 citations: 139
 arxiv_id: "2412.14803"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Video Prediction Policy: A Generalist Robot Policy with Predictive Visual Representations

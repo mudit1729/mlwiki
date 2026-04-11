@@ -12,6 +12,7 @@ tags:
   - computer-vision
   - optimization
 citations: 11060
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1603.05027)**

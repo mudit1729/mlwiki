@@ -1,5 +1,22 @@
 # Log
 
+## [2026-04-11] audit | Remaining unchecked source pages
+- Audited the final `14` pages still marked `paper-faithfullness: unchecked` against their primary sources.
+- Marked `10` of those pages `audited-solid` and `4` `audited-needs-tightening`, with wording tightened on the course/blog-style entries `cs231n`, `the-first-law-of-complexodynamics`, `the-unreasonable-effectiveness-of-recurrent-neural-networks`, and `understanding-lstm-networks`.
+- Normalized `110` legacy `audited-clean` / `audited-fixed` labels to `audited-solid` so the corpus uses a single status legend.
+- Current corpus totals after the pass: `188` solid, `7` needs-tightening, `2` needs-correction, `0` unchecked.
+
+## [2026-04-11] audit | Full paper-corpus metadata validation
+- Validated all `wiki/sources/papers/` entries at the source-identity level against primary records: `197` total pages, `187` arXiv-backed entries, `10` non-arXiv entries.
+- Fixed three broken source references: `solve-synergy-of-language-vision-and-end-to-end-networks-for-autonomous-driving`, `simlingo-vision-only-closed-loop-autonomous-driving-with-language-action-alignment`, and `para-drive-parallelized-architecture-for-real-time-autonomous-driving`.
+- Recorded the metadata-validation outcome in `wiki/queries/paper-fact-check-tracker.md`; the follow-up source-faithfulness pass and status normalization are logged above.
+
+## [2026-04-11] audit | Random 10-paper fact-check sample
+- Audited a deterministic random sample of 10 paper pages against the original papers and updated `paper-faithfullness` on all 10 to `audited-solid`.
+- Corrected hard factual issues in 5 pages: `carla-an-open-urban-driving-simulator`, `surroundocc-multi-camera-3d-occupancy-prediction-for-autonomous-driving`, `self-improving-embodied-foundation-models`, `bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding`, and `drivedreamer-towards-real-world-driven-world-models`.
+- Most issues were benchmark-value mixups, loss-function misstatements, incorrect venue/training metadata, or unsupported scope claims.
+- Recorded the batch outcome in `wiki/queries/paper-fact-check-tracker.md` for future audit coverage.
+
 ## [2026-04-06] ingest | Gemma 3 Technical Report
 - Added paper wiki page: wiki/sources/papers/gemma-3-technical-report.md
 - Updated: wiki/sources/llm-seminal-papers.md (new open-weight multimodal section + ingested individually list), wiki/concepts/foundation-models.md (LLM section + key papers table), wiki/taxonomies/research-map.md (LLM seminal papers count)
@@ -159,7 +176,7 @@
   - **GoalFlow** (2503.05689, CVPR 2025) -- goal-driven flow matching, 90.3 PDMS on NAVSIM with single-step inference
   - **LAW** (2406.08481, ICLR 2025) -- self-supervised latent world model, SOTA on nuScenes+NAVSIM+CARLA
   - **CarPlanner** (2502.19908, CVPR 2025) -- first RL planner to beat IL+rule-based on nuPlan, consistency-regularized autoregressive
-  - **SOLVE** (2501.08975, CVPR 2025) -- Sequential Q-Former + Trajectory CoT for VLM-E2E synergy
+  - **SOLVE** (2505.16805, CVPR 2025) -- Sequential Q-Former + Trajectory CoT for VLM-E2E synergy
   - **ECoT** (2407.08693, Stanford/Berkeley 2025) -- embodied Chain-of-Thought for VLAs, +28% generalization on OpenVLA
   - **RDT-1B** (2410.07864, ICLR 2025, Tsinghua) -- largest diffusion transformer for bimanual manipulation, 1.2B params
 - Updated `wiki/sources/vla-and-driving.md` with Wave 3 additions (6 driving papers) and Batch 06 ingested papers list
@@ -199,7 +216,7 @@
 
 - Ingested 5 papers with AlphaXiv overviews and Semantic Scholar citation data:
   - **DriveDreamer** (2309.09777, ECCV 2024, ~452 cites) -- first real-world-driven world model for driving, diffusion-based Auto-DM with two-stage training, 0.29m L2, 21% collision reduction
-  - **PARA-Drive** (2406.01932, CVPR 2024, NVIDIA, ~179 cites) -- systematic design space exploration of modular E2E stacks, fully parallel architecture with implicit BEV communication, 2-3x speedup
+  - **PARA-Drive** (CVPR 2024, NVIDIA, ~179 cites) -- systematic design space exploration of modular E2E stacks, fully parallel architecture with implicit BEV communication, 2-3x speedup
   - **GenAD** (2402.11502, ECCV 2024, ~189 cites) -- E2E driving as generative modeling, VAE trajectory prior + instance-centric scene representation, 0.91m L2, 0.43% collision rate SOTA
   - **Is Ego Status All You Need?** (2312.03031, CVPR 2024, NVIDIA/Nanjing, ~199 cites) -- exposes that simple Ego-MLP matches complex E2E models on nuScenes open-loop, proposes Curb Collision Rate metric
   - **Driving with LLMs** (2310.01957, ICRA 2024, Wayve, ~328 cites) -- first concrete LLM-for-driving with object-level vector modality, LLaMA-7B + LoRA, explainable decisions

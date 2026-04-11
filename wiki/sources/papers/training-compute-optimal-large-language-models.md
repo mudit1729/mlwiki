@@ -7,7 +7,7 @@ year: "2022"
 venue: "arXiv"
 citations: 4116
 arxiv_id: "2203.15556"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Training Compute-Optimal Large Language Models

@@ -11,6 +11,7 @@ tags:
   - vla
   - transformer
 citations: 2019
+paper-faithfullness: audited-solid
 ---
 
 # RT-1: Robotics Transformer for Real-World Control at Scale

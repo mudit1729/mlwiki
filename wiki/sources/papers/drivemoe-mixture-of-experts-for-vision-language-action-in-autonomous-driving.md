@@ -14,6 +14,7 @@ tags:
   - e2e
   - scaling
 citations: 55
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2505.16278)**

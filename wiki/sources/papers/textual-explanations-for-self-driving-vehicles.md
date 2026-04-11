@@ -13,6 +13,7 @@ tags:
   - attention
   - benchmark
 citations: 427
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1807.11546)**
@@ -29,9 +30,9 @@ BDD-X became the standard benchmark for explainable driving research, directly r
 
 ## Key Contributions
 
-- **BDD-X dataset**: Built on BDD100K with ~6,970 video clips paired with human-written action descriptions ("car is slowing down") and justifications ("because a pedestrian is crossing"), establishing the standard testbed for explainable driving
+- **BDD-X dataset**: Built on BDD100K with 6,984 video clips (over 77 hours, 26,228 annotations) paired with human-written action descriptions ("car is slowing down") and justifications ("because a pedestrian is crossing"), establishing the standard testbed for explainable driving
 - **Dual-model architecture**: Visual attention-based controller (images to steering/acceleration with spatial attention maps) coupled with a video-to-text explanation generator (encoder-decoder with temporal and spatial attention)
-- **Attention alignment loss**: Regularizes the explanation generator's attention map to match the controller's spatial attention map, ensuring explanations reference the visual regions that actually influenced the control decision
+- **Two attention alignment strategies**: Strongly Aligned Attention (SAA) directly reuses the controller's attention map in the explanation generator; Weakly Aligned Attention (WAA) trains a separate attention mechanism in the explainer but constrains it via a KL-divergence loss toward the controller's attention map. WAA achieves the best explanation quality in both automatic metrics and human evaluations.
 - **Introspective vs rationalization distinction**: Formally separates causally-grounded explanations from post-hoc plausible-but-not-causal text generation, a distinction that remains philosophically important in 2025 VLA research
 - **First language-output driving system with explicit visual grounding**: Prior work generated explanations without any mechanism to ensure they were related to the decision process
 
@@ -59,11 +60,12 @@ BDD-X became the standard benchmark for explainable driving research, directly r
   └────────┬──────────┘              │   of pedestrian"    │
            │                         └──────────┬──────────┘
            │                                    │
-           │         ┌──────────────┐           │
-           └────────►│  L_align =    │◄──────────┘
-                     │ ||A_ctrl -    │
-                     │   A_expl||^2  │
-                     └──────────────┘
+           │         ┌────────────────────────┐ │
+           └────────►│  Alignment (two modes): │◄┘
+                     │  SAA: A_expl = A_ctrl   │
+                     │  WAA: L_align =         │
+                     │   KL(A_ctrl || A_expl)  │
+                     └────────────────────────┘
 
   Total Loss: L = L_control + λ_text * L_text + λ_align * L_align
 ```
@@ -72,13 +74,13 @@ The system has two components trained jointly. The **vehicle controller** takes 
 
 The **explanation generator** is an encoder-decoder model. The encoder processes the same video frames through a CNN, and the decoder generates natural-language explanations word by word using an LSTM with attention over the visual features. The decoder's attention map A_expl indicates which image regions the explanation references.
 
-The attention alignment loss L_align = ||A_ctrl - A_expl||^2 penalizes divergence between the controller's and explainer's attention maps. The total loss is L = L_control + lambda_text * L_text + lambda_align * L_align, where L_control is the driving loss (MSE on steering/speed), L_text is the language generation loss (cross-entropy), and L_align is the attention alignment regularizer.
+The paper introduces two attention alignment strategies. In **Strongly Aligned Attention (SAA)**, the explanation generator directly reuses the controller's attention map, guaranteeing the two components look at identical regions. In **Weakly Aligned Attention (WAA)**, the explanation generator has its own separate attention network but is guided by a KL-divergence loss L_align = KL(A_ctrl || A_expl), which encourages alignment while preserving flexibility. WAA outperforms SAA in both automatic NLG metrics and human evaluations. The total loss is L = L_control + lambda_text * L_text + lambda_align * L_align, where L_control is the driving loss (MSE on steering/speed), L_text is the language generation loss (cross-entropy), and L_align is the attention alignment regularizer (KL divergence in the WAA variant).
 
 This architecture ensures that when the explanation says "stopping because of pedestrian on right," the explanation generator is actually attending to the pedestrian on the right, and that region is also what the controller used for its braking decision.
 
 ## Results
 
-- **Attention alignment improves explanation quality** as measured by human evaluation -- aligned explanations reference decision-relevant visual regions rather than arbitrary scene elements, with significant improvements in perceived faithfulness
+- **WAA achieves best explanation quality**: in human evaluation, the Weakly Aligned Attention model achieved 66.0% correctness for explanations and 93.5% for descriptions, outperforming both SAA and the rationalization baseline
 - **BDD-X provides a reusable benchmark** that became the de facto testbed for explainable driving research, directly used by DriveGPT4, Reason2Drive, and others
 - **Explanations are grounded in controller attention regions**, providing evidence that the language output is connected to the actual decision process rather than arbitrary scene narration
 - **Standard NLG metrics (BLEU, METEOR, CIDEr)** show improvements with attention alignment, though the human evaluation results are more meaningful for assessing faithfulness

@@ -12,7 +12,7 @@ tags:
   - planning
   - unified-stack
 citations: 1201
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Planning-oriented Autonomous Driving

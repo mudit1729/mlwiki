@@ -13,7 +13,7 @@ tags:
   - open-source
 citations: 224
 arxiv_id: "2506.01844"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # SmolVLA: A Vision-Language-Action Model for Affordable and Efficient Robotics

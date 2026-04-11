@@ -7,7 +7,7 @@ year: "2024"
 venue: "arXiv"
 citations: 50
 arxiv_id: "2412.14058"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # RoboVLMs: What Matters in Building Vision-Language-Action Models

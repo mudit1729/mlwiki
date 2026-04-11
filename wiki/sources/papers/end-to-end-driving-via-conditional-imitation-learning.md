@@ -12,7 +12,7 @@ tags:
   - e2e
   - vla
 citations: 1227
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # End-to-end Driving via Conditional Imitation Learning

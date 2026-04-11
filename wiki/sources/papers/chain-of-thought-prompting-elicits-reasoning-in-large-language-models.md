@@ -13,6 +13,7 @@ tags:
   - reasoning
   - emergent-abilities
 citations: 16871
+paper-faithfullness: audited-solid
 ---
 
 # Chain-of-Thought Prompting Elicits Reasoning in Large Language Models
@@ -41,7 +42,7 @@ CoT prompting became the foundation for subsequent techniques including self-con
 - **Emergent scaling behavior**: CoT provides negligible benefit for models under ~10B parameters, modest benefit at 10-100B, and dramatic improvement at 100B+, establishing chain-of-thought as an emergent ability tied to model scale
 - **Broad applicability across reasoning types**: Evaluated on arithmetic (GSM8K, SVAMP, AQuA, MAWPS), commonsense (CommonsenseQA, StrategyQA), and symbolic reasoning (last letter concatenation, coin flip) with consistent gains
 - **Interpretable intermediate steps**: Each reasoning step can be inspected for correctness, enabling error diagnosis -- a qualitative advantage over opaque direct-answer prompting
-- **Zero-shot CoT via "Let's think step by step"**: The paper (and concurrent work by Kojima et al.) shows that even without exemplars, simply appending "Let's think step by step" to a prompt triggers chain-of-thought reasoning in large models
+- **Zero-shot CoT via "Let's think step by step"**: Concurrent work by Kojima et al. (not this paper) shows that simply appending "Let's think step by step" to a prompt triggers chain-of-thought reasoning without any exemplars; this paper focuses on few-shot CoT with manually crafted exemplars
 
 ## Architecture / Method
 

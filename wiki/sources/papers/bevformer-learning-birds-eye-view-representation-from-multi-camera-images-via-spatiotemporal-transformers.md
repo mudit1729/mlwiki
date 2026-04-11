@@ -12,6 +12,7 @@ tags:
   - bev
   - transformer
 citations: 1826
+paper-faithfullness: audited-needs-tightening
 ---
 
 # BEVFormer: Learning Bird's-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers

@@ -7,7 +7,7 @@ year: "2025"
 venue: "arXiv"
 citations: 1120
 arxiv_id: "2503.19786"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Gemma 3 Technical Report

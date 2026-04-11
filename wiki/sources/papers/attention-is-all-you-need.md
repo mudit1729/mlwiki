@@ -14,6 +14,7 @@ tags:
   - attention
   - sequence-to-sequence
 citations: 171783
+paper-faithfullness: audited-solid
 ---
 
 # Attention Is All You Need

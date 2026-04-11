@@ -14,7 +14,7 @@ tags:
   - gaussian
 citations: 41
 arxiv_id: "2412.13193"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # GaussTR: Foundation Model-Aligned Gaussian Transformer for Self-Supervised 3D Spatial Understanding

@@ -2,7 +2,7 @@
 title: "CS231n: Convolutional Neural Networks for Visual Recognition"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2015
 venue: Stanford University Course
 tags:
@@ -13,6 +13,7 @@ tags:
   - deep-learning
   - course
 citations: 0
+paper-faithfullness: audited-needs-tightening
 ---
 
 📄 **[Course Website](https://cs231n.stanford.edu/)**
@@ -29,11 +30,11 @@ Li, Karpathy, and Johnson, Stanford University, 2015 (ongoing).
 
 ## Overview
 
-CS231n is Stanford's foundational deep learning for computer vision course, taught by Fei-Fei Li, Andrej Karpathy, and Justin Johnson, that educated a generation of researchers on how CNNs work -- from backpropagation through computational graphs to modern architectures, transfer learning, and generative models. It is arguably the single most influential educational resource in deep learning for computer vision.
+CS231n is a widely used Stanford deep learning for computer vision course, taught by Fei-Fei Li, Andrej Karpathy, and Justin Johnson, covering topics from backpropagation through computational graphs to modern architectures, transfer learning, and generative models. Within this wiki it is treated as foundational background material rather than as a source of novel experimental claims.
 
-The course's open lectures, notes, and assignments (implementing k-NN, SVMs, two-layer nets, CNNs, and RNNs from scratch in NumPy/PyTorch) gave thousands of practitioners hands-on understanding of gradient flow, weight initialization, batch normalization, and architectural design. The emphasis on "don't be a hero -- use transfer learning" became the dominant practical paradigm for applied computer vision.
+The course's open lectures, notes, and assignments (implementing k-NN, SVMs, two-layer nets, CNNs, and RNNs from scratch in NumPy/PyTorch) provide hands-on coverage of gradient flow, weight initialization, batch normalization, and architectural design. Its practical emphasis on pretrained features and transfer learning made it an influential teaching resource for applied computer vision.
 
-Ilya Sutskever's inclusion of this course in his reading list signals that deep, first-principles understanding of vision architectures is essential background for AI research. While not a traditional research paper, CS231n's pedagogical influence on the field's talent pool and shared vocabulary makes it a foundational reference.
+Ilya Sutskever's inclusion of this course in his reading list highlights it as useful background for understanding canonical vision architectures and training practice. Because it is a course resource rather than a research paper, some of the framing here is necessarily interpretive rather than paper-style claim extraction.
 
 ## Key Contributions
 

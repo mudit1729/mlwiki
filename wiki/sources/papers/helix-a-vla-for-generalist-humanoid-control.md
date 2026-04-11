@@ -13,7 +13,7 @@ tags:
   - high-frequency-control
 citations: 0
 arxiv_id: null
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Helix: A Vision-Language-Action Model for Generalist Humanoid Control

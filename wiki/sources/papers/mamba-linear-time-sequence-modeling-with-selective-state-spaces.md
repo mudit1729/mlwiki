@@ -7,7 +7,7 @@ year: "2024"
 venue: "COLM"
 citations: 9619
 arxiv_id: "2312.00752"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Mamba: Linear-Time Sequence Modeling with Selective State Spaces

@@ -7,7 +7,7 @@ year: "2024"
 venue: "CVPR"
 citations: 60
 arxiv_id: "2311.12754"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # SelfOcc: Self-Supervised Vision-Based 3D Occupancy Prediction

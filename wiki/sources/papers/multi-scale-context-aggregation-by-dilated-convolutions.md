@@ -2,7 +2,7 @@
 title: Multi-Scale Context Aggregation by Dilated Convolutions
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2015
 venue: ICLR 2016
 tags:
@@ -12,6 +12,7 @@ tags:
   - semantic-segmentation
   - dilated-convolutions
 citations: 9295
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1511.07122)**

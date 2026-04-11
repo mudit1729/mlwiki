@@ -1,5 +1,5 @@
 ---
-title: "GPipe: Easy Scaling with Micro-Batch Pipeline Parallelism"
+title: "GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism"
 type: source-summary
 status: complete
 updated: 2026-04-05
@@ -13,11 +13,12 @@ tags:
   - model-parallelism
   - scaling
 citations: 2100
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1811.06965)**
 
-# GPipe: Easy Scaling with Micro-Batch Pipeline Parallelism
+# GPipe: Efficient Training of Giant Neural Networks using Pipeline Parallelism
 
 ## Overview
 
@@ -25,7 +26,7 @@ GPipe introduces micro-batch pipeline parallelism as a practical method for trai
 
 As model sizes grew beyond single-GPU memory limits, naive model parallelism suffered from catastrophic idle time -- with K pipeline stages, (K-1)/K of compute is wasted as devices sit idle waiting for forward and backward passes to propagate. GPipe solves this by splitting each mini-batch into M micro-batches, reducing idle time from O(K) to O(K/M). With M=8 and K=8, efficiency jumps from 12.5% (naive) to 88.9%. The approach maintains fully synchronous gradient computation with no approximations, ensuring training dynamics are mathematically identical to single-device training.
 
-GPipe enabled training a 557M-parameter AmoebaNet to 84.4% ImageNet accuracy and an 83.9B-parameter Transformer, establishing the pipeline parallelism paradigm that became foundational for training virtually all large language models. Megatron-LM, PaLM, and other large-scale training systems build directly on the principles introduced here.
+GPipe enabled training a 557M-parameter AmoebaNet to 84.4% ImageNet accuracy, scaling AmoebaNet to 1.8B parameters across 8 accelerators (25x increase), and scaling a Transformer to 83.9B parameters across 128 accelerators (298x increase), establishing the pipeline parallelism paradigm that became foundational for training virtually all large language models. Megatron-LM, PaLM, and other large-scale training systems build directly on the principles introduced here.
 
 ## Key Contributions
 
@@ -91,13 +92,14 @@ Re-materialization addresses the memory bottleneck: rather than storing all inte
 
 | Model | Scale | Result |
 |-------|-------|--------|
-| AmoebaNet (GPipe) | 557M params (25x increase) | 84.4% ImageNet top-1 |
-| Transformer (GPipe) | 83.9B params (298x increase) | Outperforms 350M bilingual models |
-| Transformer 6B (GPipe) | 6B params | SOTA on 100 language pairs |
+| AmoebaNet (GPipe) | 557M params | 84.4% ImageNet top-1 accuracy |
+| AmoebaNet (GPipe, 8 accelerators) | 1.8B params (25x increase over single accelerator) | Maximum scalable model size demonstrated |
+| Transformer (GPipe, 128 partitions) | 83.9B params (298x increase over single accelerator) | Maximum scalable model size demonstrated |
+| Transformer (GPipe) | 6B params, 128-layer | Outperforms 350M bilingual models on 100 language pairs |
 
 - Near-linear scaling: with M micro-batches and K stages, pipeline efficiency is M*K / (M*K + K - 1), approaching 100% as M grows; empirically demonstrated near-linear speedup on multi-accelerator setups
-- ImageNet SOTA: 557M-parameter AmoebaNet achieves 84.4% top-1 ImageNet accuracy, demonstrating that pipeline parallelism enables training models that exceed single-device memory capacity
-- Massive Transformer training: trained an 83.9B-parameter Transformer, orders of magnitude larger than contemporary models, demonstrating the approach scales to extreme model sizes
+- ImageNet SOTA: 557M-parameter AmoebaNet achieves 84.4% top-1 ImageNet accuracy; on 8 accelerators GPipe scales AmoebaNet to 1.8B parameters (25x increase over a single accelerator), demonstrating that pipeline parallelism enables training models that far exceed single-device memory capacity
+- Massive Transformer training: on 128 accelerators GPipe scales a Transformer to 83.9B parameters (298x increase over a single accelerator); a 6B-parameter 128-layer multilingual Transformer consistently outperforms 350M bilingual baselines across 100 language pairs
 - Memory reduction: re-materialization reduces peak activation memory from O(N) to O(N/K) per device, enabling models and batch sizes that otherwise would not fit in device memory
 - Training dynamics are identical to single-device training: no staleness, no gradient approximation, no learning rate adjustments needed
 

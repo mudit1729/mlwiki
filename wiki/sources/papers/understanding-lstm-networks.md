@@ -2,7 +2,7 @@
 title: Understanding LSTM Networks
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2015
 venue: Blog Post (colah.github.io)
 tags:
@@ -13,6 +13,7 @@ tags:
   - sequence-modeling
   - vanishing-gradients
 citations: 0
+paper-faithfullness: audited-needs-tightening
 ---
 
 📄 **[Read Blog Post](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)**
@@ -21,11 +22,11 @@ citations: 0
 
 ## Overview
 
-Christopher Olah's 2015 blog post became the canonical pedagogical reference for understanding LSTM internals, read by over 500,000 people and cited in countless courses and tutorials. The post provides the clearest available explanation of why vanilla RNNs fail on long sequences and how LSTMs solve this problem through a fundamentally different information flow architecture.
+Christopher Olah's 2015 blog post is a widely used pedagogical reference for understanding LSTM internals. The post explains why vanilla RNNs fail on long sequences and how LSTMs address that problem through a different information-flow architecture.
 
 The core insight explained is that vanilla RNNs fail because gradients must pass through a product of Jacobian matrices at each timestep during backpropagation, causing exponential decay when the spectral radius is below 1 (vanishing gradients) or explosion when above 1. LSTMs solve this by replacing the multiplicative hidden state update with an additive cell state pipeline: the cell state C_t travels through the entire sequence modified only by element-wise addition and gating, not matrix multiplication. This allows gradients to flow relatively unchanged over hundreds of timesteps.
 
-The post covers three gates (forget, input, output) with careful mathematical detail and intuitive diagrams, and also discusses GRU as a simplified variant. While pedagogical rather than presenting new research, the post synthesizes and makes accessible the foundational ideas from Hochreiter and Schmidhuber (1997) and subsequent work. Understanding LSTMs remains essential background for modern deep learning: gating mechanisms reappear in transformers (gated MLPs), state-space models (S4/Mamba), and highway/residual networks, all of which inherit the core principle that additive information flow preserves gradients.
+The post covers three gates (forget, input, output) with careful mathematical detail and intuitive diagrams, and also discusses GRU as a simplified variant. While pedagogical rather than presenting new research, it synthesizes the foundational ideas from Hochreiter and Schmidhuber (1997) and subsequent work in a particularly accessible form. The broader links drawn here to later gated architectures are useful wiki synthesis rather than claims made by the original post.
 
 ## Key Contributions
 

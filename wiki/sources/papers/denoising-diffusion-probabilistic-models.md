@@ -12,6 +12,7 @@ tags:
   - diffusion
   - image-generation
 citations: 28939
+paper-faithfullness: audited-solid
 ---
 
 # Denoising Diffusion Probabilistic Models
@@ -103,7 +104,7 @@ Training minimizes the simplified objective L_simple = E_{t, x_0, epsilon} [||ep
 
 - **State-of-the-art unconditional generation**: FID of 3.17 on CIFAR-10 (32x32), surpassing most existing GAN variants, and IS of 9.46, both without any adversarial training
 - **Training is completely stable**: Unlike GANs, there is no mode collapse, no discriminator-generator balancing act, and loss curves decrease monotonically -- the paper reports no training failures
-- **Lossless compression connection**: The variational lower bound yields a bits-per-dimension of 3.70 on CIFAR-10, competitive with autoregressive models, showing that diffusion models are also good density estimators. While log-likelihoods were not competitive with autoregressive models, this reflects inductive bias toward perceptually meaningful compression rather than exact pixel reconstruction -- the majority of bits encode imperceptible details while perceptually important features are captured efficiently
+- **Lossless compression connection**: The variational lower bound yields a bits-per-dimension of ≤3.75 on CIFAR-10, competitive with autoregressive models, showing that diffusion models are also good density estimators. While log-likelihoods were not competitive with autoregressive models, this reflects inductive bias toward perceptually meaningful compression rather than exact pixel reconstruction -- the majority of bits encode imperceptible details while perceptually important features are captured efficiently
 - **High-quality 256x256 samples**: On LSUN Bedrooms, Churches, and Cats, produces visually coherent samples competitive with ProgressiveGAN and StyleGAN
 - **Hierarchical progressive generation**: Rate-distortion analysis reveals that early timesteps capture coarse image structure while later steps refine fine details, providing natural interpretability and synthesis control
 - **Critical parameterization choices**: The epsilon-prediction parameterization was essential -- alternative parameterizations like directly predicting posterior means yielded significantly worse results. The simplified L_simple objective was crucial for sample quality despite being suboptimal for likelihood estimation

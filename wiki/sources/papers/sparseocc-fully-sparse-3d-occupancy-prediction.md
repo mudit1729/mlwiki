@@ -7,7 +7,7 @@ year: "2024"
 venue: "ECCV"
 citations: 80
 arxiv_id: "2312.17118"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # SparseOcc: Fully Sparse 3D Occupancy Prediction

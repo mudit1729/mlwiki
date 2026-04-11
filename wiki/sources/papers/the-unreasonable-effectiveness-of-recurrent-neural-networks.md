@@ -2,7 +2,7 @@
 title: The Unreasonable Effectiveness of Recurrent Neural Networks
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2015
 venue: Blog Post (karpathy.github.io)
 tags:
@@ -13,6 +13,7 @@ tags:
   - language-modeling
   - sequence-modeling
 citations: 0
+paper-faithfullness: audited-needs-tightening
 ---
 
 📄 **[Read Blog Post](https://karpathy.github.io/2015/05/21/rnn-effectiveness/)**
@@ -21,11 +22,11 @@ citations: 0
 
 ## Overview
 
-Andrej Karpathy's 2015 blog post became one of the most influential pieces of machine learning writing of its era, demonstrating through vivid examples that character-level recurrent neural networks with LSTM cells can learn to generate remarkably coherent text across wildly different domains -- Shakespeare plays, LaTeX documents, Linux kernel C code, and Wikipedia markup. The central message is that a single, simple architecture (character-level LSTM) captures domain-specific syntax, long-range dependencies, and even semantic patterns without any domain-specific engineering.
+Andrej Karpathy's 2015 blog post offers a vivid qualitative demonstration that character-level recurrent neural networks with LSTM cells can learn to generate surprisingly coherent text across different domains -- Shakespeare plays, LaTeX documents, Linux kernel C code, and Wikipedia markup. The central message is that a single character-level LSTM can absorb substantial domain structure without domain-specific feature engineering.
 
 By training on raw character sequences and predicting the next character, the models learn complex hierarchical structure: matching braces and begin/end blocks in LaTeX, proper function signatures and indentation in C, iambic pentameter patterns in Shakespeare, and markup nesting in Wikipedia. The post vividly demonstrated that sequence models are general-purpose learners whose capabilities emerge from data and scale rather than from hand-designed features or rules.
 
-The post directly foreshadowed the "scaling up language models" paradigm that led to GPT and beyond. Karpathy's demonstrations of emergent structure-learning from next-token prediction -- at the character level with tiny models -- were early evidence for the hypothesis that autoregressive language modeling, given sufficient data and capacity, could learn essentially arbitrary sequential structure. The post popularized RNNs and LSTMs to a generation of ML practitioners and remains a canonical introduction to sequence modeling.
+Within this wiki, the post is most useful as an early qualitative demonstration of next-token prediction as a general sequence-modeling recipe. Because it is a blog post rather than a benchmark paper, the broader field-impact framing here is partly interpretive rather than source-internal.
 
 ## Key Contributions
 

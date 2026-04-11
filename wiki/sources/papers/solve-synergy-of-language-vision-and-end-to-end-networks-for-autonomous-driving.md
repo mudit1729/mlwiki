@@ -13,7 +13,7 @@ tags:
   - end-to-end
 citations: ~10
 arxiv_id: "2505.16805"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # SOLVE: Synergy of Language-Vision and End-to-End Networks for Autonomous Driving

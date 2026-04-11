@@ -7,7 +7,7 @@ year: "2024"
 venue: "NeurIPS"
 citations: 134
 arxiv_id: "2409.20537"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2409.20537)**

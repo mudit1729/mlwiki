@@ -2,7 +2,7 @@
 title: "Talk2Car: Taking Control of Your Self-Driving Car"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2019
 venue: EMNLP-IJCNLP
 tags:
@@ -13,6 +13,7 @@ tags:
   - benchmark
   - natural-language
 citations: 182
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1909.10838)**

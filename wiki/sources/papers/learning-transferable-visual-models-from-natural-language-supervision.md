@@ -7,7 +7,7 @@ year: "2021"
 venue: "ICML 2021"
 citations: 57987
 arxiv_id: "2103.00020"
-paper-faithfullness: audited-fixed
+paper-faithfullness: audited-solid
 ---
 
 # Learning Transferable Visual Models From Natural Language Supervision

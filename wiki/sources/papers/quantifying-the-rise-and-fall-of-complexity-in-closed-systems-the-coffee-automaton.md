@@ -12,6 +12,7 @@ tags:
   - information-theory
   - thermodynamics
 citations: 26
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1405.6903)**
@@ -20,13 +21,13 @@ citations: 26
 
 This paper bridges thermodynamics and computational complexity to formalize a deep intuition: mixing cream into coffee produces increasingly complex patterns (swirls, filaments) before eventually reaching boring uniformity. While entropy monotonically increases per the Second Law, the apparent complexity of coarse-grained descriptions is non-monotonic. The authors construct a concrete model -- the coffee automaton, a minimal 2D cellular automaton with binary cell states evolving under diffusion-like dynamics -- and define complexity via the compressibility of coarse-grained macroscopic states.
 
-The key formal result is the separation of entropy and complexity: entropy S(t) increases monotonically toward equilibrium while complexity C(t) follows an inverted-U trajectory. At t=0, the state is simple (cream on top, coffee below). At intermediate times, intricate mixing patterns produce highly complex (incompressible) coarse-grained descriptions. At t=infinity, the uniform equilibrium is again simple. This rise-and-fall of complexity is proven to be generic across different initial conditions, dynamics rules, and system sizes.
+The key formal result is the separation of entropy and complexity: entropy S(t) increases monotonically toward equilibrium while complexity C(t) follows an inverted-U trajectory. At t=0, the state is simple (cream on top, coffee below). At intermediate times, intricate mixing patterns produce highly complex (incompressible) coarse-grained descriptions. At t=infinity, the uniform equilibrium is again simple. The paper shows that genuine complexity rise-and-fall requires particle interactions: the non-interacting model's apparent complexity rise is shown analytically and numerically to be a coarse-graining artifact, while the interacting model exhibits genuine complexity rise-and-fall that persists under refined coarse-graining.
 
 Ilya Sutskever included this on his recommended reading list presumably because the same rise-and-fall pattern may characterize training dynamics in neural networks. Early in training, representations are simple (random). During training, they become increasingly structured and complex. At convergence, they may simplify again into clean, generalizable features. The connection is suggestive but not formally established.
 
 ## Key Contributions
 
-- **Coarse-grained complexity measure**: Defines apparent complexity C(x) = -log P(phi(x) | equilibrium) where phi(x) is a low-resolution description obtained by averaging cell states in m x m blocks, capturing the intuition that intermediate-scale structure is what makes a state "complex"
+- **Coarse-grained complexity measure**: Defines "apparent complexity" as the Kolmogorov complexity of a coarse-grained approximation of the automaton's state, practically approximated by the gzip compressed file size of the thresholded coarse-grained array, capturing the intuition that intermediate-scale structure is what makes a state "complex"
 - **Coffee automaton model**: A minimal L x L cellular automaton with binary cell states (cream/coffee) evolving under diffusion-like dynamics, demonstrating the universal rise-and-fall pattern with periodic boundary conditions ensuring true isolation
 - **Separation of entropy and complexity**: Proves that entropy S(t) increases monotonically while complexity C(t) follows an inverted-U trajectory
 - **Connection to Kolmogorov complexity**: Relates the coarse-grained complexity measure to the compressibility of the macroscopic description, grounding the framework in algorithmic information theory
@@ -39,13 +40,11 @@ The coffee automaton is not a neural architecture but a physical model. The setu
 
 **Initial condition**: Cream occupies the top half, coffee the bottom half, representing the moment cream is added to coffee.
 
-**Dynamics**: At each timestep, a randomly selected pair of adjacent cells swap their states with probability proportional to a diffusion coefficient. This models thermal mixing. The dynamics satisfy detailed balance, ensuring the system evolves toward the maximum-entropy equilibrium (uniform random distribution of cream and coffee).
+**Dynamics**: The paper studies two model variants. In the interacting model, at each timestep a randomly selected pair of horizontally or vertically adjacent cells with *differing* states (one cream, one coffee) swap their values, enforcing single occupancy and modeling realistic diffusion. In the non-interacting model, each cream particle independently moves one step in a randomly chosen direction, allowing multiple particles per cell; this simpler model is used for theoretical analysis.
 
-**Coarse-graining**: The L x L grid is divided into m x m non-overlapping blocks. Each block is summarized by the fraction of cream cells it contains (a real number between 0 and 1). The coarse-grained state phi(x) is the vector of all block fractions.
+**Coarse-graining**: Each cell in the coarse-grained array is the average of cells within a g x g square (grain size) centered at the corresponding location in the original array. This sliding-window average is then thresholded into discrete buckets (e.g., three buckets: mostly coffee, mostly cream, mixed; experiments also use up to 7 buckets). The paper also studies an "adjusted" coarse-graining that applies a heuristic local adjustment to suppress artifactual complexity.
 
-**Complexity measure**: At equilibrium, each block fraction is binomially distributed. The complexity C(x) = -log P(phi(x) | equilibrium) measures how "surprising" the coarse-grained state is relative to the maximum-entropy distribution. High complexity means the coarse-grained pattern is unlikely to arise from random mixing -- it contains structure.
-
-The paper also connects C(x) to algorithmic information theory: a state with high C(x) has a coarse-grained description that is difficult to compress, requiring many bits to specify. This links the physical notion of transient complexity to Kolmogorov complexity.
+**Complexity measure**: The apparent complexity is the gzip compressed file size of the thresholded coarse-grained array, used as a practical proxy for Kolmogorov complexity. A high complexity score means the coarse-grained pattern is hard to compress -- it contains non-random structure. The paper also reports gzip of the fine-grained state as a proxy for entropy. Results are shown to be qualitatively robust across gzip, bzip2, and lzma compressors.
 
 ## Results
 
@@ -53,8 +52,8 @@ The paper also connects C(x) to algorithmic information theory: a state with hig
 
 - Simulation of the coffee automaton shows C(t) peaks at intermediate times while S(t) increases monotonically throughout, with the peak time depending on system size L and coarse-graining scale m
 - Different coarse-graining resolutions m produce complexity peaks at different times: finer resolutions peak earlier and coarser resolutions peak later, confirming that complexity is a property of the observation scale
-- The rise-and-fall occurs across different initial conditions, dynamics rules, and system sizes, suggesting it is a universal feature of thermodynamic relaxation rather than an artifact of specific model choices
-- The peak complexity scales with system size L and block size m in a predictable way, enabling quantitative predictions about when complexity peaks in systems of different sizes
+- The genuine rise-and-fall is specific to the interacting model; the non-interacting model's apparent complexity increase is eliminated by the adjusted coarse-graining method, confirming that particle interactions are necessary for genuine intermediate complexity
+- The maximum complexity scales linearly with system size N (consistent with complexity developing along one primary mixing dimension), while the time to reach maximum complexity scales quadratically with N (consistent with diffusion timescales for N^2 particles)
 
 ## Limitations & Open Questions
 

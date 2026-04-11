@@ -2,7 +2,7 @@
 title: Scaling Laws for Neural Language Models
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2020
 venue: arXiv
 tags:
@@ -12,6 +12,7 @@ tags:
   - scaling
   - foundation
 citations: 7436
+paper-faithfullness: audited-solid
 ---
 
 # Scaling Laws for Neural Language Models

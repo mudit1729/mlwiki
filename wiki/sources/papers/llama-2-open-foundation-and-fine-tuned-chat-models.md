@@ -7,7 +7,7 @@ year: "2023"
 venue: "arXiv"
 citations: 22411
 arxiv_id: "2307.09288"
-paper-faithfullness: audited-clean
+paper-faithfullness: audited-solid
 ---
 
 # Llama 2: Open Foundation and Fine-Tuned Chat Models
