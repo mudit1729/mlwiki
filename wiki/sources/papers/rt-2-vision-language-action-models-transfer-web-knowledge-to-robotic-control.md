@@ -2,7 +2,7 @@
 title: RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2023
 venue: arXiv
 tags:
@@ -11,7 +11,7 @@ tags:
   - vla
   - embodied
 citations: 2686
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-needs-tightening
 ---
 
 # RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control
@@ -31,7 +31,7 @@ Built on top of PaLM-E (a 12B-parameter VLM) and PaLI-X (a 55B-parameter VLM), R
 - **Actions as tokens**: Represents robot actions as text strings (e.g., "1 128 91 241 5 101 127") that are tokenized and predicted by the VLM's standard language head, requiring zero architectural changes to accommodate action output
 - **Web-to-robot knowledge transfer**: Demonstrates that semantic knowledge from internet pretraining (object categories, spatial relationships, common sense physics) directly improves robotic manipulation performance on novel objects and concepts
 - **VLA model class definition**: Establishes the Vision-Language-Action model as a new model class where a single model jointly handles vision understanding, language comprehension, and action generation
-- **Chain-of-thought for robotics**: Shows that prompting the model with "I need to [describe plan] so I will [action tokens]" improves performance on multi-step reasoning tasks, bringing LLM prompting techniques to robot control
+- **Chain-of-thought for robotics**: Explores a chain-of-thought-style fine-tuned variant that emits an intermediate natural-language plan before action tokens, showing qualitative evidence that VLA models can combine simple planning text with low-level control
 - **Scaling laws for robot VLMs**: Larger VLM backbones (PaLI-X 55B vs PaLM-E 12B) yield better robot performance even with identical robot training data
 
 ## Architecture / Method
@@ -92,7 +92,7 @@ Co-fine-tuning maintains performance on the original VLM tasks while adding robo
 - **Emergent semantic generalization**: RT-2 achieves 62% success on tasks requiring understanding of novel semantic concepts (e.g., picking objects by category, color, or abstract property) versus 32% for RT-1, nearly doubling performance. Validated across 6K evaluation trials demonstrating improved generalization to novel objects and environments
 - **Symbol understanding**: Can interpret visual symbols (e.g., picking the object that matches a flag's country) and perform rudimentary visual reasoning that was never present in robot training data
 - **Numerical reasoning**: Demonstrated emergent abilities like numerical reasoning (e.g., "move object to the position that is the sum of 2+1"), showcasing capabilities well beyond the robot training distribution
-- **Chain-of-thought improves multi-step tasks**: Adding "think step by step" style prompting improves performance on tasks requiring sequential reasoning by 10-15%
+- **Chain-of-thought-style rollouts**: The paper presents qualitative examples of a plan-then-act RT-2 variant, but does not make this a main quantified benchmark gain
 - **Maintains RT-1 performance on seen tasks**: 97% success rate on original RT-1 evaluation tasks, showing that web co-training does not degrade core manipulation skills
 - **Larger models are better**: PaLI-X (55B) outperforms PaLM-E (12B) across all evaluation categories, with the gap largest on semantic generalization tasks
 - **Performance on 6 novel emergent evaluation categories** (symbol understanding, reasoning, human recognition, etc.) averages 62% vs 32% for RT-1

@@ -2,7 +2,7 @@
 title: ChauffeurNet: Learning to Drive by Imitating the Best and Synthesizing the Worst
 type: source-summary
 status: seed
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2019
 venue: RSS 2019
 tags:
@@ -11,7 +11,7 @@ tags:
   - imitation-learning
   - planning
 citations: 844
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 # ChauffeurNet: Learning to Drive by Imitating the Best and Synthesizing the Worst
@@ -96,11 +96,11 @@ The training loss is a weighted combination of: (1) imitation loss (L2 distance 
 
 ## Results
 
-- **Reduced collisions**: Synthesized perturbations reduce collision rate by approximately 60% compared to standard behavioral cloning on closed-loop evaluations
-- **On-road compliance**: Environment-aware losses reduce off-road driving events by an order of magnitude compared to imitation-only training
-- **Recovery behavior**: The model learns to correct from perturbations (lane departures, wrong headings) within 2-3 seconds, demonstrating robust recovery behavior not present in the expert demonstrations
-- **Real-world driving**: Successfully demonstrated on Waymo vehicles in real traffic, handling complex scenarios including unprotected left turns, multi-lane roads, and interactions with pedestrians
-- **Ablation studies**: Each component (perturbation training, collision loss, on-road loss, past motion dropout) contributes independently; removing any one degrades closed-loop performance, with perturbation training being the single most impactful component
+- **Scenario-based closed-loop gains**: The perturbation-trained models substantially outperform imitation-only baselines on the paper's three closed-loop scenario suites: nudging around a parked car, recovering from trajectory perturbations, and slowing for a slower lead vehicle
+- **Parked-car avoidance**: In the parked-car scenario, all models except M4 collided roughly half the time, while M4 reduced collisions to 10% and successfully passed the obstacle in 90% of cases
+- **Recovery from perturbations**: Models trained with perturbation data recover from lane-offset and heading-error scenarios much more reliably than the no-perturbation baseline, with the stronger variants handling all evaluated deviations in this setup
+- **Real-world deployment**: Waymo reports deploying the final model on a self-driving car and replicating the stop-sign handling, turning, and long-duration closed-loop behavior observed in simulation
+- **Component ablations matter**: The paper's M0-M4 ablations show that perturbation training, environment losses, and imitation-dropout/reweighting each contribute to the closed-loop improvements
 
 ## Limitations & Open Questions
 
@@ -116,4 +116,3 @@ The training loss is a weighted combination of: (1) imitation loss (L2 distance 
 - [[wiki/sources/papers/end-to-end-driving-via-conditional-imitation-learning]]
 - [[wiki/sources/papers/carla-an-open-urban-driving-simulator]]
 - [[wiki/sources/papers/emma-end-to-end-multimodal-model-for-autonomous-driving]]
-

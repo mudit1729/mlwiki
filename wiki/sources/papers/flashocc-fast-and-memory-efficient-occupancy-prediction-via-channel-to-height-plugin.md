@@ -7,7 +7,8 @@ year: "2023"
 venue: "arXiv"
 citations: 0 <!-- TODO: fetch citation count -->
 arxiv_id: "2311.12058"
-paper-faithfullness: audited-solid
+updated: 2026-04-11
+paper-faithfullness: audited-needs-correction
 ---
 
 # FlashOcc: Fast and Memory-Efficient Occupancy Prediction via Channel-to-Height Plugin
@@ -20,13 +21,13 @@ Occupancy prediction has emerged as a powerful perception paradigm for autonomou
 
 FlashOcc addresses this efficiency bottleneck with a surprisingly simple insight: the heavy 3D processing can be entirely replaced by 2D convolutions on BEV features, followed by a **Channel-to-Height (C2H) transformation** that reshapes the channel dimension of 2D BEV features into the height dimension to produce 3D occupancy volumes. The key observation is that BEV features already encode sufficient height information in their channel dimension when properly trained, so explicit 3D processing is redundant.
 
-The framework is designed as a plug-and-play module that integrates with existing BEV-based perception pipelines (e.g., BEVDet, FB-OCC). On the Occ3D-nuScenes benchmark, FlashOcc achieves competitive accuracy with existing methods while delivering substantial speedups (up to 3-4x faster inference) and dramatically reduced memory consumption, making occupancy prediction practical for real-time deployment.
+The framework is designed as a plug-and-play module that integrates with existing BEV-based perception pipelines such as BEVDetOcc, UniOcc, and FBOcc. On the Occ3D-nuScenes benchmark, FlashOcc keeps occupancy quality competitive while substantially reducing the cost of the occupancy head itself; on some baselines it improves mIoU, while on others it is roughly on par rather than uniformly better.
 
 ## Key Contributions
 
 - **Channel-to-Height (C2H) plugin:** A simple reshape operation that converts 2D BEV features with rich channel dimensions into 3D occupancy volumes, completely eliminating the need for 3D convolutions or 3D decoders
 - **Fully 2D processing pipeline:** All feature processing (backbone, neck, BEV encoder) operates in 2D, with the 3D volume produced only at the final output stage via C2H, dramatically reducing compute and memory
-- **Plug-and-play design:** The C2H module can be dropped into existing BEV-based frameworks (BEVDetOcc, UniOcc, FB-OCC) with minimal modification, replacing their 3D decoders
+- **Plug-and-play design:** The C2H module can be dropped into existing BEV-based frameworks (BEVDetOcc, UniOcc, FBOcc) with minimal modification, replacing their 3D decoders
 - **Temporal fusion variant (FlashOcc-T):** Optional temporal BEV fusion that aggregates multi-frame information in 2D BEV space before the C2H transformation, further improving accuracy without heavy 3D temporal modules
 - **Deployment-ready efficiency:** Achieves real-time inference speeds suitable for automotive platforms with limited GPU resources
 
@@ -97,29 +98,30 @@ where `F_BEV` is the 2D BEV feature of shape `(B, C*Z, H, W)` and `F_3D` is the 
 
 ![Comparison results](https://paper-assets.alphaxiv.org/figures/2311.12058/img-3.jpeg)
 
-FlashOcc demonstrates strong efficiency-accuracy trade-offs on the Occ3D-nuScenes benchmark:
+FlashOcc demonstrates that replacing voxel-level 3D processing with C2H can preserve or improve occupancy quality while cutting the cost of the occupancy head:
 
-| Method | Backbone | 3D Processing | mIoU | FPS | Memory |
-|--------|----------|--------------|------|-----|--------|
-| BEVDetOcc (3D conv) | ResNet-50 | 3D conv decoder | 36.1 | ~5 | High |
-| FB-OCC | ResNet-50 | 3D conv decoder | 39.1 | ~4 | High |
-| **FlashOcc** (BEVDetOcc base) | ResNet-50 | C2H (2D only) | 32.0 | ~15-20 | Low |
-| **FlashOcc** (FB-OCC base) | ResNet-50 | C2H (2D only) | 37.8 | ~12-15 | Low |
-| **FlashOcc-T** (temporal) | ResNet-50 | C2H (2D only) | 39.3 | ~10 | Low |
+| Method | Backbone | 3D Processing | mIoU |
+|--------|----------|---------------|------|
+| BEVDetOcc | Swin-B | 3D voxel processing | 36.1 |
+| **FO(BEVDetOcc)** | Swin-B | C2H (2D only) | **37.8** |
+| UniOcc | Swin-B | 3D voxel processing | **39.2** |
+| **FO(UniOcc)** | Swin-B | C2H (2D only) | 39.0 |
+| FBOcc | ResNet-101 | 3D voxel processing | 37.2 |
+| **FO(FBOcc)** | ResNet-101 | C2H (2D only) | **37.3** |
 
 Key findings:
 
-- **Speed:** FlashOcc achieves 3-4x faster inference compared to 3D convolution baselines by eliminating all 3D operations
-- **Memory:** GPU memory consumption drops substantially (roughly 2-3x reduction) since no 3D feature volumes need to be stored during the forward pass
-- **Accuracy trade-off:** The single-frame version trades 2-4 mIoU points for the efficiency gains; the temporal version (FlashOcc-T) closes the gap and can match or exceed 3D baselines
-- **Plug-and-play:** Consistent improvements in efficiency when applied to different base frameworks (BEVDetOcc, UniOcc), validating the generality of the C2H approach
+- **Plug-and-play quality:** On the paper's direct plug-in tests, FlashOcc improves BEVDetOcc from 36.1 to 37.8 mIoU, keeps UniOcc roughly unchanged (39.2 to 39.0), and slightly improves FBOcc from 37.2 to 37.3.
+- **Resource savings:** For the BEVDetOcc setting without temporal fusion, the occupancy head latency drops from 7.5 ms to 3.1 ms, inference memory drops from 398 MiB to 124 MiB, and training duration drops from 64 to 32 GPU-hours.
+- **End-to-end runtime:** In the same BEVDetOcc setting, total TensorRT FPS on a single RTX 3090 rises from 92.1 to 152.7 without temporal fusion; with temporal fusion, it rises from 15.5 to 17.3.
+- **Temporal behavior is baseline-dependent:** Temporal fusion still helps FlashOcc variants, but the gains are not uniform across all backbones and do not support a blanket claim that the temporal version always matches or exceeds heavier 3D baselines.
 
 ### Ablation Results
 
 Key ablations demonstrate:
-- The BEV encoder capacity (number of channels) is critical -- the 2D encoder must have enough channels (`C * Z`) to encode height information
-- Temporal fusion provides 2-4 mIoU improvement, confirming that multi-frame context compensates for the lack of explicit 3D reasoning
-- The C2H transformation is more effective than naive upsampling or interpolation from 2D to 3D
+- The BEV encoder capacity (number of channels) is critical -- the 2D encoder must have enough channels (`C * Z`) to encode height information.
+- Temporal fusion helps both the voxel baselines and FlashOcc variants, but the exact gain depends on the underlying method.
+- The C2H substitution cuts resource use sharply while preserving occupancy quality better than a naive 2D-to-3D replacement would.
 
 ## Limitations & Open Questions
 

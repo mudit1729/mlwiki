@@ -2,7 +2,7 @@
 title: "GaussianFormer-2: Probabilistic Gaussian Superposition for Efficient 3D Occupancy Prediction"
 type: source-summary
 status: active
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2024
 venue: arXiv
 tags:
@@ -13,7 +13,7 @@ tags:
   - gaussian-representation
 citations: 57
 arxiv_id: "2412.04384"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 # GaussianFormer-2: Probabilistic Gaussian Superposition for Efficient 3D Occupancy Prediction
@@ -24,14 +24,14 @@ paper-faithfullness: audited-solid
 
 GaussianFormer-2 addresses 3D semantic occupancy prediction for vision-centric autonomous driving by rethinking how 3D Gaussians represent occupied space. The original GaussianFormer used 144,000 Gaussians with additive superposition, leading to excessive overlap and redundancy. GaussianFormer-2 introduces a probabilistic interpretation: each Gaussian represents a probability distribution of its neighborhood being occupied, and Gaussians combine via probabilistic multiplication rather than addition.
 
-This probabilistic formulation naturally prevents unnecessary overlapping -- the overlap ratio drops from 11.0% to 3.9% -- enabling the model to achieve superior performance with only 8.9% of the Gaussians used by its predecessor (25,600 vs 144,000). A distribution-based initialization module learns pixel-aligned occupancy distributions instead of surface depths, and a Gaussian mixture model handles semantic predictions with proper normalization. The result is 75%+ memory savings while improving mIoU on both nuScenes (+1.72pp absolute) and KITTI-360 (+0.98pp absolute, ~7.6% relative).
+This probabilistic formulation naturally prevents unnecessary overlapping -- the overlap ratio drops from 10.99% to 3.91% -- enabling the model to achieve superior performance with only 8.9% of the Gaussians used by its predecessor in the nuScenes main result (12,800 vs 144,000). A distribution-based initialization module learns pixel-aligned occupancy distributions instead of surface depths, and a Gaussian mixture model handles semantic predictions with proper normalization. The result is roughly 51% memory savings on the nuScenes main setup (3,041 MB vs 6,229 MB) while improving mIoU on both nuScenes (+1.72pp absolute) and KITTI-360 (+0.98pp absolute, ~7.6% relative).
 
 ## Key Contributions
 
 - **Probabilistic Gaussian superposition**: Interprets each Gaussian as an occupancy probability distribution; uses multiplicative aggregation to derive overall geometry, naturally preventing redundant overlap
 - **Gaussian mixture model for semantics**: Applies exact GMM for normalized semantic predictions, properly handling the different mathematical requirements of geometry vs. semantics
 - **Distribution-based initialization**: Learns pixel-aligned occupancy distributions instead of surface depths, enabling more informative Gaussian placement without LiDAR
-- **Extreme efficiency**: Achieves better results with 8.9% of the Gaussians (25,600 vs 144,000) and ~51% memory reduction (3,063 MB vs 6,229 MB)
+- **Extreme efficiency**: Achieves better results with 8.9% of the Gaussians in the nuScenes main result (12,800 vs 144,000) and ~51% memory reduction (3,041 MB vs 6,229 MB)
 
 ## Architecture / Method
 
@@ -56,8 +56,8 @@ This probabilistic formulation naturally prevents unnecessary overlapping -- the
 │         │ (replaces surface depth est.)   │                        │
 │         └───────────────┬────────────────┘                        │
 │                         │                                         │
-│              25,600 initial Gaussians                              │
-│              (vs 144K in GaussianFormer)                           │
+│      Sparse Gaussian set (12.8K on nuScenes main result;          │
+│           38.4K on KITTI-360, vs 144K baseline)                   │
 │                         │                                         │
 │         ┌───────────────▼────────────────┐                        │
 │         │ Gaussian Encoder (iterative)    │                        │
@@ -102,19 +102,17 @@ The key mathematical insight is that multiplicative combination of Gaussian prob
 |--------|-----------------|----------------|--------|
 | nuScenes mIoU | 20.82% | 19.10% | +1.72pp |
 | KITTI-360 mIoU | 13.90% | 12.92% | +0.98pp |
-| Gaussians used | 25,600 | 144,000 | 8.9% |
-| Memory | 3,063 MB | 6,229 MB | -51% |
-| Correct placement | 28.85% | 16.41% | +12.44pp |
+| Gaussians used (nuScenes main result) | 12,800 | 144,000 | 8.9% |
+| Memory (nuScenes main result) | 3,041 MB | 6,229 MB | -51% |
 | Overlap ratio | 3.91% | 10.99% | -64% |
 
-- The probabilistic formulation dramatically improves Gaussian placement quality: correct placement increases from 16.4% to 28.9%
 - Overlap ratio drops by 64%, validating that multiplicative aggregation naturally prevents redundancy
 - State-of-the-art performance on both nuScenes and KITTI-360 with significantly fewer Gaussians
 
 ## Limitations
 
 - Still requires supervised 3D occupancy labels for training; not self-supervised like GaussTR
-- 25,600 Gaussians may still be insufficient for complex urban scenes with many small objects
+- Even 12,800-38,400 Gaussians may still be insufficient for complex urban scenes with many small objects
 - Probabilistic multiplication assumes independence between Gaussians, which may not hold in practice
 - Evaluated only on camera-based perception; LiDAR fusion could further improve results
 

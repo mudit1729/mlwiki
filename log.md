@@ -1,5 +1,32 @@
 # Log
 
+## [2026-04-11] audit | Targeted factuality audit — AlexNet + Hinton-van-Camp-1993
+- Audited `imagenet-classification-with-deep-convolutional-neural-networks` (AlexNet, NeurIPS 2012) against the NeurIPS proceedings PDF and official ILSVRC 2012 results page.
+- Fixed three errors: (1) Overview claimed single-model ILSVRC 2012 top-5 error was 18.9% — corrected to 15.3% ensemble / 16.4% single-model; 18.9% and 39.7% are ILSVRC-2010 results reported in the paper, not 2012 competition results. (2) Results bullet stated ensemble achieves 15.4% top-5 — corrected to 15.3% (official: 0.15315). (3) Overview margin-of-victory description updated to match corrected figures. Status set to `audited-fixed`.
+- Audited `keeping-neural-networks-simple-by-minimizing-the-description-length-of-the-weights` (Hinton & van Camp, COLT 1993) against Hinton's publication page and Semantic Scholar. Title, authors, year, and venue all verified correct. Primary PDF source was unreadable binary; relied on Hinton's own paper list and API metadata. Status set to `audited-clean`.
+
+## [2026-04-11] audit | Targeted factuality audit — transfuser + vad
+- Audited `transfuser` (2205.15997) and `vad` (2303.12077) against arxiv and AlphaXiv ground truth.
+- Fixed `transfuser`: auxiliary tasks listed "3D object detection" but the paper uses 2D vehicle detection (bounding boxes), not full 3D detection. Corrected in Key Contributions and ASCII diagram. Status set to `audited-fixed`.
+- Fixed `vad`: Overview incorrectly stated that VAD "directly influenced subsequent work like UniAD." UniAD was published at CVPR 2023 and is the prior state-of-the-art that VAD explicitly improves upon; VAD appeared at ICCV 2023. Corrected the direction of influence. Status set to `audited-fixed`.
+
+## [2026-04-11] audit | Targeted factuality audit — simlingo + talk2car
+- Audited `simlingo` and `talk2car` against arxiv and AlphaXiv ground truth.
+- Fixed one hard numerical error in `simlingo`: Action Dreaming success rates were reported as "28.22 to 72.96" but the paper (Table 5) gives baseline **24.52%** and SimLingo **81.13%**. Status set to `audited-fixed`.
+- `talk2car` checked out clean on all factual claims (dataset size 11,959 / 850 scenes, venue EMNLP-IJCNLP 2019, authors, AP50 metric). Status set to `audited-clean`.
+
+## [2026-04-11] audit | Random 10-paper fact-check sample (seed 20260413)
+- Audited another deterministic random sample of `10` paper pages against the primary papers, excluding the two earlier random batches to maximize new coverage.
+- Downgraded `simlingo-vision-only-closed-loop-autonomous-driving-with-language-action-alignment` to `audited-needs-tightening` after removing an overstated claim about how much Action Dreaming improves closed-loop driving.
+- The other `9` sampled pages remained materially faithful on review, including `alpamayo-r1`, `gaussianocc`, `drivetransformer`, `voxposer`, `senna`, `unisim`, `variational-lossy-autoencoder`, `emerging-properties-in-self-supervised-vision-transformers`, and `momad`.
+- Corpus totals after the pass: `185` solid, `9` needs-tightening, `3` needs-correction, `0` unchecked.
+
+## [2026-04-11] audit | Random 10-paper fact-check sample (seed 20260412)
+- Audited a second deterministic random sample of `10` paper pages against the primary papers.
+- Downgraded `multi-scale-context-aggregation-by-dilated-convolutions` to `audited-needs-tightening` after correcting the context-module description, and downgraded `occgen-generative-multi-modal-3d-occupancy-prediction-for-autonomous-driving` to `audited-needs-correction` after fixing swapped camera-only vs. LiDAR-only benchmark numbers.
+- Tightened `lift-splat-shoot-encoding-images-from-arbitrary-camera-rigs-by-implicitly-unprojecting-to-3d` while keeping it `audited-needs-correction`, removing unsupported transfer/runtime overclaims.
+- The other `7` sampled pages remained materially faithful on review; corpus totals now stand at `186` solid, `8` needs-tightening, `3` needs-correction, `0` unchecked.
+
 ## [2026-04-11] audit | Remaining unchecked source pages
 - Audited the final `14` pages still marked `paper-faithfullness: unchecked` against their primary sources.
 - Marked `10` of those pages `audited-solid` and `4` `audited-needs-tightening`, with wording tightened on the course/blog-style entries `cs231n`, `the-first-law-of-complexodynamics`, `the-unreasonable-effectiveness-of-recurrent-neural-networks`, and `understanding-lstm-networks`.
@@ -352,3 +379,22 @@
 - Updated: wiki/concepts/foundation-models.md (diffusion models section + key papers table), wiki/taxonomies/research-map.md (added generative models routing)
 - Citations: 31987 (user-provided; Semantic Scholar fetch unavailable)
 - Tags: diffusion, generative-models, computer-vision, image-generation, foundation-model, transformer
+## [2026-04-11] audit | Random 10-paper fact-check sample (seed 20260414)
+
+- Audited another non-overlapping deterministic sample of 10 paper summaries against the original papers.
+- Downgraded `pi0-a-vision-language-action-flow-model-for-general-robot-control` to `audited-needs-tightening` after removing an unsupported cross-embodiment transfer claim.
+- Downgraded `rdt-1b-a-diffusion-foundation-model-for-bimanual-manipulation` to `audited-needs-tightening` after correcting the limitation section to reflect real-robot, not simulation-first, evaluation.
+- Corpus status after this pass: `audited-solid` 183, `audited-needs-tightening` 11, `audited-needs-correction` 3, `unchecked` 0.
+## [2026-04-11] audit | Random 20-paper serious-error check (seed 20260415)
+
+- Audited a fresh non-overlapping deterministic sample of `20` paper summaries against the primary papers, with emphasis on serious benchmark/setup errors rather than soft phrasing drift.
+- Downgraded `flashocc-fast-and-memory-efficient-occupancy-prediction-via-channel-to-height-plugin` to `audited-needs-correction` after fixing materially wrong mIoU / speed / memory claims and correcting the plug-in baseline framing.
+- Downgraded `rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control` to `audited-needs-tightening` after removing an unsupported quantified chain-of-thought improvement claim.
+- The other `18` sampled pages did not show serious factual failures and were left unchanged; actual current frontmatter totals are `164` solid, `15` clean, `16` fixed, `1` needs-tightening, and `1` needs-correction.
+## [2026-04-11] audit | Random 20-paper sample (seed 20260416)
+
+- Audited a fresh 20-paper sample chosen to avoid overlap with all previous random samples recorded in `wiki/queries/paper-fact-check-tracker.md`.
+- Corrected `gaussianformer-2-probabilistic-gaussian-superposition-for-efficient-3d-occupancy-prediction` after the summary mixed a 25.6K-Gaussian ablation with the 12.8K-Gaussian nuScenes main result and therefore cited the wrong main-result resource figures.
+- Tightened `chauffeurnet-learning-to-drive-by-imitating-the-best-and-synthesizing-the-worst` by replacing unsupported aggregate collision/off-road claims with the paper's actual scenario-based closed-loop findings and real-world deployment description.
+- The other 18 sampled pages were materially consistent with their source papers.
+- Current frontmatter totals: `audited-solid` `162`, `audited-clean` `15`, `audited-fixed` `18`, `audited-needs-tightening` `1`, `audited-needs-correction` `1`.
