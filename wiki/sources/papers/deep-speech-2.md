@@ -12,7 +12,7 @@ tags:
   - end-to-end-learning
   - rnn
 citations: 3131
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 # Deep Speech 2: End-to-End Speech Recognition in English and Mandarin

@@ -14,7 +14,7 @@ tags:
   - closed-loop
   - e2e
 citations: 89
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2503.09594)**
@@ -27,7 +27,7 @@ Many driving VLM efforts improve language understanding (VQA, scene descriptions
 
 The paper introduces Action Dreaming, a novel bidirectional consistency task: given a language instruction the model must predict the appropriate action, and given an action the model must predict the matching language description. This creates a tight mutual coupling between the language and action representations, ensuring that the model's understanding of a scene in language is consistent with the actions it would take. The approach also includes instruction refusal -- when given unsafe commands (e.g., "run the red light"), the model prioritizes safe driving behavior.
 
-SimLingo validates this alignment-first philosophy by winning the CARLA Challenge 2024 and achieving state-of-the-art on both CARLA Leaderboard 2.0 and Bench2Drive, all with camera-only input. This represents a paradigm shift from independently optimizing language and action capabilities toward ensuring they are mutually consistent, establishing Action Dreaming as a key training technique for future driving VLAs.
+SimLingo validates this alignment-first philosophy by achieving state-of-the-art results on both CARLA Leaderboard 2.0 and Bench2Drive with camera-only input. The paper’s evidence for Action Dreaming is strongest on the dedicated language-action benchmark, while the closed-loop driving benefit is described as a slight improvement rather than a large step change.
 
 ## Key Contributions
 
@@ -35,7 +35,7 @@ SimLingo validates this alignment-first philosophy by winning the CARLA Challeng
 - **Unified three-task VLA model**: Jointly trains closed-loop driving control, VQA/scene commentary, and language-action alignment in a single camera-only architecture
 - **Instruction refusal capability**: Alignment training includes scenarios where the model should refuse unsafe instructions rather than blindly following them, demonstrating safety-aware behavior
 - **Camera-only state-of-the-art**: Achieves top performance on CARLA Leaderboard 2.0 and Bench2Drive without LiDAR, showing that vision-only is competitive with multi-sensor approaches
-- **CARLA Challenge 2024 winner**: Competition-validated driving performance provides strong external validation beyond standard benchmark numbers
+- **Official benchmark validation**: Strong camera-only performance on CARLA Leaderboard 2.0 and Bench2Drive provides external validation beyond offline language metrics
 
 ## Architecture / Method
 
@@ -83,11 +83,11 @@ The Action Dreaming task uses paired (language, action) data generated from the 
 
 ## Results
 
-- **State-of-the-art on CARLA Leaderboard 2.0 and Bench2Drive** with camera-only input, winning the CARLA Challenge 2024
-- **Action Dreaming improves both language and driving performance**: Bidirectional alignment training benefits both modalities rather than trading off between them, with ablations showing 8-12% improvement on both driving metrics and VQA scores
+- **State-of-the-art on CARLA Leaderboard 2.0 and Bench2Drive** with camera-only input
+- **Action Dreaming strongly improves the dedicated alignment task and slightly improves closed-loop driving**: on the Action Dreaming benchmark, success rate rises from 24.52% to 81.13% with dreaming data, while Bench2Drive driving performance improves slightly when that data is added to the training mixture
 - **Refusal of unsafe instructions**: When instructions conflict with safety (e.g., "run the red light"), the model prioritizes safe driving behavior, demonstrating that alignment training produces safety-aware behavior
 - **Competitive VQA/commentary quality** alongside top driving scores, showing that language understanding need not be sacrificed for driving performance
-- **Ablation studies validate Action Dreaming**: Removing the Action Dreaming task causes driving performance to drop to baseline levels while VQA also degrades, confirming the bidirectional benefit
+- **Ablation studies validate Action Dreaming as an alignment tool**: the paper reports the clearest gains on the dedicated Action Dreaming evaluation, with only modest closed-loop driving gains from including the extra alignment data
 
 ## Limitations & Open Questions
 

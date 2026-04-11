@@ -14,7 +14,7 @@ tags:
   - foundation
   - gpu-training
 citations: 127906
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read Paper](https://papers.nips.cc/paper/2012/hash/c399862d3b9d6b76c8436e924a68c45b-Abstract.html)**
@@ -23,7 +23,7 @@ paper-faithfullness: audited-solid
 
 ## Overview
 
-AlexNet, as this paper's architecture came to be known, is a deep convolutional neural network trained on GPUs that won the ILSVRC 2012 image classification competition by a massive margin, reducing top-5 error from approximately 26% (the best traditional methods) to 18.9%. The network consists of 5 convolutional layers and 3 fully-connected layers with 60 million parameters, trained using several techniques that were novel or newly popularized at the time: ReLU activations, dropout regularization, data augmentation, and multi-GPU training with custom CUDA kernels.
+AlexNet, as this paper's architecture came to be known, is a deep convolutional neural network trained on GPUs that won the ILSVRC 2012 image classification competition by a massive margin, reducing top-5 error from approximately 26% (the best traditional methods) to 15.3% (7-model ensemble). The network consists of 5 convolutional layers and 3 fully-connected layers with 60 million parameters, trained using several techniques that were novel or newly popularized at the time: ReLU activations, dropout regularization, data augmentation, and multi-GPU training with custom CUDA kernels.
 
 This paper is arguably the single most important work in the modern deep learning revolution. The scale of improvement over hand-engineered feature methods was so dramatic that it ended decades of debate about whether learned representations could compete with carefully designed ones. The result triggered a massive influx of investment, research talent, and industrial interest into deep learning that continues to this day. With over 100,000 citations, it is one of the most cited papers in all of computer science.
 
@@ -93,9 +93,9 @@ The multi-GPU implementation splits the network vertically: each GPU holds half 
 
 ## Results
 
-- ILSVRC 2012 winner: 18.9% top-5 error and 39.7% top-1 error, crushing the runner-up (26.2% top-5) by over 7 percentage points absolute -- a result that shocked the computer vision community
+- ILSVRC 2012 winner: 15.3% top-5 error (7-model ensemble) and 16.4% top-5 error (single model), crushing the runner-up (26.2% top-5) by over 10 percentage points absolute -- a result that shocked the computer vision community; the paper also reports 39.7% top-1 / 18.9% top-5 on the separate ILSVRC-2010 test set
 - Depth is critical: removing any single convolutional layer degrades top-1 error by approximately 2%, demonstrating that each layer contributes meaningful representation capacity
-- An ensemble of 7 AlexNet variants achieves 15.4% top-5 error, showing that different random initializations learn complementary representations
+- An ensemble of 7 AlexNet variants achieves 15.3% top-5 error, showing that different random initializations learn complementary representations
 - First-layer filters learn Gabor-like oriented edges and color blobs; higher layers learn increasingly abstract object parts, providing the first clear visualization of hierarchical feature learning in deep networks
 - The learned features transfer well to other vision tasks, establishing the paradigm of "pretrain on ImageNet, fine-tune on target task" that dominated computer vision for nearly a decade
 

@@ -13,7 +13,7 @@ tags:
   - language-modeling
   - sequence-modeling
 citations: 0
-paper-faithfullness: audited-needs-tightening
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read Blog Post](https://karpathy.github.io/2015/05/21/rnn-effectiveness/)**
@@ -33,7 +33,7 @@ Within this wiki, the post is most useful as an early qualitative demonstration 
 - **Character-level language modeling as universal learning**: Frames text generation as next-character prediction -- given [c_1, ..., c_t], predict P(c_{t+1}) -- with a vocabulary of just 50-100 unique characters, demonstrating that complex structure emerges from this simple objective
 - **Temperature-controlled sampling**: Demonstrates sampling from P(c) proportional to exp(logits/tau), where temperature tau controls diversity -- low tau gives conservative/repetitive text, high tau gives creative/noisy text, with a sweet spot producing the most realistic output
 - **Domain universality**: The same architecture and hyperparameters work on Shakespeare, Wikipedia, LaTeX, C code, and music notation, suggesting RNNs learn fundamental sequential patterns rather than domain-specific rules
-- **Interpretable hidden state neurons**: Visualization of individual LSTM hidden state dimensions reveals cells that track specific features -- quote detection, line length counting, indentation depth, and if/else block nesting
+- **Interpretable hidden state neurons**: Visualization of individual LSTM hidden state dimensions reveals cells that track specific features -- URL detection (firing inside URLs), [[ ]] markdown environment tracking, position within [[ ]] scope, and "www" sequence counting
 - **LSTM as practical solution to vanishing gradients**: Clearly explains why vanilla RNNs fail beyond 10-20 timesteps and how LSTM gating enables learning dependencies spanning 100+ steps
 
 ## Architecture / Method
@@ -86,11 +86,11 @@ The models are small by modern standards (a few million parameters) and train in
 
 ## Results
 
-- **Shakespeare generation**: After training on 4.6MB of Shakespeare, the model generates plausible-looking dialogue with stage directions, character names, iambic patterns, and dramatic structure, demonstrating document-level pattern learning
+- **Shakespeare generation**: After training on 4.4MB of Shakespeare, the model generates plausible-looking dialogue with stage directions, character names, iambic patterns, and dramatic structure, demonstrating document-level pattern learning
 - **LaTeX generation**: The model learns matching braces, begin/end environments, mathematical notation structure, and citation formatting, producing compilable (though semantically nonsensical) LaTeX documents
 - **C code generation**: Trained on the Linux kernel source, the model generates syntactically plausible C code with proper indentation, function signatures, comments, bracket matching, and even plausible-looking pointer arithmetic
 - **Wikipedia markup**: The model learns MediaWiki syntax including section headers, links, infoboxes, and citation templates, producing pages that look structurally correct
-- **Interpretable neurons**: Individual hidden state neurons are found to track specific features -- one neuron activates inside quotes and deactivates outside, another counts line position and fires near line endings, another tracks indentation depth in code
+- **Interpretable neurons**: Individual hidden state neurons are found to track specific features -- one neuron activates inside URLs and turns off outside, another fires inside [[ ]] markdown environments, another provides a position coordinate within [[ ]] scope, another tracks position within "www" sequences
 
 ## Limitations & Open Questions
 

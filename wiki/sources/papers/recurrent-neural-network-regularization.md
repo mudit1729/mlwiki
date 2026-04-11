@@ -14,7 +14,7 @@ tags:
   - dropout
   - language-modeling
 citations: 2986
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1409.2329)**

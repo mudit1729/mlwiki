@@ -13,7 +13,7 @@ tags:
   - algorithmic-randomness
   - computability
 citations: 106
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 📄 **[AMS Book Page](https://bookstore.ams.org/surv-220)**

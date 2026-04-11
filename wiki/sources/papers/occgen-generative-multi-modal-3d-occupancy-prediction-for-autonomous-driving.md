@@ -2,12 +2,13 @@
 title: "OccGen: Generative Multi-modal 3D Occupancy Prediction for Autonomous Driving"
 tags: [autonomous-driving, perception, 3d-occupancy, diffusion, generative-models, computer-vision, multi-camera]
 status: active
+updated: 2026-04-11
 type: paper
 year: "2024"
 venue: "ECCV"
 citations: 50
 arxiv_id: "2404.15014"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 # OccGen: Generative Multi-modal 3D Occupancy Prediction for Autonomous Driving
@@ -77,18 +78,18 @@ OccGen was evaluated primarily on the nuScenes-Occupancy benchmark:
 
 | Method | Setting | mIoU | Type |
 |--------|---------|------|------|
-| TPVFormer | Multi-modal | 15.1 | Discriminative |
+| OpenOccupancy (Baseline) | Multi-modal | 15.1 | Discriminative |
 | CONet | Multi-modal | 20.1 | Discriminative |
 | **OccGen** | **Multi-modal** | **22.0** | **Generative (diffusion)** |
-| CONet | Camera-only | 12.8 | Discriminative |
-| **OccGen** | **Camera-only** | **14.5** | **Generative (diffusion)** |
-| CONet | LiDAR-only | 15.8 | Discriminative |
-| **OccGen** | **LiDAR-only** | **16.8** | **Generative (diffusion)** |
+| C-CONet | Camera-only | 12.8 | Discriminative |
+| **C-OccGen** | **Camera-only** | **14.5** | **Generative (diffusion)** |
+| L-CONet | LiDAR-only | 15.8 | Discriminative |
+| **L-OccGen** | **LiDAR-only** | **16.8** | **Generative (diffusion)** |
 
 OccGen also achieves 13.74% mIoU on SemanticKITTI (vs OccFormer 13.46%).
 
 Key findings:
-- OccGen relatively improves mIoU by 9.5% (multi-modal), 6.3% (LiDAR-only), and 13.3% (camera-only) on the nuScenes-Occupancy benchmark vs. the prior state-of-the-art
+- OccGen relatively improves mIoU by 9.5% (multi-modal), 13.3% (camera-only), and 6.3% (LiDAR-only) on the nuScenes-Occupancy benchmark vs. the prior state-of-the-art
 - The generative formulation provides the largest improvements on rare and geometrically complex classes where structural priors matter most
 - Multi-modal conditioning (camera + LiDAR) yields additional gains over unimodal, demonstrating the flexibility of the conditioning framework
 - As a generative model, OccGen can produce uncertainty estimates alongside predictions -- a capability unavailable in discriminative baselines

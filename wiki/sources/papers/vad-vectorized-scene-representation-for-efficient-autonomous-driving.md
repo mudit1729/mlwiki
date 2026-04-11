@@ -11,7 +11,7 @@ tags:
   - planning
   - vectorized-representation
 citations: 567
-paper-faithfullness: audited-needs-correction
+paper-faithfullness: audited-fixed
 ---
 
 # VAD: Vectorized Scene Representation for Efficient Autonomous Driving
@@ -24,7 +24,7 @@ VAD (Vectorized Scene Representation for Efficient Autonomous Driving) by Jiang 
 
 The core argument is that vectorized representations are both more efficient and more informative for planning than dense grids. Map elements (lane boundaries, crosswalks) are naturally polylines, not pixel grids. Agent motions are trajectories, not occupancy maps. By representing them in their natural form and using transformer attention to model interactions, VAD achieves better planning performance with significantly lower computational cost than dense alternatives.
 
-VAD became a strong baseline and reference point for the vectorized end-to-end driving paradigm, directly influencing subsequent work like UniAD and demonstrating that the field could move beyond the "rasterize everything" approach that dominated early BEV-based driving systems. The paper represents an important counterpoint to occupancy-heavy approaches and showed that structured, sparse representations can outperform dense ones for planning.
+VAD became a strong baseline and reference point for the vectorized end-to-end driving paradigm, demonstrating that the field could move beyond the "rasterize everything" approach that dominated early BEV-based driving systems. VAD explicitly improves upon UniAD (CVPR 2023), which was the prior state-of-the-art, rather than influencing it. The paper represents an important counterpoint to occupancy-heavy approaches and showed that structured, sparse representations can outperform dense ones for planning.
 
 ## Key Contributions
 

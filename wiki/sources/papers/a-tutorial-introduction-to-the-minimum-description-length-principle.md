@@ -13,7 +13,7 @@ tags:
   - compression
   - mdl
 citations: 381
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/math/0406077)**
@@ -22,7 +22,7 @@ paper-faithfullness: audited-solid
 
 ## Citation
 
-Grunwald, arXiv math/0406077 / MIT Press, 2004.
+Grünwald, arXiv math/0406077 / MIT Press, 2004.
 
 ## Canonical link
 

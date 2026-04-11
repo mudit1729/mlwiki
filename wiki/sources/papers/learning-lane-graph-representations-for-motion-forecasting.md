@@ -11,7 +11,7 @@ tags:
   - prediction
   - lanegcn
 citations: 750
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2007.13732)**

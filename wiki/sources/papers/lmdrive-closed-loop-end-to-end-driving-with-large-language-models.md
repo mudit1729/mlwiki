@@ -13,7 +13,7 @@ tags:
   - vla
   - closed-loop
 citations: 294
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2312.07488)**
@@ -74,7 +74,7 @@ The system fuses camera and LiDAR inputs through separate encoders with a Queryi
 
 ![Detailed model architecture showing vision encoder pipeline, Q-Former visual token compression, and LLM integration](https://paper-assets.alphaxiv.org/figures/2312.07488v2/x3.png)
 
-LMDrive uses a multi-modal encoder-adapter-LLM architecture. Camera images are processed through a ResNet backbone to produce image feature maps, which are then fused across views via a transformer encoder to produce visual tokens. LiDAR point clouds are processed through a PointPillars backbone, with PointNet aggregating features into BEV queries. A BEV decoder transformer attends from LiDAR BEV queries to multi-view image features to generate BEV tokens. A Q-Former (adapted from BLIP-2) then efficiently compresses these visual tokens before they are projected into the LLM's embedding space alongside tokenized language instructions.
+LMDrive uses a multi-modal encoder-adapter-LLM architecture. Camera images are processed through a ResNet backbone to produce image feature maps, which are then fused across views via a transformer encoder to produce visual tokens. LiDAR point clouds are processed through a PointPillars backbone to produce 3D features. A BEV decoder transformer (with learned BEV queries) attends from these BEV queries to multi-view image features to generate BEV tokens. A Q-Former (adapted from BLIP-2) then efficiently compresses these visual tokens before they are projected into the LLM's embedding space alongside tokenized language instructions.
 
 The LLM backbone (LLaMA-based, e.g., LLaVA-v1.5 7B) is kept frozen during training. Two-layer MLP adapters bridge the Q-Former output to the LLM's input dimension and convert the LLM's final hidden states to future waypoints and an instruction completion flag. These predicted waypoints are then converted into low-level control signals (throttle, brake, steering) using standard PID controllers.
 
@@ -88,11 +88,11 @@ Training is two-stage: first the encoders and adapters are pretrained on driving
 
 | Configuration | Driving Score | Infraction Score |
 |---|---|---|
-| Full LMDrive | 36.2 | 0.81 |
-| Without Q-Former | 31.7 | - |
-| Without BEV tokens | - | 0.72 |
-| Vision encoder from scratch | 16.9 | - |
-| With real-time notice (LLaVA-v1.5) | - | 0.87 |
+| Full LMDrive (LLaVA-v1.5) | 36.2 | 0.81 |
+| Without Q-Former | 31.7 | 0.79 |
+| Without BEV tokens | 33.9 | 0.72 |
+| Vision encoder from scratch | 16.9 | 0.70 |
+| With real-time notice (LLaVA-v1.5, LangAuto-Notice) | 36.2 | 0.87 |
 
 ![Examples of LMDrive handling misleading instructions by rejecting unsafe commands](https://paper-assets.alphaxiv.org/figures/2312.07488v2/x5.png)
 

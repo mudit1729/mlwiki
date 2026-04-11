@@ -12,7 +12,7 @@ tags:
   - intelligence-measurement
   - algorithmic-information-theory
 citations: 63
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read Thesis](https://www.vetta.org/documents/Machine_Super_Intelligence.pdf)**

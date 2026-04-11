@@ -13,7 +13,7 @@ tags:
   - sequence-modeling
   - vanishing-gradients
 citations: 0
-paper-faithfullness: audited-needs-tightening
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read Blog Post](https://colah.github.io/posts/2015-08-Understanding-LSTMs/)**

@@ -12,8 +12,8 @@ tags:
   - reasoning
   - benchmark
   - evaluation
-citations: 128
-paper-faithfullness: audited-solid
+citations: 107
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2312.03661)**

@@ -1,5 +1,5 @@
 ---
-title: "CS231n: Convolutional Neural Networks for Visual Recognition"
+title: "CS231n: Deep Learning for Computer Vision"
 type: source-summary
 status: complete
 updated: 2026-04-11
@@ -13,12 +13,12 @@ tags:
   - deep-learning
   - course
 citations: 0
-paper-faithfullness: audited-needs-tightening
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Course Website](https://cs231n.stanford.edu/)**
 
-# CS231n: Convolutional Neural Networks for Visual Recognition
+# CS231n: Deep Learning for Computer Vision
 
 ## Citation
 

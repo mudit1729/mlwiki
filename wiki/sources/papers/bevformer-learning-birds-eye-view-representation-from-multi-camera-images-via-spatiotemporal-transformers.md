@@ -12,7 +12,7 @@ tags:
   - bev
   - transformer
 citations: 1826
-paper-faithfullness: audited-needs-tightening
+paper-faithfullness: audited-fixed
 ---
 
 # BEVFormer: Learning Bird's-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers
@@ -21,7 +21,7 @@ paper-faithfullness: audited-needs-tightening
 
 ## Citation
 
-Li, Wang, Li, Xie, Sima, Lu, Qiao, Dai (Shanghai AI Lab / Nanjing University), ECCV, 2022.
+Li, Wang, Li, Xie, Sima, Lu, Yu, Dai (Shanghai AI Lab / Nanjing University / HKU), ECCV, 2022.
 
 ## Canonical link
 
@@ -114,8 +114,8 @@ For 3D detection, a DETR3D-style head with 6 decoder layers produces bounding bo
 | DETR3D | 42.5% | 34.6% | 0.845 | R101 |
 | SSN (LiDAR) | 56.9% | - | - | - |
 
-- **nuScenes 3D detection (val)**: 51.7% NDS and 41.6% mAP with ResNet-101 backbone, setting a new camera-only SOTA at the time (surpassing DETR3D by 9.0 NDS points)
-- **nuScenes 3D detection (test)**: 56.9% NDS with V2-99 backbone, reaching performance comparable to some LiDAR-based systems like SSN (56.9% NDS) -- a significant milestone for camera-based 3D perception
+- **nuScenes 3D detection (val)**: 51.7% NDS and 41.6% mAP with ResNet-101 backbone, setting a new camera-only SOTA at the time
+- **nuScenes 3D detection (test)**: 56.9% NDS with V2-99 backbone, surpassing the previous best camera-based method (DETR3D at 47.9% NDS) by 9.0 points and reaching performance comparable to some LiDAR-based systems like SSN (56.9% NDS) -- a significant milestone for camera-based 3D perception
 - **Velocity estimation**: mAVE of 0.378 m/s, approaching the accuracy of LiDAR-based methods and significantly better than methods without temporal fusion (DETR3D: 0.845). Accurate velocity prediction is fundamental for motion planning and collision avoidance
 - **Temporal occlusion handling**: The temporal module achieves over 6.0% higher recall than static versions in low visibility conditions (0-40% visible objects), demonstrating the system's ability to infer hidden object information from temporal context
 - **BEV segmentation**: 62.4% IoU for vehicle segmentation on nuScenes, outperforming prior methods by 3+ points

@@ -13,7 +13,7 @@ tags:
   - planning
   - bev
 citations: 155
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2401.05577)**

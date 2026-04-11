@@ -13,7 +13,7 @@ tags:
   - benchmark
   - natural-language
 citations: 182
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1909.10838)**

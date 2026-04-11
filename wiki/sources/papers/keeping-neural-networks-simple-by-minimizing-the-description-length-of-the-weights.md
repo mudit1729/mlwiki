@@ -14,7 +14,7 @@ tags:
   - bayesian-inference
   - generalization
 citations: 1279
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read Paper](https://www.cs.toronto.edu/~hinton/absps/colt93.pdf)**

@@ -2,7 +2,7 @@
 title: "pi0: A Vision-Language-Action Flow Model for General Robot Control"
 type: source-summary
 status: active
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2024
 venue: RSS 2025
 tags:
@@ -13,7 +13,7 @@ tags:
   - flow-matching
 citations: 1381
 arxiv_id: "2410.24164"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 # pi0: A Vision-Language-Action Flow Model for General Robot Control
@@ -94,7 +94,7 @@ The training follows a two-stage recipe: (1) large-scale pre-training on 903 mil
 
 - Pre-training on diverse data followed by fine-tuning consistently outperforms training from scratch on individual tasks
 - Flow matching enables smooth 50 Hz control needed for contact-rich dexterous tasks that autoregressive VLAs cannot handle
-- The model shows positive transfer across embodiments -- pre-training on single-arm data improves bimanual fine-tuning performance
+- The same pretrained model is evaluated across single-arm, bimanual, and mobile-manipulation settings, but the paper does not isolate cross-embodiment transfer in a dedicated ablation
 - Language conditioning enables zero-shot task specification for seen task categories with novel object instances
 
 ## Limitations
@@ -103,6 +103,7 @@ The training follows a two-stage recipe: (1) large-scale pre-training on 903 mil
 - Fine-tuning still needed for each new task family; true zero-shot generalization to novel task categories remains limited
 - No temporal history of observations; the model processes only current images without memory of past frames, limiting reasoning about dynamics and task progress
 - Evaluation primarily on in-house platforms; limited third-party benchmarking compared to open models like OpenVLA
+- The paper does not cleanly separate the effect of cross-embodiment transfer from the effect of simply scaling data and model size
 
 ## Connections
 

@@ -12,7 +12,7 @@ tags:
   - information-theory
   - thermodynamics
 citations: 26
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1405.6903)**

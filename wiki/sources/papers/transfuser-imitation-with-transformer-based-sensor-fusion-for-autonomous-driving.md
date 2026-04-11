@@ -12,7 +12,7 @@ tags:
   - transformer
   - sensor-fusion
 citations: 600
-paper-faithfullness: audited-needs-tightening
+paper-faithfullness: audited-fixed
 ---
 
 # TransFuser: Imitation with Transformer-Based Sensor Fusion for Autonomous Driving
@@ -32,7 +32,7 @@ TransFuser became one of the most referenced baselines for CARLA-based end-to-en
 - **Multi-scale transformer fusion**: Applies transformer self-attention to fuse image and LiDAR features at multiple intermediate resolutions of the encoder backbone, not just at the final feature level
 - **Cross-modal attention for driving**: Demonstrates that attention-based fusion outperforms late fusion and concatenation by learning which cross-modal correspondences are relevant for driving decisions
 - **Strong CARLA closed-loop baseline**: Establishes a competitive and reproducible baseline on the CARLA Leaderboard that subsequent papers consistently compare against
-- **Multi-task learning framework**: Uses auxiliary supervision including depth estimation, BEV semantic segmentation, HD map prediction, and 3D object detection to regularize the learned representations and improve driving performance
+- **Multi-task learning framework**: Uses auxiliary supervision including depth estimation, BEV semantic segmentation, HD map prediction, and vehicle detection (2D bounding boxes) to regularize the learned representations and improve driving performance
 - **Latent TransFuser variant**: Provides a strong image-only baseline that surpasses reinforcement learning-based image-only methods, establishing new performance standards for camera-only driving
 - **Imitation learning with geometric reasoning**: Shows that transformer attention can implicitly learn geometric correspondences between 2D image features and 3D LiDAR features without explicit geometric projection
 
@@ -72,7 +72,7 @@ TransFuser became one of the most referenced baselines for CARLA-based end-to-en
 │          │  Predictor   │──► Waypoints ──► PID ──► Steer/Accel  │
 │          └─────────────┘                                        │
 │                                                                 │
-│  Auxiliary:  BEV Seg  │  Depth Est  │  HD Map  │  3D Det        │
+│  Auxiliary:  BEV Seg  │  Depth Est  │  HD Map  │  Vehicle Det   │
 └─────────────────────────────────────────────────────────────────┘
 ```
 

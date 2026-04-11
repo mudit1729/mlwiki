@@ -13,7 +13,7 @@ tags:
   - attention
   - benchmark
 citations: 427
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1807.11546)**
@@ -48,7 +48,7 @@ BDD-X became the standard benchmark for explainable driving research, directly r
   ┌───────────────────┐              ┌───────────────────┐
   │  Vehicle Controller│              │ Explanation Generator│
   │                   │              │                     │
-  │  CNN (VGG-16)     │              │  CNN Encoder         │
+  │  CNN (5-layer)    │              │  CNN Encoder         │
   │       │           │              │       │             │
   │       ▼           │              │       ▼             │
   │  Spatial Attention │              │  LSTM Decoder       │
@@ -70,7 +70,7 @@ BDD-X became the standard benchmark for explainable driving research, directly r
   Total Loss: L = L_control + λ_text * L_text + λ_align * L_align
 ```
 
-The system has two components trained jointly. The **vehicle controller** takes a sequence of frames and produces steering angle and speed predictions. It uses a CNN (VGG-16) with spatial attention to produce attention-weighted visual features, which are processed by an LSTM to generate control signals. The spatial attention map A_ctrl indicates which image regions the controller relies on for its decisions.
+The system has two components trained jointly. The **vehicle controller** takes a sequence of frames and produces steering angle and speed predictions. It uses a five-layer CNN (without max-pooling, similar to Bojarski et al.) with spatial attention to produce attention-weighted visual features, which are processed by an LSTM to generate control signals. The spatial attention map A_ctrl indicates which image regions the controller relies on for its decisions.
 
 The **explanation generator** is an encoder-decoder model. The encoder processes the same video frames through a CNN, and the decoder generates natural-language explanations word by word using an LSTM with attention over the visual features. The decoder's attention map A_expl indicates which image regions the explanation references.
 

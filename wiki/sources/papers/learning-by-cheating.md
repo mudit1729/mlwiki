@@ -4,14 +4,14 @@ type: source-summary
 status: seed
 updated: 2026-04-05
 year: 2019
-venue: arXiv
+venue: CoRL
 tags:
   - paper
   - autonomous-driving
   - imitation-learning
   - privileged-supervision
 citations: 632
-paper-faithfullness: audited-needs-tightening
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1912.12294)**

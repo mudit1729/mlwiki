@@ -12,7 +12,7 @@ tags:
   - information-theory
   - thermodynamics
 citations: 0
-paper-faithfullness: audited-needs-tightening
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read Blog Post](https://scottaaronson.blog/?p=762)**
@@ -23,7 +23,7 @@ paper-faithfullness: audited-needs-tightening
 
 Scott Aaronson's blog post highlights an asymmetry between entropy and complexity as a way of thinking about structure formation in physical and computational systems. While the second law of thermodynamics dictates that entropy monotonically increases, complexity -- the "interestingness" or structural richness of a system -- is argued to follow a non-monotonic arc: low at early times (ordered initial state), high at intermediate times (transitional dynamics with rich structure), and low again at equilibrium (featureless thermal noise).
 
-This observation, while intuitively obvious (a cup of coffee is most "interesting" while cooling, not when uniformly hot or uniformly room-temperature), resists formal mathematical treatment. Aaronson proposes "complextropy" as a formal measure based on Kolmogorov complexity that could capture this phenomenon: the length of the shortest program that can generate strings indistinguishable from samples of the target distribution. Pure randomness has low complextropy (sample from a uniform distribution), perfect order has low complextropy (output a constant), but structured intermediate states have high complextropy.
+This observation, while intuitively obvious (a cup of coffee is most "interesting" while cooling, not when uniformly hot or uniformly room-temperature), resists formal mathematical treatment. Aaronson proposes "complextropy" as a formal measure based on Kolmogorov complexity that could capture this phenomenon: roughly, the number of bits in the shortest efficient program (running in n log(n) time) that outputs a nearly-uniform sample from a set S containing the target string x, such that no efficient program can reconstruct x from samples of S in fewer than log2(|S|)-c bits. Pure randomness has low complextropy (S is just all n-bit strings, trivially described), perfect order has low complextropy (S is a singleton, trivially described), but structured intermediate states have high complextropy.
 
 In this wiki, the post is useful mainly as a conceptual prompt linking entropy, description length, and emergent structure. It is explicitly a speculative blog essay rather than a finished theorem or an empirical study of learning dynamics.
 
@@ -31,7 +31,7 @@ In this wiki, the post is useful mainly as a conceptual prompt linking entropy, 
 
 - **Complexity vs. entropy distinction**: Entropy measures the number of possible microstates (monotonically increasing); complexity measures structural richness or difficulty of description (non-monotonic). A fully random system has maximum entropy but low complexity
 - **The complexity arc**: For natural dynamical systems, complexity is small at t~0 (ordered initial state), large at intermediate t (transitional dynamics with rich structure), and small as t approaches infinity (thermalized equilibrium)
-- **Complextropy measure**: A proposed formal complexity measure based on Kolmogorov complexity -- the length of the shortest program that can sample from a probability distribution such that target strings are not efficiently compressible from the samples
+- **Complextropy measure**: A proposed formal complexity measure based on Kolmogorov complexity -- the number of bits in the shortest efficient program (running in n log(n) time) that outputs a nearly-uniform sample from a set S containing the target string x, subject to the constraint that no efficient program can reconstruct x from S-samples using fewer than log2(|S|)-c bits
 - **Randomness is not complexity**: Pure noise is highly compressible as "sample from uniform distribution" and thus has low complextropy; true complexity requires structure that distinguishes a system from both perfect order and white noise
 - **Connection to phase transitions**: Complexity peaks at the boundary between order and chaos, linking to self-organized criticality, edge-of-chaos phenomena, and critical points in statistical mechanics
 
@@ -41,7 +41,7 @@ This is a conceptual/theoretical blog post rather than an empirical paper, so th
 
 Aaronson builds the argument through concrete examples: a cup of cooling coffee (uniform hot liquid -> complex convection patterns -> uniform room-temperature liquid), star formation (homogeneous gas cloud -> turbulent accretion with jets and proto-planetary disks -> stable stellar system), and cosmic evolution (near-uniform initial state -> galaxies, stars, planets, life -> eventual heat death). In each case, the system passes through a complexity peak during transitional dynamics.
 
-The proposed formalization uses algorithmic information theory. For a distribution D over strings of length n, the complextropy is defined as the minimum description length of a program P such that: (1) P generates samples that are computationally indistinguishable from samples of D, and (2) the samples cannot be efficiently compressed below n bits. Condition (2) is what excludes both low-entropy ordered states (compressible because structured) and maximum-entropy random states (compressible because "just sample uniformly").
+The proposed formalization uses algorithmic information theory. For an n-bit string x, the complextropy is defined as the number of bits in the shortest program P running in n log(n) time such that: (1) P outputs a nearly-uniform sample from some set S with x∈S, and (2) any program that reconstructs x in n log(n) time using samples from S as an oracle requires at least log2(|S|)-c bits. Condition (2) is what excludes both low-entropy ordered states (x is easily reconstructed without needing a large S) and maximum-entropy random states (S is all n-bit strings, described trivially).
 
 ## Results
 

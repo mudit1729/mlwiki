@@ -13,7 +13,7 @@ tags:
   - combinatorial-optimization
   - pointer-mechanism
 citations: 3380
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/1506.03134)**

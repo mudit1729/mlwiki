@@ -2,7 +2,7 @@
 title: "RDT-1B: A Diffusion Foundation Model for Bimanual Manipulation"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2025
 venue: ICLR
 tags:
@@ -13,7 +13,7 @@ tags:
   - foundation-model
 citations: ~60
 arxiv_id: "2410.07864"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-clean
 ---
 
 # RDT-1B: A Diffusion Foundation Model for Bimanual Manipulation
@@ -112,7 +112,7 @@ RDT-1B achieves a **56% average improvement in success rates** over state-of-the
 - Bimanual training data is much scarcer than single-arm data; the model's performance ceiling may be limited by data availability rather than model capacity
 - DPM-Solver++ reduces denoising to 5 steps enabling 6 Hz chunk frequency, but this still limits responsiveness for highly dynamic bimanual tasks
 - The model does not explicitly reason about contact forces or tactile feedback, which are important for tight-tolerance bimanual assembly tasks
-- Evaluation is primarily in simulation and controlled lab settings; robustness to real-world variability is not fully established
+- Evaluation is on real ALOHA dual-arm robots but still in controlled lab tasks; robustness to broader real-world variability remains untested
 
 ## Connections
 
