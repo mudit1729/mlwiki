@@ -7,6 +7,7 @@ year: "2023"
 venue: "CoRL 2023"
 citations: 450
 arxiv_id: "2307.05973"
+paper-faithfullness: audited-clean
 ---
 
 # VoxPoser: Composable 3D Value Maps for Robotic Manipulation with Language Models

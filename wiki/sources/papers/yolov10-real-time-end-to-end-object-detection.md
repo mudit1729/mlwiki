@@ -7,6 +7,7 @@ year: "2024"
 venue: "NeurIPS 2024"
 citations: 5988
 arxiv_id: "2405.14458"
+paper-faithfullness: audited-fixed
 ---
 
 # YOLOv10: Real-Time End-to-End Object Detection
@@ -107,11 +108,11 @@ YOLOv10 achieves state-of-the-art latency-accuracy trade-offs across all model s
 | YOLOv10-L | 53.2 | 24.4 | 120.3 | 7.28 |
 | YOLOv10-X | 54.4 | 29.5 | 160.4 | 10.70 |
 | YOLOv8-S | 44.9 | 11.2 | 28.6 | 6.16 |
-| YOLOv8-M | 50.2 | 25.9 | 78.9 | 9.66 |
-| YOLOv9-C | 53.0 | 25.3 | 102.1 | 10.57 |
+| YOLOv8-M | 50.6 | 25.9 | 78.9 | 9.50 |
+| YOLOv9-C | 52.5 | 25.3 | 102.1 | 10.57 |
 | RT-DETR-R18 | 46.5 | 20.0 | 60.0 | 4.58 |
 
-Key comparisons: YOLOv10-S achieves 1.4% higher AP than YOLOv8-S with 46% fewer parameters and 60% lower latency. YOLOv10-B matches YOLOv9-C AP while using 25% fewer parameters and 46% less latency.
+Key comparisons: YOLOv10-S achieves 1.4% higher AP than YOLOv8-S with 36% fewer parameters and 65% lower latency. YOLOv10-B matches YOLOv9-C AP while using 25% fewer parameters and 46% less latency.
 
 **Ablation highlights**: Removing NMS from YOLOv8 via naive one-to-one assignment costs ~1% AP; the consistent dual assignment strategy recovers this entirely. The rank-guided block design saves 8--14% FLOPs with <0.1% AP change. PSA adds ~0.3% AP at negligible latency cost.
 
