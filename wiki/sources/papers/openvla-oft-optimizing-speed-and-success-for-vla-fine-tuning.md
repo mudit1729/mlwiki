@@ -13,6 +13,7 @@ tags:
   - deployment
 citations: 364
 arxiv_id: "2502.19645"
+paper-faithfullness: audited-fixed
 ---
 
 # OpenVLA-OFT: Optimizing Speed and Success for VLA Fine-Tuning
@@ -23,7 +24,7 @@ arxiv_id: "2502.19645"
 
 OpenVLA-OFT presents a systematic empirical study of fine-tuning strategies for Vision-Language-Action models, identifying a recipe that boosts the original OpenVLA from 76.5% to 97.1% success rate on the LIBERO benchmark while achieving a 26x inference speedup. The paper addresses a critical deployment bottleneck: OpenVLA's autoregressive action generation runs at only 3-5 Hz, far below the 25-50+ Hz required for real-world high-frequency control. Through careful evaluation of three axes -- action generation strategy, action representation, and learning objectives -- the authors arrive at an optimized fine-tuning configuration that makes VLA deployment practical.
 
-The core architectural change replaces autoregressive (sequential) action token generation with parallel decoding using bidirectional attention, enabling all action tokens to be predicted simultaneously. Combined with FiLM (Feature-wise Linear Modulation) for efficient language conditioning and multi-modal input processing, OpenVLA-OFT transforms OpenVLA from a research prototype into a deployable system.
+The core architectural change replaces autoregressive (sequential) action token generation with parallel decoding using bidirectional attention, enabling all action tokens to be predicted simultaneously. The base OFT recipe combines parallel decoding, action chunking, a continuous action representation, and an L1 regression objective. An extended variant, OpenVLA-OFT+, additionally incorporates FiLM (Feature-wise Linear Modulation) for enhanced language grounding in scenarios requiring disambiguation across language-conditioned tasks.
 
 ## Key Contributions
 
@@ -44,19 +45,19 @@ The core architectural change replaces autoregressive (sequential) action token 
   └──────────┬──────────┘         └──────────┬──────────────┘
              ▼                               ▼
   ┌─────────────────────┐         ┌─────────────────────────┐
-  │   VLM Backbone       │         │   VLM Backbone + FiLM    │
-  └──────────┬──────────┘         │   ┌───────────────────┐  │
-             │                    │   │ Language ──► FiLM  │  │
-             ▼                    │   │ (modulate visual)  │  │
-  Sequential (causal attn):      │   └───────────────────┘  │
-  a₁ ──► a₂ ──► ... ──► a₇      └──────────┬──────────────┘
-  (7 forward passes)                        │
-                                            ▼
-                                 Parallel (bidirectional attn):
-                                 ┌───┬───┬───┬───┬───┬───┬───┐
-                                 │a₁ │a₂ │a₃ │a₄ │a₅ │a₆ │a₇ │
+  │   VLM Backbone       │         │   VLM Backbone           │
+  └──────────┬──────────┘         └──────────┬──────────────┘
+             │                               │
+             ▼                               ▼
+  Sequential (causal attn):      Parallel (bidirectional attn):
+  a₁ ──► a₂ ──► ... ──► a₇      ┌───┬───┬───┬───┬───┬───┬───┐
+  (7 forward passes)             │a₁ │a₂ │a₃ │a₄ │a₅ │a₆ │a₇ │
                                  └───┴───┴───┴───┴───┴───┴───┘
                                  (1 forward pass ──► 26x faster)
+                                 + continuous actions + L1 loss
+
+  OpenVLA-OFT+ also adds FiLM conditioning for language grounding:
+  Language ──► FiLM ──► modulate visual patch embeddings
 
   + LoRA fine-tuning + Proprioception + Multi-camera
 ```
@@ -65,13 +66,23 @@ The core architectural change replaces autoregressive (sequential) action token 
 
 The key modifications to OpenVLA are:
 
+**Base OFT recipe** (four components together yield 97.1% on LIBERO):
+
 1. **Parallel action decoding**: Replaces causal (autoregressive) attention over action tokens with bidirectional attention, allowing all action dimensions to attend to each other and be predicted in a single forward pass rather than sequentially. This is the primary source of the 26x speedup.
 
-2. **FiLM conditioning**: Feature-wise Linear Modulation layers modulate visual features based on language instruction embeddings, providing efficient cross-modal fusion without requiring full attention between all modalities at every layer.
+2. **Action chunking**: Predicts K future actions per forward pass (K=8 for LIBERO simulation, K=25 for real ALOHA), further increasing throughput and smoothing execution.
 
-3. **Multi-modal input processing**: Enhanced handling of proprioceptive state and multi-camera views alongside the standard image + language inputs.
+3. **Continuous action representation**: A separate MLP action head maps final hidden states directly to continuous action values, replacing the original 256-bin discretization.
 
-4. **LoRA fine-tuning**: Parameter-efficient adaptation preserving pre-trained knowledge while adapting to new tasks and embodiments.
+4. **L1 regression objective**: Minimizes mean L1 distance between predicted and ground-truth actions, simpler and faster than diffusion while achieving equivalent performance.
+
+**OpenVLA-OFT+ extensions** (add-ons for real-world deployment):
+
+5. **FiLM conditioning**: Feature-wise Linear Modulation layers modulate visual patch embeddings using averaged language instruction embeddings, providing robust language grounding. Without FiLM, language-conditioned task performance drops to chance level (33.3%) on ALOHA.
+
+6. **Multi-modal input processing**: Enhanced handling of proprioceptive state and multi-camera views alongside standard image + language inputs.
+
+7. **LoRA fine-tuning**: Parameter-efficient adaptation preserving pre-trained knowledge while adapting to new tasks and embodiments.
 
 ![FiLM integration for language modulation](https://paper-assets.alphaxiv.org/figures/2502.19645v2/film_figure.001.jpeg)
 

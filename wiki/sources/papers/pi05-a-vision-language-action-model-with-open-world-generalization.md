@@ -14,6 +14,7 @@ tags:
   - open-world
 citations: 681
 arxiv_id: "2504.16054"
+paper-faithfullness: audited-clean
 ---
 
 # pi0.5: A Vision-Language-Action Model with Open-World Generalization

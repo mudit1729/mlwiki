@@ -13,6 +13,7 @@ tags:
   - flow-matching
 citations: 1381
 arxiv_id: "2410.24164"
+paper-faithfullness: audited-fixed
 ---
 
 # pi0: A Vision-Language-Action Flow Model for General Robot Control
@@ -28,7 +29,7 @@ The model addresses three interconnected challenges in robotics: data scarcity c
 ## Key Contributions
 
 - **Flow matching for VLA**: First VLA to use flow matching instead of autoregressive token prediction for action generation, enabling continuous action output at up to 50 Hz -- critical for dexterous tasks requiring smooth, precise movements
-- **Cross-embodiment pre-training at scale**: Pre-trained on 10,000+ hours of diverse robot data across 7 platforms (single-arm, bimanual, dexterous hand), establishing the pre-train/fine-tune paradigm for robot foundation models
+- **Cross-embodiment pre-training at scale**: Pre-trained on 10,000+ hours of diverse robot data across 7 platforms (single-arm, bimanual, mobile manipulators), establishing the pre-train/fine-tune paradigm for robot foundation models
 - **68-task generalist policy**: Single model handles 68 tasks spanning table-top manipulation, laundry folding, box assembly, and bussing, demonstrating breadth previously unseen in a single robot policy
 - **Language-conditioned dexterous control**: Combines high-level language understanding from the VLM backbone with fine-grained motor control through the flow matching action head
 

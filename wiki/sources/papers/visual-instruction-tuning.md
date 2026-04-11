@@ -7,6 +7,7 @@ year: "2023"
 venue: "NeurIPS 2023"
 citations: 13533
 arxiv_id: "2304.08485"
+paper-faithfullness: audited-clean
 ---
 
 # Visual Instruction Tuning (LLaVA)

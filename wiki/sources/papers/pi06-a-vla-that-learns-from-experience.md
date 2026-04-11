@@ -1,5 +1,5 @@
 ---
-title: "pi0.6: A VLA That Learns From Experience"
+title: "pi*0.6: A VLA That Learns From Experience"
 type: source-summary
 status: active
 updated: 2026-04-05
@@ -13,21 +13,22 @@ tags:
   - self-improvement
 citations: 93
 arxiv_id: "2511.14759"
+paper-faithfullness: audited-fixed
 ---
 
-# pi0.6: A VLA That Learns From Experience
+# pi*0.6: A VLA That Learns From Experience
 
 [Read on arXiv](https://arxiv.org/abs/2511.14759)
 
 ## Overview
 
-pi0.6 extends the pi0 VLA family with the ability to learn from autonomous deployment experience using reinforcement learning. While pi0 and pi0.5 learn entirely from human demonstrations (imitation learning), pi0.6 introduces RECAP (RL with Experience and Corrections via Advantage-conditioned Policies) -- an offline RL method that enables the VLA to improve from its own successes and failures during real-world operation, as well as from human intervention corrections. This is a critical capability gap: imitation learning is bounded by demonstration quality and cannot discover better strategies through trial and error.
+pi*0.6 extends the pi0/pi0.5/pi0.6 VLA family with the ability to learn from autonomous deployment experience using reinforcement learning. While prior models learn primarily from human demonstrations (imitation learning), pi*0.6 introduces RECAP (RL with Experience and Corrections via Advantage-conditioned Policies) -- an iterated offline RL method that enables the VLA to improve from its own successes and failures during real-world operation, as well as from human intervention corrections. pi*0.6 is itself an adaptation of the pi0.6 model, incorporating a larger VLM backbone (Gemma 3 4B) and increased action expert size (860M parameters), with the added ability to condition on a binarized advantage indicator. This is a critical capability gap: imitation learning is bounded by demonstration quality and cannot discover better strategies through trial and error.
 
 RECAP substantially improved task throughput on difficult real-world tasks: espresso preparation doubled (~15→30 successes/hr), box assembly approximately doubled, and diverse laundry folding improved ~60% (~5→8 successes/hr). Failure rates were reduced by approximately 2x across tasks. The method works as offline RL, making it compatible with large pre-trained VLA models where on-policy RL would be prohibitively expensive. pi0.6 represents a significant step toward continuously self-improving robots that get better through deployment rather than requiring ever-more human demonstrations.
 
 ## Key Contributions
 
-- **RECAP: offline RL for VLAs**: An offline reinforcement learning framework designed specifically for large pre-trained VLA models, using binary advantage-conditioned policies (text tokens "Advantage: positive/negative") to learn from mixed-quality experience data
+- **RECAP: iterated offline RL for VLAs**: An iterated offline reinforcement learning framework designed specifically for large pre-trained VLA models, using binary advantage-conditioned policies (text tokens "Advantage: positive/negative") to learn from mixed-quality experience data
 - **Learning from deployment**: The model improves from autonomous experience (successes and failures), human corrections (interventions during deployment), and reward signals -- three heterogeneous data sources integrated into a single learning framework
 - **Large throughput gains**: Espresso preparation and box assembly approximately doubled in successes/hr; diverse laundry folding improved ~60%; demonstrating practical value beyond benchmark improvements
 - **~2x failure reduction**: Halved failure rates on evaluated tasks, showing that RL from experience directly addresses common failure modes that imitation learning cannot fix
@@ -40,7 +41,7 @@ RECAP substantially improved task throughput on difficult real-world tasks: espr
               ───────────────────────────────────────
 
   ┌──────────────────────┐
-  │  VLA Policy (pi0)    │◄──────────────────────────┐
+  │  VLA Policy (pi*0.6) │◄──────────────────────────┐
   │  (flow matching)     │                           │
   └──────────┬───────────┘                           │
              │ deploy                                │
@@ -113,8 +114,8 @@ The method is specifically designed for offline RL because on-policy methods (PP
 
 ## Connections
 
-- [[wiki/sources/papers/pi0-a-vision-language-action-flow-model-for-general-robot-control]] -- pi0.6 builds directly on pi0, adding RL-based self-improvement to the flow matching VLA
-- [[wiki/sources/papers/pi05-a-vision-language-action-model-with-open-world-generalization]] -- pi0.5 scales data diversity; pi0.6 scales data quality through self-improvement
+- [[wiki/sources/papers/pi0-a-vision-language-action-flow-model-for-general-robot-control]] -- pi*0.6 traces its lineage to pi0's flow matching VLA architecture
+- [[wiki/sources/papers/pi05-a-vision-language-action-model-with-open-world-generalization]] -- pi*0.6 is a direct evolution of pi0.5 (via pi0.6); pi0.5 scales data diversity while pi*0.6 adds RL-based self-improvement through RECAP
 - [[wiki/sources/papers/knowledge-insulating-vision-language-action-models]] -- knowledge insulation addresses VLM degradation during training; RECAP faces similar challenges when fine-tuning with RL
 - [[wiki/concepts/vision-language-action]] -- demonstrates that RL is viable for VLA improvement beyond imitation learning
 - [[wiki/concepts/robotics]] -- practical self-improvement for deployed robot systems

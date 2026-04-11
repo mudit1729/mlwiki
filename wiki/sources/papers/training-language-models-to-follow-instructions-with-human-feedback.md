@@ -7,6 +7,7 @@ year: "2022"
 venue: "NeurIPS 2022"
 citations: 24355
 arxiv_id: "2203.02155"
+paper-faithfullness: audited-clean
 ---
 
 # Training Language Models to Follow Instructions with Human Feedback

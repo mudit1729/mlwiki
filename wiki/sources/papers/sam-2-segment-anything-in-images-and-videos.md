@@ -7,6 +7,7 @@ year: "2024"
 venue: "arXiv (ECCV 2024 submission)"
 citations: 3925
 arxiv_id: "2408.00714"
+paper-faithfullness: audited-fixed
 ---
 
 # SAM 2: Segment Anything in Images and Videos
@@ -102,7 +103,7 @@ The model operates in a streaming fashion: for each new frame, the image encoder
 | SAM 2 (Hiera-B+) | Hiera-Base+ | 43.8 |
 | SAM 2 (Hiera-L) | Hiera-Large | 30.2 |
 
-**Training.** The model is trained on a mixture of image data (SA-1B from SAM) and video data (SA-V plus existing VOS datasets). The training procedure uses a simulated interactive setting where prompts are sampled to mimic human annotation workflows. Loss functions include focal loss and dice loss for mask prediction, plus a binary cross-entropy loss for the occlusion head.
+**Training.** The model is trained on a mixture of image data (SA-1B from SAM) and video data (SA-V plus existing VOS datasets). The training procedure uses a simulated interactive setting where prompts are sampled to mimic human annotation workflows. Loss functions include focal loss and dice loss for mask prediction, MAE loss for IoU prediction, and cross-entropy loss for the occlusion head.
 
 ## Results
 

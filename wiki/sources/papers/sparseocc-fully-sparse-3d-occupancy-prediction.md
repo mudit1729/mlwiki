@@ -7,6 +7,7 @@ year: "2024"
 venue: "ECCV"
 citations: 80
 arxiv_id: "2312.17118"
+paper-faithfullness: audited-fixed
 ---
 
 # SparseOcc: Fully Sparse 3D Occupancy Prediction
@@ -23,7 +24,7 @@ SparseOcc achieves 34.0 RayIoU at 17.3 FPS with 7 history frames -- significantl
 
 ## Key Contributions
 
-- **Fully sparse two-stage architecture:** A Sparse Voxel Decoder reconstructs sparse 3D geometry through coarse-to-fine pruning, retaining only ~5% of voxels, followed by a Mask Transformer Decoder for semantic and instance prediction
+- **Fully sparse two-stage architecture:** A Sparse Voxel Decoder reconstructs sparse 3D geometry through coarse-to-fine pruning, retaining only 5-7.5% of voxels, followed by a Mask Transformer Decoder for semantic and instance prediction
 - **RayIoU evaluation metric:** A ray-casting-based metric that fixes the inconsistent depth penalties and metric gaming vulnerabilities of voxel-level mIoU; adopted as the official metric for the CVPR 2024 Occupancy Challenge
 - **Mask-guided sparse sampling:** Efficient 3D-2D interaction through sparse sampling guided by predicted masks, avoiding dense cross-attention over the full volume
 - **Real-time performance:** 17.3 FPS with competitive accuracy, demonstrating that sparse processing can achieve both speed and quality
@@ -57,7 +58,7 @@ SparseOcc achieves 34.0 RayIoU at 17.3 FPS with 7 history frames -- significantl
   │  └────┬────┘                                      │
   │       ▼  Layer N: final pruning                   │
   │  ┌─────────┐                                      │
-  │  │ Prune   │──► ~5% remain (32K-48K voxels)       │
+  │  │ Prune   │──► 5-7.5% remain (32K-48K voxels)    │
   │  └────┬────┘                                      │
   └───────┼───────────────────────────────────────────┘
           │ sparse voxel features
@@ -77,7 +78,7 @@ SparseOcc achieves 34.0 RayIoU at 17.3 FPS with 7 history frames -- significantl
 
 SparseOcc consists of two main stages:
 
-**Stage 1: Sparse Voxel Decoder.** Starting from multi-camera image features, the decoder reconstructs sparse 3D geometry through a coarse-to-fine pruning strategy. An initial dense set of voxel candidates is progressively pruned across multiple decoder layers, with each layer predicting occupancy scores and discarding low-confidence voxels. After pruning, only ~5% of the original voxels (typically 32,000-48,000 out of the full volume) are retained, dramatically reducing computation in subsequent stages. The retained voxels represent the occupied surfaces and objects in the scene.
+**Stage 1: Sparse Voxel Decoder.** Starting from multi-camera image features, the decoder reconstructs sparse 3D geometry through a coarse-to-fine pruning strategy. An initial dense set of voxel candidates is progressively pruned across multiple decoder layers, with each layer predicting occupancy scores and discarding low-confidence voxels. After pruning, only 5-7.5% of the original voxels (typically 32,000-48,000 out of the full volume) are retained, dramatically reducing computation in subsequent stages. The retained voxels represent the occupied surfaces and objects in the scene.
 
 **Stage 2: Mask Transformer Decoder.** The surviving sparse voxels are processed by a Mask2Former-style transformer decoder that predicts semantic classes and instance masks. Rather than applying dense cross-attention between queries and all voxel features, the decoder uses mask-guided sparse sampling: each query attends only to voxels within its predicted mask region, making the 3D-2D interaction efficient even with large numbers of queries. This produces both semantic occupancy labels and instance-level groupings.
 
@@ -101,13 +102,13 @@ Ablation studies demonstrate that training strategies which inflate traditional 
 | Method | RayIoU | FPS | Frames |
 |--------|--------|-----|--------|
 | **SparseOcc** | **34.0** | **17.3** | 7 |
-| **SparseOcc** | **35.1** | -- | 15 |
+| **SparseOcc** | **35.1** | 12.5 | 15 |
 | FB-Occ | 33.5 | 10.3 | -- |
 | BEVFormer | -- | 3.0 | -- |
 
 Key experimental findings:
 
-- **Optimal sparsity:** Ablation studies show best performance with 32,000-48,000 retained voxels, confirming that aggressive pruning does not sacrifice accuracy
+- **Optimal sparsity:** Ablation studies show best performance with 32,000-48,000 retained voxels (5-7.5% of the dense volume), confirming that aggressive pruning does not sacrifice accuracy
 - **Speed-accuracy Pareto:** SparseOcc significantly advances the speed-accuracy frontier, being the first occupancy method to achieve real-time inference with competitive accuracy
 - **RayIoU vs mIoU divergence:** Methods that score well on mIoU through surface inflation score poorly on RayIoU, validating the new metric's ability to detect gaming
 - **CVPR 2024 Occ Challenge:** RayIoU was adopted as the official metric, and SparseOcc-based approaches won the challenge

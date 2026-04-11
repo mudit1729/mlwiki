@@ -7,6 +7,7 @@ year: "2024"
 venue: "arXiv"
 citations: 140
 arxiv_id: "2402.13243"
+paper-faithfullness: audited-fixed
 ---
 
 # VADv2: End-to-End Vectorized Autonomous Driving via Probabilistic Planning
@@ -24,7 +25,7 @@ VADv2 achieved state-of-the-art closed-loop performance on the CARLA Town05 benc
 ## Key Contributions
 
 - **Probabilistic planning via action vocabulary:** Discretizes continuous trajectory space into a finite set of representative trajectories (planning vocabulary) derived by furthest-point sampling from human demonstrations, enabling the planner to output a categorical distribution over actions rather than regressing a single trajectory
-- **LLM-inspired planning formulation:** Frames autonomous driving planning as next-token prediction over an action vocabulary, drawing a direct parallel to language modeling and enabling the use of cross-entropy-based training objectives
+- **LLM-inspired planning formulation:** Frames autonomous driving planning as predicting a probability distribution over an action vocabulary, drawing a direct parallel to language modeling; trained with KL divergence between predicted and data distributions
 - **Scene-conditioned action distribution:** Uses a transformer decoder that attends to vectorized scene tokens (map polylines, agent trajectories, ego state) to produce action probabilities, preserving the efficiency of vectorized representations from VAD
 - **Conflict-aware action selection:** Introduces a conflict resolution mechanism that evaluates candidate trajectories from the predicted distribution for safety violations (collision checking against predicted agent futures), selecting the highest-probability collision-free trajectory at inference time
 - **State-of-the-art closed-loop performance:** Achieves best results on CARLA Town05 Long benchmark among camera-only methods, validating that probabilistic planning substantially improves closed-loop driving over deterministic alternatives
@@ -54,8 +55,9 @@ VADv2 achieved state-of-the-art closed-loop performance on the CARLA Town05 benc
 │               ▼                                           │
 │  ┌────────────────────────────┐   ┌───────────────────┐   │
 │  │ Probabilistic Planning     │   │Planning Vocabulary│   │
-│  │ Transformer Decoder        │◄──│K trajectories     │   │
-│  │ (ego queries + cross-attn) │   │(K-means clusters) │   │
+│  │ Transformer Decoder        │◄──│N trajectories     │   │
+│  │ (ego queries + cross-attn) │   │(furthest traj.    │   │
+│  │                            │   │ sampling, N=4096) │   │
 │  └────────────┬───────────────┘   └───────────────────┘   │
 │               │                                           │
 │               ▼                                           │
@@ -80,12 +82,12 @@ VADv2 achieved state-of-the-art closed-loop performance on the CARLA Town05 benc
 
 VADv2 builds on the VAD architecture but replaces the deterministic planning head with a probabilistic planning framework. The architecture has four main stages:
 
-**Stage 1 -- Scene Encoding:** Multi-camera images are processed by an image backbone (ResNet-50 or similar) and lifted to BEV space. The BEV features are then used to extract vectorized scene representations: map polylines (lane boundaries, crosswalks, road edges) and agent trajectories (predicted futures of surrounding vehicles and pedestrians), following the same approach as VAD.
+**Stage 1 -- Scene Encoding:** Multi-camera images are processed by an image backbone and lifted to BEV space. The BEV features are then used to extract vectorized scene representations: map polylines (lane boundaries, crosswalks, road edges) and agent trajectories (predicted futures of surrounding vehicles and pedestrians), following the same approach as VAD.
 
-**Stage 2 -- Planning Vocabulary Construction (offline):** Before training, the continuous trajectory space is discretized by sampling a large set of human driving trajectories from the training dataset using furthest-point sampling to produce K representative trajectories (the "planning vocabulary"). Each vocabulary entry is a fixed-length sequence of 2D waypoints representing a canonical driving maneuver (straight, slight left, hard right, decelerate, etc.). This vocabulary is fixed during training and inference.
+**Stage 2 -- Planning Vocabulary Construction (offline):** Before training, the continuous trajectory space is discretized by collecting all planning actions from driving demonstrations and applying furthest trajectory sampling to select N representative trajectories (the "planning vocabulary"). By default N=4096. Each vocabulary entry is a fixed-length sequence of 2D waypoints representing a canonical driving maneuver (straight, slight left, hard right, decelerate, etc.). This vocabulary is fixed during training and inference.
 
 **Stage 3 -- Probabilistic Planning Transformer:** A transformer decoder takes learnable ego planning queries and attends to the vectorized scene tokens (map vectors, agent vectors, and ego state embeddings) via cross-attention. Instead of regressing waypoints, the decoder produces logits over the K vocabulary entries. A softmax produces a probability distribution over the planning vocabulary. The model is trained with three losses:
-- **Distribution loss:** Cross-entropy between the predicted action distribution and the ground-truth action (the vocabulary entry closest to the human driver's actual trajectory)
+- **Distribution loss:** KL divergence between the predicted action distribution and the empirical data distribution derived from human driving demonstrations (L_distribution = D_KL(p_data || p_pred))
 - **Scene token loss:** Auxiliary losses on the scene encoding (map detection, agent prediction) inherited from VAD
 - **Conflict loss:** A penalty term that discourages high probability on vocabulary entries that would cause collisions with predicted agent trajectories
 
@@ -108,7 +110,7 @@ VADv2 builds on the VAD architecture but replaces the deterministic planning hea
 - **Superior route completion:** 83.2% route completion represents a substantial improvement over VAD (75.2%) and UniAD (72.4%), indicating the probabilistic planner is better at handling complex intersections and lane changes where deterministic planners stall or collide
 - **Reduced infractions:** The conflict-aware selection mechanism reduces collision rates by filtering out trajectories that would intersect with predicted agent positions
 - **Camera-only advantage:** VADv2 outperforms TransFuser which uses both camera and LiDAR, demonstrating that a strong planning formulation can compensate for sensor limitations
-- **Ablation on vocabulary size K:** Performance improves as K increases up to a point (diminishing returns beyond K~512), confirming that finer action discretization captures more driving modes but with bounded benefit
+- **Ablation on vocabulary size N:** Performance improves as N increases, with the default N=4096 used in main experiments; ablations confirm that finer action discretization captures more driving modes
 - **Conflict checking matters:** Removing the conflict-aware selection at inference time degrades performance significantly, showing that the probabilistic distribution alone is not sufficient -- the safety filtering is essential
 
 ## Limitations & Open Questions

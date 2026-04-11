@@ -4,9 +4,10 @@ tags: [robotics, transformer, imitation-learning, multimodal, foundation-model, 
 status: active
 type: paper
 year: "2023"
-venue: "arXiv"
+venue: "TMLR 2023"
 citations: ~200
 arxiv_id: "2306.11706"
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2306.11706)**
@@ -17,7 +18,7 @@ RoboCat, developed by Google DeepMind, is a multi-embodiment, multi-task general
 
 The core insight is that a large, diverse training mixture enables both zero-shot generalization to new tasks and efficient few-shot adaptation using only 100-1000 demonstrations. RoboCat builds on the Gato architecture (a visual goal-conditioned decision transformer) but scales it to 253 manipulation tasks across three real robot embodiments (Sawyer, Panda, KUKA) and simulation. Critically, the trained model can generate its own training data for subsequent iterations, creating an autonomous self-improvement loop where each generation of RoboCat produces better data that trains a stronger next generation.
 
-Large-scale evaluations demonstrate that scaling and diversifying training data produces cross-task transfer benefits and enhanced adaptation efficiency. The single RoboCat agent adapts to previously unseen embodiments like the KUKA 14-DoF bimanual arm with nearly 80% success rates, and self-generated data integration significantly boosts generalist capabilities across the board.
+Large-scale evaluations demonstrate that scaling and diversifying training data produces cross-task transfer benefits and enhanced adaptation efficiency. Experiments span 36 real robots across three embodiment types (Sawyer 5-DoF, Panda 7-DoF, KUKA 14-DoF bimanual) and two simulated arms (Sawyer 7-DoF, Panda 7-DoF). The single RoboCat agent adapts to previously unseen embodiments like the KUKA 14-DoF bimanual arm with nearly 80% success rates, and self-generated data integration significantly boosts generalist capabilities across the board.
 
 ## Key Contributions
 

@@ -13,6 +13,7 @@ tags:
   - planning
 citations: 0
 arxiv_id: "2603.29163"
+paper-faithfullness: audited-clean
 ---
 
 # SparseDriveV2: Scoring is All You Need for End-to-End Autonomous Driving

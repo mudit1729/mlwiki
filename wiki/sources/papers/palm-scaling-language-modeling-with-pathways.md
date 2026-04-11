@@ -7,6 +7,7 @@ year: "2022"
 venue: "JMLR"
 citations: 9058
 arxiv_id: "2204.02311"
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2204.02311)**
@@ -108,8 +109,8 @@ The Pathways system enabled pipeline-free 2-way pod-level data parallelism acros
 
 | Metric | PaLM 540B | GPT-3 175B | Gopher 280B |
 |--------|-----------|------------|-------------|
-| Hardware FLOPs Utilization | 57.8% | ~21% | ~32% |
-| Model FLOPs Utilization | 46.2% | — | — |
+| Hardware FLOPs Utilization (HFU) | 57.8% | — | — |
+| Model FLOPs Utilization (MFU) | 46.2% | 21.3% | 32.5% |
 | Training chips | 6,144 TPU v4 | 10,000 V100 | 4,096 TPU v3 |
 
 ### Training Data

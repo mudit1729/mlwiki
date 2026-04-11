@@ -2,9 +2,9 @@
 title: "PARA-Drive: Parallelized Architecture for Real-time Autonomous Driving"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2024
-venue: CVPR
+venue: CVPR 2024
 tags:
   - paper
   - autonomous-driving
@@ -12,12 +12,13 @@ tags:
   - real-time
   - parallel-architecture
 citations: ~179
-arxiv_id: "2406.01932"
+arxiv_id: null
+paper-faithfullness: audited-fixed
 ---
 
 # PARA-Drive: Parallelized Architecture for Real-time Autonomous Driving
 
-[Read on arXiv](https://arxiv.org/abs/2406.01932)
+[Read on CVF Open Access](https://openaccess.thecvf.com/content/CVPR2024/html/Weng_PARA-Drive_Parallelized_Architecture_for_Real-time_Autonomous_Driving_CVPR_2024_paper.html)
 
 ## Overview
 
@@ -84,13 +85,13 @@ PARA-Drive's architecture consists of three main stages:
 - **Sequential vs. parallel**: Parallel execution achieves comparable planning performance to sequential (cascaded) architectures, contradicting the assumption that planning needs explicit perception/prediction outputs
 - **Module necessity**: All three modules contribute to planning quality when co-trained, but the dependency is through shared features, not explicit outputs
 - **BEV query design**: Tokenized BEV queries outperform dense BEV grids for information sharing
-- **Runtime**: Parallel execution provides up to 2-3x speedup over sequential alternatives
+- **Runtime**: Parallel execution provides nearly 3x speedup over sequential alternatives
 
 ## Results
 
 | Method | L2 (1s) | L2 (3s) | Col. Rate | FPS |
 |--------|---------|---------|-----------|-----|
-| PARA-Drive | competitive | competitive | competitive | ~2-3x faster |
+| PARA-Drive | competitive | competitive | competitive | ~3x faster |
 | UniAD (sequential) | baseline | baseline | baseline | baseline |
 | ST-P3 (sequential) | higher | higher | higher | slower |
 | VAD | comparable | comparable | comparable | comparable |

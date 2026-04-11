@@ -15,6 +15,7 @@ year: "2023"
 venue: "NeurIPS 2023"
 citations: 3561
 arxiv_id: "2305.10601"
+paper-faithfullness: audited-fixed
 ---
 
 # Tree of Thoughts: Deliberate Problem Solving with Large Language Models
@@ -120,7 +121,8 @@ return G(p_theta, S_T)  # final generation from best state
 |--------|-------------|
 | IO prompting | 7.3% |
 | Chain-of-Thought | 4.0% |
-| CoT Self-Consistency (k=100) | 49.0% |
+| CoT Self-Consistency (k=100) | 9.0% |
+| CoT best-of-100 | 49.0% |
 | **ToT (BFS, b=5)** | **74.0%** |
 
 ### Creative Writing (Coherence)

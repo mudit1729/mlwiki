@@ -7,6 +7,7 @@ year: "2024"
 venue: "CVPR"
 citations: 60
 arxiv_id: "2311.12754"
+paper-faithfullness: audited-fixed
 ---
 
 # SelfOcc: Self-Supervised Vision-Based 3D Occupancy Prediction
@@ -104,12 +105,12 @@ SelfOcc follows a three-stage pipeline: (1) 2D-to-3D feature lifting, (2) SDF fi
 | **SelfOcc (BEV)** | **Self-supervised** | **36.83** |
 | **SelfOcc (TPV)** | **Self-supervised** | **45.01** |
 
-### SemanticKITTI Monocular Occupancy (mIoU)
+### SemanticKITTI Monocular Occupancy (IoU)
 
-| Method | Supervision | mIoU (%) |
-|--------|-------------|----------|
+| Method | Supervision | IoU (%) |
+|--------|-------------|---------|
 | MonoScene | 3D supervised | 11.08 |
-| Previous SS-SOTA | Self-supervised | 13.84 |
+| SceneRF (prev. SS-SOTA) | Self-supervised | 13.84 |
 | **SelfOcc** | **Self-supervised** | **21.97** |
 
 The results are striking: SelfOcc's self-supervised approach significantly outperforms earlier supervised methods, primarily because the self-supervised objective leverages the rich photometric signal in video data rather than depending on potentially sparse or noisy LiDAR-derived ground truth. The TPV representation outperforms the BEV representation on nuScenes, indicating that the tri-perspective view captures more fine-grained vertical structure.

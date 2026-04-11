@@ -7,6 +7,7 @@ year: "2023"
 venue: "NeurIPS 2023"
 citations: 3994
 arxiv_id: "2302.04761"
+paper-faithfullness: audited-fixed
 ---
 
 # Toolformer: Language Models Can Teach Themselves to Use Tools
@@ -19,13 +20,13 @@ Large language models exhibit remarkable in-context learning abilities but parad
 
 The approach works by augmenting a pre-existing text dataset (a subset of CCNet) with API call annotations. Starting from a GPT-J 6.7B base model, Toolformer uses few-shot prompting to sample candidate API calls at each position in the text, executes those calls to obtain results, and then filters by a simple criterion: an API call is kept only if the loss on subsequent tokens decreases when the call and its result are included versus when they are not. The model is then fine-tuned on this filtered, API-annotated dataset. At inference time, the model generates special tokens (`<API>`, `</API>`) that trigger tool execution mid-generation, with results inserted back into the sequence.
 
-Toolformer demonstrated that a 6.7B parameter model could match or exceed GPT-3 (175B) on multiple downstream tasks requiring factual knowledge (LAMA), mathematical reasoning (ASDiv, SVAMP, MAWPS), question answering (Web Questions, Natural Questions, TriviaQA), and temporal reasoning -- while retaining strong general language modeling performance. The paper is a landmark in the tool-augmented LLM paradigm, showing that tool use need not be hard-coded or require human-annotated training data. It directly influenced subsequent work on agents, function calling, and retrieval-augmented generation.
+Toolformer incorporates a range of tools including a calculator, a Q&A system, two different search engines, a machine translator, and a calendar. It demonstrated that a 6.7B parameter model could match or exceed GPT-3 (175B) on multiple downstream tasks requiring factual knowledge (LAMA), mathematical reasoning (ASDiv, SVAMP, MAWPS), question answering (Web Questions, Natural Questions, TriviaQA), and temporal reasoning -- while retaining strong general language modeling performance. The paper is a landmark in the tool-augmented LLM paradigm, showing that tool use need not be hard-coded or require human-annotated training data. It directly influenced subsequent work on agents, function calling, and retrieval-augmented generation.
 
 ## Key Contributions
 
 - **Self-supervised tool-use learning**: A method where LMs generate, execute, and filter their own API call training data, requiring no human annotations of tool use -- just a few demonstrations per tool
 - **Loss-based filtering criterion**: API calls are retained only if including the call and its response reduces the model's loss on subsequent tokens, ensuring learned tool use is genuinely helpful
-- **Multi-tool integration**: Demonstrated unified learning of five diverse tools (calculator, QA system, Wikipedia search, machine translator, calendar) within a single model
+- **Multi-tool integration**: Demonstrated unified learning of six diverse tools (calculator, QA system, two different search engines, machine translator, calendar) within a single model
 - **Small model beats large model**: A 6.7B model with tool access outperforms GPT-3 (175B) on several benchmarks, showing that tool augmentation is a more efficient path than pure scaling for certain capabilities
 - **Preserved generality**: The fine-tuning procedure maintains the base model's language modeling perplexity, avoiding the common pitfall of capability degradation during specialization
 
@@ -91,7 +92,8 @@ The Toolformer training pipeline has three stages:
 |------|-----------|---------|
 | Calculator | `<API> Calculator(math_expr) </API>` | Arithmetic operations |
 | Q&A System | `<API> QA(question) </API>` | Factual question answering (Atlas-based) |
-| Wikipedia Search | `<API> WikiSearch(query) </API>` | Factual knowledge retrieval |
+| Wikipedia Search | `<API> WikiSearch(query) </API>` | Factual knowledge retrieval (search engine 1) |
+| Search Engine | `<API> Search(query) </API>` | Web search for factual retrieval (search engine 2) |
 | Machine Translator | `<API> MT(text, target_lang) </API>` | Translation via NLLB 600M |
 | Calendar | `<API> Calendar() </API>` | Current date lookup |
 

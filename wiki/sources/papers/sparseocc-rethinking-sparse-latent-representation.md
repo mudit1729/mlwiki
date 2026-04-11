@@ -7,6 +7,7 @@ year: "2024"
 venue: "CVPR"
 citations: 50
 arxiv_id: "2404.09502"
+paper-faithfullness: audited-fixed
 ---
 
 # SparseOcc: Rethinking Sparse Latent Representation for Vision-Based Semantic Occupancy Prediction
@@ -19,7 +20,7 @@ Dense 3D occupancy prediction from multi-view cameras has become a key perceptio
 
 The method introduces three novel components that work together: (1) a **Sparse Latent Diffuser** that propagates features among sparse voxels using decomposed orthogonal sparse convolutions along the X, Y, and Z axes, avoiding full 3D convolutions; (2) a **Sparse Feature Pyramid** that constructs multi-scale representations from the sparse voxels, combining coarse global context with fine-grained local detail; and (3) a **Sparse Transformer Head** that performs contextual reasoning on sparse data through self-attention among non-empty voxels. The sparse voxels are stored in COO (coordinate) format throughout, enabling memory-efficient processing.
 
-On the nuScenes-Occupancy benchmark, SparseOcc achieves a **74.9% reduction in FLOPs** compared to dense baselines while improving mIoU from 12.8% to 14.1%. This is a notable result: the sparse method is not just more efficient but also more accurate, likely because removing the distraction of empty-space processing allows the network to focus representational capacity on the occupied regions that actually matter for downstream planning. The approach demonstrates that sparse processing is not merely a computational shortcut but a fundamentally better inductive bias for occupancy prediction.
+On the nuScenes-Occupancy benchmark, SparseOcc achieves a **74.9% reduction in FLOPs** (from 1810G to 455G) and a 31.6–40.9% reduction in memory (13G vs. 19–21G) compared to dense baselines, while improving mIoU from 12.8% to 14.1% (IoU: 21.8%). The method is additionally evaluated on SemanticKITTI. This is a notable result: the sparse method is not just more efficient but also more accurate, likely because removing the distraction of empty-space processing allows the network to focus representational capacity on the occupied regions that actually matter for downstream planning. The approach demonstrates that sparse processing is not merely a computational shortcut but a fundamentally better inductive bias for occupancy prediction.
 
 ## Key Contributions
 
@@ -93,14 +94,14 @@ The sparse processing has two important qualitative effects visible in the resul
 
 ![Quantitative results](https://paper-assets.alphaxiv.org/figures/2404.09502/img-2.jpeg)
 
-Key results on nuScenes-Occupancy:
+Key results on nuScenes-Occupancy (SparseOcc is also evaluated on SemanticKITTI in the paper):
 
-| Method | mIoU | FLOPs (relative) | Notes |
-|--------|------|-------------------|-------|
-| **SparseOcc** | **14.1%** | **25.1%** (74.9% reduction) | Sparse processing throughout |
-| Dense baseline | 12.8% | 100% | Full 3D volume processing |
-| OccFormer | 12.32% | ~100% | Dual-path transformer (SemanticKITTI) |
-| FlashOcc | ~12-13% | ~25-33% | 2D-only with C2H reshape |
+| Method | IoU | mIoU | FLOPs (relative) | Notes |
+|--------|-----|------|-------------------|-------|
+| **SparseOcc** | **21.8%** | **14.1%** | **25.1%** (74.9% reduction) | Sparse processing throughout; 13G memory |
+| Dense baseline | – | 12.8% | 100% | Full 3D volume processing; 19-21G memory |
+| OccFormer | – | 12.32% | ~100% | Dual-path transformer baseline |
+| FlashOcc | – | ~12-13% | ~25-33% | 2D-only with C2H reshape |
 
 The most striking result is that SparseOcc improves accuracy while reducing compute -- a rare combination. Ablation studies validate each component:
 

@@ -7,6 +7,7 @@ year: "2022"
 venue: "JMLR 2024"
 citations: 3987
 arxiv_id: "2210.11416"
+paper-faithfullness: audited-fixed
 ---
 
 # Scaling Instruction-Finetuned Language Models (Flan-PaLM / Flan-T5)
@@ -100,7 +101,7 @@ The paper systematically varies three axes:
 
 ### Training Details
 
-Training uses a standard language modeling objective (next-token prediction for decoder-only, span corruption for encoder-decoder) on the instruction-formatted mixture. For PaLM 540B, finetuning uses a constant learning rate of 1e-3 with Adafactor, packing examples to 2048 tokens, for ~21K steps -- roughly 0.2% of pre-training compute. Input inversion (randomly reversing the input-output mapping) is used as a regularization technique for some task categories.
+Training uses a standard language modeling objective (next-token prediction for decoder-only, span corruption for encoder-decoder) on the instruction-formatted mixture. For PaLM 540B, finetuning uses Adafactor with a constant learning rate schedule, packing multiple examples per sequence, for ~21K steps -- roughly 0.2% of pre-training compute.
 
 ## Results
 

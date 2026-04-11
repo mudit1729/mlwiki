@@ -1,5 +1,5 @@
 ---
-title: "Talk2Drive: Towards Personalized Autonomous Driving with Large Language Models"
+title: "Talk2Drive: Personalized Autonomous Driving with Large Language Models: Field Experiments"
 tags: [autonomous-driving, llm, planning, nlp, personalization, human-interaction]
 status: active
 type: paper
@@ -7,6 +7,7 @@ year: "2024"
 venue: "IEEE ITSC 2024"
 citations: 80
 arxiv_id: "2312.09397"
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2312.09397)**

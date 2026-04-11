@@ -13,6 +13,7 @@ tags:
   - action-representation
 citations: 60
 arxiv_id: "2501.10105"
+paper-faithfullness: audited-clean
 ---
 
 # UniAct: Universal Actions for Enhanced Embodied Foundation Models

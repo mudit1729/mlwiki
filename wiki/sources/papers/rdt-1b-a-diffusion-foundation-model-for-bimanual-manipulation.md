@@ -13,6 +13,7 @@ tags:
   - foundation-model
 citations: ~60
 arxiv_id: "2410.07864"
+paper-faithfullness: audited-clean
 ---
 
 # RDT-1B: A Diffusion Foundation Model for Bimanual Manipulation

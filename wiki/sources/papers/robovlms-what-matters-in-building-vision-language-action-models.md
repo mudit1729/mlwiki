@@ -7,6 +7,7 @@ year: "2024"
 venue: "arXiv"
 citations: 50
 arxiv_id: "2412.14058"
+paper-faithfullness: audited-fixed
 ---
 
 # RoboVLMs: What Matters in Building Vision-Language-Action Models
@@ -106,7 +107,7 @@ Real-world experiments on a 7-DoF Kinova Gen3 demonstrate:
 ## Limitations & Open Questions
 
 - **Scale ceiling**: All tested backbones are 3B-9B parameters; whether the findings (e.g., backbone ranking) hold at larger scales (30B+) is unknown
-- **Action representation**: The study compares continuous vs. discrete but does not evaluate newer approaches like flow matching (pi0), diffusion actions (Dita), or VQ codebooks (UniAct)
+- **Action representation**: The study compares continuous vs. discrete actions and includes flow matching as an evaluated training objective (finding no significant gain over MSE+BCE for short-horizon tasks), but does not evaluate structured alternatives like VQ codebooks (UniAct)
 - **Single-arm focus**: Experiments use a single 7-DoF manipulator; generalization to bimanual, mobile, or humanoid embodiments is untested
 - **Real-time deployment**: Inference speed and latency are not systematically benchmarked across configurations
 - **Does backbone ranking transfer across tasks?** KosMos and PaliGemma excel on manipulation -- unclear if this holds for navigation, locomotion, or driving

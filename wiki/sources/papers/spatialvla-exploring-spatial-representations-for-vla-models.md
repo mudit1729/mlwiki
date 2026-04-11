@@ -13,6 +13,7 @@ tags:
   - 3d-perception
 citations: 292
 arxiv_id: "2501.15830"
+paper-faithfullness: audited-fixed
 ---
 
 # SpatialVLA: Exploring Spatial Representations for VLA Models

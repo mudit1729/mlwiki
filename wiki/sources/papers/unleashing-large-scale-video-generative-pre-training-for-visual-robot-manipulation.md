@@ -7,6 +7,7 @@ year: "2024"
 venue: "ICLR 2024"
 citations: 150
 arxiv_id: "2312.13139"
+paper-faithfullness: audited-fixed
 ---
 
 # Unleashing Large-Scale Video Generative Pre-training for Visual Robot Manipulation (GR-1)
@@ -79,7 +80,7 @@ GR-1 achieves strong results on the CALVIN benchmark, reaching 94.9% success rat
 
 GR-1 uses a unified GPT-style transformer architecture with specialized encoders for multiple input modalities. The model processes sequences of visual observations, language instructions, and robot states to predict both future video frames and robot actions.
 
-**Input processing:** Visual observations are encoded by a frozen image encoder (pre-trained ViT). Language instructions are encoded by a text encoder. Robot proprioceptive states (arm joint positions and gripper state) are projected through an MLP. The architecture introduces two types of learnable tokens: `[ACT]` tokens for action prediction and `[OBS]` tokens for future image prediction, which are interleaved into the input sequence.
+**Input processing:** Visual observations are encoded by a frozen MAE-pretrained ViT image encoder (global CLS token + patch tokens via Perceiver Resampler). Language instructions are encoded by a frozen CLIP text encoder. Robot proprioceptive states (6D end-effector pose and binary gripper state) are projected through linear layers. The architecture introduces two types of learnable tokens: `[ACT]` tokens for action prediction and `[OBS]` tokens for future image prediction, which are interleaved into the input sequence.
 
 **Phase 1 -- Video Generative Pre-training:** The model learns to predict future frames conditioned on past observations and language instructions:
 
@@ -95,7 +96,7 @@ The combined fine-tuning loss is:
 
 $$L_{\text{finetune}} = L_{\text{arm}} + L_{\text{gripper}} + L_{\text{video}}$$
 
-where $L_{\text{arm}}$ is Smooth-L1 loss on arm joint actions, $L_{\text{gripper}}$ is binary cross-entropy on gripper open/close, and $L_{\text{video}}$ is the video prediction loss that serves as an auxiliary regularizer. Strategic masking during training maintains the autoregressive property of the transformer, ensuring that predictions at each timestep only attend to past context.
+where $L_{\text{arm}}$ is Smooth-L1 loss on arm joint actions (delta XYZ + delta Euler angles), $L_{\text{gripper}}$ is binary cross-entropy on gripper open/close, and $L_{\text{video}}$ is MSE loss on reconstructed image pixels (analogous to MAE reconstruction), which serves as an auxiliary regularizer. Strategic masking during training maintains the autoregressive property of the transformer, ensuring that predictions at each timestep only attend to past context.
 
 ## Results
 
@@ -108,7 +109,7 @@ where $L_{\text{arm}}$ is Smooth-L1 loss on arm joint actions, $L_{\text{gripper
 | Multi-task learning | **94.9%** | 88.9% | -- |
 | Zero-shot (unseen scenes) | **85.4%** | -- | 53.3% |
 | 10% training data | **77.8%** | 66.8% | -- |
-| Language generalization (GPT-4 instructions) | **76.4%** | -- | -- |
+| Language generalization (GPT-4 instructions) | **76.4%** | 71.5% | -- |
 
 GR-1 achieves state-of-the-art results across all CALVIN evaluation settings. The zero-shot generalization result (85.4% vs. 53.3% for RT-1) is particularly significant, demonstrating that video pre-training provides robust visual priors that transfer across scenes. The data efficiency result (77.8% with only 10% of data) suggests that video pre-training substantially reduces the need for robot demonstrations.
 
