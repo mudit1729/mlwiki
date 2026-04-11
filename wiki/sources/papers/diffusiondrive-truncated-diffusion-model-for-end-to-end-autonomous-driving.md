@@ -13,6 +13,7 @@ tags:
   - planning
 citations: ~50
 arxiv_id: "2411.15139"
+paper-faithfullness: audited-solid
 ---
 
 # DiffusionDrive: Truncated Diffusion Model for End-to-End Autonomous Driving
@@ -90,7 +91,7 @@ The truncation strategy works because the anchor trajectories are already close 
 | Method | PDMS (NAVSIM) | Steps | FPS |
 |--------|--------------|-------|-----|
 | **DiffusionDrive (ResNet-34)** | **88.1** | 2 | 45 |
-| Transfuser (single-mode MLP baseline) | 84.0 | - | 60 |
+| Transfuser (single-mode baseline) | 84.0 | - | 60 |
 | Vanilla diffusion policy | 84.6 | 20 | 7 |
 | Truncated diffusion (ablation) | 85.7 | 2 | 27 |
 | UniAD | 83.4 | - | - |

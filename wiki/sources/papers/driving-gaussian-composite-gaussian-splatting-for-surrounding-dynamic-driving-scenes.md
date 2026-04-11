@@ -7,6 +7,7 @@ year: "2024"
 venue: "CVPR"
 citations: 398
 arxiv_id: "2312.07920"
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2312.07920)**
@@ -20,7 +21,7 @@ DrivingGaussian addresses photorealistic 3D scene reconstruction for dynamic aut
 - **Incremental Static 3D Gaussians (IS3G):** Sequential depth-bin processing of large-scale backgrounds prevents scale confusion and artifacts in distant regions by building the scene incrementally from near to far
 - **Composite Dynamic Gaussian Graph (CDGG):** Graph-based representation where each node models an individual moving object with its own Gaussians, transformation matrix, center coordinate, and orientation -- enabling independent motion modeling
 - **LiDAR-prior integration:** Multi-frame LiDAR sweeps provide geometric priors for Gaussian initialization, refined through dense bundle adjustment
-- **Unified loss function:** Combines Tile Structural Similarity (SSIM), robust outlier loss, and LiDAR-based geometric supervision for high-quality reconstruction
+- **Unified loss function:** Combines Tile Structural Similarity (TSSIM), robust outlier loss, and LiDAR-based geometric supervision for high-quality reconstruction
 
 ## Architecture / Method
 
@@ -61,7 +62,7 @@ DrivingGaussian addresses photorealistic 3D scene reconstruction for dynamic aut
 │  │  Static Gaussians + Dynamic Gaussians           │          │
 │  │  ──► Differentiable 3DGS Splatting              │          │
 │  │  ──► Multi-camera view synthesis                │          │
-│  │  Loss: Tile-SSIM + Outlier + LiDAR geometric   │          │
+│  │  Loss: Tile-SSIM (TSSIM) + Outlier + LiDAR geometric   │          │
 │  └────────────────────────────────────────────────┘          │
 └──────────────────────────────────────────────────────────────┘
 ```

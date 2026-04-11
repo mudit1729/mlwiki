@@ -11,9 +11,10 @@ tags:
 type: source-summary
 status: complete
 year: "2024"
-venue: "ICLR 2024"
+venue: "COLM 2024"
 citations: 140
 arxiv_id: "2311.10813"
+paper-faithfullness: audited-solid
 ---
 
 # Agent-Driver: A Language Agent for Autonomous Driving

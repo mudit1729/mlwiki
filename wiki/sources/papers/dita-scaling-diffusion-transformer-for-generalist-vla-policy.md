@@ -13,6 +13,7 @@ tags:
   - cross-embodiment
 citations: 54
 arxiv_id: "2503.19757"
+paper-faithfullness: audited-solid
 ---
 
 # Dita: Scaling Diffusion Transformer for Generalist Vision-Language-Action Policy

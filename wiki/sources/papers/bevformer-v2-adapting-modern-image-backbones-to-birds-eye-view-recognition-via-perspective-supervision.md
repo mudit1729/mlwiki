@@ -7,6 +7,7 @@ year: "2023"
 venue: "CVPR 2023"
 citations: 250 <!-- TODO: verify citation count -->
 arxiv_id: "2211.10439"
+paper-faithfullness: audited-solid
 ---
 
 # BEVFormer v2: Adapting Modern Image Backbones to Bird's-Eye-View Recognition via Perspective Supervision

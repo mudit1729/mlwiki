@@ -7,13 +7,14 @@ year: "2023"
 venue: "ICCV"
 citations: 150
 arxiv_id: "2308.02236"
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2308.02236)**
 
 ## Overview
 
-FB-BEV addresses a fundamental tension in camera-based BEV perception for autonomous driving: **forward projection** methods (like Lift-Splat-Shoot) generate BEV features by explicitly predicting depth and projecting 2D image features into 3D, while **backward projection** methods (like BEVFormer) start from BEV queries and sample image features via cross-attention. Each paradigm has distinct strengths -- forward methods preserve fine-grained image detail but suffer from depth estimation errors, while backward methods handle geometric ambiguity more gracefully but can miss details due to sparse sampling. FB-BEV proposes that these two view transformation directions are complementary, not competing, and unifies them in a single framework.
+FB-BEV addresses a fundamental tension in camera-based BEV perception for autonomous driving: **forward projection** methods (like Lift-Splat-Shoot) generate BEV features by explicitly predicting depth and projecting 2D image features into 3D, while **backward projection** methods (like BEVFormer) start from BEV queries and sample image features via cross-attention. Each paradigm has distinct strengths -- forward methods (LSS) generate sparsely projected BEV features without post-processing, while backward methods (BEVFormer) tend to generate false-positive BEV features from incorrect projections due to lack of depth utilization. FB-BEV proposes that these two view transformation directions are complementary, not competing, and unifies them in a single framework.
 
 The core insight is a **forward-backward view transformation** module that combines the strengths of both paradigms. The forward branch lifts image features into BEV space via depth-based projection (similar to LSS), while the backward branch uses deformable cross-attention from BEV queries to image features (similar to BEVFormer). A learned fusion mechanism merges both BEV representations, allowing the network to leverage dense depth-based features and attention-based features simultaneously. The paper also introduces a **3D pre-training strategy** using LiDAR-supervised depth estimation and 3D object detection to bootstrap the forward branch, significantly improving convergence and final performance.
 

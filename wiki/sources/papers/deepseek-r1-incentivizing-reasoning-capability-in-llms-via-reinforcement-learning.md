@@ -7,6 +7,7 @@ year: "2025"
 venue: "arXiv"
 citations: 1920
 arxiv_id: "2501.12948"
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2501.12948)**
@@ -15,7 +16,7 @@ arxiv_id: "2501.12948"
 
 DeepSeek-R1 demonstrates that sophisticated reasoning capabilities -- including self-verification, reflection, and extended chain-of-thought -- can emerge in large language models through pure outcome-based reinforcement learning, without any human-annotated reasoning trajectories. This challenges the prevailing assumption that high-quality reasoning requires supervised training on curated step-by-step demonstrations, as used in OpenAI's o1 and similar systems.
 
-Built on DeepSeek-V3-Base (a 671B-parameter Mixture-of-Experts model), the work introduces two model variants. DeepSeek-R1-Zero is trained with RL alone (no SFT warmup), using Group Relative Policy Optimization (GRPO) with rule-based rewards for correctness and format compliance. DeepSeek-R1-Zero achieves 71.0% pass@1 on AIME 2024 (up from 15.6% at baseline), with emergent behaviors including self-reflection ("Wait, let me reconsider..."), verification of intermediate steps, and adaptive compute allocation (spending more tokens on harder problems). The full DeepSeek-R1 model uses a multi-stage pipeline -- cold-start SFT on a small set of long-CoT examples, followed by reasoning-focused RL, then rejection sampling to generate SFT data for all capabilities, and finally a second RL stage for alignment -- reaching 79.8% on AIME 2024, 97.3% on MATH-500, and performance competitive with OpenAI-o1-1217 across math, coding, and science benchmarks.
+Built on DeepSeek-V3-Base (a 671B-parameter Mixture-of-Experts model), the work introduces two model variants. DeepSeek-R1-Zero is trained with RL alone (no SFT warmup), using Group Relative Policy Optimization (GRPO) with rule-based rewards for correctness and format compliance. DeepSeek-R1-Zero achieves 77.9% pass@1 on AIME 2024 (up from 15.6% at baseline), with emergent behaviors including self-reflection ("Wait, let me reconsider..."), verification of intermediate steps, and adaptive compute allocation (spending more tokens on harder problems). The full DeepSeek-R1 model uses a multi-stage pipeline -- cold-start SFT on a small set of long-CoT examples, followed by reasoning-focused RL, then rejection sampling to generate SFT data for all capabilities, and finally a second RL stage for alignment -- reaching 79.8% on AIME 2024, 97.3% on MATH-500, and performance competitive with OpenAI-o1-1217 across math, coding, and science benchmarks.
 
 A particularly significant contribution is the demonstration that reasoning capabilities can be distilled into much smaller models. Using rejection sampling from DeepSeek-R1 to generate training data, the authors fine-tune Qwen and Llama models from 1.5B to 70B parameters. The distilled 14B model outperforms QwQ-32B-Preview on several benchmarks, and even the 1.5B distilled model surpasses GPT-4o and Claude-3.5-Sonnet on math reasoning tasks, suggesting that once reasoning is unlocked via RL in a large model, it can be compressed effectively.
 
@@ -116,7 +117,7 @@ During RL training, several behaviors emerge without explicit supervision:
 |-------|---------------------|----------|------|---------------|------------|--------------|
 | DeepSeek-R1 | **79.8%** | **97.3%** | 90.8% | **65.9%** | 2029 Elo | **71.5%** |
 | OpenAI-o1-1217 | 79.2% | 96.4% | **91.8%** | 63.4% | 2061 Elo | 75.7% |
-| DeepSeek-R1-Zero | 71.0% | 95.9% | -- | -- | -- | -- |
+| DeepSeek-R1-Zero | 77.9% | 95.9% | -- | -- | -- | -- |
 | DeepSeek-V3 | 39.2% | 90.2% | 88.5% | -- | -- | 59.1% |
 | Claude-3.5-Sonnet | 16.0% | 78.3% | 88.3% | -- | -- | 65.0% |
 | GPT-4o | 9.3% | 74.6% | 87.2% | -- | -- | 53.6% |

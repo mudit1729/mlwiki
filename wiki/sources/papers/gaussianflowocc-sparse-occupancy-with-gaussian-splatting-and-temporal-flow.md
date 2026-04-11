@@ -14,6 +14,7 @@ tags:
   - temporal
 citations: 19
 arxiv_id: "2502.17288"
+paper-faithfullness: audited-solid
 ---
 
 # GaussianFlowOcc: Sparse and Weakly Supervised Occupancy Estimation using Gaussian Splatting and Temporal Flow

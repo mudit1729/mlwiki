@@ -7,6 +7,7 @@ year: "2024"
 venue: "arXiv"
 citations: 20
 arxiv_id: "2407.14108"
+paper-faithfullness: audited-solid
 ---
 
 # GaussianBeV: 3D Gaussian Representation meets Perception Models for BeV Segmentation

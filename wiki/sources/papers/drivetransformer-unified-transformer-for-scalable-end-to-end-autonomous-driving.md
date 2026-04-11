@@ -7,6 +7,7 @@ year: "2025"
 venue: "ICLR 2025"
 citations: 91
 arxiv_id: "2503.07656"
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2503.07656)**

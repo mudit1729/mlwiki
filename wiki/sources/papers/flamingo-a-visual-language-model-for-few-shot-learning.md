@@ -7,6 +7,7 @@ year: "2022"
 venue: "NeurIPS 2022"
 citations: 7824
 arxiv_id: "2204.14198"
+paper-faithfullness: audited-solid
 ---
 
 # Flamingo: a Visual Language Model for Few-Shot Learning
@@ -81,7 +82,7 @@ Flamingo set a new state of the art on 16 multimodal benchmarks spanning visual 
 
 Flamingo's architecture connects a frozen vision encoder to a frozen language model through two trainable bridges:
 
-**Vision Encoder**: A Normalizer-Free ResNet (NFNet-F6) pretrained with a contrastive image-text objective (similar to CLIP). For images, features are extracted from the final spatial feature map. For videos, frames are sampled at 1 FPS and processed independently, then averaged temporally. The vision encoder is frozen during Flamingo training.
+**Vision Encoder**: A Normalizer-Free ResNet (NFNet-F6) pretrained with a contrastive image-text objective (similar to CLIP). For images, features are extracted from the final spatial feature map. For videos, frames are sampled at 1 FPS, processed independently by the vision encoder, and augmented with learned temporal embeddings. The vision encoder is frozen during Flamingo training.
 
 **Perceiver Resampler**: Takes the variable-size spatial features from the vision encoder (e.g., a grid of features from different resolution images or varying numbers of video frames) and produces a fixed set of 64 visual tokens. It uses a small transformer with learned latent query vectors that cross-attend to the visual features. This design is inspired by Perceiver IO and ensures constant computational cost regardless of input resolution or number of video frames.
 
@@ -95,7 +96,7 @@ The zero initialization is critical: at the start of training, the gated cross-a
 
 **Interleaved attention masking**: When processing sequences with multiple images interleaved with text, each text token only attends to the visual tokens from the most recent preceding image. This simple scheme enables the model to handle multi-image prompts (for few-shot learning) and visual dialogue naturally.
 
-**Model scales**: Flamingo comes in four sizes -- 3B (1.4B LM), 9B (7B LM), 30B, and 80B (70B Chinchilla LM). The 80B model has approximately 10.2B trainable parameters (the cross-attention layers and Perceiver Resampler), with the remaining ~70B frozen.
+**Model scales**: Flamingo comes in three sizes -- 3B (1.4B Chinchilla LM), 9B (7B Chinchilla LM), and 80B (70B Chinchilla LM). The 80B model has approximately 10.2B trainable parameters (the cross-attention layers and Perceiver Resampler), with the remaining ~70B frozen.
 
 ![Flamingo few-shot examples and results across benchmarks](https://paper-assets.alphaxiv.org/figures/2204.14198v2/img-1.jpeg)
 

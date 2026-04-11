@@ -7,6 +7,7 @@ year: "2023"
 venue: "arXiv"
 citations: 0 <!-- TODO: fetch citation count -->
 arxiv_id: "2311.12058"
+paper-faithfullness: audited-solid
 ---
 
 # FlashOcc: Fast and Memory-Efficient Occupancy Prediction via Channel-to-Height Plugin

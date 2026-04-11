@@ -7,6 +7,7 @@ year: "2024"
 venue: "ECCV"
 citations: 41
 arxiv_id: "2406.14556"
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2406.14556)**

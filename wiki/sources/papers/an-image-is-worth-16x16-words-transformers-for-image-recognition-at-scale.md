@@ -14,6 +14,7 @@ tags:
   - image-classification
   - foundation-model
 citations: 91128
+paper-faithfullness: audited-solid
 ---
 
 # An Image is Worth 16x16 Words: Transformers for Image Recognition at Scale
@@ -42,7 +43,7 @@ This result triggered a paradigm shift. Within two years, vision transformers re
 - **Learnable [CLS] token and position embeddings**: A prepended classification token aggregates global information; learnable 1D position embeddings encode spatial layout (shown to learn 2D structure automatically)
 - **Scale-dependent performance**: ViT underperforms ResNets when trained only on ImageNet-1k (~1.3M images) but dominates when pre-trained on ImageNet-21k (14M) or JFT-300M (300M), revealing that Transformers need more data to compensate for weaker inductive bias
 - **Compute-efficient scaling**: ViT-L/16 pre-trained on JFT-300M achieves 87.76% ImageNet top-1 accuracy using approximately 15x less compute than BiT-L (0.68k vs 9.9k TPUv3-core-days) at similar accuracy
-- **Attention distance analysis**: Early layers attend locally (small attention distance) while later layers attend globally, suggesting the model learns to build hierarchical representations despite having no built-in locality bias
+- **Attention distance analysis**: Some attention heads attend broadly across the image even in early layers, while others maintain local attention patterns; attention distance generally increases with network depth, suggesting the model learns a mix of local and global representations despite having no built-in locality bias
 
 ## Architecture / Method
 
@@ -109,7 +110,7 @@ Three model sizes are studied: ViT-Base (12 layers, 12 heads, 86M params), ViT-L
 - **Computational efficiency**: ViT-L/16 achieved superior results using 0.68k TPUv3-core-days vs. BiT-L's 9.9k for comparable accuracy -- approximately 15x more compute-efficient
 - **Pre-training dataset size is critical**: On ImageNet-1k alone, ViT-B achieves only ~77% (vs. ResNet-50 at ~79%); on JFT-300M, ViT-L reaches 87.8%, demonstrating a crossover where Transformers overtake CNNs as data scales. Performance "rapidly improves" with larger datasets, eventually surpassing all competitors at JFT-300M scale
 - **Position embeddings learn 2D structure**: Cosine similarity between learned position embeddings reveals a clear 2D grid pattern, showing the model discovers spatial relationships from data alone despite using 1D position embeddings
-- **Interpretability**: Initial linear embedding filters resemble plausible basis functions for patches; some attention heads maintain broad image-wide integration while others preserve locality, with attention distance increasing through network depth
+- **Interpretability**: Initial linear embedding filters resemble plausible basis functions for patches; some attention heads attend broadly across the image even in early layers while others maintain local attention, with attention distance generally increasing through network depth
 - **No saturation at scale**: Performance continues to improve as model size and data increase, with no sign of diminishing returns on JFT-300M, suggesting further gains from larger models
 - **Transfer to multiple benchmarks**: Strong results on CIFAR-10/100, Oxford Flowers, Oxford-IIIT Pets, and VTAB, establishing ViT as a general-purpose vision backbone
 - **Central thesis**: The work demonstrates that "large scale training trumps inductive bias" -- generic architectures can learn representations directly from data, potentially surpassing specialized architectures with better computational efficiency

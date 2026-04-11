@@ -7,6 +7,7 @@ year: "2023"
 venue: "NeurIPS 2023"
 citations: 8520
 arxiv_id: "2305.18290"
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2305.18290)**
@@ -107,7 +108,7 @@ The only hyperparameter beyond standard training settings is `β`, which control
 
 ![Performance comparison across tasks](https://paper-assets.alphaxiv.org/figures/2305.18290v3/img-1.jpeg)
 
-### Sentiment Generation (IMDb, GPT-2)
+### Sentiment Generation (IMDb, GPT-2-large)
 
 DPO achieves the most efficient reward-KL frontier, strictly dominating PPO at every KL budget. It reaches higher reward for the same amount of KL divergence from the reference.
 

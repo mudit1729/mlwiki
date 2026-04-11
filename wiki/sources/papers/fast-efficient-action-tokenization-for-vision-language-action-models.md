@@ -13,6 +13,7 @@ tags:
   - action-representation
 citations: 353
 arxiv_id: "2501.09747"
+paper-faithfullness: audited-solid
 ---
 
 # FAST: Efficient Action Tokenization for Vision-Language-Action Models
@@ -102,7 +103,7 @@ The compression ratio depends on the action space complexity: simple 7-DoF arms 
 
 - FAST consistently outperforms naive tokenization across all tested tasks and robot platforms
 - 5x faster training convergence due to shorter token sequences requiring fewer autoregressive steps
-- Enables learning of complex dexterous tasks (shirt folding, grocery packing, toast preparation) that are infeasible with naive tokenization due to prohibitive sequence lengths
+- Enables learning of complex dexterous tasks (shirt folding, grocery bagging, toast retrieval) that are infeasible with naive tokenization due to prohibitive sequence lengths
 - FAST+ universal tokenizer matches task-specific FAST performance, demonstrating that a single tokenizer generalizes across embodiments
 - The DCT transform is critical: ablating it (using only BPE on raw values) significantly degrades performance, confirming that frequency-space representation captures meaningful temporal structure
 

@@ -7,6 +7,7 @@ year: "2023"
 venue: "ICCV 2023"
 citations: ~120
 arxiv_id: "2308.00398"
+paper-faithfullness: audited-solid
 ---
 
 # DriveAdapter: Breaking the Coupling Barrier of Perception and Planning in End-to-End Autonomous Driving
@@ -19,14 +20,14 @@ DriveAdapter (Jia et al., ICCV 2023) identifies and addresses a fundamental stru
 
 The core insight is to decouple these two learning problems by introducing "adapter" modules between perception and planning that are trained with a **feature alignment objective**: the adapters encourage student perception features to match the privileged features the (reused) teacher planner was trained on, rather than forcing the student to learn planning from scratch. This means the privileged teacher's planning weights are reused directly -- the adapters bridge the distribution gap between predicted privileged inputs and the ground-truth privileged inputs. This decoupling allows perception and planning to be trained and improved independently.
 
-Because the learning-based teacher itself is imperfect and occasionally breaks safety rules, DriveAdapter additionally proposes **action-guided feature learning with a mask**: a mask identifies imperfect teacher features, and hand-crafted rule priors are injected for those masked regions, so the student does not blindly inherit unsafe teacher behaviors. DriveAdapter achieves strong results on the CARLA closed-loop benchmarks (Town05 Long and Longest6), outperforming prior methods including TCP, InterFuser, and TransFuser.
+Because the learning-based teacher itself is imperfect and occasionally breaks safety rules, DriveAdapter additionally proposes **action-guided feature learning with a mask**: a mask identifies imperfect teacher features, and hand-crafted rule priors are injected for those masked regions, so the student does not blindly inherit unsafe teacher behaviors. DriveAdapter achieves DS=61.7 on Town05 Long and DS=59.4 on Longest6, competitive with prior methods; with an additional TCP trajectory head (DriveAdapter+TCP), it reaches DS=65.9 on Town05 Long and DS=62.0 on Longest6.
 
 ## Key Contributions
 
 - **Decoupled perception-planning training**: Identifies the coupling barrier in privileged distillation and proposes to directly reuse a strong privileged teacher's planning module while the student focuses on perception
 - **Feature alignment via adapters**: Adapter modules are inserted between student perception and teacher planning, trained with a feature alignment objective that closes the distribution gap between predicted and ground-truth privileged inputs
 - **Action-guided feature learning with a mask**: Because the learning-based teacher is imperfect and sometimes violates safety rules, a mask identifies imperfect teacher features and injects hand-crafted rule priors into the learning process for those regions
-- **Strong CARLA performance**: Competitive driving scores on Town05 Long and Longest6 benchmarks, outperforming TCP, InterFuser, and TransFuser
+- **Strong CARLA performance**: Competitive driving scores on Town05 Long and Longest6 benchmarks; DriveAdapter achieves DS=61.7 on Town05 Long and DS=59.4 on Longest6, with DriveAdapter+TCP reaching DS=65.9 and DS=62.0 respectively
 
 ## Architecture / Method
 
@@ -93,23 +94,29 @@ DriveAdapter demonstrates strong improvements on CARLA closed-loop benchmarks:
 
 | Method | DS ↑ | RC ↑ | IS ↑ |
 |--------|------|------|------|
-| CILRS | 7.47 | 13.40 | 0.56 |
-| LBC | 30.97 | 55.01 | 0.56 |
-| TransFuser | 54.52 | 78.41 | 0.70 |
-| TCP | 55.14 | 78.20 | 0.71 |
-| InterFuser | 68.31 | 95.03 | 0.72 |
-| **DriveAdapter** | **75.18** | **93.56** | **0.80** |
+| CILRS | 7.8 | 10.3 | 0.75 |
+| LBC | 12.3 | 31.9 | 0.66 |
+| Roach | 41.6 | 96.4 | 0.43 |
+| LAV | 46.5 | 69.8 | 0.73 |
+| TCP | 57.2 | 80.4 | 0.73 |
+| ThinkTwice | 65.0 | 95.5 | 0.69 |
+| InterFuser* | 68.3 | 95.0 | -- |
+| **DriveAdapter** | **61.7** | **92.3** | **0.69** |
+| **DriveAdapter + TCP** | **65.9** | **94.4** | **0.72** |
 
-DS = Driving Score, RC = Route Completion, IS = Infraction Score.
+DS = Driving Score, RC = Route Completion, IS = Infraction Score. * = extra training data.
 
 ### Longest6 Benchmark
 
 | Method | DS ↑ | RC ↑ | IS ↑ |
 |--------|------|------|------|
-| TransFuser | 49.01 | 68.24 | 0.72 |
-| TCP | 50.35 | 69.12 | 0.73 |
-| InterFuser | 57.74 | 81.78 | 0.71 |
-| **DriveAdapter** | **63.89** | **83.25** | **0.77** |
+| WOR | 23.6 | 52.3 | 0.59 |
+| LAV | 34.2 | 73.5 | 0.53 |
+| Transfuser | 56.7 | 92.3 | 0.62 |
+| PlanT with Perception | 57.7 | 88.2 | 0.65 |
+| ThinkTwice | 61.3 | 73.0 | 0.81 |
+| **DriveAdapter** | **59.4** | **82.0** | **0.68** |
+| **DriveAdapter + TCP** | **62.0** | **82.3** | **0.70** |
 
 ### Key ablation findings
 

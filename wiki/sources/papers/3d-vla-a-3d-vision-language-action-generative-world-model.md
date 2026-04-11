@@ -5,8 +5,9 @@ status: active
 type: paper
 year: "2024"
 venue: "ICML 2024"
-citations: 100
+citations: 140
 arxiv_id: "2403.09631"
+paper-faithfullness: audited-solid
 ---
 
 # 3D-VLA: A 3D Vision-Language-Action Generative World Model
@@ -19,7 +20,7 @@ arxiv_id: "2403.09631"
 
 The core approach builds a unified architecture with three key components: (1) a 3D-aware vision encoder that processes RGBD data or point clouds, (2) a large language model backbone for multimodal reasoning, and (3) diffusion-based generative heads that can predict future visual states (RGBD images) and goal point clouds. Special interaction tokens (`<scene>`, `<obj>`, `<img>`, `<pcd>`) bridge 3D perception with language reasoning, while a Q-Former module extracts compact 3D features for the LLM. This enables the model to not only perceive and act but also "imagine" the consequences of actions — a world-modeling capability that goes beyond the standard perception-to-action pipeline.
 
-The paper also contributes a large-scale 3D embodied instruction dataset, constructed by augmenting existing robotics datasets with depth information, 3D bounding boxes, and language-action pairings. Experiments across embodied reasoning, multimodal generation, and robotic manipulation tasks show that 3D-VLA outperforms 2D baselines, validating the importance of 3D representations for embodied AI. With ~100 citations at ICML 2024, the paper has been influential in motivating 3D-grounded approaches in both robotics and driving VLA research.
+The paper also contributes a large-scale 3D embodied instruction dataset, constructed by augmenting existing robotics datasets with depth information, 3D bounding boxes, and language-action pairings. Experiments across embodied reasoning, multimodal generation, and robotic manipulation tasks show that 3D-VLA outperforms 2D baselines, validating the importance of 3D representations for embodied AI. With ~140 citations at ICML 2024, the paper has been influential in motivating 3D-grounded approaches in both robotics and driving VLA research.
 
 ## Key Contributions
 

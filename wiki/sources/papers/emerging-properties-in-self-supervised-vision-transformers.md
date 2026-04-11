@@ -7,6 +7,7 @@ year: "2021"
 venue: "ICCV 2021"
 citations: 10798
 arxiv_id: "2104.14294"
+paper-faithfullness: audited-solid
 ---
 
 # Emerging Properties in Self-Supervised Vision Transformers (DINO)

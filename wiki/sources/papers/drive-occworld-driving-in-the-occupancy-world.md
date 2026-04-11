@@ -15,6 +15,7 @@ tags:
   - prediction
 citations: 49
 arxiv_id: "2408.14197"
+paper-faithfullness: audited-solid
 ---
 
 # Drive-OccWorld: Driving in the Occupancy World
@@ -27,7 +28,7 @@ Drive-OccWorld introduces a vision-centric 4D occupancy forecasting world model 
 
 The framework operates through an auto-regressive architecture with three main components: a history encoder that builds BEV representations from multi-view cameras, a memory queue with novel conditional normalization that maintains temporal context while addressing semantic discrimination and motion awareness, and a world decoder that predicts future BEV embeddings conditioned on ego actions. The predicted future states feed into an occupancy-based planner that evaluates candidate trajectories against agent safety, road safety, and learned cost functions.
 
-A key capability is action-controllable generation: the model can simulate different future scenarios based on various ego actions (velocity, steering angle, trajectory waypoints, high-level commands), functioning as a neural simulator. Drive-OccWorld achieves a 9.4% improvement in weighted mIoU for future occupancy forecasting over Cam4DOcc on nuScenes, a 33% reduction in L2 planning error at 1-second horizon compared to UniAD, and is further validated on nuScenes-Occupancy and Lyft-Level5.
+A key capability is action-controllable generation: the model can simulate different future scenarios based on various ego actions (velocity, steering angle, trajectory waypoints, high-level commands), functioning as a neural simulator. Drive-OccWorld achieves a 2.0% improvement in mIoU_f (future occupancy) and 1.9% improvement in VPQ_f over Cam4DOcc on nuScenes, a 33% reduction in L2 planning error at 1-second horizon compared to UniAD†, and is further validated on nuScenes-Occupancy and Lyft-Level5.
 
 ## Key Contributions
 
@@ -109,21 +110,27 @@ The architecture consists of three main stages operating in an auto-regressive l
 
 ![Qualitative forecasting results](https://paper-assets.alphaxiv.org/figures/2408.14197v3/x4.png)
 
-### Occupancy Forecasting
+### Occupancy Forecasting (nuScenes, vs Cam4DOcc)
 
-| Method | mIoU (weighted) | VPQ (flow) |
-|---|---|---|
-| Baseline | -- | -- |
-| **Drive-OccWorld** | **+9.4% improvement** | **+5.1% improvement** |
+| Method | mIoU_c | mIoU_f (2s) | mIoU~_f (weighted) | VPQ_f |
+|---|---|---|---|---|
+| PowerBEV-3D | 23.1 | 21.3 | 21.9 | -- |
+| Cam4DOcc | 31.3 | 26.8 | 28.0 | 21.4 |
+| **Drive-OccWorld A** | **29.4** | **28.6** | **28.7** | **22.6** |
+| **Drive-OccWorld P** | **29.6** | **28.8** | **29.0** | **23.3** |
+
+Drive-OccWorld P achieves +2.0% in mIoU_f and +1.9% in VPQ_f over Cam4DOcc.
 
 ### Planning Performance (nuScenes)
 
-| Method | L2 @ 1s | L2 @ 2s | L2 @ 3s | Collision Rate |
-|---|---|---|---|---|
-| UniAD (baseline) | higher | higher | higher | -- |
-| **Drive-OccWorld** | **-33%** | **-22%** | **-9.7%** | Competitive |
+| Method | L2@1s ↓ | L2@2s ↓ | L2@3s ↓ | L2 Avg ↓ | Col@1s ↓ | Col@2s ↓ | Col@3s ↓ |
+|---|---|---|---|---|---|---|---|
+| UniAD† | 0.48 | 0.96 | 1.65 | 1.03 | 0.05 | 0.17 | 0.71 |
+| VAD-Base† | 0.54 | 1.15 | 1.98 | 1.22 | 0.10 | 0.24 | 0.96 |
+| OccNet† | 1.29 | 2.13 | 2.99 | 2.14 | 0.21 | 0.59 | 1.37 |
+| **Drive-OccWorld P†** | **0.32** | **0.75** | **1.49** | **0.85** | **0.05** | **0.17** | **0.64** |
 
-Relative to UniAD, Drive-OccWorld achieves a 33% reduction in L2 error at 1-second horizon, a 22% reduction at 2-second horizon, and a 9.7% reduction at 3-second horizon, while maintaining competitive collision rates. On Lyft-Level5, the model also shows a ~6% weighted mIoU and ~5.2% VPQ_f improvement on the future occupancy forecasting task. Ablation studies validate the normalization components and cost function terms, and the action-controllable generation demonstrates consistent and interpretable behavior across different ego actions.
+Drive-OccWorld P† achieves relative improvements of 33%, 22%, and 9.7% on L2@1s, L2@2s, and L2@3s compared to UniAD†. Ablation studies validate the normalization components and cost function terms, and the action-controllable generation demonstrates consistent and interpretable behavior across different ego actions.
 
 ## Limitations & Open Questions
 

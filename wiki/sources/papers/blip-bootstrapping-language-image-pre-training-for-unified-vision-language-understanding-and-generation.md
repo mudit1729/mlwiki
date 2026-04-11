@@ -7,6 +7,7 @@ year: "2022"
 venue: "ICML 2022"
 citations: 8650
 arxiv_id: "2201.12086"
+paper-faithfullness: audited-solid
 ---
 
 # BLIP: Bootstrapping Language-Image Pre-training for Unified Vision-Language Understanding and Generation

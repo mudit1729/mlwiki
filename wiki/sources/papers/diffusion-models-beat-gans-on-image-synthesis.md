@@ -7,6 +7,7 @@ year: "2021"
 venue: "NeurIPS 2021"
 citations: 13548
 arxiv_id: "2105.05233"
+paper-faithfullness: audited-solid
 ---
 
 # Diffusion Models Beat GANs on Image Synthesis
@@ -123,7 +124,8 @@ Both stages can use classifier guidance independently.
 | **ADM-G (guided)** | **256x256** | **4.59** | 0.83 | 0.53 |
 | BigGAN-deep | 256x256 | 6.95 | 0.87 | 0.28 |
 | **ADM-G + upsampling** | **256x256** | **3.94** | 0.83 | 0.53 |
-| **ADM-G + upsampling** | **512x512** | **7.72** | 0.87 | 0.42 |
+| **ADM-G (guided)** | **512x512** | **7.72** | 0.87 | 0.42 |
+| **ADM-G + upsampling** | **512x512** | **3.85** | 0.87 | 0.42 |
 
 Key findings:
 

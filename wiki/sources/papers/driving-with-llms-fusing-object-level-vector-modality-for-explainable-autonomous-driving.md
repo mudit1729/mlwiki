@@ -13,6 +13,7 @@ tags:
   - planning
 citations: ~328
 arxiv_id: "2310.01957"
+paper-faithfullness: audited-solid
 ---
 
 # Driving with LLMs: Fusing Object-Level Vector Modality for Explainable Autonomous Driving
@@ -23,7 +24,7 @@ arxiv_id: "2310.01957"
 
 Driving with LLMs (Wayve, ICRA 2024) is one of the first concrete demonstrations of using a large language model as the decision-making "brain" for autonomous driving. The paper addresses the "black box" problem in E2E driving by fusing object-level vector representations with a frozen LLaMA-7B model, enabling both driving action prediction and natural language explanations of driving decisions.
 
-The system introduces a novel three-component architecture (Vector Encoder, Vector Former, and LLM with LoRA) trained in two stages: vector representation pretraining followed by driving QA finetuning. A key innovation is the data generation pipeline using a PPO-trained RL agent in simulation, with a `lanGen` function translating vector state into natural language, and GPT-3.5 generating 160k QA pairs for training. The system demonstrates improved perception and action prediction while providing interpretable explanations.
+The system introduces a novel three-component architecture (Vector Encoder, Vector Former, and LLM with LoRA) trained in two stages: vector representation pretraining followed by driving QA finetuning. A key innovation is the data generation pipeline using a PPO-trained RL agent in a custom 2D simulator, with a `lanGen` function translating vector state into natural language, and GPT-3.5 generating 160k QA pairs for training. The system demonstrates improved perception and action prediction while providing interpretable explanations.
 
 ## Key Contributions
 
@@ -41,7 +42,7 @@ The system introduces a novel three-component architecture (Vector Encoder, Vect
 ┌──────────────────────────────────────────────────────────────┐
 │         Driving with LLMs: Vector-to-Language Pipeline         │
 │                                                               │
-│  Driving Scene (from CARLA simulation)                        │
+│  Driving Scene (from custom 2D simulator)                     │
 │  ┌────────────────────────────────────────┐                  │
 │  │ Object Vectors: [pos, vel, heading,    │                  │
 │  │  dims, type] for each agent + road     │                  │
@@ -110,7 +111,7 @@ The scene embedding from Vector Former is projected into the LLM's input space:
 
 ![Data generation](https://paper-assets.alphaxiv.org/figures/2310.01957v2/self_qa.png)
 
-- A PPO-trained RL agent drives in CARLA simulation
+- A PPO-trained RL agent drives in the custom 2D simulator
 - The `lanGen` function translates simulator state vectors into structured natural language descriptions
 - GPT-3.5 generates diverse question-answer pairs about driving decisions, perceptions, and explanations
 - Questions cover: "What should you do?", "Why?", "How many cars ahead?", "What is the speed limit?"
@@ -151,7 +152,7 @@ The scene embedding from Vector Former is projected into the LLM's input space:
 
 ## Limitations & Open Questions
 
-- **Simulation only**: All experiments are in CARLA; real-world transfer is not demonstrated
+- **Simulation only**: All experiments are in a custom 2D simulator; real-world transfer is not demonstrated
 - **Open-loop evaluation**: No closed-loop driving evaluation; the LLM predicts actions but does not drive in a feedback loop
 - **Vector input only**: Does not process raw camera images, limiting applicability to scenarios where a good perception system is already available
 - **Frozen LLM**: LLaMA-7B is not fine-tuned end-to-end; full fine-tuning might unlock better integration
@@ -165,7 +166,6 @@ The scene embedding from Vector Former is projected into the LLM's input space:
 - [[wiki/concepts/planning]] -- language-model-based planning
 - [[wiki/concepts/vision-language-action]] -- early driving VLA work
 - [[wiki/sources/papers/language-models-are-few-shot-learners]] -- GPT-3, foundation for LLM capabilities
-- [[wiki/sources/papers/carla-an-open-urban-driving-simulator]] -- simulation environment for training and evaluation
 - [[wiki/sources/papers/gpt-driver-learning-to-drive-with-gpt]] -- concurrent LLM-for-planning approach
 - [[wiki/sources/papers/lmdrive-closed-loop-end-to-end-driving-with-large-language-models]] -- subsequent closed-loop LLM driving
 - [[wiki/sources/papers/drivelm-driving-with-graph-visual-question-answering]] -- subsequent driving QA approach

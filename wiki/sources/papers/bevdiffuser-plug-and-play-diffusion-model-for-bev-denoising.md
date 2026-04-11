@@ -14,6 +14,7 @@ tags:
   - denoising
 citations: 14
 arxiv_id: "2502.19694"
+paper-faithfullness: audited-solid
 ---
 
 # BEVDiffuser: Plug-and-Play Diffusion Model for BEV Denoising with Ground-Truth Guidance

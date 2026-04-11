@@ -7,6 +7,7 @@ year: "2025"
 venue: "arXiv"
 citations: 515
 arxiv_id: "2501.03575"
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2501.03575)**

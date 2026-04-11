@@ -13,6 +13,7 @@ tags:
   - autoregressive
 citations: ~15
 arxiv_id: "2502.19908"
+paper-faithfullness: audited-solid
 ---
 
 # CarPlanner: Consistent Auto-regressive RL Planner for Autonomous Driving
@@ -21,7 +22,7 @@ arxiv_id: "2502.19908"
 
 ## Overview
 
-CarPlanner (Zhejiang University, CVPR 2025) introduces a consistent autoregressive reinforcement learning planner that is the first RL-based planner to surpass imitation learning (IL) + rule-based methods on the nuPlan benchmark. While IL-based planners suffer from distribution shift (the model encounters states at test time that differ from training demonstrations) and rule-based post-processing adds fragile hand-crafted heuristics, CarPlanner uses RL to learn a planner that is robust to its own generated states.
+CarPlanner (Zhejiang University + Cainiao Network, CVPR 2025) introduces a consistent autoregressive reinforcement learning planner that is the first RL-based planner to surpass both imitation learning (IL) and rule-based methods on the nuPlan benchmark. While IL-based planners suffer from distribution shift (the model encounters states at test time that differ from training demonstrations) and rule-based post-processing adds fragile hand-crafted heuristics, CarPlanner uses RL to learn a planner that is robust to its own generated states.
 
 The key technical contribution is a consistent autoregressive architecture that generates trajectory waypoints sequentially while maintaining temporal consistency. Standard autoregressive generation suffers from compounding errors (each waypoint conditions on potentially erroneous previous waypoints), which is especially problematic in safety-critical driving. CarPlanner addresses this through a generation-selection framework: a mode selector first identifies a stable driving mode representation that remains constant across all time steps, and the trajectory generator conditions on this fixed mode, preventing drift and ensuring coherent trajectories.
 
@@ -75,20 +76,23 @@ Training Pipeline:
                                        + R_drivable
 ```
 
-CarPlanner consists of:
+CarPlanner consists of four main components:
 
-1. **Scene Representation**: The driving scene is represented using vectorized inputs: HD map elements (lane boundaries, crosswalks, traffic lights), surrounding agent trajectories (position, velocity, heading over time), and ego vehicle state. These are encoded using a PointNet-style encoder and fused via cross-attention.
+1. **Non-reactive Transition Model**: Predicts future trajectories of surrounding traffic agents in a single forward pass (non-reactive to the ego vehicle), given the initial state. This single-shot prediction significantly improves training efficiency vs. step-by-step simulation. It uses PointNet-style encoders for map and agent data fused via self-attention Transformers.
 
-2. **Autoregressive Trajectory Generator**: A transformer decoder generates trajectory waypoints one at a time. At each step, the model attends to the scene features and all previously generated waypoints to produce the next waypoint. This autoregressive structure naturally captures the sequential, causal nature of trajectory planning.
+2. **Scene Representation**: The driving scene is represented using vectorized inputs: HD map elements (lane boundaries, crosswalks, traffic lights), surrounding agent trajectories (position, velocity, heading over time), and ego vehicle state. These are encoded using a PointNet-style encoder and fused via cross-attention.
 
-3. **Consistent Autoregressive Generation**: Rather than penalty-based regularization, CarPlanner achieves consistency through its generation-selection architecture:
-   - A **mode selector** assigns probabilities to driving behaviors (e.g., lane change, yield, follow) and selects a stable mode representation `c`
+3. **Autoregressive Trajectory Generator (RL Policy)**: A transformer decoder generates trajectory waypoints one at a time. At each step, the model attends to the scene features and all previously generated waypoints to produce the next waypoint. This autoregressive structure naturally captures the sequential, causal nature of trajectory planning.
+
+4. **Consistent Autoregressive Generation**: Rather than penalty-based regularization, CarPlanner achieves consistency through its generation-selection architecture:
+   - A **mode selector** assigns probabilities to decomposed driving modes: **longitudinal modes** (scalar average speeds) and **lateral modes** (possible routes from map topology via graph search), selecting a stable combined mode representation `c`
    - The trajectory generator conditions on this mode `c`, which **remains constant across all time steps**, ensuring coherent temporal consistency
    - This avoids compounding errors because each waypoint is anchored to the same stable mode rather than drifting
+   - An **Invariant-View Module (IVM)** preprocesses policy inputs by transforming map, agent, and route information into the ego vehicle's current coordinate frame and applying KNN selection, ensuring time-agnostic and spatially consistent state representations
 
-4. **RL Training**: The model is first pre-trained with imitation learning (L1 loss on trajectory error), then fine-tuned with RL using PPO. The RL reward is:
+5. **RL Training**: The model is first pre-trained with imitation learning (L1 loss on trajectory error), then fine-tuned with RL using PPO. The RL reward is:
    - `R_t = -DE_t + R_collision + R_drivable`
-   - **DE** (Displacement Error): expert-guided deviation from ground truth
+   - **DE** (Displacement Error): distance from the ground-truth expert trajectory at each step; penalizing DE guides the policy toward expert-like behavior
    - **R_collision**: -1 for collisions, 0 otherwise
    - **R_drivable**: -1 for out-of-drivable-area violations, 0 otherwise
 
@@ -96,18 +100,21 @@ CarPlanner consists of:
 
 ## Results
 
-| Method | Type | nuPlan Score | Collision Rate |
-|--------|------|-------------|----------------|
-| CarPlanner | RL | 87.2 | 1.8% |
-| PDM-Closed (IL+rules) | IL+rules | 85.4 | 2.3% |
-| PlanTF (IL) | IL | 82.1 | 3.1% |
-| GameFormer (IL) | IL | 80.5 | 3.7% |
+Performance is measured using the nuPlan Closed-Loop Score (CLS-NR, non-reactive setting) on the Test14-Random split.
 
-- **nuPlan SOTA**: 87.2 overall score, surpassing PDM-Closed (85.4), the previous best IL+rule-based method
-- **Lower collision rate**: 1.8% vs. 2.3% for PDM-Closed, demonstrating that RL improves safety
-- **No rule-based post-processing needed**: Eliminates the need for hand-crafted safety rules and trajectory smoothing that prior methods require
-- **Consistency regularization is critical**: Removing consistency losses degrades performance by ~4 points and increases collision rate to 3.5%, confirming that naive autoregressive RL suffers from compounding errors
-- **RL vs. IL ablation**: RL fine-tuning improves over IL pretraining by ~5 points on nuPlan score, with the largest gains in interactive scenarios (merging, unprotected turns)
+| Method | Type | CLS-NR |
+|--------|------|--------|
+| **CarPlanner** | **RL** | **94.07** |
+| PLUTO | IL | 91.92 |
+| PDM-Closed | Rule-based | 90.05 |
+
+- **nuPlan SOTA**: CLS-NR of 94.07, surpassing the best IL method PLUTO (91.92) and the best rule-based method PDM-Closed (90.05)
+- **First RL planner to beat IL and rule-based SOTAs** on this challenging large-scale benchmark
+- **Reactive setting**: CarPlanner scores 91.10 CLS-R, slightly below PDM-Closed (91.64), attributed to training exclusively in non-reactive settings
+- **Consistency is critical**: The consistent auto-regressive framework significantly outperforms vanilla auto-regressive RL in closed-loop performance, confirming that mode conditioning prevents temporal drift
+- **Invariant-View Module impact**: Coordinate transformation alone boosts CLS from 90.78 to 94.07 and progress (S-PR) from 91.37 to 95.06
+- **Reward design**: Using displacement error alone leads to near-static trajectories; combining with collision and drivable-area rewards raises S-CR from 97.49 to 99.22 and S-Area from 96.91 to 99.22
+- **Training efficiency**: Model-based approach achieves two orders of magnitude higher samples/second than model-free RL baselines (e.g., ScenarioNet)
 - The model handles long-tail scenarios (aggressive cut-ins, jaywalkers) better than IL methods, likely because RL explores and learns from failure states
 
 ## Limitations & Open Questions

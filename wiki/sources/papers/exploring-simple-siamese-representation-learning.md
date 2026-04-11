@@ -7,6 +7,7 @@ year: "2021"
 venue: "CVPR 2021"
 citations: 6444
 arxiv_id: "2011.10566"
+paper-faithfullness: audited-solid
 ---
 
 # Exploring Simple Siamese Representation Learning

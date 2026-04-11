@@ -14,6 +14,7 @@ tags:
   - depth-estimation
 citations: 18
 arxiv_id: "2504.01957"
+paper-faithfullness: audited-solid
 ---
 
 # GaussianLSS: Toward Real-world BEV Perception with Depth Uncertainty via Gaussian Splatting
@@ -101,12 +102,12 @@ A soft depth range `[mu - k*sigma, mu + k*sigma]` adapts to estimated uncertaint
 | Method | Type | Vehicle IoU | Pedestrian IoU | FPS | Memory (GiB) |
 |---|---|---|---|---|---|
 | LSS | 2D unproj | 32.1 | 14.9 | 71.5 | 0.30 |
-| SimpleBEV | 2D unproj | 36.0 | 16.3 | 58.8 | 0.38 |
-| BEVFormer | 3D proj | 36.2 | 17.4 | 15.6 | 0.62 |
-| PointBEV | 3D proj | **38.7** | **19.1** | 32.0 | 1.26 |
+| SimpleBEV | 2D unproj | 36.0 | 16.3 | 37.1 | 3.31 |
+| BEVFormer | 3D proj | 36.2 | 17.4 | 34.7 | 0.47 |
+| PointBEV | 3D proj | **38.7** | **18.5** | 32.0 | 1.26 |
 | **GaussianLSS** | 2D unproj | 38.3 | 18.0 | **80.2** | **0.33** |
 
-GaussianLSS outperforms all 2D unprojection methods and comes within 0.4% IoU of PointBEV for vehicles while being 2.5x faster and using 3.8x less memory. It particularly excels at long-range objects (beyond 30m), where depth uncertainty is naturally higher and explicit uncertainty modeling provides 1.3% IoU improvement over methods using fixed spatial extents.
+GaussianLSS outperforms all 2D unprojection methods and comes within 0.4% IoU of PointBEV for vehicles (38.3% vs 38.7%) while being 2.5x faster and using 3.8x less memory. For pedestrian segmentation, it achieves 18.0% IoU, trailing PointBEV (18.5%) by only 0.5%. It particularly excels at long-range objects (beyond 30m), where depth uncertainty is naturally higher and explicit uncertainty modeling provides 1.3% IoU improvement over methods using fixed spatial extents.
 
 ## Limitations & Open Questions
 

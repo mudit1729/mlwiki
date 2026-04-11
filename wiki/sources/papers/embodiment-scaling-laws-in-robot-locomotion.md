@@ -13,6 +13,7 @@ tags:
   - cross-embodiment
 citations: 10
 arxiv_id: "2505.05753"
+paper-faithfullness: audited-solid
 ---
 
 # Towards Embodiment Scaling Laws in Robot Locomotion
@@ -23,11 +24,11 @@ arxiv_id: "2505.05753"
 
 This paper investigates whether increasing robot diversity during training improves generalization to unseen robots, analogous to how data scaling improves language and vision models. While deep learning has established clear scaling laws in NLP (Chinchilla, Kaplan) and vision, robot embodiment has remained largely unexplored as a scaling axis.
 
-Using GENBOT-1K -- a dataset of nearly 1,000 procedurally generated robots spanning humanoids, quadrupeds, and hexapods with topological, geometric, and kinematic variations -- the authors train a unified control architecture and measure generalization to held-out embodiments. The results provide the first empirical evidence for embodiment scaling laws: training on more diverse morphologies produces power-law improvements in generalization to unseen robots. An extended URMA (Universal Robot Morphology Architecture) with multi-head attention handles variable input/output spaces and embodiment descriptors. The trained policy achieves zero-shot sim-to-real transfer to physical Unitree Go2 and H1 robots.
+Using GENBOT-1K -- a dataset of nearly 1,000 procedurally generated robots spanning humanoids, quadrupeds, and hexapods with topological, geometric, and kinematic variations -- the authors train a unified control architecture and measure generalization to held-out embodiments. The results provide the first empirical evidence for embodiment scaling laws: training on more diverse morphologies produces consistent positive scaling trends in generalization to unseen robots. An extended URMA (Universal Robot Morphology Architecture) with multi-head attention handles variable input/output spaces and embodiment descriptors. The trained policy achieves zero-shot sim-to-real transfer to physical Unitree Go2 and H1 robots.
 
 ## Key Contributions
 
-- **Embodiment scaling hypothesis validated**: First empirical demonstration that training on diverse morphologies follows power-law scaling for generalization to unseen robots
+- **Embodiment scaling hypothesis validated**: First empirical demonstration that training on diverse morphologies yields consistent positive scaling trends for generalization to unseen robots
 - **GENBOT-1K dataset**: ~1,000 procedurally generated embodiments with topological, geometric, and kinematic variations across three robot classes (348 humanoids, 332 quadrupeds, 332 hexapods)
 - **Extended URMA architecture**: Multi-head attention encoder processing variable-length joint observations with embodiment descriptors, enabling a single policy to control morphologically diverse robots
 - **Two-stage training pipeline**: Expert policy training via PPO (2 trillion simulation steps) followed by behavior cloning distillation (2 billion samples)
@@ -105,7 +106,7 @@ Using GENBOT-1K -- a dataset of nearly 1,000 procedurally generated robots spann
 | Cross-class generalization | 2-5x higher reward vs. single-class policies |
 | GENBOT-1K split | 80% train / 20% test across all embodiments |
 
-- **Scaling curves**: Humanoid performance scales approximately linearly with number of training embodiments (no saturation observed); quadrupeds and hexapods show diminishing returns around 100 within-class embodiments
+- **Scaling curves**: Humanoid performance scales consistently with number of training embodiments (no saturation observed); quadrupeds and hexapods show diminishing returns around 100 within-class embodiments
 - **Cross-class benefit**: Training across all three morphology classes yields 2-5x higher average reward on held-out embodiments compared to single-class training
 - **Real-world transfer**: Unitree Go2 achieves stable walking across grass, cobblestone, and gravel; Unitree H1 walks on flat surfaces -- all zero-shot from simulation
 - **Kinematic adaptation**: Policy learns stable limping gaits when robot has restricted knee range of motion, demonstrating morphological robustness
@@ -115,7 +116,7 @@ Using GENBOT-1K -- a dataset of nearly 1,000 procedurally generated robots spann
 ## Limitations
 
 - Locomotion only -- no manipulation, navigation, or driving tasks; unclear if embodiment scaling extends to contact-rich or dexterous tasks
-- Power-law scaling is observed but the exponent and constants are not precisely characterized; the "Chinchilla" of embodiment scaling remains unknown
+- Positive scaling trends are observed but their precise functional form and constants are not fully characterized; the "Chinchilla" of embodiment scaling remains unknown
 - Procedurally generated robots, while diverse, may not capture the full complexity of real-world robot designs
 - Distillation from per-embodiment experts to a universal policy may lose specialist performance; direct multi-embodiment RL could yield different scaling behavior
 - Real-world evaluation limited to two Unitree robots; broader hardware validation needed

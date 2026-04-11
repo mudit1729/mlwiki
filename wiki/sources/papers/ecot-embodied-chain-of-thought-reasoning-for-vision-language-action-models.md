@@ -1,9 +1,9 @@
 ---
-title: "ECoT: Embodied Chain-of-Thought Reasoning for Vision-Language-Action Models"
+title: "Robotic Control via Embodied Chain-of-Thought Reasoning"
 type: source-summary
 status: complete
 updated: 2026-04-05
-year: 2025
+year: 2024
 venue: arXiv
 tags:
   - paper
@@ -13,15 +13,16 @@ tags:
   - reasoning
 citations: ~40
 arxiv_id: "2407.08693"
+paper-faithfullness: audited-solid
 ---
 
-# ECoT: Embodied Chain-of-Thought Reasoning for Vision-Language-Action Models
+# Robotic Control via Embodied Chain-of-Thought Reasoning
 
 [Read on arXiv](https://arxiv.org/abs/2407.08693)
 
 ## Overview
 
-ECoT (UC Berkeley / Stanford, 2025) introduces Embodied Chain-of-Thought reasoning for Vision-Language-Action (VLA) models, demonstrating that generating explicit intermediate reasoning steps before predicting robot actions significantly improves generalization. The key idea: before outputting motor commands, the VLA model autoregressively generates a structured reasoning chain with eight components -- TASK, PLAN, SUBTASK, SUBTASK REASONING, MOVE, MOVE REASONING, GRIPPER POS, and VISIBLE OBJECTS -- forcing the model to explicitly identify objects, understand spatial relationships, and ground its plans in visual observations. Only after this reasoning are action tokens predicted.
+ECoT (UC Berkeley / Stanford / University of Warsaw, 2024) introduces Embodied Chain-of-Thought reasoning for Vision-Language-Action (VLA) models, demonstrating that generating explicit intermediate reasoning steps before predicting robot actions significantly improves generalization. The key idea: before outputting motor commands, the VLA model autoregressively generates a structured reasoning chain with eight components -- TASK, PLAN, SUBTASK, SUBTASK REASONING, MOVE, MOVE REASONING, GRIPPER POS, and VISIBLE OBJECTS -- forcing the model to explicitly identify objects, understand spatial relationships, and ground its plans in visual observations. Only after this reasoning are action tokens predicted.
 
 This approach draws directly from Chain-of-Thought prompting in language models, adapting it to the embodied domain. Reasoning chains are generated automatically from Bridge v2 data (2.5M+ transitions) using a scalable five-step pipeline (Prismatic-7B, Grounding DINO, OWLv2+SAM+RANSAC, Gemini 1.0). Applied to OpenVLA (SigLIP + DinoV2 visual encoders, Llama 2 7B backbone), ECoT achieves a +28% absolute improvement in success rate on generalization tasks and outperforms RT-2-X, Google DeepMind's 55B parameter model trained on 10x more diverse data. A single human natural language correction to the reasoning chain increases success rates by 48% on difficult tasks.
 

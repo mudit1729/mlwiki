@@ -14,6 +14,7 @@ year: "2023"
 venue: "arXiv"
 citations: ~60
 arxiv_id: "2309.10228"
+paper-faithfullness: audited-solid
 ---
 
 # Drive as You Speak: Enabling Human-Like Interaction with Large Language Models in Autonomous Vehicles

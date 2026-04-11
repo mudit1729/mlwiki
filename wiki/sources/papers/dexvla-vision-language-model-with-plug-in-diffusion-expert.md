@@ -1,10 +1,10 @@
 ---
-title: "DexVLA: Vision-Language Model with Plug-In Diffusion Expert"
+title: "DexVLA: Vision-Language Model with Plug-In Diffusion Expert for General Robot Control"
 type: source-summary
 status: active
 updated: 2026-04-05
 year: 2025
-venue: CoRL 2025
+venue: arXiv
 tags:
   - paper
   - robotics
@@ -14,6 +14,7 @@ tags:
   - bimanual
 citations: 140
 arxiv_id: "2502.05855"
+paper-faithfullness: audited-solid
 ---
 
 # DexVLA: Vision-Language Model with Plug-In Diffusion Expert for General Robot Control
@@ -22,7 +23,7 @@ arxiv_id: "2502.05855"
 
 ## Overview
 
-DexVLA introduces a paradigm shift in VLA architecture by scaling the action generation component to 1 billion parameters using a diffusion-based expert, rather than focusing solely on vision-language scaling as in prior work. The framework integrates a 2B parameter Qwen2-VL vision-language model with a 1B parameter Scale Diffusion Policy (ScaleDP) action expert, trained through a three-stage embodied curriculum learning strategy. DexVLA demonstrates superior performance on complex dexterous manipulation tasks -- achieving 0.92 success on shirt folding where all baselines score near zero -- across four distinct robot configurations including bimanual setups and a 12-DoF dexterous hand.
+DexVLA introduces a paradigm shift in VLA architecture by scaling the action generation component to 1 billion parameters using a diffusion-based expert, rather than focusing solely on vision-language scaling as in prior work. The framework integrates a 2B parameter Qwen2-VL vision-language model with a 1B parameter Scale Diffusion Policy (ScaleDP) action expert, trained through a three-stage embodied curriculum learning strategy. DexVLA demonstrates superior performance on complex dexterous manipulation tasks -- achieving 0.92 success on shirt folding where all baselines (OpenVLA, Octo, Diffusion Policy) score near zero after Stage 2 training alone -- across four distinct robot configurations including bimanual setups and a 12-DoF dexterous hand.
 
 The key insight is that previous VLAs underinvest in action generation quality: they pair massive VLMs (billions of parameters for understanding) with tiny action heads (millions of parameters for control). DexVLA argues that scaling the action expert is equally important, especially for dexterous tasks requiring precise, high-dimensional continuous control.
 
@@ -100,17 +101,18 @@ DexVLA's architecture has two main components connected via FiLM (Feature-wise L
 
 ![Performance across robot configurations and tasks](https://paper-assets.alphaxiv.org/figures/2502.05855v3/x5.png)
 
-| Task | Robot | DexVLA | pi0 | Other Baselines |
-|------|-------|--------|-----|-----------------|
-| Shirt folding | Bimanual UR5e | 0.92 | ~0 | ~0 |
+| Task | Robot | DexVLA | pi0 | Other Baselines (OpenVLA, Octo, DP) |
+|------|-------|--------|-----|--------------------------------------|
+| Shirt folding | Bimanual UR5e | 0.92 | N/A | ~0 |
 | Laundry folding | Bimanual UR5e | 0.40 | 0.20 | <0.20 |
+| Table bussing (hard) | Bimanual UR5e | 0.70 | 0.63 | - |
 | Bin picking | Franka + gripper | High | - | Lower |
 | Bin picking (dex hand) | Franka + 12-DoF hand | Strong | - | - |
 | Drink pouring | Bimanual AgileX | 0.90 | - | - |
 | Packing | Bimanual AgileX | 0.90 | - | - |
 | Cross-embodiment transfer | Gripper -> Dex hand | 60% zero-shot | - | - |
 
-- **Shirt folding**: 0.92 success rate where all baselines (including pi0) score near zero -- the most striking result, demonstrating the value of a scaled diffusion expert for deformable object manipulation
+- **Shirt folding**: 0.92 success rate where all baselines (OpenVLA, Octo, Diffusion Policy) score near zero -- pi0 is not a baseline for this task; the shirt folding result comes from Stage 2 training without task-specific adaptation
 - **Data efficiency**: Achieves 0.90 average on novel embodiment tasks (drink pouring, packing) with fewer than 100 demonstrations
 - **Ablation -- Stage 1 critical**: Removing cross-embodiment pre-training causes complete learning failure, confirming the curriculum is essential
 - **Ablation -- expert scale matters**: 1B expert achieved 0.92 on shirt folding vs. 0.17 (93M) and 0.63 (410M)

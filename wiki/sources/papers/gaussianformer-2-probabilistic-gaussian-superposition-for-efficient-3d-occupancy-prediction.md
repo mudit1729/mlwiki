@@ -3,7 +3,7 @@ title: "GaussianFormer-2: Probabilistic Gaussian Superposition for Efficient 3D 
 type: source-summary
 status: active
 updated: 2026-04-05
-year: 2025
+year: 2024
 venue: arXiv
 tags:
   - paper
@@ -13,6 +13,7 @@ tags:
   - gaussian-representation
 citations: 57
 arxiv_id: "2412.04384"
+paper-faithfullness: audited-solid
 ---
 
 # GaussianFormer-2: Probabilistic Gaussian Superposition for Efficient 3D Occupancy Prediction
@@ -23,7 +24,7 @@ arxiv_id: "2412.04384"
 
 GaussianFormer-2 addresses 3D semantic occupancy prediction for vision-centric autonomous driving by rethinking how 3D Gaussians represent occupied space. The original GaussianFormer used 144,000 Gaussians with additive superposition, leading to excessive overlap and redundancy. GaussianFormer-2 introduces a probabilistic interpretation: each Gaussian represents a probability distribution of its neighborhood being occupied, and Gaussians combine via probabilistic multiplication rather than addition.
 
-This probabilistic formulation naturally prevents unnecessary overlapping -- the overlap ratio drops from 11.0% to 3.9% -- enabling the model to achieve superior performance with only 8.9% of the Gaussians used by its predecessor (25,600 vs 144,000). A distribution-based initialization module learns pixel-aligned occupancy distributions instead of surface depths, and a Gaussian mixture model handles semantic predictions with proper normalization. The result is 75%+ memory savings while improving mIoU on both nuScenes (+1.72%) and KITTI-360 (+7.6%).
+This probabilistic formulation naturally prevents unnecessary overlapping -- the overlap ratio drops from 11.0% to 3.9% -- enabling the model to achieve superior performance with only 8.9% of the Gaussians used by its predecessor (25,600 vs 144,000). A distribution-based initialization module learns pixel-aligned occupancy distributions instead of surface depths, and a Gaussian mixture model handles semantic predictions with proper normalization. The result is 75%+ memory savings while improving mIoU on both nuScenes (+1.72pp absolute) and KITTI-360 (+0.98pp absolute, ~7.6% relative).
 
 ## Key Contributions
 
@@ -99,8 +100,8 @@ The key mathematical insight is that multiplicative combination of Gaussian prob
 
 | Metric | GaussianFormer-2 | GaussianFormer | Change |
 |--------|-----------------|----------------|--------|
-| nuScenes mIoU | 20.82% | 19.10% | +1.72% |
-| KITTI-360 mIoU | 13.90% | 12.92% | +7.6% |
+| nuScenes mIoU | 20.82% | 19.10% | +1.72pp |
+| KITTI-360 mIoU | 13.90% | 12.92% | +0.98pp |
 | Gaussians used | 25,600 | 144,000 | 8.9% |
 | Memory | 3,063 MB | 6,229 MB | -51% |
 | Correct placement | 28.85% | 16.41% | +12.44pp |

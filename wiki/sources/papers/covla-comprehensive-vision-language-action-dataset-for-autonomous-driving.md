@@ -7,6 +7,7 @@ year: "2024"
 venue: "WACV 2025 Oral"
 citations: 30
 arxiv_id: "2408.10845"
+paper-faithfullness: audited-solid
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2408.10845)**
@@ -15,7 +16,7 @@ arxiv_id: "2408.10845"
 
 Autonomous driving systems face the "long tail" problem -- handling countless rare and complex driving scenarios beyond common situations. While traditional rule-based pipelines and even recent end-to-end methods rely on fixed perception-planning decompositions, Vision-Language-Action (VLA) models offer a path toward more human-like reasoning. However, a critical bottleneck has been the lack of large-scale datasets that jointly provide visual data, detailed language descriptions, and fine-grained driving actions. CoVLA directly addresses this by constructing the first large-scale dataset that comprehensively integrates vision, language, and action annotations for autonomous driving.
 
-The authors (from Turing Inc., Japan) collected over 1,000 hours of raw driving data in Tokyo using instrumented vehicles equipped with cameras, CAN bus, GNSS, and IMU sensors. From this raw data, they produced 10,000 diverse 30-second scenes totaling approximately 6,000,000 annotated frames. Each frame is annotated with future trajectory predictions (from Kalman-filtered GNSS/IMU), traffic light states (from OpenLenda-s detection), and natural language captions (from a two-stage pipeline combining rule-based descriptions with VideoLLaMA2 VLM enhancement). A key design choice is the weighted inverse-probability sampling strategy based on steering angle, acceleration, and turn signal status, which significantly improves representation of complex and rare maneuvers.
+The authors (from Turing Inc., Japan) collected over 1,000 hours of raw driving data in and around Tokyo, Japan using instrumented vehicles equipped with cameras, CAN bus, GNSS, and IMU sensors. From this raw data, they produced 10,000 diverse 30-second scenes totaling approximately 6,000,000 annotated frames. Each frame is annotated with future trajectory predictions (from Kalman-filtered GNSS/IMU), traffic light states (from OpenLenda-s detection), and natural language captions (from a two-stage pipeline combining rule-based descriptions with VideoLLaMA2 VLM enhancement). A key design choice is the weighted inverse-probability sampling strategy based on steering angle, acceleration, and turn signal status, which significantly improves representation of complex and rare maneuvers.
 
 As a baseline, the paper introduces **CoVLA-Agent**, a VLA model integrating a CLIP ViT-L vision encoder, Llama-2 language model, MLP-based speed embedding, and specialized trajectory prediction heads. With ground-truth captions, CoVLA-Agent achieves 0.814m ADE and 1.655m FDE; with predicted captions, 0.955m ADE and 2.239m FDE -- demonstrating that caption quality significantly impacts trajectory prediction accuracy. The paper was accepted as an oral presentation at WACV 2025.
 
@@ -102,7 +103,7 @@ Training uses a joint loss combining caption generation (language modeling cross
 | Turn signal activation rate | 16.11% |
 | Traffic light presence rate | 22.90% |
 | Raw data collected | 1,000+ hours |
-| Collection location | Tokyo, Japan |
+| Collection location | In and around Tokyo, Japan |
 
 ### Trajectory Prediction Performance
 
@@ -122,7 +123,7 @@ Motion direction and acceleration descriptions proved particularly challenging f
 
 ## Limitations & Open Questions
 
-- **Geographic bias:** All data collected in Tokyo -- generalization to other cities, countries, and driving cultures is untested
+- **Geographic bias:** All data collected in and around Tokyo -- generalization to other cities, countries, and driving cultures is untested
 - **Single front camera:** Only front-view video is used, limiting perception of side and rear traffic
 - **VLM captioning quality:** Automated captions contain systematic errors (hallucination, spatial confusion), and the 35% FDE gap between GT and predicted captions shows this is a bottleneck
 - **Open-loop evaluation only:** CoVLA-Agent is evaluated in open-loop; closed-loop driving performance and sim-to-real transfer are not addressed

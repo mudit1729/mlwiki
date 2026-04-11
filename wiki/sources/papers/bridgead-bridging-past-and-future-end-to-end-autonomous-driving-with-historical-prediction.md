@@ -12,8 +12,9 @@ tags:
   - prediction
   - planning
   - temporal-modeling
-citations: 31
+citations: 22
 arxiv_id: "2503.14182"
+paper-faithfullness: audited-solid
 ---
 
 # BridgeAD: Bridging Past and Future End-to-End Autonomous Driving with Historical Prediction

@@ -7,6 +7,7 @@ year: "2024"
 venue: "CVPR 2024"
 citations: 80
 arxiv_id: "2312.01696"
+paper-faithfullness: audited-solid
 ---
 
 📄 [arXiv:2312.01696](https://arxiv.org/abs/2312.01696)
@@ -19,8 +20,8 @@ The work comes from Fudan University and NVIDIA Research, and demonstrates stron
 
 ## Key Contributions
 
-1. **CRF-modulated depth estimation**: Introduces conditional random field (CRF) potentials into LSS-style depth prediction, capturing pairwise relationships between neighboring pixels for geometrically consistent depth maps
-2. **Long-term temporal aggregation**: Replaces sliding-window multi-frame fusion with a recurrent mechanism that efficiently aggregates temporal information across arbitrarily long sequences
+1. **CRF-modulated depth estimation**: Introduces conditional random field (CRF) potentials into LSS-style depth prediction, enforcing object-level consistencies for geometrically consistent depth maps
+2. **Long-term temporal aggregation**: Replaces sliding-window multi-frame fusion with a module using extended receptive fields that efficiently aggregates temporal information across long sequences
 3. **Two-stage object decoder**: Combines perspective-based techniques with CRF-modulated depth embedding in a two-stage detection head, going beyond simple CenterPoint-style heatmap prediction
 4. **Scalable dense BEV pipeline**: Demonstrates that dense BEV frameworks scale effectively with stronger backbones, achieving SOTA results with ViT-Adapter-L
 5. **Comprehensive benchmarking**: Thorough comparison against both dense (BEVDet, BEVDepth, SOLOFusion) and sparse (DETR3D, PETR, StreamPETR) paradigms
@@ -58,12 +59,12 @@ The work comes from Fudan University and NVIDIA Research, and demonstrates stron
 │                 │                                          │
 │                 ▼                                          │
 │  ┌──────────────────────────────┐                          │
-│  │  Recurrent Temporal Agg.     │                          │
+│  │  Long-term Temporal Agg.     │                          │
 │  │  ┌────────┐   ┌───────────┐  │                          │
-│  │  │Hidden  │──►│GRU-style  │  │  Constant memory,        │
-│  │  │State   │   │Gate Update│  │  arbitrary sequence       │
-│  │  │(t-1)   │   └─────┬─────┘  │  length                  │
-│  │  └────────┘         │        │                          │
+│  │  │Past    │──►│Extended   │  │  Long-range temporal     │
+│  │  │Frames  │   │Receptive  │  │  aggregation beyond      │
+│  │  │        │   │Field Agg. │  │  sliding windows         │
+│  │  └────────┘   └─────┬─────┘  │                          │
 │  └─────────────────────┼────────┘                          │
 │                        ▼                                   │
 │  ┌──────────────────────────────┐                          │
@@ -76,9 +77,9 @@ The work comes from Fudan University and NVIDIA Research, and demonstrates stron
 
 BEVNeXt follows the standard dense BEV pipeline (image backbone -> depth estimation -> BEV feature construction -> detection head) but with two critical upgrades:
 
-**CRF-Modulated Depth**: Standard LSS predicts per-pixel depth distributions independently. BEVNeXt adds a CRF layer that models pairwise potentials between neighboring pixels, encouraging spatially smooth and geometrically consistent depth. The CRF uses learned compatibility functions conditioned on image features, refined through mean-field inference iterations.
+**CRF-Modulated Depth**: Standard LSS predicts per-pixel depth distributions independently. BEVNeXt adds a CRF layer that enforces object-level consistencies, encouraging spatially coherent and geometrically accurate depth. The CRF uses learned compatibility functions conditioned on image features, refined through mean-field inference iterations.
 
-**Recurrent Temporal Aggregation**: Instead of concatenating BEV features from a fixed window of past frames (typical 3-8 frames), BEVNeXt maintains a hidden state that is updated recurrently. This allows the model to aggregate information from the entire driving sequence while keeping memory costs constant. The recurrence uses a gated update mechanism similar to GRU/LSTM cells but operating on BEV feature maps.
+**Long-Term Temporal Aggregation**: Instead of concatenating BEV features from a fixed window of past frames (typical 3-8 frames), BEVNeXt uses a temporal aggregation module with extended receptive fields. This allows the model to aggregate information across longer temporal sequences compared to sliding-window approaches.
 
 The detection head is a two-stage object decoder that combines perspective-based techniques with CRF-modulated depth embedding, rather than a simple single-stage heatmap head.
 
