@@ -8,4 +8,5 @@ raw/papers/*
 !raw/papers/.gitkeep
 raw/assets/*
 !raw/assets/.gitkeep
+.grounding/
 

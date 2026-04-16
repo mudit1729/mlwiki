@@ -95,7 +95,7 @@ GaussianBeV achieves state-of-the-art performance on nuScenes BEV semantic segme
 
 | Method | Vehicle IoU | Pedestrian IoU | Lane Boundary IoU | FPS |
 |--------|------------|----------------|-------------------|-----|
-| LSS | 32.1 | 14.9 | -- | 71.5 |
+| LSS | 32.1 | 15.0 | -- | 71.5 |
 | BEVPoolv2 | -- | -- | -- | -- |
 | MatrixVT | -- | -- | 44.8 | -- |
 | PointBeV | 44.0 | 18.5 | -- | -- |

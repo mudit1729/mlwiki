@@ -16,7 +16,7 @@ paper-faithfullness: audited-solid
 
 ## Overview
 
-Dense 3D occupancy prediction from multi-view cameras has become a key perception task for autonomous driving, but most methods process the full voxel volume -- including the vast majority of voxels that are empty. SparseOcc rethinks this by operating exclusively on non-empty (occupied) voxels in a sparse latent space, dramatically reducing computational cost while actually improving prediction quality. The core observation is that real-world driving scenes are inherently sparse: typically only 5-15% of voxels in the perception volume are occupied, yet dense methods expend equal computation on empty and occupied regions.
+Dense 3D occupancy prediction from multi-view cameras has become a key perception task for autonomous driving, but most methods process the full voxel volume -- including the vast majority of voxels that are empty. SparseOcc rethinks this by operating exclusively on non-empty (occupied) voxels in a sparse latent space, dramatically reducing computational cost while actually improving prediction quality. The core observation is that real-world driving scenes are inherently sparse: typically only ~20% of voxels in the perception volume are occupied after LSS lifting (approximately 80% are empty), yet dense methods expend equal computation on empty and occupied regions.
 
 The method introduces three novel components that work together: (1) a **Sparse Latent Diffuser** that propagates features among sparse voxels using decomposed orthogonal sparse convolutions along the X, Y, and Z axes, avoiding full 3D convolutions; (2) a **Sparse Feature Pyramid** that constructs multi-scale representations from the sparse voxels, combining coarse global context with fine-grained local detail; and (3) a **Sparse Transformer Head** that performs contextual reasoning on sparse data through self-attention among non-empty voxels. The sparse voxels are stored in COO (coordinate) format throughout, enabling memory-efficient processing.
 
@@ -25,7 +25,7 @@ On the nuScenes-Occupancy benchmark, SparseOcc achieves a **74.9% reduction in F
 ## Key Contributions
 
 - **Sparse latent representation for occupancy:** First method to process only non-empty voxels throughout the entire occupancy prediction pipeline, using COO-format sparse tensors for memory efficiency
-- **Sparse Latent Diffuser:** Two-part module: a Sparse Completion Block that propagates features to adjacent empty regions via sequential orthogonal convolutions (k×k×1, k×1×k, 1×k×k), and a Contextual Aggregation Block using decomposed sparse convolutions that reduce parameter count from O(k³) to O(3k)
+- **Sparse Latent Diffuser:** Two-part module: a Sparse Completion Block that propagates features to adjacent empty regions via sequential orthogonal convolutions (k×k×1, k×1×k, 1×k×k), and a Contextual Aggregation Block using decomposed sparse convolutions that reduce parameter count from O(k³) to O(3k²) or O(4k²)
 - **Multi-scale Sparse Feature Pyramid:** Constructs coarse-to-fine sparse feature hierarchies, combining global scene context (from coarser levels) with local geometric detail (from finer levels)
 - **Sparse Transformer Head:** Self-attention restricted to non-empty voxels for contextual reasoning, avoiding the quadratic cost of attending over the full volume
 - **Simultaneous efficiency and accuracy gains:** 74.9% FLOP reduction with improved mIoU (12.8% to 14.1%), showing that sparsity is a better inductive bias, not just a compression trick
@@ -46,7 +46,7 @@ On the nuScenes-Occupancy benchmark, SparseOcc achieves a **74.9% reduction in F
            ▼
   ┌──────────────────────────────────────────────┐
   │  Mask Predictor: identify occupied voxels    │
-  │  Retain ~5-15% ──► COO sparse tensor         │
+  │  Retain ~20% ──► COO sparse tensor            │
   └────────┬─────────────────────────────────────┘
            │ sparse voxels (coords, features)
            ▼
@@ -78,13 +78,13 @@ On the nuScenes-Occupancy benchmark, SparseOcc achieves a **74.9% reduction in F
 
 The SparseOcc pipeline processes multi-view camera images through three stages:
 
-**1. Initial Sparse Representation:** Multi-view images are processed through a standard 2D backbone (e.g., ResNet-50) and view transformer to produce an initial 3D feature volume. A mask prediction module identifies which voxels are likely occupied, and only these voxels are retained in COO format -- a sparse tensor storing `(coordinates, features)` pairs for non-empty locations only. This initial sparsification step is critical: it discards the ~85-95% of voxels that are empty before any expensive 3D processing begins.
+**1. Initial Sparse Representation:** Multi-view images are processed through a standard 2D backbone (e.g., ResNet-50) and view transformer to produce an initial 3D feature volume. A mask prediction module identifies which voxels are likely occupied, and only these voxels are retained in COO format -- a sparse tensor storing `(coordinates, features)` pairs for non-empty locations only. This initial sparsification step is critical: it discards the ~80% of voxels that are empty before any expensive 3D processing begins.
 
-**2. Sparse Latent Diffuser:** The sparse voxel features are refined through two sub-blocks. The **Sparse Completion Block** propagates features into adjacent empty voxels via sequential orthogonal convolutions (k×k×1, then k×1×k, then 1×k×k), extending the sparse representation to neighboring space. The **Contextual Aggregation Block** then applies decomposed sparse convolutions across all non-empty voxels, reducing the parameter count from O(k³) to O(3k) compared to full 3D convolutions. Together, these blocks enable efficient feature propagation while avoiding the cost of densifying the representation.
+**2. Sparse Latent Diffuser:** The sparse voxel features are refined through two sub-blocks. The **Sparse Completion Block** propagates features into adjacent empty voxels via sequential orthogonal convolutions (k×k×1, then k×1×k, then 1×k×k), extending the sparse representation to neighboring space. The **Contextual Aggregation Block** then applies decomposed sparse convolutions across all non-empty voxels, reducing the parameter count from O(k³) to O(3k²) or O(4k²) compared to full 3D convolutions. Together, these blocks enable efficient feature propagation while avoiding the cost of densifying the representation.
 
 **3. Sparse Feature Pyramid:** To capture multi-scale context, the sparse voxels are organized into a feature pyramid with multiple resolution levels. At coarser levels, sparse voxels are grouped and pooled to provide global scene understanding (e.g., road layout, building outlines). At finer levels, the original sparse voxels retain detailed local geometry. Features from different scales are fused through top-down and lateral connections, all operating in sparse format.
 
-**4. Sparse Transformer Head:** The final prediction head applies self-attention among the sparse voxels. Because attention is restricted to the ~5-15% of voxels that are non-empty, the quadratic cost of self-attention is dramatically reduced compared to attending over the full dense volume. This enables rich contextual reasoning -- e.g., recognizing that a set of sparse voxels forms a vehicle rather than isolated noise -- while remaining computationally feasible.
+**4. Sparse Transformer Head:** The final prediction head applies self-attention among the sparse voxels. Because attention is restricted to the ~20% of voxels that are non-empty, the quadratic cost of self-attention is dramatically reduced compared to attending over the full dense volume. This enables rich contextual reasoning -- e.g., recognizing that a set of sparse voxels forms a vehicle rather than isolated noise -- while remaining computationally feasible.
 
 ![Qualitative comparison with dense methods](https://paper-assets.alphaxiv.org/figures/2404.09502/img-3.jpeg)
 

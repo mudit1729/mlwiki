@@ -106,9 +106,9 @@ BridgeAD processes multi-view camera images through an image encoder, then feeds
 
 | Method | L2 Error (m) | Collision Rate (%) |
 |---|---|---|
-| UniAD | 0.73 | 0.13 |
-| VAD | 0.67 | -- |
-| SparseDrive | 0.63 | 0.10 |
+| UniAD | 0.73 | 0.61 |
+| VAD | 0.72 | 0.21 |
+| SparseDrive | 0.61 | 0.10 |
 | **BridgeAD-S** | **0.59** | **0.09** |
 | **BridgeAD-B** | **0.58** | **0.08** |
 

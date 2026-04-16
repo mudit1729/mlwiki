@@ -99,7 +99,7 @@ SimSiam achieves competitive performance across ImageNet linear evaluation, semi
 
 | Method | Negative Pairs | Momentum Encoder | Large Batch | ImageNet Top-1 (100ep) | ImageNet Top-1 (200ep) |
 |--------|:-:|:-:|:-:|:-:|:-:|
-| **SimSiam** | No | No | No | **68.1** | **70.8** |
+| **SimSiam** | No | No | No | **68.1** | **70.0** |
 | SimCLR | Yes | No | Yes (4096) | 66.5 | 68.3 |
 | MoCo v2 | Yes | Yes | No | 67.4 | 69.9 |
 | BYOL | No | Yes | Yes (4096) | 66.5 | 70.6 |

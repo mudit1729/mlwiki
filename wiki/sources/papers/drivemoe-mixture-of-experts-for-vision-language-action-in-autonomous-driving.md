@@ -101,19 +101,19 @@ The Action MoE incorporates multiple specialized expert networks within the acti
 
 | Metric | DriveMoE | Drive-pi-0 Baseline | Delta |
 |--------|----------|---------------------|-------|
-| Driving Score | 84.2% | 78.9% | +5.3% |
-| Success Rate | 87.3% | 82.1% | +5.2% |
+| Driving Score | 74.22 | 60.45 | +13.77 |
+| Success Rate | 48.64% | 30.00% | +18.64% |
 
 | Ablation | Driving Score Impact |
 |----------|---------------------|
-| Remove Vision MoE | -3.2% |
-| Remove Action MoE | -4.1% |
-| Optimal expert count | 4-6 per module |
+| Remove Vision MoE | -5.54 (DS: 68.68) |
+| Remove Action MoE | -6.91 (DS: 67.31) |
+| Optimal expert count | 6 non-shared experts |
 
-- **Bench2Drive state-of-the-art**: Driving Score 84.2% (vs. baseline Drive-pi-0 at 78.9%), Success Rate 87.3% (vs. 82.1% baseline), with improved performance on challenging maneuvers like emergency braking and aggressive turning
+- **Bench2Drive state-of-the-art**: Driving Score 74.22 (vs. baseline Drive-pi-0 at 60.45), Success Rate 48.64% (vs. 30.00% baseline), with improved performance on challenging maneuvers like emergency braking and aggressive turning
 - Mode averaging eliminated: expert specialization allows each driving skill to be handled by a dedicated expert rather than averaged across a shared parameter set
-- **Vision MoE impact**: Removing Vision MoE led to 3.2% decrease in driving score, demonstrating value of dynamic camera view selection
-- **Action MoE impact**: Eliminating Action MoE resulted in 4.1% drop in performance, confirming importance of skill specialization
+- **Vision MoE impact**: Removing Vision MoE led to DS drop to 68.68 (from 74.22), demonstrating value of dynamic camera view selection
+- **Action MoE impact**: Eliminating Action MoE resulted in DS drop to 67.31 (from 74.22), confirming importance of skill specialization
 - **Router training validated**: Models trained without explicit router supervision showed degraded performance, validating the two-stage training approach
 - **Expert count analysis**: Optimal performance achieved with 4-6 experts per MoE module, with diminishing returns beyond this range due to load balancing issues
 - The dual-level MoE provides complementary benefits -- Vision MoE and Action MoE each contribute independently, with the combination outperforming either alone

@@ -20,7 +20,7 @@ SelfOcc (Huang et al., Tsinghua University, CVPR 2024) introduces the first self
 
 The key insight is to lift 2D image features into explicit 3D representations (BEV or TPV), encode them as Signed Distance Fields (SDFs) via a lightweight MLP decoder, and then use differentiable volume rendering (following the NeuS formulation) to synthesize novel views. The synthesized images serve as the self-supervision signal -- if the 3D representation is accurate, rendered views should match real camera observations. Critically, SelfOcc introduces an MVS-embedded depth learning strategy that samples multiple depth proposals along each camera ray, expanding the receptive field beyond traditional single-depth photometric losses and addressing a core convergence limitation in self-supervised depth learning.
 
-SelfOcc achieves 45.01% geometric IoU on the nuScenes surround-view occupancy benchmark, surpassing supervised methods like MonoScene (6.06%) by a massive margin. On SemanticKITTI monocular occupancy, it sets a new self-supervised state of the art at 21.97% mIoU -- a 58.7% improvement over the previous best (13.84%). This demonstrates that self-supervised methods can not only close the gap with supervised approaches but actually surpass them when the supervision quality of the labeled data is limited.
+SelfOcc achieves 45.01% geometric IoU on the nuScenes surround-view occupancy benchmark, surpassing LiDAR-supervised TPVFormer (17.20% IoU) and outperforming supervised mIoU baselines. On SemanticKITTI monocular occupancy, it sets a new self-supervised state of the art at 21.97% mIoU -- a 58.7% improvement over the previous best (13.84%). This demonstrates that self-supervised methods can not only close the gap with supervised approaches but actually surpass them when the supervision quality of the labeled data is limited.
 
 ## Key Contributions
 
@@ -98,20 +98,20 @@ SelfOcc follows a three-stage pipeline: (1) 2D-to-3D feature lifting, (2) SDF fi
 
 ### nuScenes Surround-View Occupancy (Geometric IoU)
 
-| Method | Supervision | IoU (%) |
-|--------|-------------|---------|
-| MonoScene | 3D supervised | 6.06 |
-| TPVFormer | LiDAR supervised | 17.20 |
-| **SelfOcc (BEV)** | **Self-supervised** | **36.83** |
-| **SelfOcc (TPV)** | **Self-supervised** | **45.01** |
+| Method | Supervision | IoU (%) | mIoU (%) |
+|--------|-------------|---------|----------|
+| MonoScene | 3D supervised | — | 6.06 |
+| TPVFormer | LiDAR supervised | 17.20 | 13.57 |
+| **SelfOcc (BEV)** | **Self-supervised** | **44.33** | 6.76 |
+| **SelfOcc (TPV)** | **Self-supervised** | **45.01** | 9.30 |
 
 ### SemanticKITTI Monocular Occupancy (IoU)
 
 | Method | Supervision | IoU (%) |
 |--------|-------------|---------|
-| MonoScene | 3D supervised | 11.08 |
+| MonoScene | 3D supervised | 13.53 |
 | SceneRF (prev. SS-SOTA) | Self-supervised | 13.84 |
-| **SelfOcc** | **Self-supervised** | **21.97** |
+| **SelfOcc (TPV)** | **Self-supervised** | **21.97** |
 
 The results are striking: SelfOcc's self-supervised approach significantly outperforms earlier supervised methods, primarily because the self-supervised objective leverages the rich photometric signal in video data rather than depending on potentially sparse or noisy LiDAR-derived ground truth. The TPV representation outperforms the BEV representation on nuScenes, indicating that the tri-perspective view captures more fine-grained vertical structure.
 

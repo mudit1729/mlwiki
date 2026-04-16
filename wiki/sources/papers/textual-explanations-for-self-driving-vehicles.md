@@ -30,7 +30,7 @@ BDD-X became the standard benchmark for explainable driving research, directly r
 
 ## Key Contributions
 
-- **BDD-X dataset**: Built on BDD100K with 6,984 video clips (over 77 hours, 26,228 annotations) paired with human-written action descriptions ("car is slowing down") and justifications ("because a pedestrian is crossing"), establishing the standard testbed for explainable driving
+- **BDD-X dataset**: Built on BDD100K with 6,984 video clips (over 77 hours, over 26K annotations) paired with human-written action descriptions ("car is slowing down") and justifications ("because a pedestrian is crossing"), establishing the standard testbed for explainable driving
 - **Dual-model architecture**: Visual attention-based controller (images to steering/acceleration with spatial attention maps) coupled with a video-to-text explanation generator (encoder-decoder with temporal and spatial attention)
 - **Two attention alignment strategies**: Strongly Aligned Attention (SAA) directly reuses the controller's attention map in the explanation generator; Weakly Aligned Attention (WAA) trains a separate attention mechanism in the explainer but constrains it via a KL-divergence loss toward the controller's attention map. WAA achieves the best explanation quality in both automatic metrics and human evaluations.
 - **Introspective vs rationalization distinction**: Formally separates causally-grounded explanations from post-hoc plausible-but-not-causal text generation, a distinction that remains philosophically important in 2025 VLA research

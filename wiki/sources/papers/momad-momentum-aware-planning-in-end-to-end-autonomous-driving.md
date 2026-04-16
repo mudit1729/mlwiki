@@ -86,9 +86,9 @@ MomAD builds upon sparse perception backbones (similar to SparseDrive) with a mo
 
 | Model | L2 Error (m) | Collision (%) | TPC (m) |
 |-------|-------------|--------------|---------|
-| UniAD | 1.03 | 0.31 | -- |
-| VAD | 0.72 | 0.12 | -- |
-| SparseDrive | 0.68 | 0.11 | 0.81 |
+| UniAD | 1.03 | 0.31 | 0.96 |
+| VAD | 0.72 | 0.21 | 0.64 |
+| SparseDrive | 0.61 | 0.08 | 0.57 |
 | **MomAD** | **0.60** | **0.09** | **0.54** |
 
 ### Turning-nuScenes (6-second horizon)

@@ -116,17 +116,17 @@ Toolformer was evaluated zero-shot across multiple benchmarks:
 
 | Task | Benchmark | GPT-J (6.7B) | Toolformer (6.7B) | GPT-3 (175B) |
 |------|-----------|---------------|--------------------|--------------:|
-| Math | ASDiv | 10.0 | **40.4** | 29.6 |
-| Math | SVAMP | 11.0 | **29.4** | 16.7 |
-| Math | MAWPS | 27.9 | **44.0** | -- |
-| QA | Web Questions | 10.2 | **17.1** | 14.0 |
-| QA | Natural Questions | 7.5 | **11.8** | 14.6 |
-| QA | TriviaQA | 11.6 | 48.8 | **64.3** |
-| Factual | LAMA (T-REx) | 33.7 | **53.2** | 52.0 |
-| Factual | LAMA (Google-RE) | 3.1 | **30.2** | 16.3 |
-| Temporal | TempLAMA | 18.1 | **38.1** | 26.2 |
-| Translation | MLQA (en→es) | 14.6 | **19.5** | -- |
-| LM Perplexity | WikiText (ppl) | 12.0 | 11.8 | -- |
+| Math | ASDiv | 7.5 | **40.4** | 14.0 |
+| Math | SVAMP | 5.2 | **29.4** | 10.0 |
+| Math | MAWPS | 9.9 | **44.0** | 19.8 |
+| QA | Web Questions | 18.5 | **26.3** | 29.0 |
+| QA | Natural Questions | 12.8 | **17.7** | 22.6 |
+| QA | TriviaQA | 43.9 | 48.8 | **65.9** |
+| Factual | LAMA (T-REx) | 31.9 | **53.5** | 39.8 |
+| Factual | LAMA (Google-RE) | 4.9 | **11.5** | 7.0 |
+| Temporal | TempLAMA | 13.7 | **16.3** | 15.5 |
+| Translation | MLQA (en→es) | 15.2 | **20.6** | -- |
+| LM Perplexity | WikiText (ppl) | 9.9 | 10.3 | -- |
 
 Key findings:
 - Toolformer outperforms GPT-3 on math tasks despite being 26x smaller

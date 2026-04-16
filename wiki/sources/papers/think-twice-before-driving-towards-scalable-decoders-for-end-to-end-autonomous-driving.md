@@ -118,10 +118,8 @@ The primary evaluation is on the CARLA Town05 Long benchmark under closed-loop d
 
 | Decoder Layers | Driving Score |
 |:-:|:---:|
-| 1 | 59.3 |
-| 2 | 61.5 |
-| 3 | 63.0 |
-| 4 | 64.3 |
+| 0 (TCP-Head baseline) | 59.3 |
+| 1 | 61.6 |
 | 5 | 65.0 |
 
 Key findings:

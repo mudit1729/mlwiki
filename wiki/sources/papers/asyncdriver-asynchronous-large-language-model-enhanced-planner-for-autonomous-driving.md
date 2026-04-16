@@ -87,9 +87,9 @@ The system has three components:
 
 | Method | nuPlan Hard20 Score | vs. Baseline |
 |--------|-------------------|--------------|
-| GameFormer | 62.13 | -- |
+| GameFormer | 62.05 | -- |
 | AsyncDriver | 65.00 | +4.6% |
-| PDM-Hybrid | 64.07 | -- |
+| PDM-Hybrid | 64.05 | -- |
 | AsyncDriver* (w/ PDM scorer) | 67.48 | +5.3% |
 
 ![Asynchronous Robustness](https://paper-assets.alphaxiv.org/figures/2406.14556v3/img-2.jpeg)

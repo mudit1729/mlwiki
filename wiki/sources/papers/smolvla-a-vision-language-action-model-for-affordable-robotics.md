@@ -2,7 +2,7 @@
 title: "SmolVLA: A Vision-Language-Action Model for Affordable and Efficient Robotics"
 type: source-summary
 status: active
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2025
 venue: arXiv
 tags:
@@ -13,7 +13,7 @@ tags:
   - open-source
 citations: 224
 arxiv_id: "2506.01844"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 # SmolVLA: A Vision-Language-Action Model for Affordable and Efficient Robotics
@@ -26,7 +26,7 @@ SmolVLA is a 450M-parameter open-source VLA model from Hugging Face that demonst
 
 Key architectural innovations include layer skipping (using only the first N=L/2 decoder layers from the VLM backbone), aggressive visual token reduction to 64 per frame, and interleaved cross-attention and causal self-attention in the Action Expert. The model trains on 481 community-contributed datasets (~10.6M frames, <30K episodes) with automated VLM-based task annotation, and an asynchronous inference stack decouples perception from execution for 30% faster task completion.
 
-SmolVLA achieves 78.3% success on real-world SO-100 robot tasks versus 61.7% for pi0 (3.3B parameters), while consuming 7x less memory and training 40% faster. This establishes that carefully designed compact VLAs can match or exceed much larger models, making practical robot learning accessible to researchers without large compute budgets.
+SmolVLA achieves 78.3% success on real-world SO-100 robot tasks versus 61.7% for pi0 (3.5B parameters), while consuming 6x less memory and training 40% faster. This establishes that carefully designed compact VLAs can match or exceed much larger models, making practical robot learning accessible to researchers without large compute budgets.
 
 ## Key Contributions
 
@@ -91,16 +91,16 @@ SmolVLA achieves 78.3% success on real-world SO-100 robot tasks versus 61.7% for
 
 ![Real robot tasks](https://paper-assets.alphaxiv.org/figures/2506.01844/x19.png)
 
-| Setting | SmolVLA (450M) | pi0 (3.3B) | ACT (single-task) |
+| Setting | SmolVLA (450M) | pi0 | ACT (single-task) |
 |---------|---------------|------------|-------------------|
-| LIBERO (sim) | 87.3% | 86.0% | - |
-| SO-100 real (multi-task) | 78.3% | 61.7% | 48.3% |
+| LIBERO (sim) | 87.3% | 86.0% (3.3B) | - |
+| SO-100 real (multi-task) | 78.3% | 61.7% (3.5B) | 48.3% |
 | SO-101 in-dist | 90% | - | - |
 | SO-101 out-of-dist | 50% | - | - |
-| Memory | 1x | 7x | - |
+| Memory | 1x | 6x | - |
 | Training speed | 1.4x faster | 1x | - |
 
-- **Simulation (LIBERO)**: 87.3% success vs pi0's 86.0%, with 40% faster training and 7x less memory
+- **Simulation (LIBERO)**: 87.3% success vs pi0's 86.0%, with 40% faster training and 6x less memory
 - **Real-world (SO-100)**: 78.3% multi-task success, outperforming pi0 (61.7%) by 16.6 points absolute
 - **Asynchronous inference**: 30% faster task completion (9.7s vs 13.75s); 19 pick-place cycles per 60s vs 9 synchronous; no degradation in success rate
 - **Throughput**: 2x improvement with async over sync execution mode

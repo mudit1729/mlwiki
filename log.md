@@ -1,5 +1,32 @@
 # Log
 
+## [2026-04-16] audit | Batch 9 factuality audit — 7 papers
+- Audited 7 paper wiki pages against source PDFs (Mistral OCR): `drivetransformer`, `drivevlm`, `driving-gaussian`, `driving-with-llms`, `ecot`, `embodiment-scaling-laws`, `fb-bev`.
+- Fixed 3 factual errors in `fb-bev`:
+  - Results table: removed fabricated `BEVFormer v2 | ResNet-101 | 61.7 | 52.8` row (not in paper). Corrected FB-BEV backbone from ResNet-101 to V2-99 and replaced with actual paper Table 2 baselines (SOLOFusion, BEVStereo, BEVDepth).
+  - Ablation table (forward vs. backward vs. combined): replaced fabricated test-set numbers (58.1/47.9, 59.3/49.5, 62.4/54.2) with actual val-set numbers from paper Table 1 (R50, no temporal, no depth).
+  - "Effect of 3D Pre-training" table: replaced three-row fabricated pre-training ablation (59.8/50.1, 61.2/52.4, 62.4/54.2) with actual val-set depth supervision comparison from Table 1 (47.9/35.0 → 49.8/37.8). Status set to `audited-corrected`.
+- 6 other papers verified clean against paper source: DriveTransformer (all Bench2Drive + nuScenes numbers confirmed), DriveVLM (Qwen-VL 9.6B, 410ms, nuScenes numbers confirmed), DrivingGaussian (PSNR/SSIM/LPIPS/rendering time confirmed), Driving-with-LLMs (all perception/action/QA table numbers confirmed), ECoT (key claims confirmed; note that per-category breakdown numbers in results table may be inaccurate summaries), Embodiment Scaling Laws (GENBOT-1K counts, compute stats, CoRL venue all confirmed).
+- Report written to `.grounding/reports/batch9.md`.
+
+## [2026-04-16] audit | Batch 14 factuality audit — 7 papers
+- Audited 7 paper wiki pages against source PDFs (Mistral OCR): `learning-lane-graph-representations-for-motion-forecasting`, `learning-transferable-visual-models-from-natural-language-supervision`, `lift-splat-shoot-encoding-images-from-arbitrary-camera-rigs-by-implicitly-unprojecting-to-3d`, `llama-2-open-foundation-and-fine-tuned-chat-models`, `llarva-vision-action-instruction-tuning-enhances-robot-learning`, `llms-cant-plan-but-can-help-planning-in-llm-modulo-frameworks`, `lmdrive-closed-loop-end-to-end-driving-with-large-language-models`.
+- Fixed 2 factual errors in `learning-transferable-visual-models-from-natural-language-supervision` (CLIP):
+  - Architecture section incorrectly named ViT-L/14 as the best-performing model. Corrected to ViT-L/14@336px, which the paper explicitly states is the canonical "CLIP" result (Section 2.5: "all results reported in this paper as 'CLIP' use this model which we found to perform best").
+  - Results table row label corrected from "Zero-shot CLIP (ViT-L/14)" to "Zero-shot CLIP (ViT-L/14@336px)".
+  - Note: both ViT-L/14 and ViT-L/14@336px achieve 76.2% on ImageNet (Table 11), so the 76.2% figure itself is correct. Status set to `audited-fixed`.
+- 6 other papers verified clean: LaneGCN (K=6 minADE=0.87m, minFDE=1.36m confirmed), LSS (nuScenes IoU table confirmed), Llama 2 (all benchmark numbers confirmed including previously-fixed GQA scope and LLaMA 1 65B TriviaQA=84.5, NQ=31.0), LLARVA (43.3%, +17.5%, +15% confirmed), LLMs Can't Plan (12%, 82%/70% case study results confirmed), LMDrive (all ablation scores confirmed).
+- Report written to `.grounding/reports/batch14.md`.
+
+## [2026-04-16] audit | Batch 5 factuality audit — 7 papers
+- Audited 7 paper wiki pages against source PDFs: `diffusion-models-beat-gans-on-image-synthesis`, `dita-scaling-diffusion-transformer-for-generalist-vla-policy`, `emerging-properties-in-self-supervised-vision-transformers`, `end-to-end-driving-via-conditional-imitation-learning`, `end-to-end-learning-for-self-driving-cars`, `exploring-simple-siamese-representation-learning`, `fast-efficient-action-tokenization-for-vision-language-action-models`.
+- Fixed 5 factual errors across 3 papers:
+  - `diffusion-models-beat-gans`: BigGAN-deep 128x128 precision corrected 0.87→0.86, recall corrected 0.28→0.35; ADM-G 256x256 precision corrected 0.83→0.82, recall corrected 0.53→0.52; ADM-G+upsampling 512x512 precision corrected 0.87→0.84, recall corrected 0.42→0.53. (Source: paper Tables 5 and 6.)
+  - `emerging-properties-in-self-supervised-vision-transformers`: Results bullet incorrectly stated "+3.5% over supervised ViT-S/16" — corrected to "+3.5% over best competing SSL methods (BYOL, MoCo v2, SwAV) on ViT-S/16". (Source: paper text, "DINO outperforms BYOL, MoCov2 and SwAV by +3.5%".)
+  - `exploring-simple-siamese-representation-learning`: SimSiam 200-epoch ImageNet top-1 corrected 70.8→70.0. (Source: paper Table 4; 70.8 is the 400-epoch result.)
+- DITA, CIL (Codevilla), DAVE-2 (Bojarski/NVIDIA), and FAST all verified clean with no factual errors.
+- Report written to `.grounding/reports/batch5.md`.
+
 ## [2026-04-11] audit | Targeted factuality audit — AlexNet + Hinton-van-Camp-1993
 - Audited `imagenet-classification-with-deep-convolutional-neural-networks` (AlexNet, NeurIPS 2012) against the NeurIPS proceedings PDF and official ILSVRC 2012 results page.
 - Fixed three errors: (1) Overview claimed single-model ILSVRC 2012 top-5 error was 18.9% — corrected to 15.3% ensemble / 16.4% single-model; 18.9% and 39.7% are ILSVRC-2010 results reported in the paper, not 2012 competition results. (2) Results bullet stated ensemble achieves 15.4% top-5 — corrected to 15.3% (official: 0.15315). (3) Overview margin-of-victory description updated to match corrected figures. Status set to `audited-fixed`.
@@ -398,3 +425,11 @@
 - Tightened `chauffeurnet-learning-to-drive-by-imitating-the-best-and-synthesizing-the-worst` by replacing unsupported aggregate collision/off-road claims with the paper's actual scenario-based closed-loop findings and real-world deployment description.
 - The other 18 sampled pages were materially consistent with their source papers.
 - Current frontmatter totals: `audited-solid` `162`, `audited-clean` `15`, `audited-fixed` `18`, `audited-needs-tightening` `1`, `audited-needs-correction` `1`.
+
+## [2026-04-11] audit | Random 10-paper fact-check sample (seed 20260417)
+
+- Audited a fresh non-overlapping deterministic sample of 10 paper summaries against the original papers.
+- Corrected `vectornet-encoding-hd-maps-and-agent-dynamics-from-vectorized-representation` after the summary understated the ConvNet FLOP gap; the paper reports `10.56G` vs `0.041G` FLOPs (about `200x` fewer / `99.6%` lower), not `70%` fewer.
+- Corrected `smolvla-a-vision-language-action-model-for-affordable-robotics` after the overview and results overstated the memory advantage; the paper says `6x less memory` than `pi0`, not `7x`.
+- The other 8 sampled pages were materially consistent with their source papers.
+- Current frontmatter totals: `audited-solid` `160`, `audited-clean` `15`, `audited-fixed` `20`, `audited-needs-tightening` `1`, `audited-needs-correction` `1`.

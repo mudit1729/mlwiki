@@ -16,14 +16,14 @@ paper-faithfullness: audited-solid
 
 Gemini 2.5 is Google's frontier multimodal model family, built on a sparse Mixture-of-Experts (MoE) Transformer architecture. It represents a major advance in reasoning, multimodal understanding, long-context processing (exceeding 1 million tokens), and agentic capabilities. The model family spans multiple capability tiers -- Gemini 2.5 Pro, Gemini 2.5 Flash, and the earlier Gemini 2.0 Flash and Flash-Lite -- covering the full capability-cost spectrum for deployment.
 
-A defining feature is the "Thinking" mechanism, which allows models to perform tens of thousands of forward passes during a dedicated reasoning phase before producing a final answer. This extended inference-time compute dramatically improves performance on tasks requiring deep reasoning: LiveCodeBench scores jump from 30.5% to 74.2% and AIME 2025 scores from 17.5% to 88.0% compared to Gemini 1.5 Pro. The approach aligns with the broader trend of scaling inference-time compute (test-time compute scaling) rather than only training-time compute.
+A defining feature is the "Thinking" mechanism, which allows models to perform tens of thousands of forward passes during a dedicated reasoning phase before producing a final answer. This extended inference-time compute dramatically improves performance on tasks requiring deep reasoning: LiveCodeBench scores jump from 29.7% to 74.2% and AIME 2025 scores from 17.5% to 88.0% compared to Gemini 1.5 Pro. The approach aligns with the broader trend of scaling inference-time compute (test-time compute scaling) rather than only training-time compute.
 
 Training was conducted on Google's TPUv5p architecture using synchronous data-parallel processing across multiple pods. The paper describes key infrastructure innovations for reliability at scale: "Slice-Granularity Elasticity" maintains approximately 97% throughput during hardware failures by dynamically adjusting the training configuration, and "Split-Phase SDC Detection" identifies Silent Data Corruption errors that can silently degrade model quality. Agentic capabilities are demonstrated through complex tasks including autonomous completion of Pokemon Blue, which requires long-term strategic planning and coherent decision-making over extended horizons. Safety evaluations using the Frontier Safety Framework confirmed no Critical Capability Levels reached for dangerous domains (though an alert threshold for Cyber Uplift Level 1 was triggered, prompting mitigation), with improved helpfulness and reduced memorization.
 
 ## Key Contributions
 
 - **Sparse MoE Transformer architecture** supporting native multimodal input (text, image, video, audio, code) with context windows exceeding 1 million tokens -- enabling processing of entire code repositories, lengthy documents, and up to 3 hours of video
-- **"Thinking" mechanism** for extended inference-time reasoning via tens of thousands of forward passes, producing dramatic gains on math and coding benchmarks (AIME 2025: 17.5% → 88.0%; LiveCodeBench: 30.5% → 74.2% vs. Gemini 1.5 Pro)
+- **"Thinking" mechanism** for extended inference-time reasoning via tens of thousands of forward passes, producing dramatic gains on math and coding benchmarks (AIME 2025: 17.5% → 88.0%; LiveCodeBench: 29.7% → 74.2% vs. Gemini 1.5 Pro)
 - **Training infrastructure innovations** -- Slice-Granularity Elasticity (~97% throughput maintenance during failures) and Split-Phase SDC Detection for silent data corruption, enabling reliable training at massive scale on TPUv5p
 - **Full capability-cost spectrum** with Gemini 2.5 Pro, 2.5 Flash, 2.0 Flash, and 2.0 Flash-Lite tiers, allowing deployment across different latency and cost requirements
 - **Agentic capabilities** demonstrated through complex long-horizon tasks requiring strategic planning and sustained coherence
@@ -91,7 +91,7 @@ Training leverages Google's TPUv5p infrastructure with synchronous data parallel
 | Benchmark | Gemini 1.5 Pro (baseline) | Gemini 2.5 Pro | Domain |
 |-----------|--------------------------|----------------|--------|
 | AIME 2025 | 17.5% | **88.0%** | Mathematical reasoning |
-| LiveCodeBench | 30.5% | **74.2%** | Code generation |
+| LiveCodeBench | 29.7% | **74.2%** | Code generation |
 | Context window | 1M+ tokens | **1M+ tokens** | Long-context |
 
 Gemini 2.5 Pro achieves state-of-the-art or near-state-of-the-art results across a wide range of benchmarks spanning mathematical reasoning, coding, multimodal understanding, and agentic tasks. The most dramatic improvements come from the Thinking mechanism on tasks requiring extended reasoning chains.

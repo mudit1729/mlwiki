@@ -122,15 +122,15 @@ A GRU-based temporal decoder progressively generates waypoints:
 
 | Method | L2 1s (m) | L2 3s (m) | Avg L2 (m) | Col. Rate (%) | FPS |
 |--------|-----------|-----------|------------|---------------|-----|
-| GenAD | **0.36** | **1.83** | **0.91** | **0.43** | 6.7 |
-| UniAD | 0.48 | 1.93 | 1.03 | 0.29 | ~2 |
-| VAD-Tiny | 0.46 | 1.76 | 0.93 | 0.57 | ~8 |
-| ST-P3 | 1.33 | 2.90 | 1.93 | 1.27 | - |
+| GenAD | **0.36** | **1.55** | **0.91** | **0.43** | 6.7 |
+| UniAD | 0.48 | 1.65 | 1.03 | 0.31 | ~2 |
+| VAD-Tiny | 0.60 | 2.06 | 1.30 | 0.72 | ~8 |
+| ST-P3 | 1.33 | 2.90 | 2.11 | 0.71 | - |
 
 ![Qualitative results](https://paper-assets.alphaxiv.org/figures/2402.11502v3/img-3.jpeg)
 
 - **0.91m average L2** displacement error -- SOTA on nuScenes planning at time of publication
-- **0.43% collision rate** -- competitive among E2E methods (UniAD achieves 0.29% using additional supervision)
+- **0.43% collision rate** -- competitive among E2E methods (UniAD achieves 0.31% using additional supervision)
 - **6.7 FPS** on RTX 3090 -- faster than UniAD (~2 FPS) due to efficient instance-centric design
 - Ablations confirm that ego-agent interaction modeling and the VAE trajectory prior each provide significant improvements
 - Removing the generative prior degrades collision rate substantially, confirming the value of learned trajectory structure

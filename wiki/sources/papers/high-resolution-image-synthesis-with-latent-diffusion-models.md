@@ -119,7 +119,7 @@ For text conditioning, tau_theta is a transformer-based text encoder (e.g., BERT
 |--------|---------|-------|
 | **LDM-4** | CelebA-HQ 256 | **5.11** |
 | LSGM | CelebA-HQ 256 | 7.22 |
-| UDM | CelebA-HQ 256 | 7.16 |
+| UDM | CelebA-HQ 256 | 2.16 |
 | PGGAN | CelebA-HQ 256 | 8.0 |
 | VQGAN+T | CelebA-HQ 256 | 10.2 |
 | DC-VAE | CelebA-HQ 256 | 15.8 |

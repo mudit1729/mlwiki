@@ -115,7 +115,7 @@ Hydra-MDP achieved first place in the NAVSIM challenge with state-of-the-art per
 
 | Method | PDM Score | NC (%) | DAC (%) | TTC | Comfort | EP |
 |--------|-----------|--------|---------|-----|---------|-----|
-| **Hydra-MDP (best single)** | **86.5** | **97.9** | **96.1** | -- | -- | -- |
+| **Hydra-MDP (best single)** | **86.5** | **98.3** | **96.0** | -- | -- | -- |
 | **Hydra-MDP (large backbone)** | **91.0** | -- | -- | -- | -- | -- |
 | TransFuser baseline | 78.0 | 97.2 | 89.1 | -- | -- | 76.0 |
 | Single aggregated score distillation | 80.2 | -- | -- | -- | -- | -- |

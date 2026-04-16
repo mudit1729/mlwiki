@@ -121,10 +121,10 @@ BEVFormer v2 set new state-of-the-art results on nuScenes among camera-only meth
 | Method | Backbone | NDS | mAP |
 |--------|----------|-----|-----|
 | **BEVFormer v2** | InternImage-XL | **63.4** | **55.6** |
-| BEVFormer v2 | InternImage-B | 61.2 | 52.6 |
+| BEVFormer v2 | InternImage-B | 62.0 | 54.0 |
 | BEVFormer (v1) | VoVNet-99 (DD3D) | 56.9 | 48.1 |
 | PolarFormer | VoVNet-99 (DD3D) | 57.2 | 49.3 |
-| PETR v2 | VoVNet-99 (DD3D) | 58.2 | 49.0 |
+| PETR v2 | GLOM | 58.2 | 49.0 |
 
 ### Ablation Results
 

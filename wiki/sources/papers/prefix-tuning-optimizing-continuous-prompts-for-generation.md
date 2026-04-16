@@ -108,7 +108,7 @@ Initialization matters significantly. Initializing prefix vectors using activati
 | Method | E2E (BLEU) | E2E (NIST) | WebNLG (BLEU) | DART (BLEU) |
 |--------|-----------|-----------|--------------|------------|
 | Full fine-tuning (GPT-2 Medium) | 68.2 | 8.62 | 63.7 | 46.2 |
-| **Prefix-tuning (GPT-2 Medium)** | **69.7** | **8.68** | **64.2** | **46.4** |
+| **Prefix-tuning (GPT-2 Medium)** | **69.7** | **8.81** | **62.9** | **46.4** |
 | Adapter tuning | 66.3 | 8.41 | 60.4 | -- |
 
 Prefix-tuning matches or slightly exceeds full fine-tuning across all three benchmarks while training 1000x fewer parameters.

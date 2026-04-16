@@ -104,8 +104,8 @@ SAM consists of three components designed to separate the expensive image proces
 
 | Task | Metric | SAM (zero-shot) | Best prior (task-specific) |
 |------|--------|------------------|----------------------------|
-| Edge detection (BSDS500) | ODS (50 NMS) | 76.8 | 78.8 (HED, trained) |
-| Object proposals (LVIS) | AR@1000 | 75.5 | 72.0 (ViTDet-H) |
+| Edge detection (BSDS500) | ODS | 76.8 | 78.8 (HED, trained) |
+| Object proposals (LVIS) | AR@1000 | 59.3 | 63.0 (ViTDet-H) |
 | Instance segmentation (LVIS) | AP | comparable | ViTDet (trained on LVIS) |
 | Single-point valid mask | Human preference | **7/9 wins** | RITM |
 
@@ -114,7 +114,7 @@ SAM consists of three components designed to separate the expensive image proces
 - Performance scales with encoder size: ViT-H > ViT-L > ViT-B across all evaluations
 - Multi-point prompting significantly improves mask quality (as expected), with diminishing returns after ~5-9 points
 - Box prompts generally outperform single-point prompts and approach oracle-prompted performance
-- On LVIS (1203 categories), SAM zero-shot AR@1000 of 75.5 exceeds ViTDet-H (72.0), despite SAM never training on LVIS annotations
+- On LVIS (1203 categories), SAM zero-shot AR@1000 of 59.3 does not overall exceed ViTDet-H (63.0), though SAM outperforms on medium/large objects and rare/common categories; ViTDet-H's advantage on small and frequent objects reflects LVIS-specific training biases
 - Automatic mask generation at scale (the 32x32 grid strategy) produces high-quality masks suitable for downstream model training
 
 ## Limitations & Open Questions

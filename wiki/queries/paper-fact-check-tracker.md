@@ -13,6 +13,14 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `audited-needs-tightening` — mostly faithful but contains notable imprecision or unsupported framing
 - `audited-needs-correction` — contains factual errors or materially misleading claims
 
+## [2026-04-11] random-sample audit | 10 additional paper summaries (seed 20260417)
+
+- Deterministic sample seed: `20260417`
+- Sampled pages: `uniact-universal-actions-for-enhanced-embodied-foundation-models`, `swin-transformer-hierarchical-vision-transformer-using-shifted-windows`, `attention-is-all-you-need`, `driveadapter-breaking-the-coupling-barrier-of-perception-and-planning-in-end-to-end-autonomous-driving`, `vectornet-encoding-hd-maps-and-agent-dynamics-from-vectorized-representation`, `scaling-instruction-finetuned-language-models`, `smolvla-a-vision-language-action-model-for-affordable-robotics`, `fb-bev-bev-representation-from-forward-backward-view-transformations`, `a-language-agent-for-autonomous-driving`, and `cosmos-world-foundation-model-platform-for-physical-ai`.
+- Found `2` clear corrections: `vectornet-encoding-hd-maps-and-agent-dynamics-from-vectorized-representation` understated the FLOP reduction as `70%` even though the paper reports `10.56G` vs `0.041G` FLOPs for the main comparison (about `200x` fewer / `99.6%` lower), and `smolvla-a-vision-language-action-model-for-affordable-robotics` overstated the memory advantage over `pi0` as `7x` even though the paper states `6x less memory`.
+- The other `8` sampled pages did not show material paper-vs-summary failures in this pass and were left unchanged.
+- Actual frontmatter counts after this sample remain mixed because legacy labels are still present elsewhere in the corpus: `audited-solid` `160`, `audited-clean` `15`, `audited-fixed` `20`, `audited-needs-tightening` `1`, `audited-needs-correction` `1`.
+
 ## [2026-04-11] random-sample audit | 20-paper serious-error check (seed 20260415)
 
 - Deterministic sample seed: `20260415`

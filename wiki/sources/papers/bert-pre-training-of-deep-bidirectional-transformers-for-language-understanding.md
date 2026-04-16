@@ -107,7 +107,7 @@ For fine-tuning, a task-specific head (typically a linear layer) is added on top
 | MultiNLI | 86.7% | 82.1% | +4.6% |
 
 - **GLUE benchmark**: BERT-LARGE achieves 80.5 on the official GLUE leaderboard, surpassing OpenAI GPT's 72.8 by 7.7 points absolute
-- **SQuAD 1.1 (reading comprehension)**: F1 of 93.2 (single model), surpassing human performance (91.2 F1) for the first time
+- **SQuAD 1.1 (reading comprehension)**: F1 of 93.2 (ensemble + TriviaQA augmentation), surpassing human performance (91.2 F1); single model result is 91.8 F1
 - **SQuAD 2.0 (with unanswerable questions)**: F1 of 83.1, surpassing the previous best by 5.1 points
 - **SWAG (commonsense inference)**: 86.3% accuracy, surpassing human expert performance (85.0%) and the previous SOTA by 27.1% absolute
 - **Ablation studies show MLM is crucial**: Replacing bidirectional MLM with left-to-right training drops MRPC accuracy from 86.7 to 77.8 and SQuAD F1 from 91.3 to 81.0, quantifying the value of bidirectionality

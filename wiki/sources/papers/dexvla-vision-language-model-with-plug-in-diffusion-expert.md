@@ -108,8 +108,8 @@ DexVLA's architecture has two main components connected via FiLM (Feature-wise L
 | Table bussing (hard) | Bimanual UR5e | 0.70 | 0.63 | - |
 | Bin picking | Franka + gripper | High | - | Lower |
 | Bin picking (dex hand) | Franka + 12-DoF hand | Strong | - | - |
-| Drink pouring | Bimanual AgileX | 0.90 | - | - |
-| Packing | Bimanual AgileX | 0.90 | - | - |
+| Drink pouring | Franka + dex hand | 0.85 | - | - |
+| Packing | Bimanual UR5e | 0.95 | - | - |
 | Cross-embodiment transfer | Gripper -> Dex hand | 60% zero-shot | - | - |
 
 - **Shirt folding**: 0.92 success rate where all baselines (OpenVLA, Octo, Diffusion Policy) score near zero -- pi0 is not a baseline for this task; the shirt folding result comes from Stage 2 training without task-specific adaptation

@@ -18,7 +18,7 @@ paper-faithfullness: audited-solid
 
 Mistral 7B (Jiang et al., Mistral AI, 2023) challenged the prevailing assumption that larger language models are always better by demonstrating that a carefully designed 7-billion-parameter model can outperform models with nearly twice its parameter count. At a time when the LLM field was racing toward ever-larger models, Mistral 7B showed that architectural efficiency -- through Grouped-Query Attention (GQA) and Sliding Window Attention (SWA) -- could deliver superior performance per parameter, achieving 3.3x parameter efficiency on MMLU and 5.4x on reasoning benchmarks relative to Llama 2.
 
-The paper's core insight is that attention mechanism design matters as much as raw scale. By combining GQA (which reduces key-value cache memory and accelerates inference) with SWA (which limits each token's attention to a fixed window, reducing complexity from O(n^2) to O(n * w)), Mistral 7B handles longer contexts efficiently while maintaining quality. The model outperformed Llama 2 13B on every benchmark tested -- reasoning (69.5% vs. 66.1%), mathematics (32.6% vs. 20.3%), and code generation (38.9% vs. 26.8%) -- and approached Llama 1 34B on several tasks despite being nearly 5x smaller.
+The paper's core insight is that attention mechanism design matters as much as raw scale. By combining GQA (which reduces key-value cache memory and accelerates inference) with SWA (which limits each token's attention to a fixed window, reducing complexity from O(n^2) to O(n * w)), Mistral 7B handles longer contexts efficiently while maintaining quality. The model outperformed Llama 2 13B on every benchmark tested -- including mathematics (GSM8K: 52.2% vs. 34.3%) and code generation (HumanEval: 30.5% vs. 18.9%) -- and approached Llama 1 34B on several tasks despite being nearly 5x smaller.
 
 Released under the Apache 2.0 license, Mistral 7B became one of the most widely adopted open-weight language models, serving as the base for countless fine-tuned variants across research and industry. Its instruction-tuned version (Mistral 7B -- Instruct) surpassed Llama 2 13B -- Chat on human evaluation benchmarks. The paper also introduced a rolling cache mechanism for KV storage that enables efficient inference on long sequences without the memory overhead of full attention.
 
@@ -105,12 +105,12 @@ Key experimental findings across standard LLM benchmarks:
 
 | Model | Params | MMLU | HellaSwag | WinoGrande | ARC-c | GSM8K | HumanEval |
 |-------|--------|------|-----------|------------|-------|-------|-----------|
-| **Mistral 7B** | **7B** | **60.1** | **81.3** | **75.3** | **55.5** | **32.6** | **38.9** |
-| Llama 2 7B | 7B | 44.4 | 77.1 | 69.5 | 45.9 | 14.6 | 12.8 |
-| Llama 2 13B | 13B | 55.8 | 80.7 | 72.2 | 49.4 | 20.3 | 26.8 |
-| Llama 1 34B | 34B | 62.6 | 83.7 | 76.0 | 54.2 | -- | -- |
+| **Mistral 7B** | **7B** | **60.1** | **81.3** | **75.3** | **55.5** | **52.2** | **30.5** |
+| Llama 2 7B | 7B | 44.4 | 77.1 | 69.5 | 43.2 | 16.0 | 11.6 |
+| Llama 2 13B | 13B | 55.6 | 80.7 | 72.9 | 48.8 | 34.3 | 18.9 |
+| Llama 1 34B | 34B | 56.8 | 83.7 | 76.2 | 54.4 | 44.1 | 25.0 |
 
-Mistral 7B matches or exceeds Llama 2 13B on every benchmark despite being nearly half the size. On code (HumanEval) and math (GSM8K), the gap is particularly large -- 38.9% vs. 26.8% and 32.6% vs. 20.3% respectively. The model approaches Llama 1 34B (a 5x larger model) on MMLU and ARC-c.
+Mistral 7B matches or exceeds Llama 2 13B on every benchmark despite being nearly half the size. On math (GSM8K) and code (HumanEval), the gap is particularly large -- 52.2% vs. 34.3% and 30.5% vs. 18.9% respectively. The model approaches Llama 1 34B (a nearly 5x larger model) on MMLU and reasoning benchmarks.
 
 The instruction-tuned variant (Mistral 7B -- Instruct) outperforms Llama 2 13B -- Chat on MT-Bench (human preference evaluation), demonstrating that the architectural advantages carry through to the aligned setting.
 

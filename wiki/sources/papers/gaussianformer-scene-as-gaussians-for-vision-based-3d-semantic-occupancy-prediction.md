@@ -14,7 +14,7 @@ paper-faithfullness: audited-solid
 
 ## Overview
 
-GaussianFormer introduces a fundamentally different scene representation for 3D semantic occupancy prediction: instead of dense voxel grids, scenes are modeled as sparse sets of 3D semantic Gaussians. Each Gaussian encodes position (mean), shape (covariance), and semantic features, enabling adaptive modeling where large Gaussians cover empty regions and small Gaussians capture fine object details. A transformer-based decoder iteratively refines Gaussian properties through self-encoding (local 3D sparse convolutions) and cross-attention to multi-view image features. The sparse Gaussians are then splatted into dense voxel occupancy predictions via efficient Gaussian-to-voxel aggregation. The key result: GaussianFormer uses only 18.2% of the memory required by SurroundOcc and 24.8% of OccFormer's memory, trading modest accuracy (~2% mIoU) for dramatic efficiency gains.
+GaussianFormer introduces a fundamentally different scene representation for 3D semantic occupancy prediction: instead of dense voxel grids, scenes are modeled as sparse sets of 3D semantic Gaussians. Each Gaussian encodes position (mean), shape (covariance), and semantic features, enabling adaptive modeling where large Gaussians cover empty regions and small Gaussians capture fine object details. A transformer-based decoder iteratively refines Gaussian properties through self-encoding (local 3D sparse convolutions) and cross-attention to multi-view image features. The sparse Gaussians are then splatted into dense voxel occupancy predictions via efficient Gaussian-to-voxel aggregation. The key result: GaussianFormer uses only 17.8% - 24.8% of the memory required by existing methods, trading modest accuracy (~2% mIoU) for dramatic efficiency gains.
 
 ## Key Contributions
 
@@ -91,9 +91,9 @@ The pipeline:
 
 | Method | mIoU | Memory (vs. GaussianFormer) |
 |--------|------|----------------------------|
-| SurroundOcc | 34.5% | 5.49x |
-| OccFormer | 34.3% | 4.03x |
-| GaussianFormer | 32.5% | 1.00x (baseline) |
+| SurroundOcc | 20.30% | not in paper efficiency table |
+| OccFormer | 19.03% | not in paper efficiency table |
+| GaussianFormer | 19.10% | 1.00x (baseline) |
 
 ![Qualitative Results](https://paper-assets.alphaxiv.org/figures/2405.17429/x6.png)
 

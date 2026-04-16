@@ -88,7 +88,7 @@ The controller emits all addressing parameters (k, beta, g, s, gamma, e, a) at e
 
 ![Memory usage patterns during copy task execution, showing clear sequential write and read patterns](https://paper-assets.alphaxiv.org/figures/1410.5401v2/img-11.jpeg)
 
-- NTM outperforms LSTM on all six algorithmic tasks (copy, repeat copy, associative recall, dynamic N-grams, priority sort, and sorting): NTM converges faster and achieves near-zero error, while LSTM struggles especially as sequence length grows
+- NTM outperforms LSTM on all five algorithmic tasks (copy, repeat copy, associative recall, dynamic N-grams, and priority sort): NTM converges faster and achieves near-zero error, while LSTM struggles especially as sequence length grows
 - **Copy task**: NTMs learned much faster than LSTMs and successfully copied sequences up to 6x longer than training examples (trained on lengths up to 20, generalized to length 120); learned behavior reveals an algorithmic approach -- writing inputs sequentially to memory, then returning to the beginning and reading sequentially, with write operations following a clear diagonal pattern
 - **Associative recall**: NTM substantially outperformed LSTM, learning to create compressed representations and use content-based addressing to locate queried items followed by location-based shifts to retrieve associated values; LSTM error rate grows linearly with stored pairs
 - **Priority sorting**: Required multiple parallel read/write heads; NTM successfully learned to sort by mapping priorities to specific memory locations during writing, then reading sequentially from sorted locations

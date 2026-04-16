@@ -117,7 +117,7 @@ where P_s and P_t are the student and teacher softmax outputs with temperatures 
 | BYOL | ResNet-50 | 66.5% | 74.3% |
 | Supervised | ViT-B/16 | — | 79.9% |
 
-- DINO ViT-S/16 achieves +3.5% over supervised ViT-S/16 in linear evaluation and +7.9% in k-NN evaluation, showing that self-supervision produces substantially better features for ViTs at small scale
+- DINO ViT-S/16 achieves +3.5% over the best competing SSL methods (BYOL, MoCo v2, SwAV) on ViT-S/16 in linear evaluation and +7.9% in k-NN evaluation, showing that self-supervision with DINO produces substantially better features than other SSL approaches for ViTs at small scale
 - Smaller patch sizes dramatically improve performance: ViT-B/8 gains +4.0% k-NN and +1.9% linear over ViT-B/16, at the cost of higher compute
 - The self-attention heads in the last layer of DINO ViTs contain explicit object segmentation information, with different heads attending to different semantic regions of the image
 - DINO features excel at copy detection (strong performance on the Oxford and Paris retrieval benchmarks) and video object segmentation (DAVIS benchmark), outperforming supervised features without any adaptation

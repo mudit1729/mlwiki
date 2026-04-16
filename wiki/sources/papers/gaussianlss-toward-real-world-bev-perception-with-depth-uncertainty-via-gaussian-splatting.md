@@ -101,9 +101,9 @@ A soft depth range `[mu - k*sigma, mu + k*sigma]` adapts to estimated uncertaint
 
 | Method | Type | Vehicle IoU | Pedestrian IoU | FPS | Memory (GiB) |
 |---|---|---|---|---|---|
-| LSS | 2D unproj | 32.1 | 14.9 | 71.5 | 0.30 |
-| SimpleBEV | 2D unproj | 36.0 | 16.3 | 37.1 | 3.31 |
-| BEVFormer | 3D proj | 36.2 | 17.4 | 34.7 | 0.47 |
+| LSS | 2D unproj | 32.1 | 15.0 | — | — |
+| SimpleBEV | 2D unproj | 36.9 | 17.1 | 37.1 | 3.31 |
+| BEVFormer | 3D proj | 35.8 | 16.4 | 34.7 | 0.47 |
 | PointBEV | 3D proj | **38.7** | **18.5** | 32.0 | 1.26 |
 | **GaussianLSS** | 2D unproj | 38.3 | 18.0 | **80.2** | **0.33** |
 

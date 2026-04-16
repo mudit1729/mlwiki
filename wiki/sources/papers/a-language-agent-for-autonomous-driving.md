@@ -89,17 +89,18 @@ Agent-Driver demonstrates competitive or superior performance across both open-l
 | Method | L2 (avg, m) ↓ | Collision (%) ↓ |
 |--------|---------------|-----------------|
 | **Agent-Driver** | **0.37** | **0.09** |
-| GPT-Driver | 0.71 | 0.31 |
-| UniAD | 0.48 | 0.15 |
-| ST-P3 | 1.33 | 0.23 |
+| GPT-Driver | 0.44 | 0.17 |
+| VAD | 0.37 | 0.14 |
+| ST-P3 | 2.11 | 0.71 |
 
 **CARLA Closed-Loop (Town05-Short):**
 
-| Method | Route Completion (%) ↑ | Infraction Score ↑ |
-|--------|----------------------|-------------------|
-| **Agent-Driver** | **91.37** | - |
-| TransFuser | 54.52 | - |
-| TCP | 62.78 | - |
+| Method | Route Completion (%) ↑ | Driving Score ↑ |
+|--------|----------------------|-----------------|
+| **Agent-Driver** | **91.37** | 57.33 |
+| VAD | 87.26 | 64.29 |
+| ST-P3 | 86.74 | 55.14 |
+| TransFuser | 78.41 | 54.52 |
 
 **Key findings:**
 - Over 30% collision rate improvement compared to prior methods on nuScenes

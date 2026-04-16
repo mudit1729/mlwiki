@@ -171,8 +171,9 @@ The bias table has shape (2M-1) x (2M-1) for each head, covering all possible re
 |----------|-----------|-------|
 | Swin-T (shifted windows) | 81.3 | baseline |
 | No shifting (W-MSA only) | 80.2 | -1.1 |
-| Absolute position embedding | 80.1 | -1.2 |
-| Relative position bias | 81.3 | +1.2 vs abs. |
+| No position embedding | 80.1 | -1.2 |
+| Absolute position embedding | 80.5 | -0.8 vs rel. pos. |
+| Relative position bias | 81.3 | +0.8 vs abs. pos., +1.2 vs no pos. |
 | Sliding window (3x3) | 81.4 | +0.1 but 40.8x slower |
 
 The shifted window mechanism provides +1.1% over non-shifted windows at no computational cost increase. The sliding window approach achieves only marginal additional accuracy (+0.1%) while being 40.8x slower, validating that shifted windows capture nearly all cross-window benefits at a fraction of the cost.

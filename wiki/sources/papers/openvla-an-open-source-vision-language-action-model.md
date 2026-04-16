@@ -93,12 +93,12 @@ For fine-tuning, LoRA fine-tuning matches full fine-tuning performance (68.2% vs
 | Configuration | Success Rate | Parameters | Memory |
 |---------------|-------------|------------|--------|
 | OpenVLA (full fine-tune) | 69.7% | 7B (100%) | 16.8 GB |
-| OpenVLA (LoRA) | 68.2% | 7B (1.4%) | ~8 GB |
+| OpenVLA (LoRA) | 68.2% | 7B (1.4%) | 59.7 GB |
 | OpenVLA (4-bit quant) | 71.9% | 7B | 7.0 GB |
 | RT-2-X | ~53% | 55B | - |
 
 - **Generalist policy performance**: OpenVLA achieved a 16.5% absolute improvement in success rate over RT-2-X (55B parameters) across 29 tasks spanning two robot embodiments (WidowX and Google Robot), establishing a new state-of-the-art for generalist robot manipulation with 7x fewer parameters
-- On the WidowX BridgeV2 evaluation suite, OpenVLA achieves 82% average success rate across 7 tasks, matching RT-2-X (84%) despite being 7B vs. 55B parameters
+- On the WidowX BridgeV2 evaluation suite, OpenVLA achieves 70.6% average success rate across 17 tasks, significantly outperforming RT-2-X (50.6%) despite being 7B vs. 55B parameters
 - Fine-tuning on a new WidowX task (e.g., "put the spoon on the towel") reaches 90%+ success after 10-15 hours of LoRA training on a single GPU
 - **Adaptation to new robots**: 20.4% improvement over Diffusion Policy on diverse multi-instruction tasks on Franka platforms (10-150 demonstrations). Consistent robustness across all tested tasks (the only method achieving >=50% success rate universally). Superior on tasks requiring language grounding and distractor handling
 - The dual vision encoder (SigLIP + DinoV2) outperforms single-encoder variants by 8-12% on spatial reasoning tasks, validating the complementary feature design

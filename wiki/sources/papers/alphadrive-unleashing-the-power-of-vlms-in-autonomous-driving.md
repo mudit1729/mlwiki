@@ -97,7 +97,7 @@ GRPO computes advantages relative to the group mean reward (rather than against 
 ![AlphaDrive multimodal planning examples: generating alternative driving strategies per scenario](https://paper-assets.alphaxiv.org/figures/2503.07608/x3.png)
 
 - **Planning accuracy**: AlphaDrive significantly outperforms SFT-only models, achieving up to 25.5% higher planning accuracy on the MetaAD dataset
-- **Data efficiency**: With merely 20K training samples (20% of total), AlphaDrive achieves 35.31% better planning accuracy than the SFT-only model, demonstrating remarkable sample efficiency
+- **Data efficiency**: With merely 20K training samples (~18% of total), AlphaDrive achieves 35.31% better planning accuracy than the SFT-only model, demonstrating remarkable sample efficiency
 - **Emergent multimodal planning capabilities**: Following RL training, the model develops the ability to generate multiple reasonable driving plans per scenario (e.g., truck ahead: either stop or decelerate/change lanes; pedestrians present: either stop or careful left turn), a capability absent in SFT-trained models that generate single responses
 - **Reward validation**: Ablation studies confirm each reward contributes positively; SFT warm-up plus RL exploration consistently outperforms isolated approaches
 - **Reasoning impact**: Models incorporating reasoning demonstrate substantially better performance than those without

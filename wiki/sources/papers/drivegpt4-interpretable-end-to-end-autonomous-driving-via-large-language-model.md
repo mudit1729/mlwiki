@@ -101,8 +101,8 @@ The model is trained on a mixture of tasks: (1) control prediction (regressing s
 | Model | CIDEr (Flexible QA) | ChatGPT Score |
 |-------|---------------------|---------------|
 | DriveGPT4 | 56.34 | 81.62 |
-| Video-LLaMA | 10.74 | 43.13 |
-| Valley | 5.12 | 27.49 |
+| Valley | 11.37 | 43.23 |
+| Video-LLaMA | 5.71 | 27.75 |
 
 - **Competitive open-loop control prediction on BDD-X** with speed and turning angle RMSE comparable to specialized models
 - **Fluent, contextually appropriate driving explanations** generated alongside control predictions, demonstrating multi-task feasibility

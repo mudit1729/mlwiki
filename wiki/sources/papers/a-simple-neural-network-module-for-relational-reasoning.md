@@ -29,7 +29,7 @@ Relation Networks (RNs) are a simple neural network module for relational reason
 
 The module computes answer = f_phi(sum_{i,j} g_theta(o_i, o_j, q)), where g_theta is a learned pairwise relation function, the sum provides permutation invariance, and f_phi produces the final output. Objects are extracted from CNN feature maps by treating each spatial location as an "object" representation, avoiding explicit object detection. The question embedding q is concatenated with each pair, allowing question-specific relation computation. This plug-and-play module can be appended to any encoder and trained end-to-end.
 
-This paper demonstrated that the bottleneck in visual reasoning was not perceptual but relational -- the RN module achieved 95.5% on CLEVR (vs. ~76% for CNN+LSTM baselines and ~92% for humans). The work influenced the broader trend toward structured, compositional reasoning modules in deep learning and directly informed later work on graph neural networks and relational inductive biases.
+This paper demonstrated that the bottleneck in visual reasoning was not perceptual but relational -- the RN module achieved 95.5% on CLEVR (vs. 52.3% for CNN+LSTM and 76.6% for CNN+LSTM+SA* baselines, and 92.6% for humans). The work influenced the broader trend toward structured, compositional reasoning modules in deep learning and directly informed later work on graph neural networks and relational inductive biases.
 
 ## Key Contributions
 
@@ -94,12 +94,13 @@ For the Sort-of-CLEVR diagnostic dataset, the authors created a simplified versi
 |---------|-------|----------|
 | CLEVR | CNN+LSTM+RN | 95.5% |
 | CLEVR | Human baseline | 92.6% |
-| CLEVR | CNN+LSTM | 76.6% |
+| CLEVR | CNN+LSTM+SA* (RN authors' impl.) | 76.6% |
+| CLEVR | CNN+LSTM | 52.3% |
 | Sort-of-CLEVR (relational) | CNN+RN | 94% |
 | Sort-of-CLEVR (relational) | CNN+MLP | 63% |
 | bAbI | RN | 18/20 tasks solved |
 
-- **Superhuman CLEVR performance**: 95.5% accuracy on CLEVR vs. 92.6% human baseline and 76.6% for CNN+LSTM, with near-perfect accuracy on relational question subtypes (compare relations, spatial reasoning)
+- **Superhuman CLEVR performance**: 95.5% accuracy on CLEVR vs. 92.6% human baseline, 76.6% for CNN+LSTM+SA* (the authors' own optimized stacked-attention implementation), and 52.3% for the published CNN+LSTM baseline, with near-perfect accuracy on relational question subtypes (compare relations, spatial reasoning)
 - **Relational vs. non-relational separation**: On Sort-of-CLEVR, RN achieves 94% on relational questions where CNN+MLP achieves only 63%, while both perform similarly on non-relational questions, isolating the contribution of explicit relational reasoning
 - **Near-perfect bAbI performance**: Achieves >95% accuracy on all 20 bAbI tasks including the hardest relational reasoning tasks, matching or exceeding memory-augmented networks
 - **Dynamic physical scenes**: The RN module successfully predicts future states of interacting objects in a physics simulation, demonstrating relational reasoning beyond static scenes

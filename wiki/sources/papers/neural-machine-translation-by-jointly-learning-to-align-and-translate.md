@@ -94,13 +94,13 @@ Training uses standard maximum likelihood on parallel corpora (WMT'14 English-Fr
 
 | Model | BLEU (all) | BLEU (known words) |
 |-------|-----------|-------------------|
-| RNNsearch-50 | 26.75 | 36.15 |
-| RNNsearch-50 (extended training) | 28.45 | — |
+| RNNsearch-50 | 26.75 | 34.16 |
+| RNNsearch-50 (extended training) | 28.45 | 36.15 |
 | RNNencdec-50 | 17.82 | 21.97 |
 | Moses (SMT) | 33.30 | 35.63 |
 
 - **Attention eliminates length degradation**: Standard encoder-decoder BLEU drops sharply for sentences >20 words; the attention model (RNNsearch-50) maintains consistent performance even for sentences over 50 words long
-- **Quantitative gains**: RNNsearch-50 achieved 26.75 BLEU on the standard test set (28.45 with extended training) vs. RNNencdec-50's 17.82 BLEU -- a dramatic improvement. Moses scored 33.30 BLEU overall; however, when excluding out-of-vocabulary effects, RNNsearch-50 reached 36.15 BLEU vs. Moses SMT's 35.63 BLEU, surpassing phrase-based statistical MT on known-word sentences
+- **Quantitative gains**: RNNsearch-50 achieved 26.75 BLEU on the standard test set (28.45 with extended training) vs. RNNencdec-50's 17.82 BLEU -- a dramatic improvement. Moses scored 33.30 BLEU overall; however, when excluding out-of-vocabulary effects, RNNsearch-50 reached 34.16 BLEU and the extended-training model (RNNsearch-50*) reached 36.15 BLEU vs. Moses SMT's 35.63 BLEU, surpassing phrase-based statistical MT on known-word sentences
 - **Learned alignments are linguistically plausible**: Visualization of attention weight heatmaps shows strong diagonal patterns for largely monotonic alignments, with off-diagonal patterns revealing non-monotonic reordering when necessary (e.g., translating "European Economic Area" to "zone economique europeenne" demonstrates correct French word reordering). The soft approach handles phrases of different lengths without forcing one-to-one mappings
 - **Architecture details**: 1000 hidden units in encoder and decoder, 620-dimensional word embeddings, minibatch SGD with Adadelta adaptive learning rates, gradient clipping for exploding gradient handling, trained on a 348M word subset of the WMT'14 corpora with 30,000 word vocabulary per language
 - **The model handles rare words better** than the fixed-vocabulary baseline because attention can "copy" information from specific source positions rather than relying on the fixed-length bottleneck

@@ -74,7 +74,7 @@ Llama 2 uses a standard autoregressive transformer architecture building on LLaM
 - **Pre-normalization** using RMSNorm (Zhang & Sennrich, 2019)
 - **SwiGLU activation** (Shazeer, 2020) in the feed-forward layers
 - **Rotary positional embeddings (RoPE)** (Su et al., 2021)
-- **Grouped-query attention (GQA)** for the 70B model: 8 KV heads shared across 64 query heads, reducing KV cache by 8x versus standard multi-head attention while preserving quality
+- **Grouped-query attention (GQA)** for the 34B and 70B models: on 70B, 8 KV heads shared across 64 query heads, reducing KV cache by 8x versus standard multi-head attention while preserving quality
 
 | Model | Parameters | Layers | Hidden dim | Heads | KV Heads | Context | Training tokens |
 |-------|-----------|--------|------------|-------|----------|---------|----------------|
@@ -114,7 +114,7 @@ Llama 2 pretrained models outperform all existing open-source LLMs on most bench
 
 | Model | Size | MMLU (5-shot) | TriviaQA (1-shot) | NQ (1-shot) | GSM8K (8-shot) | HumanEval (0-shot) |
 |-------|------|---------------|--------------------|--------------|-----------------|--------------------|
-| LLaMA 1 | 65B | 63.4 | 77.3 | 33.1 | 50.9 | 23.7 |
+| LLaMA 1 | 65B | 63.4 | 84.5 | 31.0 | 50.9 | 23.7 |
 | Llama 2 | 70B | **68.9** | **85.0** | **33.0** | **56.8** | **29.9** |
 | Falcon | 40B | 55.4 | -- | -- | 19.6 | -- |
 | MPT | 30B | 46.9 | -- | -- | 15.2 | -- |
@@ -128,7 +128,7 @@ For Llama 2-Chat, human evaluation against competing chat models:
 | vs. MPT-30B-Chat | 75% |
 | vs. Vicuna-33B | 70% |
 
-Safety improvements were dramatic: toxicity reduced to effectively 0% on ToxiGen, and truthfulness improved from 50.18% (pretrained) to 64.14% (Chat, via TruthfulQA). Red teaming violation rates dropped from 1.8 to 0.45 per person-hour across RLHF iterations.
+Safety improvements were dramatic: toxicity reduced to effectively 0% on ToxiGen, and truthfulness improved from 50.18% (pretrained) to 64.14% (Chat, via TruthfulQA). Red teaming violation rates dropped from 1.8 to 0.45 per person-hour across RLHF iterations for the Llama 2-Chat 7B model specifically (§4.3).
 
 ## Limitations & Open Questions
 

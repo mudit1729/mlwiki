@@ -106,8 +106,7 @@ The total training loss is the standard 3D occupancy loss (cross-entropy + lovas
 | Base Model | IoU (base) | IoU (+GaussRender) | mIoU (base) | mIoU (+GaussRender) |
 |---|---|---|---|---|
 | TPVFormer | 30.86 | **32.05 (+1.19)** | 17.10 | **20.85 (+3.75)** |
-| SurroundOcc | 34.71 | **35.48 (+0.77)** | 20.30 | **22.26 (+1.96)** |
-| Symphonies | 32.41 | **33.05 (+0.64)** | 19.24 | **20.88 (+1.64)** |
+| SurroundOcc | 31.49 | **32.61 (+1.12)** | 20.30 | **20.82 (+0.52)** |
 
 GaussRender provides consistent improvements across all base models, with particularly strong gains on mIoU (per-class metric) and RayIoU (surface accuracy metric). The gains are largest for TPVFormer, suggesting the projective consistency loss helps most when the base model has weaker 3D structure.
 

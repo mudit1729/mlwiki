@@ -129,15 +129,17 @@ BLIP adapts to downstream tasks by selecting the appropriate functional mode:
 |--------|-----------|-----------|-------------|-------------|
 | ALBEF (14M) | 77.6 | 60.7 | 95.9 | 85.6 |
 | BLIP (14M) | **80.6** | **63.1** | **96.6** | **87.2** |
-| BLIP (129M) | **82.4** | **65.1** | **97.4** | **87.6** |
+| BLIP (129M) | 81.9 | 64.3 | 97.3 | 87.3 |
+| BLIP ViT-L (129M) | **82.4** | **65.1** | **97.4** | **87.6** |
 
 ### Image Captioning (COCO, NoCaps)
 
 | Method | COCO CIDEr | NoCaps CIDEr |
 |--------|------------|--------------|
-| LEMON (200M) | 139.1 | 117.3 |
-| BLIP (14M) | 136.7 | 113.2 |
-| BLIP (129M) | **140.7** | **121.6** |
+| LEMON-large (200M) | 135.7 | 113.4 |
+| BLIP (14M) | 129.7 | 105.1 |
+| BLIP (129M) | 131.4 | 106.3 |
+| BLIP ViT-L (129M) | **136.7** | **113.2** |
 
 ### Visual Question Answering
 
@@ -145,7 +147,7 @@ BLIP adapts to downstream tasks by selecting the appropriate functional mode:
 |--------|----------------|----------------|
 | ALBEF (14M) | 75.84 | 76.04 |
 | BLIP (14M) | 77.54 | 77.62 |
-| BLIP (129M) | **78.25** | **78.32** |
+| BLIP (129M) | **78.24** | **78.17** |
 
 ### Zero-Shot Video-Language Transfer (MSRVTT)
 
@@ -158,14 +160,13 @@ The zero-shot video transfer result is particularly striking -- BLIP outperforms
 
 ### CapFilt Ablation
 
-| Data | COCO TR@1 | VQAv2 | COCO CIDEr |
-|------|-----------|-------|------------|
-| Original web text only | 76.3 | 76.48 | 133.3 |
-| + Synthetic captions (beam) | 78.2 | 77.14 | 134.9 |
-| + Synthetic captions (nucleus) | 79.3 | 77.24 | 136.0 |
-| + Filtering | **80.6** | **77.54** | **136.7** |
+| Generation method | COCO TR@1 | COCO CIDEr |
+|------|-----------|------------|
+| None (original web text) | 78.4 | 127.8 |
+| + Synthetic captions (beam) | 79.6 | 128.9 |
+| + Synthetic captions (nucleus) | **80.6** | **129.7** |
 
-This ablation confirms that: (1) synthetic captions improve performance, (2) nucleus sampling outperforms beam search for caption generation, and (3) filtering noisy data provides additional gains on top of caption augmentation.
+This ablation confirms that: (1) synthetic captions improve performance and (2) nucleus sampling outperforms beam search for caption generation. Filtering (applied on top of nucleus captions) yields a further gain in COCO TR@1 to 80.6 alongside VQA improvement, as shown in Table 1 of the paper.
 
 ## Limitations & Open Questions
 

@@ -118,7 +118,7 @@ The decoder outputs per-class binary occupancy masks, which are combined to prod
 | Method | Input | mIoU (%) |
 |--------|-------|----------|
 | **OccFormer** | **Camera** | **70.8** |
-| Cylinder3D | LiDAR | 76.1 |
+| Cylinder3D++ | LiDAR | 76.1 |
 | PolarNet | LiDAR | 71.0 |
 
 - OccFormer reached 70.8% mIoU on nuScenes LiDAR segmentation using only cameras, approaching LiDAR-based PolarNet (71.0%) -- a significant milestone for camera-only volumetric perception

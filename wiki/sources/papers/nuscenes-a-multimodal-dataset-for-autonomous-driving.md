@@ -66,7 +66,7 @@ nuScenes is a dataset contribution, not an algorithmic one. The key design decis
 | Nighttime (camera) | 55-58% reduction |
 | 1 vs 10 LiDAR sweeps | NDS: 31.8% vs 44.8% |
 
-- At release, the PointPillars baseline achieved 30.5 NDS and 16.0 mAP on the test set, establishing initial performance reference points
+- At release, the PointPillars baseline achieved 45.3 NDS and 30.5 mAP on the test set, establishing initial performance reference points
 - By 2023, top-performing methods exceeded 75 NDS, demonstrating the dataset's ability to drive sustained progress
 - The dataset enabled the discovery that camera-only methods (BEVFormer, BEVDet) could approach LiDAR-based performance when using BEV representations, a finding that would not have been possible without the full 360-degree camera coverage
 - nuScenes tracking and prediction challenges revealed that multi-object tracking in 3D remains significantly harder than 2D, with identity switches and fragmentation being dominant failure modes

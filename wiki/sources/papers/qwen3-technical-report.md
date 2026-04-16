@@ -14,7 +14,7 @@ paper-faithfullness: audited-solid
 
 ## Overview
 
-Qwen3, developed by the Qwen team at Alibaba, represents a major step forward in open-weight language models by offering a comprehensive family spanning both dense and Mixture-of-Experts (MoE) architectures, ranging from 0.6B to 235B total parameters. The flagship models are Qwen3-235B-A22B (a sparse MoE with 235B total parameters but only 22B activated per token) and Qwen3-32B (the largest dense variant). All models support 128K token context lengths and cover 119 languages and dialects, a substantial expansion from Qwen2.5's 29 languages.
+Qwen3, developed by the Qwen team at Alibaba, represents a major step forward in open-weight language models by offering a comprehensive family spanning both dense and Mixture-of-Experts (MoE) architectures, ranging from 0.6B to 235B total parameters. The flagship models are Qwen3-235B-A22B (a sparse MoE with 235B total parameters but only 22B activated per token) and Qwen3-32B (the largest dense variant). Most models support 128K token context lengths (the 0.6B and 1.7B models support 32K) and cover 119 languages and dialects, a substantial expansion from Qwen2.5's 29 languages.
 
 The core innovation is a unified "thinking mode" that enables dynamic allocation of inference-time compute. Rather than forcing a choice between fast generation and deep reasoning, Qwen3 models can seamlessly switch between a "thinking" mode (producing extended chain-of-thought reasoning) and a "non-thinking" mode (direct response) within a single model. This is achieved through a four-stage post-training pipeline that fuses both capabilities: Long-CoT Cold Start, Reasoning RL, Thinking Mode Fusion, and General RL. Users can control the reasoning budget at inference time, allocating more compute to harder problems.
 
@@ -98,7 +98,7 @@ The MoE variants use a learned router to select a subset of experts per token at
 
 1. **Stage 1 -- General knowledge:** Broad pre-training on a diverse multilingual corpus to build world knowledge and linguistic competence
 2. **Stage 2 -- Reasoning enhancement:** Increased proportion of STEM, code, and reasoning-heavy data to strengthen analytical capabilities
-3. **Stage 3 -- Long-context adaptation:** Progressive extension of context window to 128K tokens with adjusted RoPE frequencies
+3. **Stage 3 -- Long-context adaptation:** Pre-training on long-context corpora at 32K sequence lengths with adjusted RoPE base frequency (ABF); inference-time context is further extended to 128K via YARN and Dual Chunk Attention (DCA)
 
 The total pre-training corpus spans 36 trillion tokens across 119 languages, a significant scale-up from Qwen2.5.
 

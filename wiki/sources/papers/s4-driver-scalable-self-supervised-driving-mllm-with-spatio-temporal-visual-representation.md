@@ -101,15 +101,13 @@ The hierarchical planning approach first generates coarse meta-decisions (e.g., 
 
 ## Results
 
-| Benchmark | Metric | S4-Driver | Comparison |
-|---|---|---|---|
-| nuScenes | Avg L2 (1-3s) | **0.31m** | OmniDrive: 0.33m, VAD: 0.37m, UniAD: 0.66m |
-| WOMD | ADE@5s | **0.693** | Vanilla PaLI: 0.798, MotionLM: 0.697 |
-| WOMD | bADE@5s | **0.928** | Vanilla PaLI: 1.069 |
-| WOMD (scaled) | ADE@5s | **0.655** | Demonstrates scaling benefit |
-| WOMD (scaled) | bADE@5s | **0.830** | Clear improvement with more data |
+| Benchmark | Metric | S4-Driver | S4-Driver* (pretrained) | Comparison |
+|---|---|---|---|---|
+| nuScenes | Avg L2 (1-3s) | 0.38m | **0.31m** | OmniDrive: 0.33m, VAD: 0.37m, UniAD: 0.66m |
+| WOMD | ADE@5s | **0.693** | **0.655** | Vanilla PaLI: 0.798, MotionLM: 0.697 |
+| WOMD | bADE@5s | **0.928** | **0.830** | Vanilla PaLI: 1.069 |
 
-On nuScenes, S4-Driver achieves 0.31m average L2 error across 1-3 second horizons, outperforming all supervised baselines including OmniDrive (0.33m) and VAD (0.37m). On the proprietary WOMD-Planning-ADE benchmark (100x larger than nuScenes), it performs competitively against MotionLM (0.697 vs 0.693 ADE@5s) despite using only raw camera inputs versus MotionLM's richer inputs.
+On nuScenes, the base S4-Driver achieves 0.38m average L2 error; S4-Driver* (pretrained on large internal dataset) achieves 0.31m, outperforming supervised baselines OmniDrive (0.33m) and VAD (0.37m). On the proprietary WOMD-Planning-ADE benchmark (100x larger than nuScenes), the base S4-Driver performs competitively against MotionLM (0.697 vs 0.693 ADE@5s) despite using only raw camera inputs versus MotionLM's richer inputs.
 
 Meta-decision accuracy ranges 67-85% across driving behaviors. Ablation studies confirm that each component (sparse volumes, temporal fusion, multi-decoding, stronger backbones) contributes measurably, and that stronger MLLM backbones yield significant gains on large datasets.
 

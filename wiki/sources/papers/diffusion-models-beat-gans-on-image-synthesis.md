@@ -120,12 +120,12 @@ Both stages can use classifier guidance independently.
 | Model | Resolution | FID (down) | Precision | Recall |
 |-------|-----------|-----|-----------|--------|
 | **ADM-G (guided)** | **128x128** | **2.97** | 0.78 | 0.59 |
-| BigGAN-deep | 128x128 | 6.02 | 0.87 | 0.28 |
-| **ADM-G (guided)** | **256x256** | **4.59** | 0.83 | 0.53 |
+| BigGAN-deep | 128x128 | 6.02 | 0.86 | 0.35 |
+| **ADM-G (guided)** | **256x256** | **4.59** | 0.82 | 0.52 |
 | BigGAN-deep | 256x256 | 6.95 | 0.87 | 0.28 |
 | **ADM-G + upsampling** | **256x256** | **3.94** | 0.83 | 0.53 |
 | **ADM-G (guided)** | **512x512** | **7.72** | 0.87 | 0.42 |
-| **ADM-G + upsampling** | **512x512** | **3.85** | 0.87 | 0.42 |
+| **ADM-G + upsampling** | **512x512** | **3.85** | 0.84 | 0.53 |
 
 Key findings:
 

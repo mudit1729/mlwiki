@@ -7,7 +7,7 @@ year: "2023"
 venue: "ICCV"
 citations: 150
 arxiv_id: "2308.02236"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-corrected
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2308.02236)**
@@ -100,32 +100,32 @@ FB-BEV was evaluated on the nuScenes dataset for both 3D object detection and BE
 
 | Method | Backbone | NDS | mAP |
 |--------|----------|-----|-----|
-| **FB-BEV** | ResNet-101 | **62.4** | **54.2** |
-| BEVFormer v2 | ResNet-101 | 61.7 | 52.8 |
-| BEVFormer | ResNet-101 | 56.9 | 48.1 |
+| **FB-BEV** | V2-99 | **62.4** | **53.7** |
+| SOLOFusion | ConvNeXt-B | 61.9 | 54.0 |
+| BEVStereo | V2-99 | 61.0 | 52.5 |
+| BEVDepth | V2-99 | 60.0 | 50.3 |
+| BEVFormer | V2-99 | 56.9 | 48.1 |
 | BEVDet4D | Swin-B | 56.9 | 45.1 |
-| BEVDepth | ResNet-101 | 53.5 | 41.2 |
-| PETR v2 | ResNet-101 | 58.2 | 49.0 |
+| PETRv2 | V2-99 | 58.2 | 49.0 |
 
-### Ablation: Forward vs. Backward vs. Combined
+### Ablation: Forward vs. Backward vs. Combined (nuScenes val, R50, no temporal, no depth)
 
 | View Transform | NDS | mAP |
 |---------------|-----|-----|
-| Forward only (LSS-style) | 58.1 | 47.9 |
-| Backward only (BEVFormer-style) | 59.3 | 49.5 |
-| Forward + Backward (FB-BEV) | **62.4** | **54.2** |
+| Forward only (BEVDet*) | 38.2 | 30.7 |
+| Backward only (BEVFormer*) | 37.9 | 29.7 |
+| Forward + Backward (FB-BEV) | **40.6** | **31.2** |
 
 The combined forward-backward approach consistently outperforms either direction alone, confirming the complementarity thesis. The improvement is largest for distant objects and occluded regions, where the backward attention branch compensates for depth estimation failures in the forward branch.
 
-### Effect of 3D Pre-training
+### Effect of Depth Supervision (nuScenes val, R50, with temporal)
 
-| Pre-training | NDS | mAP |
+| Configuration | NDS | mAP |
 |-------------|-----|-----|
-| No pre-training | 59.8 | 50.1 |
-| Depth pre-training only | 61.2 | 52.4 |
-| Depth + 3D det pre-training | **62.4** | **54.2** |
+| FB-BEV (temporal, no depth sup) | 47.9 | 35.0 |
+| FB-BEV (temporal, with depth sup) | **49.8** | **37.8** |
 
-The 3D pre-training strategy provides a +2.6 NDS improvement, with explicit depth supervision being the dominant factor. This suggests that accurate depth initialization is critical for the forward branch to provide useful complementary information to the backward branch.
+Depth supervision provides a clear improvement in BEV feature quality, consistent with findings from BEVDepth. Accurate depth initialization is critical for the forward branch to provide useful complementary information to the backward branch.
 
 ## Limitations & Open Questions
 

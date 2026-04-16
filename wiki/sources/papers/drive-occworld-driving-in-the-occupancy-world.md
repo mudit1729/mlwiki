@@ -114,12 +114,12 @@ The architecture consists of three main stages operating in an auto-regressive l
 
 | Method | mIoU_c | mIoU_f (2s) | mIoU~_f (weighted) | VPQ_f |
 |---|---|---|---|---|
-| PowerBEV-3D | 23.1 | 21.3 | 21.9 | -- |
-| Cam4DOcc | 31.3 | 26.8 | 28.0 | 21.4 |
-| **Drive-OccWorld A** | **29.4** | **28.6** | **28.7** | **22.6** |
-| **Drive-OccWorld P** | **29.6** | **28.8** | **29.0** | **23.3** |
+| PowerBEV-3D | 23.1 | 21.3 | 21.9 | 20.0 |
+| Cam4DOcc | 31.3 | 26.8 | 28.0 | 18.6 |
+| **Drive-OccWorld A** | **39.7** | **36.3** | **37.3** | **23.7** |
+| **Drive-OccWorld P** | **39.8** | **36.3** | **37.4** | **25.1** |
 
-Drive-OccWorld P achieves +2.0% in mIoU_f and +1.9% in VPQ_f over Cam4DOcc.
+Drive-OccWorld P achieves +9.5 pp in mIoU_f and +6.5 pp in VPQ_f over Cam4DOcc.
 
 ### Planning Performance (nuScenes)
 

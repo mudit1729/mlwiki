@@ -20,14 +20,14 @@ GR-2 is a generalist robot manipulation agent from ByteDance Research that lever
 
 The architecture is a GPT-style autoregressive transformer that processes a unified token sequence of text, video frames, and robot actions. Training proceeds in two stages: (1) large-scale video-language pretraining on 38M video clips to learn a generative world model capable of predicting future video frames conditioned on text, and (2) robot-specific fine-tuning that integrates a conditional Variational Autoencoder (cVAE) for action generation. The video generation capability serves dual purposes: it provides interpretable action visualization (the model generates prediction videos aligned with real executions) and it encodes the physical priors that make downstream manipulation robust.
 
-GR-2 achieves a 97.7% success rate across more than 100 tabletop manipulation tasks (with 400 demonstrations per task), 75% success with only 50 demonstrations per task, and 79.0% on industrial bin-picking (vs. GR-1's 35.9%). On the CALVIN benchmark, it reaches 98.6% single-task success with an average task completion length of 4.64. Notably, success rates scale with model size: from 39% at 1.1B parameters to 60% at 6.8B parameters, providing evidence for scaling laws in robotic VLA.
+GR-2 achieves a 97.7% success rate across more than 100 tabletop manipulation tasks (with 400 demonstrations per task), 73.9% success with only 50 demonstrations per task, and 79.0% on industrial bin-picking (vs. GR-1's 33.3%). On the CALVIN benchmark, it reaches 98.6% single-task success with an average task completion length of 4.64. Notably, success rates scale monotonically with model size across four evaluated sizes (30M–719M trainable parameters), providing evidence for scaling laws in robotic VLA.
 
 ## Key Contributions
 
 - **Web-scale video pretraining for robotics**: Demonstrates that pretraining on 38M internet video clips provides transferable physical priors that dramatically improve robot manipulation, bridging the data gap between web-scale vision and scarce robot demonstrations
 - **Unified video-language-action architecture**: A single GPT-style transformer processes text, video, and action tokens in a shared sequence, enabling joint video prediction and action generation without modality-specific architectural changes
 - **Conditional VAE for action generation**: Integrates a cVAE module during robot fine-tuning to handle the multimodal nature of action distributions, improving over deterministic action prediction
-- **Scaling evidence for robotic VLA**: Shows clear performance scaling from 1.1B to 6.8B parameters (39% to 60% success), providing among the earliest scaling law evidence for embodied foundation models
+- **Scaling evidence for robotic VLA**: Shows clear performance scaling across four model sizes (30M–719M trainable parameters), providing among the earliest scaling law evidence for embodied foundation models
 - **Interpretable video predictions**: The model generates high-quality prediction videos that align with real-world executions, providing a built-in interpretability mechanism for robot behavior
 
 ## Architecture / Method
@@ -71,7 +71,7 @@ GR-2 achieves a 97.7% success rate across more than 100 tabletop manipulation ta
 │  │  └─────────────────────────────────┘            │       │
 │  └─────────────────────────────────────────────────┘       │
 │                                                             │
-│  Scaling: 1.1B (39%) ──► 6.8B (60%) success rate           │
+│  Scaling: 30M ──► 95M ──► 312M ──► 719M (trainable params) │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -94,19 +94,21 @@ The video prediction capability is preserved during fine-tuning: GR-2 can genera
 | Setting | Metric | GR-2 | GR-1 | Notes |
 |---------|--------|------|------|-------|
 | Multi-task tabletop (400 demos/task) | Success rate | **97.7%** | -- | 100+ tasks |
-| Multi-task tabletop (50 demos/task) | Success rate | **75.0%** | -- | Low-data regime |
-| Industrial bin-picking | Success rate | **79.0%** | 35.9% | 2.2x improvement |
+| Multi-task tabletop (50 demos/task) | Success rate | **73.9%** | -- | Low-data regime |
+| Industrial bin-picking | Success rate | **79.0%** | 33.3% | 2.4x improvement |
 | CALVIN (single-task) | Success rate | **98.6%** | -- | Standard benchmark |
 | CALVIN (chained) | Avg. task length | **4.64** | -- | Long-horizon |
 
 **Scaling behavior:**
 
-| Model size | Success rate |
+| Model size (trainable) | Success rate (relative trend) |
 |-----------|-------------|
-| 1.1B params | 39% |
-| 6.8B params | **60%** |
+| 30M (GR-2-S) | lowest |
+| 95M (GR-2-B) | ↑ |
+| 312M (GR-2-L) | ↑ |
+| 719M (GR-2-XL) | highest |
 
-The scaling from 1.1B to 6.8B parameters produces a substantial improvement, suggesting that continued scaling may yield further gains. This aligns with scaling trends observed in HPT and the broader hypothesis that the language model scaling paradigm transfers to robotics.
+The paper evaluates four model sizes (30M, 95M, 312M, 719M trainable parameters) and shows monotonically increasing success rate with model size (reported as a figure, not exact numbers per size). This suggests continued scaling may yield further gains, aligning with scaling trends observed in HPT and the broader hypothesis that the language model scaling paradigm transfers to robotics.
 
 ![Scaling and bin-picking results](https://paper-assets.alphaxiv.org/figures/2410.06158/x8.png)
 

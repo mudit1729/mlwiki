@@ -120,7 +120,7 @@ Training uses SGD with momentum 0.9, weight decay 1e-4, batch size 256, and lear
 ![Training curves showing plain networks degrade while ResNets improve with depth](https://paper-assets.alphaxiv.org/figures/1512.03385/img-3.jpeg)
 
 - **Degradation is not overfitting**: 56-layer plain networks have higher training error than 20-layer plain networks on ImageNet, proving the problem is optimization difficulty, not capacity
-- **Residual networks do not degrade with depth**: ResNet-152 (22.59% top-1 error) consistently outperforms ResNet-34 (26.7% top-1 error), with monotonic improvement as layers increase; experiments successfully trained networks exceeding 1000 layers
+- **Residual networks do not degrade with depth**: ResNet-152 (21.43% top-1 error) consistently outperforms ResNet-34 (25.03% top-1 error), with monotonic improvement as layers increase; experiments successfully trained networks exceeding 1000 layers
 - **Skip connections enable gradient flow**: Gradients through a residual block have the form dL/dx = dL/dy * (1 + dF/dx), where the identity term 1 prevents vanishing gradients even when dF/dx is small
 - **Layer response analysis**: ResNets exhibit smaller, uniformly distributed responses across layers compared to plain networks, indicating superior information flow throughout the network
 - **Generalization across tasks**: Same architecture wins ImageNet classification (3.57% top-5), COCO detection, and COCO segmentation, demonstrating broad applicability

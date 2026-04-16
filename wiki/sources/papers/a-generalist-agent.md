@@ -4,7 +4,7 @@ type: source-summary
 status: seed
 updated: 2026-04-05
 year: 2022
-venue: arXiv
+venue: TMLR
 tags:
   - paper
   - robotics
@@ -20,7 +20,7 @@ paper-faithfullness: audited-solid
 
 ## Citation
 
-Reed et al., arXiv, 2022.
+Reed et al., Transactions on Machine Learning Research (TMLR), 2022.
 
 ## Canonical link
 

@@ -132,7 +132,7 @@ By running multiple denoising passes (ensemble) for a given action, the conditio
 
 **Reward Function:** Demonstrated clear inverse correlation between trajectory error and estimated rewards on unseen Waymo dataset. Successfully distinguished ground truth commands from random inputs, validating cross-dataset generalization of the reward signal.
 
-**Training Data:** 1,735 hours of driving video from filtered OpenDV-YouTube subset plus nuScenes annotations. Training uses progressive resolution from 320x576 to 576x1024.
+**Training Data:** 1,740 hours of driving video from filtered OpenDV-YouTube subset plus nuScenes annotations. Training uses progressive resolution from 320x576 to 576x1024.
 
 ## Limitations & Open Questions
 

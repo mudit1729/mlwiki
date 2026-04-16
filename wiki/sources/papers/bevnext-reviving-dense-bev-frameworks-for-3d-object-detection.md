@@ -85,23 +85,24 @@ The detection head is a two-stage object decoder that combines perspective-based
 
 ## Results
 
-### nuScenes 3D Detection Benchmark
+### nuScenes 3D Detection Benchmark (test set, Table 2)
 
 | Method | Type | Backbone | NDS ↑ | mAP ↑ |
 |--------|------|----------|-------|-------|
 | BEVFormer v2 | Dense | InternImage-XL | 63.4 | 55.6 |
-| StreamPETR | Sparse | ViT-L | 63.6 | 57.1 |
-| Far3D | Sparse | ViT-L | 63.5 | 56.3 |
-| **BEVNeXt** | **Dense** | **ViT-Adapter-L** | **64.2** | **56.0** |
+| StreamPETR | Sparse | V2-99 | 63.6 | 55.0 |
+| Sparse4Dv2 | Sparse | V2-99 | 63.8 | 55.6 |
+| **BEVNeXt** | **Dense** | **V2-99** | **64.2** | **55.7** |
 
-### Ablation Results (ResNet-50)
+### Ablation Results (ResNet-50, val set, Table 5)
 
-| Component | NDS |
-|-----------|-----|
-| Baseline (BEVDet) | 39.2 |
-| + CRF depth | 42.1 |
-| + Long-term temporal | 45.8 |
-| + Both (BEVNeXt) | 47.3 |
+| Component | NDS | mAP |
+|-----------|-----|-----|
+| Baseline (BEVPoolv2) | 52.6 | 40.6 |
+| + Res2Fusion | 53.7 | 42.0 |
+| + F1/8 depth scale | 54.0 | 43.0 |
+| + CRF depth | 54.2 | 43.4 |
+| + Perspective refinement (BEVNeXt) | 54.8 | 43.7 |
 
 ## Limitations & Open Questions
 

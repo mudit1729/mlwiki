@@ -94,13 +94,13 @@ The key architectural decision is that all sensor modalities are encoded as "sof
 
 | Task / Benchmark | PaLM-E Result | Notes |
 |-----------------|---------------|-------|
-| VQAv2 | 85.2% | SOTA for generalist models |
+| VQAv2 | 80.0% | Best generalist (one model) result |
 | OK-VQA | SOTA | State-of-the-art at 562B |
 | Tabletop manipulation | 94.9% success | Full data mixture |
 | TAMP planning | 91.5% success | Single model, multiple task families |
 | Single-robot training | 48.6% success | Without multi-task transfer |
 
-- PaLM-E 562B achieves 85.2% on VQAv2 (state-of-the-art for generalist models at the time) while simultaneously being capable of robotic planning; also achieves state-of-the-art on OK-VQA
+- PaLM-E 562B achieves 80.0% on VQAv2 as a single generalist model (without task-specific finetuning) while simultaneously being capable of robotic planning; also achieves state-of-the-art on OK-VQA (66.1%, outperforming task-specifically finetuned models)
 - On tabletop manipulation, PaLM-E achieves 94.9% success rate with the full data mixture, demonstrating efficient data utilization through vision-language transfer and positive transfer across embodiments
 - On the TAMP (Task and Motion Planning) robot benchmark, PaLM-E achieves 91.5% planning success rate with a single model across multiple task families
 - Positive transfer is observed only at the 562B scale; at 8B and 62B, adding robot data slightly hurts VQA performance, suggesting a scale threshold for beneficial multi-task transfer

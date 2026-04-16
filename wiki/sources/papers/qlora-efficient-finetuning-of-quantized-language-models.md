@@ -14,7 +14,7 @@ paper-faithfullness: audited-solid
 
 ## Overview
 
-Full fine-tuning of large language models requires enormous GPU memory -- a 65B-parameter model in 16-bit precision needs over 390 GB of GPU memory for parameters and optimizer states alone. QLoRA solves this by combining 4-bit quantization of the frozen pretrained weights with Low-Rank Adaptation (LoRA), enabling fine-tuning of a 65B model on a single 48GB GPU while matching the task performance of full 16-bit fine-tuning. The result is a roughly 10x reduction in memory compared to standard fine-tuning and 3-4x reduction compared to standard LoRA.
+Full fine-tuning of large language models requires enormous GPU memory -- a 65B-parameter model in 16-bit precision needs over 780 GB of GPU memory for parameters and optimizer states alone. QLoRA solves this by combining 4-bit quantization of the frozen pretrained weights with Low-Rank Adaptation (LoRA), enabling fine-tuning of a 65B model on a single 48GB GPU while matching the task performance of full 16-bit fine-tuning. The result is a roughly 10x reduction in memory compared to standard fine-tuning and 3-4x reduction compared to standard LoRA.
 
 The paper introduces three technical innovations that together make this possible: (1) 4-bit NormalFloat (NF4), a new quantization data type that is information-theoretically optimal for normally distributed weights; (2) Double Quantization, which quantizes the quantization constants themselves to save an additional ~0.37 bits per parameter; and (3) Paged Optimizers, which use NVIDIA unified memory to handle memory spikes during gradient checkpointing by automatically paging optimizer states between GPU and CPU. These components are orthogonal and composable.
 
@@ -110,11 +110,12 @@ The Guanaco model family (QLoRA-finetuned LLaMA on OASST1) achieved strong chatb
 
 | Model | Vicuna Elo (GPT-4 eval) | Params | Training |
 |-------|------------------------|--------|----------|
-| ChatGPT | 1348 | -- | -- |
-| Guanaco-65B | 1336 (99.3% of ChatGPT) | 65B | 24h, 1x A100-48GB |
-| Guanaco-33B | 1311 | 33B | 12h, 1x A100-24GB |
-| Vicuna-13B | 1264 | 13B | -- |
-| Guanaco-7B | 1218 | 7B | 5h, 1x A100-24GB |
+| GPT-4 | 1348 | -- | -- |
+| Guanaco-65B | 1022 (99.3% of ChatGPT) | 65B | 24h, 1x A100-48GB |
+| Guanaco-33B | 992 | 33B | 12h, 1x A100-24GB |
+| Vicuna-13B | 974 | 13B | -- |
+| ChatGPT | 966 | -- | -- |
+| Guanaco-7B | 879 | 7B | 5h, 1x A100-24GB |
 
 ### Key ablation findings
 

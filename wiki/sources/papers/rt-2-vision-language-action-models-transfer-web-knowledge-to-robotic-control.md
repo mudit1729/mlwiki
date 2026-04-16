@@ -89,13 +89,13 @@ Co-fine-tuning maintains performance on the original VLM tasks while adding robo
 
 ![Emergent capabilities including reasoning, symbol understanding, and human recognition](https://paper-assets.alphaxiv.org/figures/2307.15818/img-7.jpeg)
 
-- **Emergent semantic generalization**: RT-2 achieves 62% success on tasks requiring understanding of novel semantic concepts (e.g., picking objects by category, color, or abstract property) versus 32% for RT-1, nearly doubling performance. Validated across 6K evaluation trials demonstrating improved generalization to novel objects and environments
+- **Emergent semantic generalization**: RT-2 achieves 60% average success across emergent evaluation categories (symbol understanding, reasoning, human recognition) versus 20% for RT-1, a 3x improvement. Validated across 6K evaluation trials demonstrating improved generalization to novel objects and environments
 - **Symbol understanding**: Can interpret visual symbols (e.g., picking the object that matches a flag's country) and perform rudimentary visual reasoning that was never present in robot training data
 - **Numerical reasoning**: Demonstrated emergent abilities like numerical reasoning (e.g., "move object to the position that is the sum of 2+1"), showcasing capabilities well beyond the robot training distribution
 - **Chain-of-thought-style rollouts**: The paper presents qualitative examples of a plan-then-act RT-2 variant, but does not make this a main quantified benchmark gain
 - **Maintains RT-1 performance on seen tasks**: 97% success rate on original RT-1 evaluation tasks, showing that web co-training does not degrade core manipulation skills
 - **Larger models are better**: PaLI-X (55B) outperforms PaLM-E (12B) across all evaluation categories, with the gap largest on semantic generalization tasks
-- **Performance on 6 novel emergent evaluation categories** (symbol understanding, reasoning, human recognition, etc.) averages 62% vs 32% for RT-1
+- **Performance on emergent evaluation categories** (symbol understanding, reasoning, human recognition) averages 60% for RT-2-PaLI-X-55B vs 20% for RT-1, a 3x improvement
 
 ## Limitations & Open Questions
 

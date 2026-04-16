@@ -2,7 +2,7 @@
 title: VectorNet: Encoding HD Maps and Agent Dynamics From Vectorized Representation
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-11
 year: 2020
 venue: CVPR
 tags:
@@ -11,7 +11,7 @@ tags:
   - prediction
   - vectorized-representation
 citations: 1035
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2005.04259)**
@@ -99,7 +99,7 @@ VectorNet processes the driving scene in two stages. **Stage 1 -- Polyline Subgr
 | FLOPs | 0.041 GFLOPs | 10.56 GFLOPs | 99.6% |
 
 - **State-of-the-art on Argoverse motion forecasting**: Achieves top minADE and minFDE metrics at the time of publication, outperforming CNN-based rasterized approaches
-- **Computational efficiency**: 70% fewer FLOPs than rasterized CNN baselines while achieving better prediction accuracy, because vectorized representations scale with the number of scene elements rather than spatial resolution
+- **Computational efficiency**: Over 200x fewer FLOPs than the best rasterized CNN baseline for a single agent (10.56G vs. 0.041G, about 99.6% fewer) while achieving better prediction accuracy, because vectorized representations scale with the number of scene elements rather than spatial resolution
 - **Self-supervised pre-training improves prediction**: The node completion pre-training objective improves final prediction metrics by 5-8%, demonstrating that the graph structure supports effective self-supervised learning
 - **Unified encoding validated**: Using the same vector representation for both maps and agents outperforms architectures that encode them with different modules, confirming the value of a unified representation
 - **Scalability to large scenes**: Performance remains stable as the number of map elements increases, unlike rasterized approaches where computational cost grows with map area at fixed resolution

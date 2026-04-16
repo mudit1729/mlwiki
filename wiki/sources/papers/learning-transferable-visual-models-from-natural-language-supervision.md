@@ -7,7 +7,7 @@ year: "2021"
 venue: "ICML 2021"
 citations: 57987
 arxiv_id: "2103.00020"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 # Learning Transferable Visual Models From Natural Language Supervision
@@ -86,7 +86,7 @@ CLIP is one of the most influential papers in the multimodal foundation model sp
 
 CLIP's architecture consists of two parallel encoders: an image encoder and a text encoder, both producing fixed-dimensional embedding vectors that are projected into a shared space.
 
-The image encoder can be either a ResNet (modified with attention pooling) or a Vision Transformer (ViT). The paper evaluates multiple scales: ResNet variants (RN50, RN101, RN50x4, RN50x16, RN50x64) and Vision Transformer variants (ViT-B/32, ViT-B/16, ViT-L/14), with ViT-L/14 (24 layers, patch size 14x14) being the best-performing. The image encoder takes a 224x224 image and produces a single embedding vector. A notable finding is that while the paper explores different image encoder architectures, the text encoder remains constant, suggesting text representation is not the bottleneck for performance.
+The image encoder can be either a ResNet (modified with attention pooling) or a Vision Transformer (ViT). The paper evaluates multiple scales: ResNet variants (RN50, RN101, RN50x4, RN50x16, RN50x64) and Vision Transformer variants (ViT-B/32, ViT-B/16, ViT-L/14), with ViT-L/14@336px (ViT-L/14 additionally fine-tuned at 336px resolution for one epoch) being the best-performing model; all results reported as "CLIP" in the paper use this variant. The image encoder takes a 224x224 image and produces a single embedding vector. A notable finding is that while the paper explores different image encoder architectures, the text encoder remains constant, suggesting text representation is not the bottleneck for performance.
 
 The text encoder is a 12-layer transformer with masked self-attention (GPT-2 style), taking tokenized text (up to 76 tokens, byte pair encoding with 49,152-token vocabulary) and producing a single embedding vector from the [EOS] token position. Both encoders' outputs are linearly projected to the shared embedding dimension (512 or 768 depending on the model variant) and L2-normalized.
 
@@ -106,7 +106,7 @@ For zero-shot classification, the class names are embedded in prompt templates (
 
 | Setting | ImageNet Top-1 | ImageNet-R | ImageNet-Sketch | ObjectNet |
 |---------|---------------|------------|-----------------|-----------|
-| Zero-shot CLIP (ViT-L/14) | **76.2%** | **88.9%** | **60.2%** | **72.3%** |
+| Zero-shot CLIP (ViT-L/14@336px) | **76.2%** | **88.9%** | **60.2%** | **72.3%** |
 | Supervised ResNet-50 | 76.1% | 56.1% | 33.3% | 52.3% |
 | Supervised ResNet-101 | 77.4% | 57.7% | 36.0% | 54.8% |
 | Few-shot CLIP (16-shot) | 73.7% | — | — | — |

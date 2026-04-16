@@ -105,7 +105,7 @@ Data augmentation through rotation and shifting of bird's-eye view images simula
 ![Infraction comparison per 10km: Learning by Cheating vs alternatives](https://paper-assets.alphaxiv.org/figures/1912.12294/img-3.jpeg)
 
 - **100% success rate on all CARLA benchmark tasks** across navigation conditions with varying weather and traffic density
-- **NoCrash benchmark records**: Significant outperformance over all methods including Conditional Imitation Learning (CILRS), Learning by Watching (LbW), and Modular Policy (MP), especially in dense traffic scenarios
+- **NoCrash benchmark records**: Significant outperformance over all methods including Conditional Imitation Learning (CILRS), Conditional Affordance Learning (CAL), and Modular Policy (MP), especially in dense traffic scenarios
 - **Substantially reduced infractions** (collisions, traffic light violations) versus existing approaches, with dramatically fewer infractions across all measurements compared to CILRS
 - The privileged agent achieves near-expert performance (close to the autopilot), confirming that policy learning from clean state representations is the easy part
 - The sensorimotor agent recovers a substantial fraction of the privileged agent's performance, demonstrating effective knowledge distillation from BEV representations to camera-based perception

@@ -111,11 +111,11 @@ When â_t is a thought, no observation is generated; when it is an action, the e
 | CoT Prompting | 29.4 | 56.3 |
 | Act Only | 25.7 | 58.9 |
 | **ReAct** | **27.4** | **60.9** |
-| CoT-SC (21 samples) | 33.4 | 64.6 |
-| ReAct → CoT-SC | **34.2** | 62.0 |
-| CoT-SC → ReAct | 32.3 | **64.6** |
+| CoT-SC (21 samples) | 33.4 | 60.4 |
+| ReAct → CoT-SC | **35.1** | 62.0 |
+| CoT-SC → ReAct | 34.2 | **64.6** |
 
-ReAct outperforms CoT on FEVER by 4.6% and significantly reduces hallucination. On HotpotQA, ReAct slightly underperforms CoT due to retrieval limitations, but the hybrid ReAct → CoT-SC achieves the best overall result (34.2% EM). Error analysis shows ReAct's false positive rate is 6% versus CoT's 14%, confirming the grounding benefit.
+ReAct outperforms CoT on FEVER by 4.6% and significantly reduces hallucination. On HotpotQA, ReAct slightly underperforms CoT due to retrieval limitations, but the hybrid ReAct → CoT-SC achieves the best overall HotpotQA result (35.1% EM), and CoT-SC → ReAct achieves the best FEVER result (64.6%). Error analysis shows ReAct's false positive rate is 6% versus CoT's 14%, confirming the grounding benefit.
 
 ### Interactive Decision-Making
 

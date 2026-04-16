@@ -104,7 +104,7 @@ The critical detail: no dropout is applied within these equations. The recurrent
 
 **Output layer**: A linear projection from the LSTM hidden state to the vocabulary size (10K for PTB), followed by softmax. Standard cross-entropy loss is used.
 
-**Training**: SGD with gradient clipping (max norm 5), learning rate 1.0 decayed by 1/1.15 after epoch 14 (for the large model). BPTT is truncated at 35 timesteps. Training on PTB takes a few hours on a single GPU.
+**Training**: SGD with gradient clipping (max norm 5 for the medium model, max norm 10 for the large model), learning rate 1.0 decayed by 1/1.15 after epoch 14 (for the large model). BPTT is truncated at 35 timesteps. Training on PTB takes a few hours on a single GPU.
 
 ## Results
 

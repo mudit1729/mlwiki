@@ -101,7 +101,7 @@ VoxPoser operates through three stages: (1) instruction parsing and code generat
 | Static environment | **88.0%** | 24.0% |
 | Dynamic disturbances | **70.0%** | 0.0% |
 
-VoxPoser was evaluated on 5 representative real-world manipulation tasks: taking bread out of a toaster, pressing a moisturizer pump, turning on a lamp, opening a bottle, and sweeping trash into a dustpan. The primitives baseline uses the same LLM to parameterize pre-defined motion primitives rather than composing value maps.
+VoxPoser was evaluated on 5 representative real-world manipulation tasks: Move & Avoid, Set Up Table, Close Printer, Open Bottle, and Sweep Trash. The primitives baseline uses the same LLM to parameterize pre-defined motion primitives rather than composing value maps.
 
 ### Simulation Generalization
 
