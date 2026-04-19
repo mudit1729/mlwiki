@@ -45,21 +45,21 @@ TransFuser became one of the most referenced baselines for CARLA-based end-to-en
 │  RGB Image              LiDAR BEV                               │
 │     │                      │                                    │
 │  ┌──▼──┐               ┌──▼──┐                                  │
-│  │ResNet│               │ResNet│                                 │
+│  │RegNet│               │RegNet│                                 │
 │  │Blk 1 │               │Blk 1 │                                │
 │  └──┬──┘               └──┬──┘                                  │
 │     │    ┌────────────┐   │                                     │
 │     └───►│ Transformer ◄──┘   (Scale 1: high res)               │
 │     ┌────┤  Fusion     ├───┐                                    │
 │  ┌──▼──┐ └────────────┘┌──▼──┐                                  │
-│  │ResNet│               │ResNet│                                 │
+│  │RegNet│               │RegNet│                                 │
 │  │Blk 2 │               │Blk 2 │                                │
 │  └──┬──┘               └──┬──┘                                  │
 │     │    ┌────────────┐   │                                     │
 │     └───►│ Transformer ◄──┘   (Scale 2: mid res)                │
 │     ┌────┤  Fusion     ├───┐                                    │
 │  ┌──▼──┐ └────────────┘┌──▼──┐                                  │
-│  │ResNet│               │ResNet│                                 │
+│  │RegNet│               │RegNet│                                 │
 │  │Blk 3 │               │Blk 3 │                                │
 │  └──┬──┘               └──┬──┘                                  │
 │     │    ┌────────────┐   │                                     │
@@ -82,7 +82,7 @@ TransFuser became one of the most referenced baselines for CARLA-based end-to-en
 
 ![Multi-task learning framework showing outputs for depth, segmentation, HD maps, and detection](https://paper-assets.alphaxiv.org/figures/2205.15997/img-2.jpeg)
 
-TransFuser processes two input streams: front-facing RGB camera images and LiDAR BEV (bird's eye view) representations. Both are encoded by separate ResNet-based backbones (typically ResNet-34 or ResNet-50). At multiple intermediate stages of the backbone (after each ResNet block), the spatial features from both modalities are flattened into token sequences and fed into a transformer module that performs cross-attention between image tokens and LiDAR tokens.
+TransFuser processes two input streams: front-facing RGB camera images and LiDAR BEV (bird's eye view) representations. Both are encoded by separate RegNetY-3.2GF backbones (the image branch is pretrained on ImageNet; the LiDAR BEV branch is trained from scratch). At multiple intermediate stages of the backbone (after each ResNet block), the spatial features from both modalities are flattened into token sequences and fed into a transformer module that performs cross-attention between image tokens and LiDAR tokens.
 
 Specifically, at each scale s, the image features F_img^s (shape H_s x W_s x C_s) and LiDAR features F_lid^s (shape H_s' x W_s' x C_s) are projected to a common dimension, flattened into token sequences, and concatenated. A transformer encoder (2-4 layers, multi-head self-attention) processes this combined sequence, allowing image tokens to attend to LiDAR tokens and vice versa. The output tokens are split back into their respective modalities and reshaped to spatial feature maps, which are passed to the next backbone stage.
 

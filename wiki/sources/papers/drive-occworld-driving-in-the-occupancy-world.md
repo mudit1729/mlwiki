@@ -28,7 +28,7 @@ Drive-OccWorld introduces a vision-centric 4D occupancy forecasting world model 
 
 The framework operates through an auto-regressive architecture with three main components: a history encoder that builds BEV representations from multi-view cameras, a memory queue with novel conditional normalization that maintains temporal context while addressing semantic discrimination and motion awareness, and a world decoder that predicts future BEV embeddings conditioned on ego actions. The predicted future states feed into an occupancy-based planner that evaluates candidate trajectories against agent safety, road safety, and learned cost functions.
 
-A key capability is action-controllable generation: the model can simulate different future scenarios based on various ego actions (velocity, steering angle, trajectory waypoints, high-level commands), functioning as a neural simulator. Drive-OccWorld achieves a 2.0% improvement in mIoU_f (future occupancy) and 1.9% improvement in VPQ_f over Cam4DOcc on nuScenes, a 33% reduction in L2 planning error at 1-second horizon compared to UniAD†, and is further validated on nuScenes-Occupancy and Lyft-Level5.
+A key capability is action-controllable generation: the model can simulate different future scenarios based on various ego actions (velocity, steering angle, trajectory waypoints, high-level commands), functioning as a neural simulator. Drive-OccWorld achieves a 9.5 pp improvement in mIoU_f (future occupancy) and 6.5 pp improvement in VPQ_f over Cam4DOcc on nuScenes (36.3 vs 26.8 and 25.1 vs 18.6), a 33% reduction in L2 planning error at 1-second horizon compared to UniAD†, and is further validated on nuScenes-Occupancy and Lyft-Level5.
 
 ## Key Contributions
 

@@ -126,13 +126,13 @@ BEVFormer v2 set new state-of-the-art results on nuScenes among camera-only meth
 | PolarFormer | VoVNet-99 (DD3D) | 57.2 | 49.3 |
 | PETR v2 | GLOM | 58.2 | 49.0 |
 
-### Ablation Results
+### Ablation Results (nuScenes val, ResNet-101, no temporal, 48 epochs — paper Table 2)
 
 | Configuration | NDS | mAP | Delta NDS | Delta mAP |
 |---------------|-----|-----|-----------|-----------|
-| BEV Only (baseline) | 54.4 | 45.5 | -- | -- |
-| BEV & BEV (control) | 54.3 | 45.6 | -0.1 | +0.1 |
-| **Perspective & BEV** | **56.9** | **47.4** | **+2.5** | **+1.9** |
+| BEV Only (baseline) | 42.6 | 35.5 | -- | -- |
+| BEV & BEV (control) | 42.8 | 35.0 | +0.2 | -0.5 |
+| **Perspective & BEV** | **45.1** | **37.4** | **+2.5** | **+1.9** |
 
 The control experiment ("BEV & BEV") added a second BEV detection head instead of a perspective head, showing no improvement. This confirms the gains come specifically from perspective-view supervision, not from simply adding more supervision or parameters. Models with perspective supervision trained for 24 epochs surpassed BEV-only models trained for 48 epochs, demonstrating substantially faster convergence.
 
