@@ -101,15 +101,14 @@ VADv2 builds on the VAD architecture but replaces the deterministic planning hea
 
 | Method | Driving Score | Route Completion | Infraction Score |
 |--------|--------------|-----------------|-----------------|
-| VADv2 (camera-only) | **44.5** | **83.2%** | **0.53** |
-| VAD (camera-only) | 30.3 | 75.2% | 0.40 |
-| UniAD | 33.4 | 72.4% | 0.46 |
-| TransFuser (camera+LiDAR) | 31.0 | 47.5% | 0.65 |
+| VADv2 (camera-only) | **85.1** | **98.4%** | **0.87** |
+| VAD (camera-only) | 30.3 | 75.2% | -- |
+| TransFuser† (camera+LiDAR) | 31.0 | 47.5% | 0.77 |
 
-- **47% improvement in Driving Score over VAD:** The probabilistic formulation yields a large closed-loop gain (44.5 vs. 30.3), validating that expressing uncertainty over actions matters significantly for real driving performance
-- **Superior route completion:** 83.2% route completion represents a substantial improvement over VAD (75.2%) and UniAD (72.4%), indicating the probabilistic planner is better at handling complex intersections and lane changes where deterministic planners stall or collide
+- **181% improvement in Driving Score over VAD:** The probabilistic formulation yields a massive closed-loop gain (85.1 vs. 30.3), validating that expressing uncertainty over actions matters significantly for real driving performance
+- **Superior route completion:** 98.4% route completion represents a substantial improvement over VAD (75.2%), indicating the probabilistic planner is far better at handling complex intersections and lane changes
 - **Reduced infractions:** The conflict-aware selection mechanism reduces collision rates by filtering out trajectories that would intersect with predicted agent positions
-- **Camera-only advantage:** VADv2 outperforms TransFuser which uses both camera and LiDAR, demonstrating that a strong planning formulation can compensate for sensor limitations
+- **Camera-only advantage:** VADv2 outperforms TransFuser† which uses both camera and LiDAR, demonstrating that a strong planning formulation can compensate for sensor limitations
 - **Ablation on vocabulary size N:** Performance improves as N increases, with the default N=4096 used in main experiments; ablations confirm that finer action discretization captures more driving modes
 - **Conflict checking matters:** Removing the conflict-aware selection at inference time degrades performance significantly, showing that the probabilistic distribution alone is not sufficient -- the safety filtering is essential
 

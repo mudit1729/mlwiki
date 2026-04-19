@@ -27,7 +27,7 @@ The results established Swin Transformer as the first general-purpose vision tra
 - **Shifted window self-attention mechanism**: Computes self-attention within non-overlapping local windows (W-MSA), then shifts the window partition by half the window size in alternating layers (SW-MSA), creating cross-window connections at effectively zero additional cost. This achieves linear computational complexity O(n) with respect to image size, compared to O(n^2) for global self-attention.
 - **Hierarchical feature pyramid via patch merging**: Produces multi-scale feature maps (C, 2C, 4C, 8C channels at 1/4, 1/8, 1/16, 1/32 resolution) by concatenating and linearly projecting 2x2 groups of neighboring patches between stages, enabling direct compatibility with FPN, UPerNet, and other multi-scale architectures.
 - **Efficient cyclic shift implementation**: Instead of naively computing attention for multiple smaller shifted windows (which would be irregular and slow), uses cyclic shifting of the feature map combined with attention masking. This maintains batched computation within the same window size while correctly restricting attention to non-shifted neighbors.
-- **Relative position bias**: Replaces absolute position embeddings with a learnable relative position bias added to each attention head, parameterized by relative offsets. This provides +1.2% top-1 accuracy on ImageNet over absolute position embeddings and transfers better across varying input resolutions.
+- **Relative position bias**: Replaces absolute position embeddings with a learnable relative position bias added to each attention head, parameterized by relative offsets. This provides +0.8% top-1 accuracy on ImageNet over absolute position embeddings (+1.2% over no position embedding at all) and transfers better across varying input resolutions.
 - **General-purpose backbone demonstration**: First transformer architecture to serve as a drop-in backbone for detection (Cascade Mask R-CNN, HTC++), segmentation (UPerNet), and classification simultaneously, establishing the template that subsequent architectures (Swin V2, CSWin, Focal Transformer) followed.
 
 ## Architecture / Method
@@ -127,7 +127,7 @@ Instead of absolute position embeddings, each attention head adds a bias term B 
 Attention(Q, K, V) = SoftMax(QK^T / sqrt(d) + B) V
 ```
 
-The bias table has shape (2M-1) x (2M-1) for each head, covering all possible relative positions within an M x M window. Relative position bias is significantly more effective than absolute embeddings (+1.2% top-1 on ImageNet) and allows the model to generalize across different input resolutions at fine-tuning time by interpolating the bias table.
+The bias table has shape (2M-1) x (2M-1) for each head, covering all possible relative positions within an M x M window. Relative position bias is significantly more effective than absolute embeddings (+0.8% top-1 on ImageNet over absolute pos., +1.2% over no position embedding) and allows the model to generalize across different input resolutions at fine-tuning time by interpolating the bias table.
 
 ## Results
 

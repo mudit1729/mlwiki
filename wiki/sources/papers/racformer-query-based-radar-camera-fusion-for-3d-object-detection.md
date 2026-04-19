@@ -121,7 +121,7 @@ RaCFormer outperforms HyDRa by 4.7% mAP and 2.8% NDS on the validation set.
 | Method | Sensors | mAP | NDS |
 |---|---|---|---|
 | CenterPoint (LiDAR) | L | 60.3% | 67.3% |
-| VoxelNeXt (LiDAR) | L | 64.5% | — |
+| VoxelNeXt (LiDAR) | L | 64.5% | 70.0% |
 | HVDetFusion (radar-camera) | R+C | 60.9% | 67.4% |
 | **RaCFormer** (radar-camera) | **R+C** | **64.9%** | **70.2%** |
 

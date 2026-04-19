@@ -16,7 +16,7 @@ paper-faithfullness: audited-solid
 
 ## Overview
 
-Large language models like GPT-3 are trained on vast internet corpora to predict the next token, but this objective is fundamentally misaligned with the goal of following user instructions helpfully and safely. Ouyang et al. (2022) introduced InstructGPT, a family of models trained using Reinforcement Learning from Human Feedback (RLHF) to align language model outputs with human intent. The core insight is that a relatively small amount of human preference data, combined with a reward model and PPO-based reinforcement learning, can dramatically improve a model's ability to follow instructions -- even making a 1.3B parameter InstructGPT model preferred by human labelers over the 175B parameter GPT-3 71% of the time.
+Large language models like GPT-3 are trained on vast internet corpora to predict the next token, but this objective is fundamentally misaligned with the goal of following user instructions helpfully and safely. Ouyang et al. (2022) introduced InstructGPT, a family of models trained using Reinforcement Learning from Human Feedback (RLHF) to align language model outputs with human intent. The core insight is that a relatively small amount of human preference data, combined with a reward model and PPO-based reinforcement learning, can dramatically improve a model's ability to follow instructions -- even making a 1.3B parameter InstructGPT model preferred by human labelers over the 175B parameter GPT-3, while the 175B InstructGPT is preferred over the 175B GPT-3 85% of the time and preferred over few-shot GPT-3 71% of the time.
 
 The paper establishes a three-stage alignment pipeline that became the standard recipe for the field: (1) collect human demonstrations of desired behavior and fine-tune a pretrained model via supervised learning (SFT), (2) collect human rankings of model outputs and train a reward model (RM) to predict these preferences, and (3) optimize the SFT model against the reward model using Proximal Policy Optimization (PPO), with a KL penalty to prevent excessive drift from the original model. This pipeline proved that alignment is not just about making models safer -- aligned models are also more useful, more truthful, and less toxic, demonstrating that helpfulness and safety can be complementary rather than competing objectives.
 
@@ -107,13 +107,12 @@ Three InstructGPT model sizes were trained: 1.3B, 6B, and 175B parameters. All s
 
 ### Human Preference Evaluations
 
-| Model | Win rate vs. 175B GPT-3 | Likert helpfulness |
-|-------|-------------------------|-------------------|
-| GPT-3 (175B, prompted) | 50% (baseline) | -- |
-| SFT (1.3B) | 61% | -- |
-| InstructGPT (1.3B, PPO-ptx) | **71%** | -- |
-| InstructGPT (6B, PPO-ptx) | -- | -- |
-| InstructGPT (175B, PPO-ptx) | **85%** | -- |
+| Model | Win rate vs. 175B GPT-3 (non-prompted) | Win rate vs. 175B few-shot GPT-3 |
+|-------|----------------------------------------|----------------------------------|
+| GPT-3 (175B, non-prompted) | 50% (baseline) | -- |
+| GPT-3 (175B, few-shot prompted) | -- | 50% (baseline) |
+| InstructGPT (1.3B, PPO-ptx) | preferred (see Figure 1) | -- |
+| InstructGPT (175B, PPO-ptx) | **85±3%** | **71±4%** |
 
 ### Truthfulness and Toxicity
 

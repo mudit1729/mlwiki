@@ -29,7 +29,7 @@ This paper, together with the later Chinchilla correction (Hoffmann et al., 2022
 
 ## Key Contributions
 
-- **Three independent power laws**: L(N) = (N/8.8x10^13)^{-0.076}, L(D) = (D/5.4x10^13)^{-0.095}, L(C) = (C/2.3x10^8)^{-0.050}, each holding over many orders of magnitude on WebText2 with Transformer LMs ranging from 768 to 1.5B parameters
+- **Three independent power laws**: L(N) = (N/8.8x10^13)^{-0.076}, L(D) = (D/5.4x10^13)^{-0.095}, L(C_min) = (C_min/3.1x10^8)^{-0.050}, each holding over many orders of magnitude on WebText2 with Transformer LMs ranging from 768 to 1.5B parameters
 - **Compute-optimal allocation**: For a fixed compute budget C ~ 6ND, the paper derives that optimal training allocates most budget to model size N rather than dataset size D, yielding the "train large, stop early" prescription. Optimal compute allocation follows N_optimal ~ 1.3x10^9 * C^{0.73}
 - **Architecture invariance**: Within the Transformer family, specific choices of depth, width, and attention heads have minimal effect on the scaling exponent; total non-embedding parameter count is the dominant predictor. Performance depends "strongly on scale" but "weakly on model shape"
 - **Smooth extrapolation**: Power-law fits on small models accurately predict loss of 10x larger models, enabling cheap experimental design
