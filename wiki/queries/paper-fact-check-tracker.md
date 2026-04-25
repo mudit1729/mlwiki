@@ -1,6 +1,6 @@
 # Paper Fact-Check Tracker
 
-Updated: 2026-04-11
+Updated: 2026-04-25
 
 Purpose: coordinate a full factuality audit of every page in `wiki/sources/papers/` against the original paper.
 
@@ -10,8 +10,37 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 
 - `unchecked` — no direct paper-vs-summary audit completed yet
 - `audited-solid` — sampled against the original paper and materially faithful
+- `audited-clean` — legacy/resolved synonym for a faithful audit with no material fixes
+- `audited-fixed` — factual issue found and corrected in the page
+- `audited-corrected` — legacy synonym for `audited-fixed`
 - `audited-needs-tightening` — mostly faithful but contains notable imprecision or unsupported framing
 - `audited-needs-correction` — contains factual errors or materially misleading claims
+
+## [2026-04-25] correction pass | 10-paper review findings
+
+- Fixed `goalflow-goal-driven-flow-matching-for-multimodal-trajectory-generation`: separated the 90.3 PDMS / 5-step result from the 88.9 PDMS / 1-step / 10.4 ms result.
+- Fixed `is-ego-status-all-you-need-for-open-loop-end-to-end-autonomous-driving`: replaced approximate/wrong benchmark table values with the paper's Table 1 values.
+- Fixed `dima-distilling-multi-modal-large-language-models-for-autonomous-driving`, `sparsedriveV2-end-to-end-autonomous-driving-via-sparse-scene-representation`, and `carplanner-consistent-autoregressive-rl-planner-for-autonomous-driving` metadata/details from the review.
+
+## [2026-04-25] cleanup kickoff | 197-paper batch pass
+
+- Reconfirmed `197` paper pages and kept the manifest below as `20` alphabetical batches: `19` batches of `10` papers plus a final batch of `7`.
+- Reused the existing `.grounding/reports/` audit artifacts instead of starting a parallel tracker; no new agents were spawned for this kickoff.
+- Cleared the two stale open flags from the current corpus: `flashocc-fast-and-memory-efficient-occupancy-prediction-via-channel-to-height-plugin` and `rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control` were already corrected/tightened in content, so their frontmatter now records `audited-fixed`.
+- Operating rule for the cleanup: keep one active batch lane at a time unless explicitly widened, patch only direct paper-vs-summary factual errors or status drift, and leave broader synthesis rewrites for separate passes.
+
+## [2026-04-25] corpus batch audit | Batch 01
+
+- Audited the first `10` pages in the manifest: `3d-vla`, `a-generalist-agent`, `a-language-agent-for-autonomous-driving`, `a-simple-neural-network-module-for-relational-reasoning`, `a-tutorial-introduction-to-the-minimum-description-length-principle`, `alpamayo-r1`, `alphadrive`, `an-image-is-worth-16x16-words`, `asyncdriver`, and `attention-is-all-you-need`.
+- New fixes applied: `0`. Existing corrected values for Agent-Driver, AlphaDrive, AsyncDriver, Relation Networks, ViT, and Transformer remained source-aligned.
+- Report: `.grounding/reports/corpus-batch01-2026-04-25.md`.
+
+## [2026-04-25] random sample gate | 20 papers
+
+- Deterministic sample seed: `20260425`; sampled `20` of `197` paper pages.
+- Sampled pages: `bridgead`, `kolmogorov-complexity-and-algorithmic-randomness`, `mamba`, `smolvla`, `vlp`, `genad-generalized`, `gaussianformer`, `llarva`, `bevformer`, `llama-2`, `video-prediction-policy`, `dima`, `scaling-laws`, `recurrent-neural-network-regularization`, `palm`, `the-unreasonable-effectiveness-of-recurrent-neural-networks`, `mixtral`, `gr-2`, `sparseocc-rethinking`, and `end-to-end-learning-for-self-driving-cars`.
+- Found `1` minor factual issue and fixed it: `bevformer-learning-birds-eye-view-representation-from-multi-camera-images-via-spatiotemporal-transformers` had an ablation bullet that mixed unsupported `3.4` / `5.2` drop claims into temporal/spatial module removal wording. It now mirrors the paper's frame-count and spatial-attention ablation rows.
+- Gate decision: because the sample found fewer than `5` issues and the only issue was minor, stop the broader 197-paper review process here rather than continuing batch-by-batch.
 
 ## [2026-04-11] random-sample audit | 10 additional paper summaries (seed 20260417)
 
@@ -110,7 +139,9 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 
 ## Batch Tracker
 
-### Batch 01 — active
+The headings below are the batch manifest, not simultaneous active work.
+
+### Batch 01 — reviewed 2026-04-25
 - `wiki/sources/papers/3d-vla-a-3d-vision-language-action-generative-world-model.md`
 - `wiki/sources/papers/a-generalist-agent.md`
 - `wiki/sources/papers/a-language-agent-for-autonomous-driving.md`
@@ -122,7 +153,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/asyncdriver-asynchronous-large-language-model-enhanced-planner-for-autonomous-driving.md`
 - `wiki/sources/papers/attention-is-all-you-need.md`
 
-### Batch 02 — active
+### Batch 02
 - `wiki/sources/papers/autort-embodied-foundation-models-for-large-scale-orchestration-of-robotic-agents.md`
 - `wiki/sources/papers/autovala-vision-language-action-model-for-end-to-end-autonomous-driving.md`
 - `wiki/sources/papers/bert-pre-training-of-deep-bidirectional-transformers-for-language-understanding.md`
@@ -134,7 +165,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/bridgead-bridging-past-and-future-end-to-end-autonomous-driving-with-historical-prediction.md`
 - `wiki/sources/papers/carla-an-open-urban-driving-simulator.md`
 
-### Batch 03 — active
+### Batch 03
 - `wiki/sources/papers/carplanner-consistent-autoregressive-rl-planner-for-autonomous-driving.md`
 - `wiki/sources/papers/chain-of-thought-prompting-elicits-reasoning-in-large-language-models.md`
 - `wiki/sources/papers/chauffeurnet-learning-to-drive-by-imitating-the-best-and-synthesizing-the-worst.md`
@@ -146,7 +177,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/deepseek-r1-incentivizing-reasoning-capability-in-llms-via-reinforcement-learning.md`
 - `wiki/sources/papers/denoising-diffusion-probabilistic-models.md`
 
-### Batch 04 — active
+### Batch 04
 - `wiki/sources/papers/dexvla-vision-language-model-with-plug-in-diffusion-expert.md`
 - `wiki/sources/papers/diffusion-models-beat-gans-on-image-synthesis.md`
 - `wiki/sources/papers/diffusiondrive-truncated-diffusion-model-for-end-to-end-autonomous-driving.md`
@@ -158,7 +189,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/driveadapter-breaking-the-coupling-barrier-of-perception-and-planning-in-end-to-end-autonomous-driving.md`
 - `wiki/sources/papers/drivedreamer-towards-real-world-driven-world-models.md`
 
-### Batch 05 — active
+### Batch 05
 - `wiki/sources/papers/drivegpt-scaling-autoregressive-behavior-models-for-driving.md`
 - `wiki/sources/papers/drivegpt4-interpretable-end-to-end-autonomous-driving-via-large-language-model.md`
 - `wiki/sources/papers/drivelm-driving-with-graph-visual-question-answering.md`
@@ -170,7 +201,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/driving-with-llms-fusing-object-level-vector-modality-for-explainable-autonomous-driving.md`
 - `wiki/sources/papers/drivor-driving-on-registers.md`
 
-### Batch 06 — active
+### Batch 06
 - `wiki/sources/papers/ecot-embodied-chain-of-thought-reasoning-for-vision-language-action-models.md`
 - `wiki/sources/papers/embodiment-scaling-laws-in-robot-locomotion.md`
 - `wiki/sources/papers/emerging-properties-in-self-supervised-vision-transformers.md`
@@ -182,7 +213,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/fb-bev-bev-representation-from-forward-backward-view-transformations.md`
 - `wiki/sources/papers/flamingo-a-visual-language-model-for-few-shot-learning.md`
 
-### Batch 07 — active
+### Batch 07
 - `wiki/sources/papers/flashocc-fast-and-memory-efficient-occupancy-prediction-via-channel-to-height-plugin.md`
 - `wiki/sources/papers/gaussianbev-3d-gaussian-representation-meets-perception-models-for-bev-segmentation.md`
 - `wiki/sources/papers/gaussianflowocc-sparse-occupancy-with-gaussian-splatting-and-temporal-flow.md`
@@ -194,7 +225,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/gaussrender-learning-3d-occupancy-with-gaussian-rendering.md`
 - `wiki/sources/papers/gausstr-foundation-model-aligned-gaussian-transformer-for-self-supervised-3d.md`
 
-### Batch 08 — active
+### Batch 08
 - `wiki/sources/papers/gemini-25-pushing-the-frontier-with-advanced-reasoning-multimodality-long-context-and-next-generation-agentic-capabilities.md`
 - `wiki/sources/papers/gemini-robotics-bringing-ai-into-the-physical-world.md`
 - `wiki/sources/papers/gemma-3-technical-report.md`
@@ -206,7 +237,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/gpt-driver-learning-to-drive-with-gpt.md`
 - `wiki/sources/papers/gr-2-a-generative-video-language-action-model-with-web-scale-knowledge-for-robot-manipulation.md`
 
-### Batch 09 — active
+### Batch 09
 - `wiki/sources/papers/groot-n1-an-open-foundation-model-for-generalist-humanoid-robots.md`
 - `wiki/sources/papers/helix-a-vla-for-generalist-humanoid-control.md`
 - `wiki/sources/papers/hermes-a-unified-self-driving-world-model-for-simultaneous-3d-scene-understanding-and-generation.md`
@@ -218,7 +249,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/imagenet-classification-with-deep-convolutional-neural-networks.md`
 - `wiki/sources/papers/is-ego-status-all-you-need-for-open-loop-end-to-end-autonomous-driving.md`
 
-### Batch 10 — active
+### Batch 10
 - `wiki/sources/papers/keeping-neural-networks-simple-by-minimizing-the-description-length-of-the-weights.md`
 - `wiki/sources/papers/knowledge-insulating-vision-language-action-models.md`
 - `wiki/sources/papers/kolmogorov-complexity-and-algorithmic-randomness.md`
@@ -230,7 +261,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/learning-transferable-visual-models-from-natural-language-supervision.md`
 - `wiki/sources/papers/lift-splat-shoot-encoding-images-from-arbitrary-camera-rigs-by-implicitly-unprojecting-to-3d.md`
 
-### Batch 11 — active
+### Batch 11
 - `wiki/sources/papers/llama-2-open-foundation-and-fine-tuned-chat-models.md`
 - `wiki/sources/papers/llarva-vision-action-instruction-tuning-enhances-robot-learning.md`
 - `wiki/sources/papers/llms-cant-plan-but-can-help-planning-in-llm-modulo-frameworks.md`
@@ -242,7 +273,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/mixtral-of-experts.md`
 - `wiki/sources/papers/momad-momentum-aware-planning-in-end-to-end-autonomous-driving.md`
 
-### Batch 12 — active
+### Batch 12
 - `wiki/sources/papers/multi-scale-context-aggregation-by-dilated-convolutions.md`
 - `wiki/sources/papers/navsim-data-driven-non-reactive-autonomous-vehicle-simulation.md`
 - `wiki/sources/papers/navsim-v2-pseudo-simulation-for-autonomous-driving.md`
@@ -254,7 +285,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/occgen-generative-multi-modal-3d-occupancy-prediction-for-autonomous-driving.md`
 - `wiki/sources/papers/occmamba-semantic-occupancy-prediction-with-state-space-models.md`
 
-### Batch 13 — active
+### Batch 13
 - `wiki/sources/papers/occworld-learning-a-3d-occupancy-world-model-for-autonomous-driving.md`
 - `wiki/sources/papers/octo-an-open-source-generalist-robot-policy.md`
 - `wiki/sources/papers/on-the-opportunities-and-risks-of-foundation-models.md`
@@ -266,7 +297,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/palm-e-an-embodied-multimodal-language-model.md`
 - `wiki/sources/papers/palm-scaling-language-modeling-with-pathways.md`
 
-### Batch 14 — active
+### Batch 14
 - `wiki/sources/papers/para-drive-parallelized-architecture-for-real-time-autonomous-driving.md`
 - `wiki/sources/papers/pi0-a-vision-language-action-flow-model-for-general-robot-control.md`
 - `wiki/sources/papers/pi05-a-vision-language-action-model-with-open-world-generalization.md`
@@ -278,7 +309,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/quantifying-the-rise-and-fall-of-complexity-in-closed-systems-the-coffee-automaton.md`
 - `wiki/sources/papers/qwen3-technical-report.md`
 
-### Batch 15 — active
+### Batch 15
 - `wiki/sources/papers/racformer-query-based-radar-camera-fusion-for-3d-object-detection.md`
 - `wiki/sources/papers/rdt-1b-a-diffusion-foundation-model-for-bimanual-manipulation.md`
 - `wiki/sources/papers/react-synergizing-reasoning-and-acting-in-language-models.md`
@@ -290,7 +321,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/robovlms-what-matters-in-building-vision-language-action-models.md`
 - `wiki/sources/papers/rt-1-robotics-transformer-for-real-world-control-at-scale.md`
 
-### Batch 16 — active
+### Batch 16
 - `wiki/sources/papers/rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control.md`
 - `wiki/sources/papers/rt-h-action-hierarchies-using-language.md`
 - `wiki/sources/papers/s4-driver-scalable-self-supervised-driving-mllm-with-spatio-temporal-visual-representation.md`
@@ -302,7 +333,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/self-improving-embodied-foundation-models.md`
 - `wiki/sources/papers/selfocc-self-supervised-vision-based-3d-occupancy-prediction.md`
 
-### Batch 17 — active
+### Batch 17
 - `wiki/sources/papers/senna-bridging-large-vision-language-models-and-end-to-end-autonomous-driving.md`
 - `wiki/sources/papers/simlingo-vision-only-closed-loop-autonomous-driving-with-language-action-alignment.md`
 - `wiki/sources/papers/smolvla-a-vision-language-action-model-for-affordable-robotics.md`
@@ -314,7 +345,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/spatialvla-exploring-spatial-representations-for-vla-models.md`
 - `wiki/sources/papers/surroundocc-multi-camera-3d-occupancy-prediction-for-autonomous-driving.md`
 
-### Batch 18 — active
+### Batch 18
 - `wiki/sources/papers/swin-transformer-hierarchical-vision-transformer-using-shifted-windows.md`
 - `wiki/sources/papers/talk2car-taking-control-of-your-self-driving-car.md`
 - `wiki/sources/papers/talk2drive-towards-personalized-autonomous-driving-with-large-language-models.md`
@@ -326,7 +357,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/training-compute-optimal-large-language-models.md`
 - `wiki/sources/papers/training-language-models-to-follow-instructions-with-human-feedback.md`
 
-### Batch 19 — active
+### Batch 19
 - `wiki/sources/papers/transfuser-imitation-with-transformer-based-sensor-fusion-for-autonomous-driving.md`
 - `wiki/sources/papers/tree-of-thoughts-deliberate-problem-solving-with-large-language-models.md`
 - `wiki/sources/papers/understanding-lstm-networks.md`
@@ -338,7 +369,7 @@ Per-paper status lives in YAML frontmatter under `paper-faithfullness`.
 - `wiki/sources/papers/variational-lossy-autoencoder.md`
 - `wiki/sources/papers/vectornet-encoding-hd-maps-and-agent-dynamics-from-vectorized-representation.md`
 
-### Batch 20 — active
+### Batch 20
 - `wiki/sources/papers/video-prediction-policy-a-generalist-robot-policy-with-predictive-visual-representations.md`
 - `wiki/sources/papers/vista-a-generalizable-driving-world-model-with-high-fidelity-and-versatile-controllability.md`
 - `wiki/sources/papers/visual-instruction-tuning.md`

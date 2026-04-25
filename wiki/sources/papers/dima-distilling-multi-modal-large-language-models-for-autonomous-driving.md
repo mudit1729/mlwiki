@@ -3,11 +3,12 @@ title: "DiMA: Distilling Multi-modal Large Language Models for Autonomous Drivin
 tags: [autonomous-driving, knowledge-distillation, multimodal, language-model]
 status: active
 type: paper
+updated: 2026-04-25
 year: "2025"
 venue: "CVPR"
 citations: 34
 arxiv_id: "2501.09757"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 📄 **[Read on arXiv](https://arxiv.org/abs/2501.09757)**
@@ -43,7 +44,7 @@ DiMA achieves 37% reduction in L2 trajectory error, 80% reduction in collision r
 │            ┌────────────────┘              └──────────────┐      │
 │            ▼                                             ▼      │
 │  ┌─────────────────────┐  KL divergence  ┌──────────────────┐   │
-│  │  Planning Transformer│◄──────────────►│  LLaMA-v1.5 7B  │   │
+│  │  Planning Transformer│◄──────────────►│  LLaVA-v1.5 7B  │   │
 │  │  (lightweight)       │  distillation  │  (MLLM Teacher)  │   │
 │  │                      │                │                   │   │
 │  │  Task: trajectory    │                │  Tasks:           │   │
@@ -73,7 +74,7 @@ The framework has two components during training:
 - Planning transformer for trajectory generation
 
 **Multi-Modal LLM (discarded at inference):**
-- LLAMA-v1.5-7B processing structured BEAM representations
+- LLaVA-v1.5-7B language model base processing structured BEAM representations through adapter layers
 - Handles four training objectives:
 
 1. **Visual Question Answering:** Scene understanding through language
@@ -90,7 +91,7 @@ The framework has two components during training:
 - **A**gent tokens: surrounding dynamic objects
 - **M**ap tokens: additional road elements
 
-Training uses AdamW optimizer on 8x NVIDIA A100 GPUs with nuScenes and DriveLM datasets.
+Training uses nuScenes for open-loop planning and DriveLM plus generated QA pairs for VQA-style supervision; the appendix describes a two-stage AdamW training setup.
 
 ## Results
 

@@ -2,7 +2,7 @@
 title: RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control
 type: source-summary
 status: complete
-updated: 2026-04-11
+updated: 2026-04-25
 year: 2023
 venue: arXiv
 tags:
@@ -11,7 +11,7 @@ tags:
   - vla
   - embodied
 citations: 2686
-paper-faithfullness: audited-needs-tightening
+paper-faithfullness: audited-fixed
 ---
 
 # RT-2: Vision-Language-Action Models Transfer Web Knowledge to Robotic Control

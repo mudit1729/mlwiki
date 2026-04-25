@@ -2,7 +2,7 @@
 title: "SparseDriveV2: Scoring is All You Need for End-to-End Autonomous Driving"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-25
 year: 2026
 venue: arXiv
 tags:
@@ -13,7 +13,7 @@ tags:
   - planning
 citations: 0
 arxiv_id: "2603.29163"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 # SparseDriveV2: Scoring is All You Need for End-to-End Autonomous Driving
@@ -24,7 +24,7 @@ paper-faithfullness: audited-solid
 
 SparseDriveV2 by Sun et al. (2026) pushes the performance boundary of scoring-based trajectory planning by demonstrating that "scoring is all you need" -- given sufficient coverage of the action space, a simple score-and-select approach outperforms complex generative planners. The core innovation is a scalable trajectory vocabulary that factorizes spatiotemporal trajectories into geometric paths and velocity profiles, enabling combinatorial explosion of candidates (1024 paths x 256 velocities = 262,144 total) while remaining computationally tractable.
 
-SparseDriveV2 achieves 92.0 PDMS and 90.1 EPDMS on NAVSIM, and 89.15 Driving Score with 70.00% Success Rate on Bench2Drive using a lightweight ResNet-34 backbone. The paper presents a systematic scaling study (using Hydra-MDP as a baseline) showing that planning performance improves consistently as trajectory anchors increase in density, without saturation before computational limits -- suggesting that larger vocabularies will yield further gains.
+SparseDriveV2 achieves 92.0 PDMS and 90.1 EPDMS on NAVSIM using a lightweight ResNet-34 backbone, and 89.15 Driving Score with 70.00% Success Rate on Bench2Drive using a ResNet-50 backbone with all six cameras. The paper presents a systematic scaling study (using Hydra-MDP as a baseline) showing that planning performance improves consistently as trajectory anchors increase in density, without saturation before computational limits -- suggesting that larger vocabularies will yield further gains.
 
 ## Key Contributions
 
@@ -32,7 +32,7 @@ SparseDriveV2 achieves 92.0 PDMS and 90.1 EPDMS on NAVSIM, and 89.15 Driving Sco
 - **Scaling law for trajectory anchors**: Demonstrates that planning performance improves consistently as vocabulary density increases, with no saturation observed before memory limits
 - **Two-stage scalable scoring**: Coarse factorized scoring with progressive filtering (128/64 → 20/20) prunes the 262K candidates to 400 composed trajectories, followed by fine-grained trajectory re-conditioning scoring
 - **Metric supervision training**: Multi-task objectives including metric-based losses for safety, progress, comfort, and rule compliance aligned with the PDMS evaluation metric
-- **92.0 PDMS on NAVSIM v1, 90.1 EPDMS on NAVSIM v2**: New state-of-the-art on NAVSIM; also achieves 89.15 Driving Score / 70.00% Success Rate on Bench2Drive with ResNet-34 backbone
+- **92.0 PDMS on NAVSIM v1, 90.1 EPDMS on NAVSIM v2**: New state-of-the-art on NAVSIM with ResNet-34; also achieves 89.15 Driving Score / 70.00% Success Rate on Bench2Drive with ResNet-50
 
 ## Architecture / Method
 

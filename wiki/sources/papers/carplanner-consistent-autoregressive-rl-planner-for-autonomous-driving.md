@@ -1,8 +1,8 @@
 ---
-title: "CarPlanner: Consistent Auto-regressive RL Planner for Autonomous Driving"
+title: "CarPlanner: Consistent Auto-regressive Trajectory Planning for Large-scale Reinforcement Learning in Autonomous Driving"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-25
 year: 2025
 venue: CVPR
 tags:
@@ -13,10 +13,10 @@ tags:
   - autoregressive
 citations: ~15
 arxiv_id: "2502.19908"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
-# CarPlanner: Consistent Auto-regressive RL Planner for Autonomous Driving
+# CarPlanner: Consistent Auto-regressive Trajectory Planning for Large-scale Reinforcement Learning in Autonomous Driving
 
 [Read on arXiv](https://arxiv.org/abs/2502.19908)
 

@@ -2,7 +2,7 @@
 title: "Is Ego Status All You Need for Open-Loop End-to-End Autonomous Driving?"
 type: source-summary
 status: complete
-updated: 2026-04-05
+updated: 2026-04-25
 year: 2024
 venue: CVPR 2024
 tags:
@@ -13,7 +13,7 @@ tags:
   - end-to-end
 citations: ~199
 arxiv_id: "2312.03031"
-paper-faithfullness: audited-solid
+paper-faithfullness: audited-fixed
 ---
 
 # Is Ego Status All You Need for Open-Loop End-to-End Autonomous Driving?
@@ -22,7 +22,7 @@ paper-faithfullness: audited-solid
 
 ## Overview
 
-This paper (CVPR 2024, NVIDIA / Nanjing University) delivers a "wake-up call" to the autonomous driving research community by demonstrating that simple baselines using only ego vehicle status (velocity, acceleration, heading) can match or outperform complex end-to-end driving models on the standard nuScenes open-loop planning benchmark. The paper shows that 73.9% of nuScenes driving scenarios are straightforward (going straight at near-constant speed), and current evaluation metrics fail to distinguish genuine scene understanding from trivial extrapolation of ego motion.
+This paper (CVPR 2024, NVIDIA / Nanjing University) delivers a "wake-up call" to the autonomous driving research community by demonstrating that simple baselines using only ego vehicle status (velocity, acceleration, yaw angle, and driving command) can match or outperform complex end-to-end driving models on the standard nuScenes open-loop planning benchmark. The paper shows that 73.9% of nuScenes driving scenarios are straightforward (going straight at near-constant speed), and current evaluation metrics fail to distinguish genuine scene understanding from trivial extrapolation of ego motion.
 
 The authors introduce two minimal baselines -- Ego-MLP (a simple MLP on ego status) and BEV-Planner (adding minimal BEV features) -- that achieve competitive performance with state-of-the-art methods like UniAD and VAD, revealing fundamental flaws in how the community evaluates planning. They also propose a novel Curb Collision Rate (CCR) metric that better measures road boundary adherence.
 
@@ -30,7 +30,7 @@ The authors introduce two minimal baselines -- Ego-MLP (a simple MLP on ego stat
 
 - **Exposure of evaluation weakness**: Demonstrates that ego status alone (without any perception) achieves competitive open-loop planning on nuScenes, invalidating claims of scene understanding
 - **Dataset bias analysis**: Reveals that 73.9% of nuScenes consists of straight driving, making L2 displacement error dominated by trivial scenarios
-- **Ego-MLP baseline**: A simple MLP taking only ego velocity/acceleration/heading as input achieves results competitive with complex E2E models
+- **Ego-MLP baseline**: A simple MLP taking only ego velocity, acceleration, yaw angle, and driving command as input achieves results competitive with complex E2E models
 - **BEV-Planner baseline**: Adding minimal BEV features to Ego-MLP provides marginal additional benefit, showing perception features are underutilized by planners
 - **Curb Collision Rate (CCR)**: Novel metric measuring road boundary violations, providing a more meaningful signal than average L2 error
 - **Call for closed-loop evaluation**: Argues the field must transition to closed-loop reactive simulation for meaningful planning evaluation
@@ -47,7 +47,7 @@ The authors introduce two minimal baselines -- Ego-MLP (a simple MLP on ego stat
 │  │ Ego Status    │────►│ MLP (3-4 layers)│────►│ Future     │ │
 │  │ - velocity    │     │                │     │ Waypoints  │ │
 │  │ - acceleration│     └────────────────┘     └────────────┘ │
-│  │ - heading rate│                                           │
+│  │ - yaw/command │                                           │
 │  └──────────────┘                                            │
 │                                                              │
 │  BEV-PLANNER (minimal vision):                              │
@@ -75,7 +75,7 @@ The authors introduce two minimal baselines -- Ego-MLP (a simple MLP on ego stat
 ### Ego-MLP Baseline
 
 The simplest baseline takes only ego vehicle status as input:
-- **Input**: Ego velocity, acceleration, heading rate (no camera images, no LiDAR, no maps)
+- **Input**: Ego velocity, acceleration, yaw angle, and driving command (no camera images, no LiDAR, no maps)
 - **Architecture**: A small MLP (3-4 layers) that directly regresses future waypoints
 - **Output**: Planned trajectory (T future waypoints in BEV)
 
@@ -111,18 +111,18 @@ A new metric that measures the percentage of planned trajectories that cross roa
 
 ## Results
 
-| Method | L2 1s (m) | L2 3s (m) | Col. Rate (%) | CCR (%) |
-|--------|-----------|-----------|---------------|---------|
-| Ego-MLP (no vision) | ~0.5 | ~1.9 | ~0.7 | high |
-| BEV-Planner | ~0.4 | ~1.8 | ~0.6 | moderate |
-| UniAD | 0.48 | 1.93 | 0.71 | lower |
-| VAD | 0.41 | 1.76 | 0.57 | lower |
-| ST-P3 | 1.33 | 2.90 | 1.27 | - |
+| Method | L2 1s | L2 2s | L2 3s | Avg L2 | Avg collision | Avg CCR |
+|--------|-------|-------|-------|--------|---------------|---------|
+| ST-P3 official | 1.59 | 2.64 | 3.73 | 2.65 | 4.23 | 8.37 |
+| UniAD official | 0.35 | 0.63 | 0.99 | 0.66 | 0.62 | 1.72 |
+| VAD-Base official | 0.17 | 0.34 | 0.60 | 0.37 | 0.33 | 2.47 |
+| Ego-MLP (no vision) | 0.15 | 0.32 | 0.59 | 0.35 | 0.37 | 2.93 |
+| BEV-Planner | 0.30 | 0.52 | 0.83 | 0.55 | 0.59 | 4.26 |
 
-- **Ego-MLP matches complex E2E models** on average L2 error, invalidating the metric as a measure of scene understanding
+- **Ego-MLP matches complex E2E models** on average L2 error and collision rate, invalidating those metrics as measures of scene understanding
 - **Velocity perturbation experiments** show that small changes to ego status input dominate planning output changes, confirming over-reliance on ego motion
 - **Feature analysis** reveals that learned features in complex models converge to representations dominated by ego status information
-- **CCR provides better differentiation**: Methods with genuine perception features significantly outperform Ego-MLP on curb collision rate
+- **CCR provides better differentiation**: Ego-MLP's average CCR is worse than the official UniAD and VAD-Base rows, and BEV-Planner without an explicit map task is worse still
 - **Training dynamics** show Ego-MLP converges much faster than complex models, confirming the shortcut is easy to learn
 
 ![Feature analysis](https://paper-assets.alphaxiv.org/figures/2312.03031v2/x4.png)

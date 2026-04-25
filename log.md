@@ -1,5 +1,25 @@
 # Log
 
+## [2026-04-25] audit | Random 20-paper corpus gate
+- Drew a deterministic random sample of `20` paper summaries from the `197`-paper corpus using seed `20260425`.
+- Fixed `1` minor factual issue in `bevformer-learning-birds-eye-view-representation-from-multi-camera-images-via-spatiotemporal-transformers`: the ablation bullet now uses the paper's actual frame-count and spatial-attention rows.
+- Since the sample found fewer than `5` issues and no major errors, stopped the broader review process per request.
+
+## [2026-04-25] audit | Corpus Batch 01 factuality review
+- Reviewed the first `10` paper pages from the 197-paper manifest against existing grounding reports and source material.
+- Applied `0` new paper-page fixes; current summaries were already aligned after prior corrections.
+- Wrote `.grounding/reports/corpus-batch01-2026-04-25.md` and marked Batch 01 reviewed in the tracker.
+
+## [2026-04-25] audit | Initiate 197-paper cleanup pass
+- Reconfirmed the `wiki/sources/papers/` corpus at `197` pages and kept the tracker organized as `20` alphabetical batches.
+- Reused existing `.grounding/reports/` artifacts and did not spawn new agents for this kickoff.
+- Cleared stale open factuality flags on `flashocc-fast-and-memory-efficient-occupancy-prediction-via-channel-to-height-plugin` and `rt-2-vision-language-action-models-transfer-web-knowledge-to-robotic-control`.
+
+## [2026-04-25] audit | Correct 10-paper review findings
+- Fixed 5 reviewed paper pages from the fresh 10-paper factuality sample.
+- Corrected major result errors in `goalflow-goal-driven-flow-matching-for-multimodal-trajectory-generation` and `is-ego-status-all-you-need-for-open-loop-end-to-end-autonomous-driving`.
+- Tightened architecture/backbone metadata in `dima-distilling-multi-modal-large-language-models-for-autonomous-driving`, `sparsedriveV2-end-to-end-autonomous-driving-via-sparse-scene-representation`, and `carplanner-consistent-autoregressive-rl-planner-for-autonomous-driving`.
+
 ## [2026-04-16] audit | Batch 9 factuality audit — 7 papers
 - Audited 7 paper wiki pages against source PDFs (Mistral OCR): `drivetransformer`, `drivevlm`, `driving-gaussian`, `driving-with-llms`, `ecot`, `embodiment-scaling-laws`, `fb-bev`.
 - Fixed 3 factual errors in `fb-bev`:

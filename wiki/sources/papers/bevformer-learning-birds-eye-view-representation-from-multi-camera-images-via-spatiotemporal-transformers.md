@@ -2,7 +2,7 @@
 title: BEVFormer: Learning Bird's-Eye-View Representation from Multi-Camera Images via Spatiotemporal Transformers
 type: source-summary
 status: seed
-updated: 2026-04-05
+updated: 2026-04-25
 year: 2022
 venue: ECCV
 tags:
@@ -120,7 +120,7 @@ For 3D detection, a DETR3D-style head with 6 decoder layers produces bounding bo
 - **Temporal occlusion handling**: The temporal module achieves over 6.0% higher recall than static versions in low visibility conditions (0-40% visible objects), demonstrating the system's ability to infer hidden object information from temporal context
 - **BEV segmentation**: 44.8% IoU for vehicle segmentation on nuScenes (segmentation-only head), outperforming prior methods such as Lift-Splat (42.1%)
 - **Robustness**: BEVFormer shows improved robustness to camera calibration noise compared to other methods, making it more practical for real-world deployment where perfect sensor calibration is rarely maintained
-- **Ablation studies**: Removing temporal self-attention drops NDS by 3.4 points; removing spatial cross-attention (using simple projection instead) drops mAP by 5.2 points; both components contribute substantially
+- **Ablation studies**: The frame-count ablation shows the temporal contribution directly: 1 frame gives 0.448 NDS / 0.802 mAVE, while 4 frames gives 0.517 NDS / 0.394 mAVE. The spatial-attention ablation compares BEVFormer-S with local deformable attention (0.448 NDS / 0.375 mAP) against point-only attention (0.423 / 0.351) and global attention (0.404 / 0.325).
 
 ## Limitations & Open Questions
 
@@ -136,4 +136,3 @@ For 3D detection, a DETR3D-style head with 6 decoder layers produces bounding bo
 - [[wiki/sources/papers/attention-is-all-you-need]]
 - [[wiki/sources/papers/emma-end-to-end-multimodal-model-for-autonomous-driving]]
 - [[wiki/sources/papers/bevformer-v2-adapting-modern-image-backbones-to-birds-eye-view-recognition-via-perspective-supervision]] — successor that adds perspective supervision to enable modern 2D backbones
-
